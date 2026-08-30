@@ -1,0 +1,91 @@
+{
+  "topic": "y = x²+4x+c が直線 y = 2x+1 に接するとき、c と接点を求める",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "放物線と直線が接する。この接するという条件を、式にできるかどうかが勝負です。",
+      "visual_type": "hook",
+      "visual_content": "「接する」を式にする"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まず二つの式を連立します。移項して整理すると、エックスについての二次方程式になります。",
+      "visual_type": "point",
+      "visual_content": "連立して整理",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "x^2+4x+c = 2x+1",
+          "x^2+2x+(c-1) = 0"
+        ],
+        "caption": "二次方程式に"
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "接するとは、共有点がちょうど一つということ。つまり重解を持つので、判別式がゼロです。計算すると、シーは2と決まります。",
+      "visual_type": "point",
+      "visual_content": "接する = 判別式ゼロ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "D = 2^2 - 4(c-1) = 0",
+          "8 - 4c = 0",
+          "c = 2"
+        ],
+        "caption": "重解の条件"
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "シーが2なので、方程式はエックス二乗 プラス 2エックス プラス 1 イコール ゼロ。これはカッコ エックス プラス 1 の二乗なので、エックスはマイナス1です。",
+      "visual_type": "point",
+      "visual_content": "接点のxを出す",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "x^2+2x+1 = 0",
+          "(x+1)^2 = 0",
+          "x = -1"
+        ],
+        "caption": "重解はひとつ"
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "ワイは直線に代入してマイナス1。グラフで見ると、確かに一点だけで触れています。答えは、シーが2、接点はマイナス1 マイナス1です。",
+      "visual_type": "summary",
+      "visual_content": "c = 2 接点 (−1, −1)",
+      "visual": {
+        "kind": "plot",
+        "xRange": [
+          -4.5,
+          0.5
+        ],
+        "yRange": [
+          -7,
+          3
+        ],
+        "curves": [
+          {
+            "expr": "x^2+4*x+2",
+            "label": "y = x²+4x+2"
+          },
+          {
+            "expr": "2*x+1",
+            "label": "y = 2x+1"
+          }
+        ],
+        "shade": null,
+        "points": [
+          {
+            "x": -1,
+            "y": -1,
+            "label": "(-1, -1)"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+/**
+ * The Japanese mathematics curriculum, as the unit label shown above a problem.
+ *
+ * The label is always `課程 中分類` — the middle category, never the small one.
+ * That keeps every banner the same shape and short enough for one line, while
+ * the small categories below give the model enough detail to pick correctly.
+ *
+ * The list is also the schema: `generateScript` turns it into an enum, so the
+ * model cannot invent a unit name or spell an existing one differently.
+ */
+export type Unit = {
+  /** What appears on screen. */
+  name: string;
+  /** Small categories, for choosing between units — never displayed. */
+  topics: readonly string[];
+};
+
+export const MATH_UNITS: readonly Unit[] = [
+  // 中学
+  { name: "中1 数と式", topics: ["正の数・負の数", "文字の式", "一次方程式"] },
+  {
+    name: "中1 図形",
+    topics: ["平面図形（直線・角・対称・作図）", "空間図形（表面積・体積・位置関係）"],
+  },
+  { name: "中1 関数", topics: ["比例と反比例", "座標"] },
+  {
+    name: "中1 データの活用",
+    topics: ["データの分布", "ヒストグラム", "代表値（平均値・中央値・最頻値）"],
+  },
+  {
+    name: "中2 数と式",
+    topics: ["式の計算（単項式・多項式の加減乗除）", "連立方程式"],
+  },
+  {
+    name: "中2 図形",
+    topics: ["平行線と角", "多角形の角", "三角形と四角形の合同・証明"],
+  },
+  {
+    name: "中2 関数",
+    topics: ["一次関数（グラフ・変化の割合・方程式とグラフ）"],
+  },
+  {
+    name: "中2 データの活用",
+    topics: ["確率（樹形図などの活用）", "箱ひげ図と四分位範囲"],
+  },
+  {
+    name: "中3 数と式",
+    topics: ["多項式の計算（展開・因数分解）", "平方根", "二次方程式"],
+  },
+  {
+    name: "中3 図形",
+    topics: ["相似な図形", "円の性質（円周角の定理）", "三平方の定理"],
+  },
+  { name: "中3 関数", topics: ["関数 y = ax^2（グラフ・変化の割合）"] },
+  { name: "中3 データの活用", topics: ["標本調査"] },
+
+  // 数学I・A
+  {
+    name: "数I 数と式",
+    topics: ["式の計算（展開・因数分解）", "実数", "一次不等式", "集合と命題"],
+  },
+  {
+    name: "数I 図形と計量",
+    topics: ["三角比（sin, cos, tan）", "正弦定理と余弦定理", "図形の計量（面積・空間図形）"],
+  },
+  {
+    name: "数I 二次関数",
+    topics: ["二次関数とそのグラフ", "関数の最大・最小", "二次方程式と二次不等式"],
+  },
+  {
+    name: "数I データの分析",
+    topics: [
+      "データの散らばり（分散・標準偏差）",
+      "データの相関（散布図・相関係数）",
+      "仮説検定の考え方",
+    ],
+  },
+  {
+    name: "数A 場合の数と確率",
+    topics: ["順列・組合せ", "確率の基本性質", "独立な試行と条件付き確率"],
+  },
+  {
+    name: "数A 図形の性質",
+    topics: ["平面図形（三角形・円の性質）", "空間図形"],
+  },
+  {
+    name: "数A 数学と人間の活動",
+    topics: ["整数の性質（約数・倍数、ユークリッドの互除法）", "n進法", "座標や数学史"],
+  },
+
+  // 数学II・B
+  {
+    name: "数II いろいろな式",
+    topics: [
+      "三次式の展開と因数分解",
+      "二項定理",
+      "分数式",
+      "複素数と二次方程式",
+      "高次方程式",
+    ],
+  },
+  {
+    name: "数II 図形と方程式",
+    topics: ["直線・平面上の点", "直線や円の方程式", "軌跡と方程式", "不等式の表す領域"],
+  },
+  {
+    name: "数II 指数関数・対数関数",
+    topics: ["指数の拡張と指数関数", "対数の性質と対数関数"],
+  },
+  {
+    name: "数II 三角関数",
+    topics: ["一般角と弧度法", "三角関数のグラフ", "加法定理とその応用"],
+  },
+  {
+    name: "数II 微分・積分の考え",
+    topics: ["微分係数と導関数", "接線と関数の増減", "不定積分と定積分", "面積"],
+  },
+  {
+    name: "数B 数列",
+    topics: ["等差・等比数列", "いろいろな数列（Σの計算など）", "漸化式と数学的帰納法"],
+  },
+  {
+    name: "数B 統計的な推測",
+    topics: ["確率分布", "正規分布", "母集団と標本・区間推定", "仮説検定"],
+  },
+  {
+    name: "数B 数学と社会生活",
+    topics: ["社会事象の数学的考察（最適化問題などの応用）"],
+  },
+
+  // 数学C・III
+  {
+    name: "数C ベクトル",
+    topics: ["平面上のベクトル", "ベクトルの内積", "位置ベクトル", "空間のベクトル"],
+  },
+  {
+    name: "数C 平面上の曲線と複素数平面",
+    topics: [
+      "二次曲線（放物線・楕円・双曲線）",
+      "媒介変数表示と極座標",
+      "複素数平面とド・モアブルの定理",
+    ],
+  },
+  {
+    name: "数C 数学的な表現の工夫",
+    topics: ["行列とその演算", "離散グラフと行列表現"],
+  },
+  {
+    name: "数III 極限",
+    topics: ["数列の極限と無限級数", "分数・無理・合成関数", "関数の極限と連続性"],
+  },
+  {
+    name: "数III 微分法",
+    topics: [
+      "導関数の計算（積・商・合成関数）",
+      "種々の関数の微分",
+      "導関数の応用（接線・凹凸・最大最小）",
+    ],
+  },
+  {
+    name: "数III 積分法",
+    topics: [
+      "不定積分",
+      "定積分（置換積分法・部分積分法）",
+      "積分法の応用（面積・体積・曲線の長さ）",
+    ],
+  },
+];
+
+export const MATH_UNIT_NAMES = MATH_UNITS.map((unit) => unit.name);
+
+/** The list as the prompt shows it: one unit per line, its topics after it. */
+export const unitCatalogue = (units: readonly Unit[]) =>
+  units.map((unit) => `- ${unit.name}: ${unit.topics.join(" / ")}`).join("\n");

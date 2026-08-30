@@ -1,0 +1,624 @@
+:root {
+  --bg: #0b0121;
+  --panel: #170a3c;
+  --ink: #ffffff;
+  --ink-dim: rgba(255, 255, 255, 0.58);
+  --accent: #ffe500;
+  --accent-2: #00e5ff;
+  --line: rgba(255, 255, 255, 0.12);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP",
+    system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* `dvh` so the iOS URL bar collapsing does not crop the player. */
+.app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---------- subject filter ---------- */
+
+.filters {
+  flex: none;
+  display: flex;
+  gap: 8px;
+  padding: calc(10px + env(safe-area-inset-top)) 12px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filters::-webkit-scrollbar {
+  display: none;
+}
+
+.filters__chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 15px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink-dim);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filters__chip.is-on {
+  background: var(--accent);
+  color: #12042e;
+}
+
+.filters__count {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* ---------- vertical snap feed ---------- */
+
+.feed-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  /* Prepending a new short would otherwise shift scrollTop to keep the old one
+     in view, cancelling the jump to the freshly generated video. */
+  overflow-anchor: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.feed-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* One short per screenful, like a shorts feed. */
+.feed-item {
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  padding-top: calc(12px + env(safe-area-inset-top));
+}
+
+.feed-item__topic {
+  margin: 0;
+  max-width: min(100%, 520px);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/*
+ * `aspect-ratio` alone collapses here: in a column flex container the box has
+ * no definite size to derive the other axis from. So the binding axis is
+ * chosen explicitly — width on a phone (taller than 9:16), height on a desktop.
+ */
+.phone {
+  aspect-ratio: 9 / 16;
+  height: 100%;
+  width: auto;
+  min-height: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+}
+
+@media (max-aspect-ratio: 9 / 16) {
+  .phone {
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* ---------- thumbnail ---------- */
+
+/*
+ * Shown for every short that is not the active one. Laid out like the video
+ * itself — chip, headline, accent rule — so scrolling past it reads as the same
+ * object rather than a card about it.
+ */
+.thumb {
+  container-type: inline-size;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 26px;
+  text-align: left;
+  overflow: hidden;
+}
+
+.thumb__course {
+  flex: none;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  padding: 5px 13px;
+}
+
+.thumb__headline {
+  margin: 16px 0 0;
+  font-size: clamp(20px, 9cqi, 40px);
+  font-weight: 900;
+  line-height: 1.25;
+  /* Long hooks are trimmed rather than pushing the rest off the card. */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.thumb__rule {
+  margin-top: 12px;
+  width: clamp(48px, 22cqi, 96px);
+  height: 5px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.thumb__topic {
+  margin: 18px 0 0;
+  font-size: clamp(10px, 3.4cqi, 14px);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.thumb__meta {
+  margin: 14px 0 0;
+  font-size: clamp(10px, 3.2cqi, 13px);
+  font-weight: 700;
+}
+
+/* ---------- empty state ---------- */
+
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px;
+  text-align: center;
+}
+
+.empty__brand {
+  margin: 0;
+  font-size: 28px;
+}
+
+.empty__brand span {
+  color: var(--accent);
+}
+
+.empty p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-dim);
+}
+
+/* ---------- player ---------- */
+
+.short {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.short__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: rgba(6, 0, 18, 0.42);
+}
+
+.short__play {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  color: #0b0121;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  padding-left: 6px;
+}
+
+.short__hint {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+/* ---------- seek bar ---------- */
+
+.scrubber {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* The visible bar is thin; the touch target is not. */
+  padding: 18px 14px 12px;
+  /* Stops the feed's vertical snap-scroll from stealing the drag. */
+  touch-action: none;
+  cursor: pointer;
+}
+
+.scrubber__track {
+  position: relative;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.24);
+  transition: height 0.12s ease;
+}
+
+.scrubber.is-scrubbing .scrubber__track {
+  height: 8px;
+}
+
+.scrubber__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.scrubber__knob {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translateY(-50%) scale(0);
+  transition: transform 0.12s ease;
+}
+
+.scrubber:hover .scrubber__knob,
+.scrubber.is-scrubbing .scrubber__knob {
+  transform: translateY(-50%) scale(1);
+}
+
+.scrubber__time {
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.player-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--ink-dim);
+}
+
+/* ---------- job progress ---------- */
+
+.overlay-top {
+  position: fixed;
+  top: calc(58px + env(safe-area-inset-top));
+  left: 12px;
+  right: 12px;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.job {
+  width: min(100%, 460px);
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(23, 10, 60, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.job__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.job__percent {
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.job__close {
+  border: none;
+  background: none;
+  color: var(--ink-dim);
+  font-size: 15px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.job__track {
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.job__fill {
+  height: 100%;
+  background: var(--accent-2);
+  transition: width 0.4s ease;
+}
+
+.job--done .job__fill {
+  background: #4dff7c;
+}
+
+.job--error .job__fill {
+  background: #ff2d95;
+}
+
+.job__error {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #ff8fbe;
+  word-break: break-word;
+}
+
+/* ---------- compose button ---------- */
+
+.fab {
+  position: fixed;
+  right: 18px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  z-index: 25;
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #12042e;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.fab:disabled {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--ink-dim);
+}
+
+/* ---------- bottom sheet ---------- */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.sheet {
+  width: min(100%, 560px);
+  max-height: 82dvh;
+  overflow-y: auto;
+  padding: 10px 20px calc(28px + env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+}
+
+.sheet__grip {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.28);
+  margin: 0 auto 18px;
+}
+
+.sheet h2 {
+  margin: 0 0 14px;
+  font-size: 16px;
+}
+
+/* ---------- composer ---------- */
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.composer textarea {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--ink);
+  font: inherit;
+  /* 16px keeps iOS Safari from zooming in on focus. */
+  font-size: 16px;
+  line-height: 1.6;
+  resize: none;
+}
+
+.composer textarea:focus {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 1px;
+}
+
+.mock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+.composer button {
+  padding: 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #12042e;
+  font: inherit;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--ink-dim);
+}
+
+/* ---------- feed ---------- */
+
+.feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feed button {
+  width: 100%;
+  text-align: left;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.24);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.feed button.is-active {
+  border-color: var(--accent);
+  background: rgba(255, 229, 0, 0.1);
+}
+
+.feed__topic {
+  font-size: 14px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.feed__meta {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.feed__empty {
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+/* ---------- course picker (composer) ---------- */
+
+.picker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.picker__chip {
+  padding: 9px 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-dim);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.picker__chip.is-on {
+  border-color: transparent;
+  background: var(--accent);
+  color: #12042e;
+}
+
+/* Which prompt a running job is using. */
+.job__course {
+  margin-right: 8px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 11px;
+  font-weight: 700;
+}

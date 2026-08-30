@@ -1,0 +1,92 @@
+{
+  "topic": "微分と積分をグラフで見る",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "関数のグラフを見れば、微分と積分が何をしているのか一目で分かります。",
+      "visual_type": "hook",
+      "visual_content": "グラフで見る微積分"
+    },
+    {
+      "scene_id": 2,
+      "narration": "これが y イコール エックス二乗 のグラフです。右に行くほど急になっていきますね。",
+      "visual_type": "point",
+      "visual_content": "傾きが変わる",
+      "visual": {
+        "kind": "plot",
+        "xRange": [
+          -3,
+          3
+        ],
+        "yRange": [
+          -1,
+          9
+        ],
+        "curves": [
+          {
+            "expr": "x^2",
+            "label": "y = x²"
+          }
+        ],
+        "shade": null,
+        "points": []
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "微分は、その傾きを求める操作です。定義はこの式で、極限を取ることで瞬間の傾きが出ます。",
+      "visual_type": "point",
+      "visual_content": "微分の定義",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "f'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}",
+          "(x^2)' = 2x"
+        ],
+        "caption": "傾きの極限"
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "積分は逆に、グラフの下の面積です。ゼロから二までの色のついた部分が、その値になります。",
+      "visual_type": "point",
+      "visual_content": "積分は面積",
+      "visual": {
+        "kind": "plot",
+        "xRange": [
+          -1,
+          3
+        ],
+        "yRange": [
+          -1,
+          9
+        ],
+        "curves": [
+          {
+            "expr": "x^2",
+            "label": "y = x²"
+          }
+        ],
+        "shade": [
+          0,
+          2
+        ],
+        "points": []
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "傾きを知りたいなら微分、積み重ねを知りたいなら積分。グラフで見ると迷いません。",
+      "visual_type": "summary",
+      "visual_content": "傾きと面積",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "微分 → 傾き",
+          "積分 → 面積"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+import { createContext, useContext } from "react";
+import { Easing } from "remotion";
+import { fontFamily as notoSansJP, loadFont as loadSans } from "@remotion/google-fonts/NotoSansJP";
+import { fontFamily as notoSerifJP, loadFont as loadSerif } from "@remotion/google-fonts/NotoSerifJP";
+import { fontFamily as zenMaru, loadFont as loadRounded } from "@remotion/google-fonts/ZenMaruGothic";
+
+/**
+ * Only the renderer downloads webfonts.
+ *
+ * `loadFont()` eagerly fetches every unicode range of the japanese subset —
+ * over a hundred files per family — because the renderer must have every glyph
+ * in memory before it captures a frame. A phone browser does not: it already
+ * ships Japanese faces, and the stacks below fall through to them.
+ *
+ * `__STUDY_WEB__` is defined by web/vite.config.ts and undefined in the
+ * Remotion bundle, so this is decided at build time rather than by sniffing
+ * globals whose timing relative to module evaluation is not guaranteed.
+ */
+const isWebPlayerBuild = typeof __STUDY_WEB__ !== "undefined" && __STUDY_WEB__;
+
+if (!isWebPlayerBuild) {
+  const options = {
+    weights: ["700", "900"] as ("700" | "900")[],
+    subsets: ["japanese", "latin"] as ("japanese" | "latin")[],
+    ignoreTooManyRequestsWarning: true,
+  };
+  loadSans("normal", options);
+  loadSerif("normal", options);
+  loadRounded("normal", { ...options, weights: ["700", "900"] });
+}
+
+/** Device faces first in the browser; the webfont is what the renderer uses. */
+const stack = (webfont: string, ...system: string[]) =>
+  [`"${webfont}"`, ...system.map((s) => `"${s}"`), "sans-serif"].join(", ");
+
+const SANS = stack(notoSansJP, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Yu Gothic");
+const SERIF = stack(notoSerifJP, "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP");
+const ROUNDED = stack(zenMaru, "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans CJK JP");
+
+export const SUBJECTS = ["history", "math", "science", "language", "general"] as const;
+export type Subject = (typeof SUBJECTS)[number];
+
+export type Theme = {
+  bg: string;
+  bgDeep: string;
+  ink: string;
+  inkDim: string;
+  /** Cycled per scene so consecutive scenes never share an accent. */
+  accents: readonly string[];
+  fontFamily: string;
+  /** How much the background wash shows through. */
+  veil: string;
+  /** Chip and card rounding — sharper reads as more formal. */
+  radius: number;
+  /** The motion character: slower and softer, or crisp and direct. */
+  easing: (input: number) => number;
+  /** Multiplies every entrance duration. */
+  speed: number;
+};
+
+const SOFT = Easing.bezier(0.16, 1, 0.3, 1);
+const CRISP = Easing.bezier(0.3, 0.9, 0.2, 1);
+const SPRINGY = Easing.bezier(0.34, 1.56, 0.64, 1);
+
+export const themes: Record<Subject, Theme> = {
+  /** Sepia and ink: quieter, slower, a printed-page feel. */
+  history: {
+    bg: "#241705",
+    bgDeep: "#120B02",
+    ink: "#FFF6E6",
+    inkDim: "rgba(255,246,230,0.62)",
+    accents: ["#F0B93B", "#E0653A", "#8FA95A", "#79A6C0", "#D98F6A"],
+    fontFamily: SERIF,
+    veil: "rgba(14,8,1,0.46)",
+    radius: 8,
+    easing: SOFT,
+    speed: 1.15,
+  },
+  /** Blueprint blues: high contrast, direct motion, nothing decorative. */
+  math: {
+    bg: "#0C1B36",
+    bgDeep: "#050B1A",
+    ink: "#FFFFFF",
+    inkDim: "rgba(255,255,255,0.6)",
+    accents: ["#4CD8FF", "#FFD84D", "#FF63A5", "#5CFFB0", "#B98CFF"],
+    fontFamily: SANS,
+    veil: "rgba(4,9,20,0.44)",
+    radius: 10,
+    easing: CRISP,
+    speed: 0.9,
+  },
+  /** Lab greens: rounded type, a slight overshoot, energetic. */
+  science: {
+    bg: "#072A26",
+    bgDeep: "#031412",
+    ink: "#FFFFFF",
+    inkDim: "rgba(255,255,255,0.6)",
+    accents: ["#00E5C7", "#A6FF4D", "#FFA02B", "#66C7FF", "#C46BFF"],
+    fontFamily: ROUNDED,
+    veil: "rgba(2,16,14,0.42)",
+    radius: 22,
+    easing: SPRINGY,
+    speed: 1,
+  },
+  /** Warm violets for language and literature. */
+  language: {
+    bg: "#241041",
+    bgDeep: "#100420",
+    ink: "#FFFFFF",
+    inkDim: "rgba(255,255,255,0.6)",
+    accents: ["#FF7FC0", "#FFD93D", "#7FE6FF", "#B4FF7F", "#FF9E6B"],
+    fontFamily: SANS,
+    veil: "rgba(12,3,24,0.44)",
+    radius: 18,
+    easing: SOFT,
+    speed: 1,
+  },
+  /** The original high-chroma pop, for anything unclassified. */
+  general: {
+    bg: "#150438",
+    bgDeep: "#0B0121",
+    ink: "#FFFFFF",
+    inkDim: "rgba(255,255,255,0.62)",
+    accents: ["#FFE500", "#00E5FF", "#FF2D95", "#4DFF7C", "#FF8A00"],
+    fontFamily: SANS,
+    veil: "rgba(10,1,28,0.42)",
+    radius: 999,
+    easing: SOFT,
+    speed: 1,
+  },
+};
+
+const ThemeContext = createContext<Theme>(themes.general);
+export const ThemeProvider = ThemeContext.Provider;
+export const useTheme = () => useContext(ThemeContext);
+
+export const accentFor = (theme: Theme, index: number) =>
+  theme.accents[index % theme.accents.length];
+
+/** `#rrggbb` → `rgba(...)`. Gradients need explicit alpha stops: interpolating
+ * a hex straight to `transparent` fades through transparent *black* in some
+ * engines and leaves a dark ring. */
+export const withAlpha = (hex: string, alpha: number) => {
+  const int = parseInt(hex.slice(1), 16);
+  return `rgba(${(int >> 16) & 255}, ${(int >> 8) & 255}, ${int & 255}, ${alpha})`;
+};
+
+/** 1080x1920. Key content stays inside these margins. */
+export const layout = {
+  width: 1080,
+  height: 1920,
+  safeX: 88,
+  safeTop: 120,
+  /**
+   * The caption is anchored to the *bottom* of the frame rather than hung from
+   * a fixed top, because its height varies with the line count. Measuring from
+   * the bottom keeps it at a constant distance from the edge and lets it grow
+   * upward into space the stage has already reserved.
+   */
+  captionBottom: 190,
+  /** Two lines at 66px/1.3 plus the plate's 20px padding, rounded up. */
+  captionBandHeight: 212,
+  /** Breathing room between the stage and the tallest caption. */
+  captionGap: 44,
+} as const;
+
+/** Top of a full two-line caption: where the scene stage has to stop. */
+export const stageBottom =
+  layout.height -
+  layout.captionBottom -
+  layout.captionBandHeight -
+  layout.captionGap;
+
+/** Keeps white text legible over any accent-coloured shape behind it. */
+export const textShadow = "0 8px 32px rgba(0,0,0,0.55)";
