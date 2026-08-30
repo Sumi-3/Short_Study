@@ -18,7 +18,7 @@ npm run generate -- "微分積分の基本を教えて"
 |---|---|
 | **ホーム** | 大分類・中分類・小分類の3段フィルターと、2段組の一覧。カードを開くと全画面で再生され、**その絞り込みの中で**スワイプできます |
 | **ショート** | 全動画をシャッフルして順に流します。タブに入り直すたびに引き直します |
-| **生成** | 問題を入力して作る。できた瞬間その動画が全画面で開きます |
+| **生成** | 問題を入力して作る。**声とデザインを選べます**。できた瞬間その動画が全画面で開きます |
 
 フィルターの3階層は [curriculum.ts](src/curriculum.ts) の `MATH_UNITS` そのものです。
 単元名が `課程 中分類`、`topics` が小分類。**動画が1本もない分類はチップを出しません** —
@@ -69,7 +69,7 @@ npm run server    # http://localhost:3001 で web/dist を配信
 
 | | |
 |---|---|
-| `POST /api/generate` | `{topic, course?, mock?}` → 進捗を NDJSON で流しながら1本作る |
+| `POST /api/generate` | `{topic, voice?, design?}` → 進捗を NDJSON で流しながら1本作る |
 | `GET /api/shorts` | 生成済み一覧 |
 | `GET /projects/…` | manifest とナレーション音声（ローカルのみ。デプロイ時は Blob の URL） |
 
@@ -177,7 +177,6 @@ Remotion 側は `manifest.json` を1回 fetch するだけで、非同期のメ�
 
 ```bash
 npm run generate -- "トピック"                # 台本→音声→字幕→MP4 まで一括
-npm run generate -- "トピック" --mock         # Claude を呼ばず組み込み台本を使う（APIキー不要）
 npm run generate -- "トピック" --skip-render  # manifest まで作って止める
 npm run generate -- "トピック" --slug demo    # 出力フォルダ名を固定
 npm run render -- <slug>                      # 既存の manifest から書き出しだけやり直す
@@ -196,7 +195,7 @@ npm run studio -- --props=public/projects/mock/props.json
 
 `.env.example` を参照。要点だけ:
 
-- `ANTHROPIC_API_KEY` — 台本生成に必須（`--mock` なら不要）
+- `ANTHROPIC_API_KEY` — 台本生成に必須
 - `TTS_PROVIDER` — `edge`（無料・デフォルト）/ `elevenlabs`
 - `CAPTION_SOURCE` — `tts`（デフォルト）/ `whisper`
 - `EDGE_VOICE` / `EDGE_RATE` / `EDGE_PITCH` — 声質（後述）
@@ -204,12 +203,20 @@ npm run studio -- --props=public/projects/mock/props.json
 
 ### 声を変える
 
-EdgeTTS の日本語ボイスは2種類だけです。
+**使えるのは14種類**です。一覧は [voices.ts](src/voices.ts)、生成画面から選べます。
 
-| `EDGE_VOICE` | |
+| | |
 |---|---|
-| `ja-JP-NanamiNeural` | 女性・デフォルト |
-| `ja-JP-KeitaNeural` | 男性 |
+| `ja-JP-NanamiNeural` / `ja-JP-KeitaNeural` | 日本語ネイティブ。EdgeTTS の `getVoices()` が返す日本語はこの2件だけ |
+| 多言語ボイス12種 | 別ロケール（en-US, de-DE, fr-FR, it-IT, ko-KR, pt-BR, en-AU）だが**日本語を喋る**。全件で語境界が返ることを実測済み |
+
+Azure のカタログには Aoi・Daichi・Mayu・Naoki・Shiori・DragonHD・MAI-Voice などの
+日本語ボイスが並んでいますが、**Edge の無料エンドポイントは全部拒否します**
+（`Stream closed before the synthesis completed`）。使うには Azure Speech の
+APIキーと別クライアントが要ります。
+
+多言語ボイスは日本語向けに作られたものではないので、訛りの有無は好みで判断してください。
+`out/voice-samples/` に同じ文章のサンプルがあります。
 
 選択肢が少ないぶん、`EDGE_RATE` / `EDGE_PITCH` / `EDGE_VOLUME`（いずれも相対指定。
 `"+10%"` `"-2st"` `"+20Hz"`）で印象を振れます。
@@ -217,6 +224,25 @@ EdgeTTS の日本語ボイスは2種類だけです。
 ```bash
 EDGE_VOICE=ja-JP-KeitaNeural EDGE_PITCH=-8% npm run generate -- "トピック"
 ```
+
+生成画面で選んだ声はリクエストごとに渡され、`EDGE_VOICE` は既定値として残ります。
+
+### デザインを変える
+
+[designs.ts](src/designs.ts) に6種類。生成画面で選び、manifest に記録されるので、
+その動画はいつ再生しても同じ見た目になります。
+
+| | |
+|---|---|
+| `indigo` | 藍・シアン（既定。従来の数学テーマそのまま） |
+| `midnight` | 青紫、角丸大きめ、動きゆっくり |
+| `chalk` | 黒板。明朝・角ばった枠 |
+| `plum` | 梅。丸ゴシック・跳ねる動き |
+| `forest` | 深緑。丸ゴシック |
+| `ember` | 熾火。暖色・速め |
+
+実体は [theme.ts](src/remotion/theme.ts) の `designs` で、`Theme` 型は従来と同じです。
+`design` を持たない古い動画は、これまでどおり `subject` からテーマを引きます。
 
 もっと自由に選びたい場合は ElevenLabs に切り替えます（`ELEVENLABS_VOICE_ID` は
 ElevenLabs の Voice Library から取得）:

@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import { Easing } from "remotion";
+import type { DesignId } from "../designs.js";
 import { fontFamily as notoSansJP, loadFont as loadSans } from "@remotion/google-fonts/NotoSansJP";
 import { fontFamily as notoSerifJP, loadFont as loadSerif } from "@remotion/google-fonts/NotoSerifJP";
 import { fontFamily as zenMaru, loadFont as loadRounded } from "@remotion/google-fonts/ZenMaruGothic";
@@ -61,6 +62,90 @@ export type Theme = {
 const SOFT = Easing.bezier(0.16, 1, 0.3, 1);
 const CRISP = Easing.bezier(0.3, 0.9, 0.2, 1);
 const SPRINGY = Easing.bezier(0.34, 1.56, 0.64, 1);
+
+/**
+ * Named looks the create screen offers, keyed by DesignId.
+ *
+ * They vary the same fields the subject themes do. `indigo` is the maths theme
+ * unchanged, so a short made before designs existed keeps exactly its look.
+ */
+export const designs: Record<DesignId, Theme> = {
+  indigo: {
+    bg: "#0C1B36",
+    bgDeep: "#050B1A",
+    ink: "#FFFFFF",
+    inkDim: "rgba(255,255,255,0.6)",
+    accents: ["#4CD8FF", "#FFD84D", "#FF63A5", "#5CFFB0", "#B98CFF"],
+    fontFamily: SANS,
+    veil: "rgba(4,9,20,0.44)",
+    radius: 10,
+    easing: CRISP,
+    speed: 0.9,
+  },
+  /** Cooler and quieter: wider corners, softer motion. */
+  midnight: {
+    bg: "#141A3A",
+    bgDeep: "#070819",
+    ink: "#F3F5FF",
+    inkDim: "rgba(243,245,255,0.58)",
+    accents: ["#8AA4FF", "#7BE0FF", "#C6A0FF", "#FFC97A", "#7CFFD4"],
+    fontFamily: SANS,
+    veil: "rgba(7,8,25,0.46)",
+    radius: 22,
+    easing: SOFT,
+    speed: 0.8,
+  },
+  /** Blackboard: warm chalk on deep green, serif, deliberate. */
+  chalk: {
+    bg: "#183A2E",
+    bgDeep: "#08150F",
+    ink: "#F6E7C1",
+    inkDim: "rgba(246,231,193,0.6)",
+    accents: ["#F6E7C1", "#9BE8B4", "#FFD08A", "#8FD8FF", "#FFA8A8"],
+    fontFamily: SERIF,
+    veil: "rgba(8,21,15,0.5)",
+    radius: 4,
+    easing: SOFT,
+    speed: 0.75,
+  },
+  plum: {
+    bg: "#2A0E33",
+    bgDeep: "#12041A",
+    ink: "#FFFFFF",
+    inkDim: "rgba(255,255,255,0.6)",
+    accents: ["#FF7AC8", "#FFD84D", "#8AF0FF", "#C6A0FF", "#FF9E7A"],
+    fontFamily: ROUNDED,
+    veil: "rgba(18,4,26,0.44)",
+    radius: 26,
+    easing: SPRINGY,
+    speed: 0.95,
+  },
+  forest: {
+    bg: "#0C2A26",
+    bgDeep: "#04120F",
+    ink: "#EAFFF7",
+    inkDim: "rgba(234,255,247,0.58)",
+    accents: ["#5CFFB0", "#7BE0FF", "#FFE27A", "#B8FF7A", "#7AFFE0"],
+    fontFamily: ROUNDED,
+    veil: "rgba(4,18,15,0.44)",
+    radius: 18,
+    easing: SPRINGY,
+    speed: 0.9,
+  },
+  /** Warm and high-contrast, for something that should feel urgent. */
+  ember: {
+    bg: "#2E1207",
+    bgDeep: "#150602",
+    ink: "#FFF4EA",
+    inkDim: "rgba(255,244,234,0.58)",
+    accents: ["#FFA24C", "#FFD84D", "#FF6B6B", "#FFC2A0", "#7BE0FF"],
+    fontFamily: SANS,
+    veil: "rgba(21,6,2,0.46)",
+    radius: 8,
+    easing: CRISP,
+    speed: 1,
+  },
+};
 
 export const themes: Record<Subject, Theme> = {
   /** Sepia and ink: quieter, slower, a printed-page feel. */

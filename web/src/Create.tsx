@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { COURSES } from "../../src/courses";
+import { DEFAULT_DESIGN, DESIGNS, type DesignId } from "../../src/designs";
+import { VOICES } from "../../src/voices";
 import type { JobEvent } from "./api";
 
 const JobCard: React.FC<{ job: JobEvent; onDismiss: () => void }> = ({
@@ -31,11 +33,12 @@ const JobCard: React.FC<{ job: JobEvent; onDismiss: () => void }> = ({
 export const Create: React.FC<{
   job: JobEvent | null;
   busy: boolean;
-  onSubmit: (topic: string, mock: boolean) => void;
+  onSubmit: (topic: string, voice: string, design: DesignId) => void;
   onDismiss: () => void;
 }> = ({ job, busy, onSubmit, onDismiss }) => {
   const [topic, setTopic] = useState("");
-  const [mock, setMock] = useState(false);
+  const [voice, setVoice] = useState(VOICES[0].id);
+  const [design, setDesign] = useState<DesignId>(DEFAULT_DESIGN);
 
   return (
     <div className="create">
@@ -46,7 +49,7 @@ export const Create: React.FC<{
           if (!topic.trim() || busy) {
             return;
           }
-          onSubmit(topic.trim(), mock);
+          onSubmit(topic.trim(), voice, design);
           setTopic("");
         }}
       >
@@ -57,14 +60,51 @@ export const Create: React.FC<{
           placeholder={COURSES.math.placeholder}
           rows={5}
         />
-        <label className="mock">
-          <input
-            type="checkbox"
-            checked={mock}
-            onChange={(e) => setMock(e.target.checked)}
-          />
-          モック台本を使う（APIキー不要）
-        </label>
+
+        <div className="field">
+          <span className="field__label">声</span>
+          {/* A select rather than chips: fourteen of them would be three rows
+              of scrolling, and this is a set-and-forget choice. */}
+          <select value={voice} onChange={(e) => setVoice(e.target.value)}>
+            <optgroup label="日本語ボイス">
+              {VOICES.filter((entry) => entry.native).map((entry) => (
+                <option key={entry.id} value={entry.id}>
+                  {entry.label}（{entry.gender === "female" ? "女性" : "男性"}）
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="多言語ボイス（日本語も話せます）">
+              {VOICES.filter((entry) => !entry.native).map((entry) => (
+                <option key={entry.id} value={entry.id}>
+                  {entry.label}（{entry.gender === "female" ? "女性" : "男性"}）
+                </option>
+              ))}
+            </optgroup>
+          </select>
+        </div>
+
+        <div className="field">
+          <span className="field__label">デザイン</span>
+          <div className="swatches">
+            {DESIGNS.map((entry) => (
+              <button
+                key={entry.id}
+                type="button"
+                aria-pressed={design === entry.id}
+                className={`swatch${design === entry.id ? " is-on" : ""}`}
+                onClick={() => setDesign(entry.id)}
+              >
+                <span
+                  className="swatch__dot"
+                  style={{ background: entry.swatch }}
+                  aria-hidden
+                />
+                {entry.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <button type="submit" disabled={!topic.trim() || busy}>
           {busy ? "生成中…" : "動画をつくる"}
         </button>

@@ -3,7 +3,6 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { config, paths } from "./config.js";
 import { generateScript } from "./pipeline/generateScript.js";
-import { mockScript } from "./pipeline/mockScript.js";
 import { generateAudio } from "./pipeline/generateAudio.js";
 import { generateCaptions } from "./pipeline/generateCaptions.js";
 import { buildManifest, manifestSrc } from "./pipeline/buildManifest.js";
@@ -16,8 +15,7 @@ const usage = `Usage: npm run generate -- "<トピック>" [options]
 
 Options:
   --course <id>   科目を指定して専用のプロンプトを使う
-                  ${COURSE_IDS.join(" | ")}（既定は general）
-  --mock          Claude を呼ばず組み込みの台本を使う（音声・字幕・描画は本物）
+                  ${COURSE_IDS.join(" | ")}（既定は math）
   --script <path> 手書きの台本JSONを読み込む（台本生成だけ飛ばす）
   --skip-render   MP4 を書き出さず manifest まで作る（Studio で確認したいとき）
   --slug <name>   出力先フォルダ名を固定する（既定は日付＋ハッシュ）
@@ -26,7 +24,6 @@ Environment: see .env.example`;
 
 const parseArgs = (argv: string[]) => {
   const positional: string[] = [];
-  let mock = false;
   let skipRender = false;
   let slug: string | null = null;
   let scriptPath: string | null = null;
@@ -34,9 +31,7 @@ const parseArgs = (argv: string[]) => {
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
-    if (arg === "--mock") {
-      mock = true;
-    } else if (arg === "--skip-render") {
+    if (arg === "--skip-render") {
       skipRender = true;
     } else if (arg === "--slug") {
       slug = argv[++i] ?? null;
@@ -60,7 +55,6 @@ const parseArgs = (argv: string[]) => {
   return {
     topic: positional.join(" ").trim(),
     course,
-    mock,
     skipRender,
     slug,
     scriptPath,
@@ -82,7 +76,7 @@ const step = (n: number, total: number, label: string) => {
 };
 
 const main = async () => {
-  const { topic, course, mock, skipRender, slug: slugArg, scriptPath } =
+  const { topic, course, skipRender, slug: slugArg, scriptPath } =
     parseArgs(process.argv.slice(2));
 
   if (!topic && !scriptPath) {
@@ -96,21 +90,12 @@ const main = async () => {
 
   const stepOneLabel = scriptPath
     ? `台本読み込み (${scriptPath})`
-    : mock
-      ? "台本（モック）"
-      : `台本生成 (${COURSES[course].label} / ${config.anthropicModel})`;
+    : `台本生成 (${COURSES[course].label} / ${config.anthropicModel})`;
   step(1, totalSteps, stepOneLabel);
 
   const script: Script = scriptPath
     ? scriptSchema.parse(JSON.parse(fs.readFileSync(scriptPath, "utf-8")))
-    : mock
-      ? {
-          ...mockScript,
-          topic,
-          course,
-          subject: COURSES[course].subject ?? mockScript.subject,
-        }
-      : await generateScript(topic, course);
+    : await generateScript(topic, course);
   for (const scene of script.scenes) {
     console.log(`   ${scene.scene_id}. [${scene.visual_type}] ${scene.narration.slice(0, 32)}…`);
   }

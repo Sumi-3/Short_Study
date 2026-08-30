@@ -1,3 +1,4 @@
+import { DEFAULT_DESIGN } from "../designs.js";
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { config } from "../config.js";
@@ -58,7 +59,7 @@ export const generateScript = async (
 
   if (!config.anthropicApiKey) {
     throw new Error(
-      "ANTHROPIC_API_KEY is not set. Copy .env.example to .env and fill it in, or run with --mock.",
+      "ANTHROPIC_API_KEY is not set. Copy .env.example to .env and fill it in.",
     );
   }
 
@@ -97,6 +98,8 @@ export const generateScript = async (
     // being the question.
     topic: topic || parsed.topic,
     ...classify(parsed.unit, course.units),
+    // Chosen by the user, not the model; runPipeline overwrites it.
+    design: DEFAULT_DESIGN,
     course: course.id,
     // A course with a fixed subject has already told the model which one to
     // pick, so the two agree; `general` is the case where the answer matters.

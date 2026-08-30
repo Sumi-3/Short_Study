@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ShortPlayer } from "./ShortPlayer";
 import { Thumbnail } from "./Thumbnail";
 import type { ShortSummary } from "./api";
+import type { AudioGate } from "./audioGate";
 
 /**
  * The vertical swipe feed.
@@ -14,10 +15,10 @@ import type { ShortSummary } from "./api";
 export const Feed: React.FC<{
   shorts: ShortSummary[];
   initialIndex: number;
-  hasGesture: React.RefObject<React.SyntheticEvent | null>;
+  gate: React.RefObject<AudioGate>;
   /** Present when the feed is covering the app rather than filling a tab. */
   onClose?: () => void;
-}> = ({ shorts, initialIndex, hasGesture, onClose }) => {
+}> = ({ shorts, initialIndex, gate, onClose }) => {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const scroller = useRef<HTMLDivElement>(null);
 
@@ -68,7 +69,7 @@ export const Feed: React.FC<{
               {index === activeIndex ? (
                 <ShortPlayer
                   manifestSrc={short.manifestSrc}
-                  hasGesture={hasGesture}
+                  gate={gate}
                 />
               ) : (
                 <Thumbnail short={short} />

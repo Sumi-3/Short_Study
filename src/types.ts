@@ -1,3 +1,4 @@
+import { DEFAULT_DESIGN } from "./designs.js";
 import { z } from "zod/v4";
 import type { Caption } from "@remotion/captions";
 import { COURSE_IDS, type CourseId } from "./courses.js";
@@ -215,6 +216,8 @@ export const scriptSchema = z.object({
   course: z.enum(COURSE_IDS).default("math"),
   /** Picks the palette, typeface and motion style. */
   subject: z.enum(SUBJECTS).default("general"),
+  /** The look chosen on the create screen. Not asked of the model. */
+  design: z.string().default(DEFAULT_DESIGN),
   scenes: z.array(sceneSchema).min(2),
 });
 
@@ -601,6 +604,8 @@ export type ManifestScene = Scene & {
 
 export type Manifest = {
   topic: string;
+  /** The look this short was made with; absent on ones made before designs. */
+  design?: string;
   unit: string;
   subunit: string;
   course: CourseId;

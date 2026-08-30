@@ -1,4 +1,6 @@
 import { isCourseId } from "../src/courses.js";
+import { isDesignId } from "../src/designs.js";
+import { isVoiceId } from "../src/voices.js";
 import { runPipeline } from "../src/pipeline/run.js";
 
 /**
@@ -27,13 +29,19 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     const course = isCourseId(body?.course) ? body.course : "math";
-    const mock = Boolean(body?.mock);
+    const voice = isVoiceId(body?.voice) ? body.voice : undefined;
+    const design = isDesignId(body?.design) ? body.design : undefined;
 
     const encoder = new TextEncoder();
     const stream = new ReadableStream<Uint8Array>({
       async start(controller) {
         try {
-          for await (const event of runPipeline({ topic, course, mock })) {
+          for await (const event of runPipeline({
+            topic,
+            course,
+            voice,
+            design,
+          })) {
             controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
           }
         } catch (error) {

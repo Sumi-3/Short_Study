@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Create } from "./Create";
 import { Feed } from "./Feed";
 import { Home } from "./Home";
+import { newAudioGate } from "./audioGate";
 import { fetchShorts, generate, type JobEvent, type ShortSummary } from "./api";
+import type { DesignId } from "../../src/designs";
 
 type Tab = "home" | "shorts" | "create";
 
@@ -32,15 +34,16 @@ export const App: React.FC = () => {
     index: number;
   } | null>(null);
   /**
-   * The last real user gesture, kept so a short that starts on its own can
-   * still be handed one. The Player only unlocks its pool of audio tags when
-   * `play()` is given an event, and unlocked tags are the only ones a phone
-   * lets make sound.
+   * Session-wide audio state, shared by every player. The first short of a
+   * session waits to be tapped because only a play() made inside that click
+   * unlocks the Player's audio tags on a phone; after that, the gesture that
+   * brought a short on screen is enough.
    *
    * Ref, not state: setting this during a tap must not re-render the mounted
    * ShortPlayer, or the same tap both auto-starts and click-starts it.
    */
-  const hasGesture = useRef<React.SyntheticEvent | null>(null);
+  const gate = useRef(newAudioGate());
+
   /** Reshuffled whenever the tab is entered, so it is a different run each time. */
   const [shuffleKey, setShuffleKey] = useState(0);
 
@@ -66,7 +69,11 @@ export const App: React.FC = () => {
 
   const busy = job !== null && job.status !== "done" && job.status !== "error";
 
-  const submit = async (topic: string, mock: boolean) => {
+  const submit = async (
+    topic: string,
+    voice: string,
+    design: DesignId,
+  ) => {
     setJob({
       status: "queued",
       message: "順番待ち",
@@ -78,7 +85,7 @@ export const App: React.FC = () => {
     });
 
     try {
-      for await (const next of generate(topic, "math", mock)) {
+      for await (const next of generate(topic, "math", voice, design)) {
         setJob(next);
         if (next.status === "done" && next.slug) {
           const list = await refreshShorts();
@@ -115,7 +122,7 @@ export const App: React.FC = () => {
     <div
       className="app"
       onPointerDown={(event) => {
-        hasGesture.current = event;
+        gate.current.gesture = event;
       }}
     >
       <main className="app__body">
@@ -139,7 +146,7 @@ export const App: React.FC = () => {
               key={shuffleKey}
               shorts={random}
               initialIndex={0}
-              hasGesture={hasGesture}
+              gate={gate}
             />
           )
         ) : null}
@@ -173,7 +180,7 @@ export const App: React.FC = () => {
         <Feed
           shorts={viewing.list}
           initialIndex={viewing.index}
-          hasGesture={hasGesture}
+          gate={gate}
           onClose={() => setViewing(null)}
         />
       ) : null}

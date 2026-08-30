@@ -5,6 +5,8 @@ import { paths } from "../config.js";
 import { runPipeline } from "../pipeline/run.js";
 import { listShorts } from "../storage.js";
 import { isCourseId } from "../courses.js";
+import { isDesignId } from "../designs.js";
+import { isVoiceId } from "../voices.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
 const WEB_DIST = path.join(paths.root, "web", "dist");
@@ -86,7 +88,7 @@ const server = http.createServer(async (req, res) => {
       if (!topic) {
         return sendJson(res, 400, { error: "topic is required" });
       }
-      const course = isCourseId(body.course) ? body.course : "general";
+      const course = isCourseId(body.course) ? body.course : "math";
 
       res.writeHead(200, {
         "content-type": "application/x-ndjson; charset=utf-8",
@@ -96,7 +98,8 @@ const server = http.createServer(async (req, res) => {
         for await (const event of runPipeline({
           topic,
           course,
-          mock: Boolean(body.mock),
+          voice: isVoiceId(body.voice) ? body.voice : undefined,
+          design: isDesignId(body.design) ? body.design : undefined,
         })) {
           res.write(`${JSON.stringify(event)}\n`);
         }

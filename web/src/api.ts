@@ -1,4 +1,5 @@
 import type { CourseId } from "../../src/courses";
+import type { DesignId } from "../../src/designs";
 import type { JobEvent } from "../../src/progress";
 import type { ShortSummary } from "../../src/shorts";
 import type { Manifest } from "../../src/types";
@@ -28,12 +29,13 @@ const json = async <T,>(input: string, init?: RequestInit): Promise<T> => {
 export async function* generate(
   topic: string,
   course: CourseId,
-  mock: boolean,
+  voice: string,
+  design: DesignId,
 ): AsyncGenerator<JobEvent> {
   const response = await fetch("/api/generate", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ topic, course, mock }),
+    body: JSON.stringify({ topic, course, voice, design }),
   });
 
   // A rejected request answers with JSON, not with the stream.

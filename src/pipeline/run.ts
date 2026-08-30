@@ -1,13 +1,12 @@
+import { DEFAULT_DESIGN, type DesignId } from "../designs.js";
 import crypto from "node:crypto";
-import { COURSES, type CourseId } from "../courses.js";
+import type { CourseId } from "../courses.js";
 import type { JobEvent, JobStatus } from "../progress.js";
 import { publishProject } from "../storage.js";
-import type { Script } from "../types.js";
 import { buildManifest } from "./buildManifest.js";
 import { generateAudio } from "./generateAudio.js";
 import { generateCaptions } from "./generateCaptions.js";
 import { generateScript } from "./generateScript.js";
-import { mockScript } from "./mockScript.js";
 
 /**
  * Weighted so the bar tracks wall-clock rather than step count: the Claude call
@@ -42,37 +41,37 @@ const makeSlug = (topic: string) => {
 export async function* runPipeline({
   topic,
   course,
-  mock,
+  voice,
+  design,
 }: {
   topic: string;
   course: CourseId;
-  mock: boolean;
+  /** EdgeTTS ShortName chosen on the create screen. */
+  voice?: string;
+  design?: DesignId;
 }): AsyncGenerator<JobEvent> {
   const base = { course, slug: null, manifestSrc: null, error: null } as const;
   const at = (index: number): JobEvent => ({ ...base, ...STEPS[index] });
 
   try {
     yield at(0);
-    const script: Script = mock
-      ? {
-          ...mockScript,
-          topic,
-          course,
-          subject: COURSES[course].subject ?? mockScript.subject,
-        }
-      : await generateScript(topic, course);
+    const script = await generateScript(topic, course);
 
     const slug = makeSlug(topic);
 
     yield at(1);
-    const sceneAudios = await generateAudio({ scenes: script.scenes, slug });
+    const sceneAudios = await generateAudio({
+      scenes: script.scenes,
+      slug,
+      voice,
+    });
 
     yield at(2);
     const captionsPerScene = await generateCaptions({ sceneAudios, slug });
 
     yield at(3);
     const manifest = buildManifest({
-      script,
+      script: { ...script, design: design ?? DEFAULT_DESIGN },
       slug,
       sceneAudios,
       captionsPerScene,

@@ -115,10 +115,11 @@ const parseWordBoundaries = (raw: string): WordBoundary[] => {
 
 const synthesizeWithEdge = async (
   texts: string[],
+  voice: string,
 ): Promise<{ audio: Buffer; boundaries: WordBoundary[] }[]> => {
   const tts = new MsEdgeTTS();
   await tts.setMetadata(
-    config.edgeVoice,
+    voice,
     OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3,
     { wordBoundaryEnabled: true },
   );
@@ -185,9 +186,12 @@ const synthesizeWithElevenLabs = async (texts: string[]): Promise<Buffer[]> => {
 export const generateAudio = async ({
   scenes,
   slug,
+  voice = config.edgeVoice,
 }: {
   scenes: Scene[];
   slug: string;
+  /** Chosen per video on the create screen; falls back to EDGE_VOICE. */
+  voice?: string;
 }): Promise<SceneAudio[]> => {
   const dir = paths.projectDir(slug);
   fs.mkdirSync(dir, { recursive: true });
@@ -199,7 +203,7 @@ export const generateAudio = async ({
           audio,
           boundaries: null,
         }))
-      : await synthesizeWithEdge(texts);
+      : await synthesizeWithEdge(texts, voice);
 
   const result: SceneAudio[] = [];
   for (const [index, scene] of scenes.entries()) {

@@ -119,14 +119,32 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 26px;
+  /* Everything below is sized in `cqi` against this box rather than in pixels:
+     the same card is a full-screen poster in the feed and half a phone's width
+     in the library grid, and a fixed 26px padding ate a third of the narrow one
+     before the text had anywhere to go. */
+  padding: clamp(9px, 7cqi, 26px);
   text-align: left;
   overflow: hidden;
 }
 
+/* The curriculum unit. "数II 図形と方程式" is wider than half a phone at the
+   size this used to be fixed at, so it shrinks with the card and clips. */
+.thumb__unit {
+  flex: none;
+  max-width: 100%;
+  font-size: clamp(7px, 3.1cqi, 11px);
+  font-weight: 900;
+  letter-spacing: clamp(0.2px, 0.45cqi, 1.5px);
+  padding: clamp(3px, 1.4cqi, 5px) clamp(7px, 3.6cqi, 13px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .thumb__headline {
-  margin: 16px 0 0;
-  font-size: clamp(20px, 9cqi, 40px);
+  margin: clamp(8px, 4.5cqi, 16px) 0 0;
+  font-size: clamp(12px, 9cqi, 40px);
   font-weight: 900;
   line-height: 1.25;
   /* Long hooks are trimmed rather than pushing the rest off the card. */
@@ -137,16 +155,16 @@ body {
 }
 
 .thumb__rule {
-  margin-top: 12px;
-  width: clamp(48px, 22cqi, 96px);
-  height: 5px;
+  margin-top: clamp(6px, 3.4cqi, 12px);
+  width: clamp(30px, 22cqi, 96px);
+  height: clamp(3px, 1.4cqi, 5px);
   border-radius: 3px;
   flex: none;
 }
 
 .thumb__topic {
-  margin: 18px 0 0;
-  font-size: clamp(10px, 3.4cqi, 14px);
+  margin: clamp(9px, 5cqi, 18px) 0 0;
+  font-size: clamp(8px, 3.6cqi, 14px);
   line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -155,8 +173,8 @@ body {
 }
 
 .thumb__meta {
-  margin: 14px 0 0;
-  font-size: clamp(10px, 3.2cqi, 13px);
+  margin: clamp(7px, 4cqi, 14px) 0 0;
+  font-size: clamp(8px, 3.2cqi, 13px);
   font-weight: 700;
 }
 
@@ -395,14 +413,6 @@ body {
   outline-offset: 1px;
 }
 
-.mock {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--ink-dim);
-}
-
 .composer button {
   padding: 16px;
   border: none;
@@ -535,6 +545,8 @@ body {
 
 /* ---------- library grid ---------- */
 
+/* Two per row. The card is the video's own 9:16 frame, so at half a phone's
+   width everything inside it has to shrink with the box — see `.thumb`. */
 .grid {
   flex: 1;
   min-height: 0;
@@ -598,4 +610,61 @@ body {
   flex-direction: column;
   gap: 14px;
   padding: calc(18px + env(safe-area-inset-top)) 16px 24px;
+}
+
+/* ---------- create: voice and design ---------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field__label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-dim);
+}
+
+.field select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-dim);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.swatch.is-on {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.swatch__dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
 }

@@ -32,6 +32,7 @@ export const buildManifest = ({
   const manifest: Manifest = {
     topic: script.topic,
     unit: script.unit,
+    design: script.design,
     subunit: script.subunit,
     course: script.course,
     subject: script.subject,

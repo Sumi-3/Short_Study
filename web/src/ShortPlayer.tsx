@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Player, type PlayerRef } from "@remotion/player";
 import { StudyShort } from "../../src/remotion/Composition";
 import { fetchManifest } from "./api";
+import type { AudioGate } from "./audioGate";
 import type { Manifest } from "../../src/types";
 
 const PLAYER_STYLE = { width: "100%", height: "100%" } as const;
@@ -107,16 +108,16 @@ const Scrubber: React.FC<{
 export const ShortPlayer: React.FC<{
   manifestSrc: string;
   /**
-   * The last user gesture, or null if the viewer has not touched anything yet.
-   * The first short waits for a tap; every later swipe starts on its own and is
-   * handed that swipe, which is what lets its narration through on a phone.
+   * Session-wide audio state. The first short waits for a tap because only a
+   * play() made inside that click unlocks the Player's audio tags; every later
+   * one starts on its own and is handed the swipe that brought it on screen.
    *
    * A ref rather than a prop value on purpose: as state it re-rendered this
    * component during the very tap that set it, so the auto-start effect and the
    * click handler both fired for the same gesture.
    */
-  hasGesture: React.RefObject<React.SyntheticEvent | null>;
-}> = ({ manifestSrc, hasGesture }) => {
+  gate: React.RefObject<AudioGate>;
+}> = ({ manifestSrc, gate }) => {
   const player = useRef<PlayerRef>(null);
   const [manifest, setManifest] = useState<Manifest | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -162,15 +163,15 @@ export const ShortPlayer: React.FC<{
   // starts it without another tap; the first one finds no gesture yet and waits.
   useEffect(() => {
     const instance = player.current;
-    if (!manifest || !instance || !hasGesture.current || started.current) {
+    if (!manifest || !instance || !gate.current.unlocked || started.current) {
       return;
     }
     started.current = true;
     instance.seekTo(0);
     // The swipe that brought this short on screen, forwarded so the Player
     // unlocks its audio tags — it checks only that an event was passed.
-    instance.play(hasGesture.current);
-  }, [manifest, hasGesture]);
+    instance.play(gate.current.gesture ?? undefined);
+  }, [manifest, gate]);
 
   const toggle = useCallback((event: React.MouseEvent) => {
     const instance = player.current;
@@ -191,12 +192,16 @@ export const ShortPlayer: React.FC<{
       // The poster sits a beat into the hook so the thumbnail is not the blank
       // frame every scene fades in from. Rewind on the first real play.
       started.current = true;
+      // Inside the click, which is the only place the first unlock of the
+      // session can happen. Everything after this may start on its own.
+      gate.current.unlocked = true;
       instance.seekTo(0);
       instance.play(event);
       return;
     }
+    gate.current.unlocked = true;
     instance.toggle(event);
-  }, []);
+  }, [gate]);
 
   // Stable identity: a fresh object here is read as a prop change and costs an
   // audio re-schedule on every render.

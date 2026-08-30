@@ -11,7 +11,8 @@ import { Background } from "./Background";
 import { Captions } from "./Captions";
 import { SceneText } from "./SceneText";
 import { SceneDiagram } from "./SceneDiagram";
-import { ThemeProvider, accentFor, layout, themes } from "./theme";
+import { ThemeProvider, accentFor, designs, layout, themes } from "./theme";
+import { isDesignId } from "../designs";
 import type { Manifest, ManifestScene } from "../types";
 
 export type StudyShortProps = {
@@ -104,7 +105,11 @@ const SceneRenderer: React.FC<{
 export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
   // Everything below reads its palette, typeface and easing from here, so the
   // whole video changes character with the subject the script declared.
-  const theme = themes[manifest?.subject ?? "general"];
+  // A short made before designs existed has no `design`, so it keeps falling
+  // back to the theme its subject picked — exactly the look it was made with.
+  const theme = isDesignId(manifest?.design)
+    ? designs[manifest.design]
+    : themes[manifest?.subject ?? "general"];
 
   if (!manifest) {
     return (
