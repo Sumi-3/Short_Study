@@ -26,35 +26,49 @@ const loadDotEnv = () => {
 
 loadDotEnv();
 
+/**
+ * Reads an environment variable, treating an empty one as absent.
+ *
+ * A dashboard stores "I added the key but left the box blank" as an empty
+ * string, and `??` only falls back on `undefined` — so the blank sails through
+ * as a real value. That is how an empty `ANTHROPIC_MODEL` reached the API as
+ * `model: ""` and came back as a 400 that named the model, not the setting.
+ */
+const env = (name: string) => {
+  const value = process.env[name]?.trim();
+  return value ? value : undefined;
+};
+
 const num = (value: string | undefined, fallback: number) => {
   const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
+  // Number("") is 0, which is finite — so a blank has to be ruled out first.
+  return value !== undefined && Number.isFinite(parsed) ? parsed : fallback;
 };
 
 export { VIDEO } from "./config-video.js";
 
 export const config = {
-  anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? "",
-  anthropicModel: process.env.ANTHROPIC_MODEL ?? "claude-opus-5",
+  anthropicApiKey: env("ANTHROPIC_API_KEY") ?? "",
+  anthropicModel: env("ANTHROPIC_MODEL") ?? "claude-opus-5",
   /**
    * Required only for identity-linked API keys, which do not themselves say
    * which workspace a request bills to. Workspace-scoped keys leave this empty.
    */
-  anthropicWorkspaceId: process.env.ANTHROPIC_WORKSPACE_ID ?? "",
+  anthropicWorkspaceId: env("ANTHROPIC_WORKSPACE_ID") ?? "",
 
   /** "edge" (free, default) | "elevenlabs" */
-  ttsProvider: (process.env.TTS_PROVIDER ?? "edge") as "edge" | "elevenlabs",
+  ttsProvider: (env("TTS_PROVIDER") ?? "edge") as "edge" | "elevenlabs",
   /** EdgeTTS only ships two Japanese voices: NanamiNeural (F), KeitaNeural (M). */
-  edgeVoice: process.env.EDGE_VOICE ?? "ja-JP-NanamiNeural",
+  edgeVoice: env("EDGE_VOICE") ?? "ja-JP-NanamiNeural",
   /** e.g. "+10%" to speed the narration up. */
-  edgeRate: process.env.EDGE_RATE ?? "+8%",
+  edgeRate: env("EDGE_RATE") ?? "+8%",
   /** Relative: "+10%", "-2st", "+20Hz". With only two voices, this is the main knob. */
-  edgePitch: process.env.EDGE_PITCH ?? "+0%",
+  edgePitch: env("EDGE_PITCH") ?? "+0%",
   /** Relative: "+0%" is the synthesiser's own level. */
-  edgeVolume: process.env.EDGE_VOLUME ?? "+0%",
-  elevenLabsApiKey: process.env.ELEVENLABS_API_KEY ?? "",
-  elevenLabsVoiceId: process.env.ELEVENLABS_VOICE_ID ?? "21m00Tcm4TlvDq8ikWAM",
-  elevenLabsModel: process.env.ELEVENLABS_MODEL ?? "eleven_multilingual_v2",
+  edgeVolume: env("EDGE_VOLUME") ?? "+0%",
+  elevenLabsApiKey: env("ELEVENLABS_API_KEY") ?? "",
+  elevenLabsVoiceId: env("ELEVENLABS_VOICE_ID") ?? "21m00Tcm4TlvDq8ikWAM",
+  elevenLabsModel: env("ELEVENLABS_MODEL") ?? "eleven_multilingual_v2",
 
   /**
    * "tts" reuses EdgeTTS word boundaries: exact script text, exact timings, no
@@ -62,15 +76,15 @@ export const config = {
    * when TTS_PROVIDER=elevenlabs, but note that whisper.cpp's token-level JSON
    * splits Japanese characters across tokens (see generateCaptions.ts).
    */
-  captionSource: (process.env.CAPTION_SOURCE ?? "tts") as "whisper" | "tts",
-  whisperModel: process.env.WHISPER_MODEL ?? "medium",
-  whisperVersion: process.env.WHISPER_VERSION ?? "1.5.5",
+  captionSource: (env("CAPTION_SOURCE") ?? "tts") as "whisper" | "tts",
+  whisperModel: env("WHISPER_MODEL") ?? "medium",
+  whisperVersion: env("WHISPER_VERSION") ?? "1.5.5",
   language: "ja" as const,
 
   /** Target length, fed to the script prompt as a scene-count hint. */
-  targetSeconds: num(process.env.TARGET_SECONDS, 50),
+  targetSeconds: num(env("TARGET_SECONDS"), 50),
   /** Silence appended after each scene's narration, in seconds. */
-  scenePaddingSeconds: num(process.env.SCENE_PADDING_SECONDS, 0.35),
+  scenePaddingSeconds: num(env("SCENE_PADDING_SECONDS"), 0.35),
 } as const;
 
 /**
@@ -85,7 +99,7 @@ export const config = {
  * directory is free to vanish afterwards.
  */
 const dataRoot =
-  process.env.SHORT_STUDY_DATA_DIR ??
+  env("SHORT_STUDY_DATA_DIR") ??
   (process.env.VERCEL ? "/tmp" : process.cwd());
 
 export const paths = {
