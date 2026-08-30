@@ -170,20 +170,30 @@ export const ShortPlayer: React.FC<{
     instance.play();
   }, [manifest, hasGesture]);
 
-  const toggle = useCallback(() => {
+  const toggle = useCallback((event: React.MouseEvent) => {
     const instance = player.current;
     if (!instance) {
       return;
     }
-    // The poster sits a beat into the hook so the thumbnail is not the blank
-    // frame every scene fades in from. Rewind on the first real play.
-    if (!started.current) {
-      started.current = true;
-      instance.seekTo(0);
-      instance.play();
+    // Capture phase runs before the scrubber's own handlers, so its
+    // stopPropagation cannot keep a drag from also toggling playback. Ask
+    // where the click came from instead.
+    if ((event.target as HTMLElement).closest(".scrubber")) {
       return;
     }
-    instance.toggle();
+    // The event is passed on rather than dropped: the Player warms a pool of
+    // silent audio tags during a real user gesture, and only tags warmed that
+    // way are allowed to make sound on mobile. Calling play() without it
+    // leaves the narration silent on a phone while the video runs.
+    if (!started.current) {
+      // The poster sits a beat into the hook so the thumbnail is not the blank
+      // frame every scene fades in from. Rewind on the first real play.
+      started.current = true;
+      instance.seekTo(0);
+      instance.play(event);
+      return;
+    }
+    instance.toggle(event);
   }, []);
 
   // Stable identity: a fresh object here is read as a prop change and costs an
@@ -210,7 +220,7 @@ export const ShortPlayer: React.FC<{
   }
 
   return (
-    <div className="short" onClick={toggle}>
+    <div className="short" onClickCapture={toggle}>
       <Player
         ref={player}
         component={StudyShort}
