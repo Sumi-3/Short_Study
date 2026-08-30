@@ -206,8 +206,13 @@ export const scriptSchema = z.object({
   topic: z.string(),
   /** Curriculum unit, e.g. "数A 図形の性質". Shown above the question. */
   unit: z.string().default(""),
+  /**
+   * The small category under that unit, e.g. "円周角の定理". Never shown — it
+   * exists so the home screen can filter one level finer than the banner does.
+   */
+  subunit: z.string().default(""),
   /** Which system prompt wrote this. Not asked of the model — the user picks it. */
-  course: z.enum(COURSE_IDS).default("general"),
+  course: z.enum(COURSE_IDS).default("math"),
   /** Picks the palette, typeface and motion style. */
   subject: z.enum(SUBJECTS).default("general"),
   scenes: z.array(sceneSchema).min(2),
@@ -231,6 +236,12 @@ export const apiScriptSchema = z.object({
    * scene schema pushed the compiled grammar past what structured outputs
    * accept — and a scene that cannot be generated is worse than a label that
    * occasionally has to be dropped.
+   */
+  /**
+   * Both curriculum levels in one string, `中分類｜小分類`, split by
+   * `generateScript`. They arrive together because a separate field pushed the
+   * compiled grammar past what structured outputs accept — the same ceiling
+   * that already forced this off an enum and onto free text.
    */
   unit: z.string(),
   subject: z.enum(SUBJECTS),
@@ -591,6 +602,7 @@ export type ManifestScene = Scene & {
 export type Manifest = {
   topic: string;
   unit: string;
+  subunit: string;
   course: CourseId;
   subject: Subject;
   slug: string;

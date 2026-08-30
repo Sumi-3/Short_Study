@@ -1,4 +1,3 @@
-import { COURSES } from "../../src/courses";
 import { themes } from "../../src/remotion/theme";
 import { MathText } from "../../src/remotion/MathText";
 import type { ShortSummary } from "./api";
@@ -26,15 +25,16 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
         color: theme.ink,
       }}
     >
+      {/* The curriculum unit, not the course: every short here is maths. */}
       <span
-        className="thumb__course"
+        className="thumb__unit"
         style={{
           background: accent,
           color: theme.bgDeep,
           borderRadius: Math.min(theme.radius, 20),
         }}
       >
-        {COURSES[short.course].label}
+        {short.unit || "数学"}
       </span>
 
       <p className="thumb__headline">

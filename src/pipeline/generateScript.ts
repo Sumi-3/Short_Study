@@ -3,6 +3,7 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { config } from "../config.js";
 import { apiScriptSchema, normalizeVisual, type Script } from "../types.js";
 import { coursePrompts } from "../prompts/index.js";
+import { topicsOf } from "../curriculum.js";
 import type { CourseId } from "../courses.js";
 
 /**
@@ -22,11 +23,38 @@ const resolveUnit = (written: string, allowed: readonly string[] | null) => {
   return allowed.find((name) => unit.startsWith(name) || unit.includes(name)) ?? "";
 };
 
+/**
+ * Splits the one `unit` string the model returns back into the two levels.
+ *
+ * The banner shows the unit; the small category only files the short on the
+ * home screen, so an unrecognised one is dropped rather than shown.
+ */
+const classify = (written: string, allowed: readonly string[] | null) => {
+  const [rawUnit = "", rawSubunit = ""] = written.split("｜");
+  const unit = resolveUnit(rawUnit, allowed);
+  const topics = topicsOf(unit);
+  const subunit = rawSubunit.trim();
+
+  if (!topics || !subunit) {
+    return { unit, subunit: "" };
+  }
+
+  return {
+    unit,
+    subunit:
+      topics.find((topic) => topic === subunit) ??
+      topics.find(
+        (topic) => topic.startsWith(subunit) || subunit.startsWith(topic),
+      ) ??
+      "",
+  };
+};
+
 export const generateScript = async (
   topic: string,
-  courseId: CourseId = "general",
+  courseId: CourseId = "math",
 ): Promise<Script> => {
-  const course = coursePrompts[courseId] ?? coursePrompts.general;
+  const course = coursePrompts[courseId] ?? coursePrompts.math;
 
   if (!config.anthropicApiKey) {
     throw new Error(
@@ -68,7 +96,7 @@ export const generateScript = async (
     // opening card shows, and a question paraphrased into a heading stops
     // being the question.
     topic: topic || parsed.topic,
-    unit: resolveUnit(parsed.unit, course.units),
+    ...classify(parsed.unit, course.units),
     course: course.id,
     // A course with a fixed subject has already told the model which one to
     // pick, so the two agree; `general` is the case where the answer matters.

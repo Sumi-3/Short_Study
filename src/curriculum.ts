@@ -172,3 +172,25 @@ export const MATH_UNIT_NAMES = MATH_UNITS.map((unit) => unit.name);
 /** The list as the prompt shows it: one unit per line, its topics after it. */
 export const unitCatalogue = (units: readonly Unit[]) =>
   units.map((unit) => `- ${unit.name}: ${unit.topics.join(" / ")}`).join("\n");
+
+/**
+ * The unit name carries two levels: `課程 中分類`, e.g. "数II 微分・積分の考え".
+ * The home screen filters on them separately, so it needs them apart.
+ */
+export const splitUnit = (unit: string) => {
+  const space = unit.indexOf(" ");
+  return space === -1
+    ? { major: unit, middle: "" }
+    : { major: unit.slice(0, space), middle: unit.slice(space + 1) };
+};
+
+/** 大分類 → 中分類 → 小分類, in curriculum order. */
+export const MATH_TAXONOMY = MATH_UNITS.map((unit) => ({
+  ...splitUnit(unit.name),
+  name: unit.name,
+  topics: unit.topics,
+}));
+
+/** The small categories under one unit name, or null if it is not a known unit. */
+export const topicsOf = (unitName: string): readonly string[] | null =>
+  MATH_UNITS.find((unit) => unit.name === unitName)?.topics ?? null;

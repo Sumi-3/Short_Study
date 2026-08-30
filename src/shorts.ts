@@ -9,6 +9,10 @@ export type ShortSummary = {
   headline: string;
   course: CourseId;
   subject: Subject;
+  /** Curriculum unit, e.g. "数II 微分・積分の考え". Empty if it could not be filed. */
+  unit: string;
+  /** Small category under that unit. Empty on shorts made before it was recorded. */
+  subunit: string;
   createdAt: string;
   manifestSrc: string;
   durationInFrames: number;
@@ -33,6 +37,8 @@ export const summarize = (
     headline: hook?.visual_content ?? manifest.topic,
     course: courseOf(manifest),
     subject: manifest.subject ?? "general",
+    unit: manifest.unit ?? "",
+    subunit: manifest.subunit ?? "",
     createdAt: manifest.createdAt,
     manifestSrc,
     durationInFrames: manifest.scenes.reduce(

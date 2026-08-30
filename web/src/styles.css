@@ -37,47 +37,6 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ---------- subject filter ---------- */
-
-.filters {
-  flex: none;
-  display: flex;
-  gap: 8px;
-  padding: calc(10px + env(safe-area-inset-top)) 12px 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.filters::-webkit-scrollbar {
-  display: none;
-}
-
-.filters__chip {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 15px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--ink-dim);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.filters__chip.is-on {
-  background: var(--accent);
-  color: #12042e;
-}
-
-.filters__count {
-  font-size: 11px;
-  opacity: 0.7;
-}
-
 /* ---------- vertical snap feed ---------- */
 
 .feed-scroll {
@@ -163,14 +122,6 @@ body {
   padding: 26px;
   text-align: left;
   overflow: hidden;
-}
-
-.thumb__course {
-  flex: none;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 1.5px;
-  padding: 5px 13px;
 }
 
 .thumb__headline {
@@ -348,19 +299,6 @@ body {
   color: var(--ink-dim);
 }
 
-/* ---------- job progress ---------- */
-
-.overlay-top {
-  position: fixed;
-  top: calc(58px + env(safe-area-inset-top));
-  left: 12px;
-  right: 12px;
-  z-index: 20;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-}
-
 .job {
   width: min(100%, 460px);
   padding: 14px 16px;
@@ -425,62 +363,7 @@ body {
   word-break: break-word;
 }
 
-/* ---------- compose button ---------- */
-
-.fab {
-  position: fixed;
-  right: 18px;
-  bottom: calc(20px + env(safe-area-inset-bottom));
-  z-index: 25;
-  width: 60px;
-  height: 60px;
-  border: none;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #12042e;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.fab:disabled {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--ink-dim);
-}
-
-/* ---------- bottom sheet ---------- */
-
-.scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.sheet {
-  width: min(100%, 560px);
-  max-height: 82dvh;
-  overflow-y: auto;
-  padding: 10px 20px calc(28px + env(safe-area-inset-bottom));
-  border-radius: 22px 22px 0 0;
-  background: var(--panel);
-  border-top: 1px solid var(--line);
-}
-
-.sheet__grip {
-  width: 40px;
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.28);
-  margin: 0 auto 18px;
-}
-
-.sheet h2 {
+.composer h2 {
   margin: 0 0 14px;
   font-size: 16px;
 }
@@ -537,88 +420,182 @@ body {
   color: var(--ink-dim);
 }
 
-/* ---------- feed ---------- */
 
-.feed {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* ---------- shell ---------- */
+
+.app__body {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
-.feed button {
-  width: 100%;
-  text-align: left;
-  padding: 14px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.24);
-  color: var(--ink);
+/* ---------- bottom tabs ---------- */
+
+.tabs {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(14px);
+}
+
+.tabs__button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 9px 0 8px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-dim);
   font: inherit;
+  font-size: 10px;
+  font-weight: 700;
   cursor: pointer;
+}
+
+.tabs__button.is-on {
+  color: var(--accent);
+}
+
+.tabs__icon {
+  font-size: 17px;
+  line-height: 1;
+}
+
+/* ---------- home ---------- */
+
+.home {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.home__filters {
+  flex: none;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  padding: calc(9px + env(safe-area-inset-top)) 0 8px;
+  border-bottom: 1px solid var(--line);
 }
 
-.feed button.is-active {
-  border-color: var(--accent);
-  background: rgba(255, 229, 0, 0.1);
-}
-
-.feed__topic {
-  font-size: 14px;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.feed__meta {
-  font-size: 11px;
-  color: var(--ink-dim);
-}
-
-.feed__empty {
-  font-size: 13px;
-  color: var(--ink-dim);
-}
-
-/* ---------- course picker (composer) ---------- */
-
-.picker {
+.bar {
   display: flex;
+  align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  min-width: 0;
 }
 
-.picker__chip {
-  padding: 9px 18px;
+.bar__label {
+  flex: none;
+  padding-left: 12px;
+  width: 46px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-dim);
+}
+
+/* Each level scrolls on its own: nine courses and ninety-one topics will not
+   fit a phone's width, and wrapping would push the grid off the screen. */
+.bar__chips {
+  display: flex;
+  gap: 6px;
+  padding-right: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.bar__chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex: none;
+  padding: 6px 13px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: transparent;
   color: var(--ink-dim);
   font: inherit;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
 }
 
-.picker__chip.is-on {
+.chip.is-on {
   border-color: transparent;
   background: var(--accent);
   color: #12042e;
 }
 
-/* Which prompt a running job is using. */
-.job__course {
-  margin-right: 8px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.14);
-  font-size: 11px;
-  font-weight: 700;
+/* ---------- library grid ---------- */
+
+.grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 12px 12px 24px;
+}
+
+.grid__cell {
+  padding: 0;
+  border: 0;
+  background: #000;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 9 / 16;
+  cursor: pointer;
+}
+
+/* ---------- feed ---------- */
+
+.feed {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Opened from a card: over the tab bar too, so the video really is full screen. */
+.feed--full {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: var(--bg);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.feed__close {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top));
+  right: 12px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--ink);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* ---------- create ---------- */
+
+.create {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: calc(18px + env(safe-area-inset-top)) 16px 24px;
 }

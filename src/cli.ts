@@ -30,7 +30,7 @@ const parseArgs = (argv: string[]) => {
   let skipRender = false;
   let slug: string | null = null;
   let scriptPath: string | null = null;
-  let course: CourseId = "general";
+  let course: CourseId = "math";
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];

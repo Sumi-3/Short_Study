@@ -7,6 +7,7 @@ import type { Script } from "../types.js";
 export const mockScript: Script = {
   topic: "微分積分の基本を教えて",
   unit: "数II 微分・積分",
+  subunit: "",
   course: "math",
   subject: "math",
   scenes: [

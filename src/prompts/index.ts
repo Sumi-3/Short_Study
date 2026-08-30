@@ -1,7 +1,5 @@
 import { COURSES, type CourseId, type CourseMeta } from "../courses.js";
 import { MATH_UNIT_NAMES } from "../curriculum.js";
-import { generalPrompt } from "./general.js";
-import { japaneseHistoryPrompt } from "./japaneseHistory.js";
 import { mathPrompt } from "./math.js";
 
 /**
@@ -16,15 +14,9 @@ export type Course = CourseMeta & {
 };
 
 export const coursePrompts: Record<CourseId, Course> = {
-  "japanese-history": {
-    ...COURSES["japanese-history"],
-    buildSystemPrompt: japaneseHistoryPrompt,
-    units: null,
-  },
   math: {
     ...COURSES.math,
     buildSystemPrompt: mathPrompt,
     units: MATH_UNIT_NAMES,
   },
-  general: { ...COURSES.general, buildSystemPrompt: generalPrompt, units: null },
 };

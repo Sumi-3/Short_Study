@@ -26,7 +26,7 @@ export async function POST(request: Request): Promise<Response> {
       return Response.json({ error: "topic is required" }, { status: 400 });
     }
 
-    const course = isCourseId(body?.course) ? body.course : "general";
+    const course = isCourseId(body?.course) ? body.course : "math";
     const mock = Boolean(body?.mock);
 
     const encoder = new TextEncoder();
