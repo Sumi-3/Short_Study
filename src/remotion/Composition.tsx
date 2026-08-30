@@ -34,7 +34,13 @@ export type StudyShortProps = {
  * Module-level so the object identity never changes: a fresh one each render is
  * read as new props, and re-scheduling the audio is what makes words stutter.
  */
-const FALLBACK_AUDIO = { crossOrigin: "anonymous" } as const;
+const FALLBACK_AUDIO = {
+  crossOrigin: "anonymous",
+  // Hold the playhead until the narration is ready. The default lets the
+  // timeline run on while the clip is still arriving, which over a network
+  // reads as a short that plays with no sound at all.
+  pauseWhenBuffering: true,
+} as const;
 
 const ProgressBar: React.FC<{ accent: string }> = ({ accent }) => {
   const frame = useCurrentFrame();

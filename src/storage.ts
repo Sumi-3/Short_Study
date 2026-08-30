@@ -56,6 +56,10 @@ const publishToBlob = async (slug: string, manifest: Manifest) => {
         contentType: "audio/mpeg",
         addRandomSuffix: false,
         allowOverwrite: true,
+        // Without this the narration carries no cache-control, so a phone
+        // re-fetches every clip on every swipe and playback starts as a race
+        // against the download. The path already names an immutable file.
+        cacheControlMaxAge: 31536000,
       },
     );
     scene.audioSrc = url;
