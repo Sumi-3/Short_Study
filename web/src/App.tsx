@@ -51,10 +51,19 @@ export const App: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [composing, setComposing] = useState(false);
   /**
+   * The last real user gesture, kept so a short that starts on its own can
+   * still be handed one.
+   *
+   * The Player only unlocks its pool of audio tags when `play()` is given an
+   * event, and unlocked tags are the only ones a phone lets make sound. A
+   * swipe is a genuine gesture, but it is over by the time the next short has
+   * fetched its manifest and mounted — so the event is carried forward rather
+   * than reduced to a boolean.
+   *
    * Ref, not state: setting this during a tap must not re-render the mounted
    * ShortPlayer, or the same tap both auto-starts and click-starts it.
    */
-  const hasGesture = useRef(false);
+  const hasGesture = useRef<React.SyntheticEvent | null>(null);
   /** Slug to jump to once the refreshed feed has actually rendered. */
   const [pendingSlug, setPendingSlug] = useState<string | null>(null);
   const feedRef = useRef<HTMLDivElement>(null);
@@ -195,8 +204,8 @@ export const App: React.FC = () => {
     // Any real tap counts as the gesture that unlocks programmatic playback.
     <div
       className="app"
-      onPointerDown={() => {
-        hasGesture.current = true;
+      onPointerDown={(event) => {
+        hasGesture.current = event;
       }}
     >
       {shorts.length > 0 ? (

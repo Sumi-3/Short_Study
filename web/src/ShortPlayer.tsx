@@ -107,15 +107,15 @@ const Scrubber: React.FC<{
 export const ShortPlayer: React.FC<{
   manifestSrc: string;
   /**
-   * Whether the viewer has already tapped something this session. Browsers only
-   * allow programmatic playback after a user gesture, so the first short waits
-   * for a tap and every later swipe starts on its own.
+   * The last user gesture, or null if the viewer has not touched anything yet.
+   * The first short waits for a tap; every later swipe starts on its own and is
+   * handed that swipe, which is what lets its narration through on a phone.
    *
    * A ref rather than a prop value on purpose: as state it re-rendered this
    * component during the very tap that set it, so the auto-start effect and the
    * click handler both fired for the same gesture.
    */
-  hasGesture: React.RefObject<boolean>;
+  hasGesture: React.RefObject<React.SyntheticEvent | null>;
 }> = ({ manifestSrc, hasGesture }) => {
   const player = useRef<PlayerRef>(null);
   const [manifest, setManifest] = useState<Manifest | null>(null);
@@ -167,7 +167,9 @@ export const ShortPlayer: React.FC<{
     }
     started.current = true;
     instance.seekTo(0);
-    instance.play();
+    // The swipe that brought this short on screen, forwarded so the Player
+    // unlocks its audio tags — it checks only that an event was passed.
+    instance.play(hasGesture.current);
   }, [manifest, hasGesture]);
 
   const toggle = useCallback((event: React.MouseEvent) => {
