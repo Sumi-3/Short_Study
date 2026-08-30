@@ -21,6 +21,21 @@ export type StudyShortProps = {
   manifest: Manifest | null;
 };
 
+/**
+ * Lets the narration through when it is served from blob storage.
+ *
+ * `<Audio>` falls back to an HTML5 element wherever its own decoder is
+ * unavailable, which is what a phone tends to get, and Remotion routes that
+ * element through Web Audio to apply volume. A cross-origin element without
+ * `crossOrigin` taints the graph, and a tainted source node outputs silence —
+ * the video plays and the narration simply is not there. Same-origin playback
+ * does not need it and is unaffected.
+ *
+ * Module-level so the object identity never changes: a fresh one each render is
+ * read as new props, and re-scheduling the audio is what makes words stutter.
+ */
+const FALLBACK_AUDIO = { crossOrigin: "anonymous" } as const;
+
 const ProgressBar: React.FC<{ accent: string }> = ({ accent }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
@@ -132,6 +147,12 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
               durationInFrames={Math.ceil(
                 scene.audioDurationInSeconds * manifest.fps,
               )}
+              // Every scene is its own mp3, so without this each one only
+              // starts downloading as its sequence begins — fine from disk,
+              // a race against the playhead over a network. Mounting two
+              // seconds early gives the fetch somewhere to happen.
+              premountFor={Math.round(manifest.fps * 2)}
+              fallbackHtml5AudioProps={FALLBACK_AUDIO}
             />
             <SceneRenderer
               scene={scene}
