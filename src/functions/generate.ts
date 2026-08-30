@@ -1,5 +1,5 @@
-import { isCourseId } from "../src/courses";
-import { runPipeline } from "../src/pipeline/run";
+import { isCourseId } from "../courses";
+import { runPipeline } from "../pipeline/run";
 
 /**
  * The whole pipeline in a single invocation, reporting progress as NDJSON.

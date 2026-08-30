@@ -21,7 +21,6 @@
     "noUnusedLocals": true
   },
   "include": [
-    "api",
     "src",
     "web/src"
   ],

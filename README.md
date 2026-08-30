@@ -100,6 +100,33 @@ URL を知られた時点で他人が `ANTHROPIC_API_KEY` を消費できます�
 `staticFile()` は先頭に `/` を足すだけなので絶対URLを渡すと壊れます。
 両方を通すために [assetSrc.ts](src/remotion/assetSrc.ts) を挟んでいます。
 
+### 関数はバンドルしてからデプロイする
+
+`npm run build` は web と**関数の両方**をビルドします（`web:build` + `api:build`）。
+
+Vercel は TypeScript を**ファイル単位でトランスパイルするだけでバンドルしません**。
+このパッケージは `"type": "module"` なので、`import { runPipeline } from "../pipeline/run"`
+がそのまま残った `.js` を Node が ESM として読み、**ESM は相対 import の拡張子省略を
+許さない**ため `ERR_MODULE_NOT_FOUND` で落ちます。ローカルで動くのは tsx と Vite が
+拡張子を補完するからで、素の Node だけが厳格です。
+
+そこで [scripts/build-api.mjs](scripts/build-api.mjs) が実装を1ファイルに束ね、
+相対 import を消してから配ります:
+
+```
+src/functions/generate.ts   実装（typecheck 対象）
+  ↓ esbuild --bundle --packages=external
+api-build/generate.js       相対 import ゼロ。node_modules は bare のまま
+  ↑ export { default } from "../api-build/generate.js"
+api/generate.ts             Vercel がルートとして拾う薄い入口（拡張子つき）
+```
+
+入口を `api/` にコミットしてあるのは、生成物を `api/` に直接吐くと、
+ルート検出がビルドより先に走った場合に 404 になるためです。
+
+バンドル時に whisper 経路はスタブへ差し替えています。デプロイ先では実行され得ないのに、
+`import("ffmpeg-static")` がファイルトレースに拾われて 78MB のバイナリを連れてくるからです。
+
 ### Vercel でできなくなること
 
 - **MP4 の書き出し**（`npm run render`）— Remotion は Chromium に依存し、関数の

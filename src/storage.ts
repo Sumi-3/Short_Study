@@ -16,7 +16,26 @@ import type { Manifest } from "./types";
  * The presence of the token is what picks the branch, so a local checkout needs
  * no configuration and a deployment needs no code change.
  */
-const usingBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+const usingBlob = () => {
+  // Two ways a store can be attached. Connecting one to the project sets up
+  // OIDC (`BLOB_STORE_ID` plus a short-lived token the SDK refreshes itself),
+  // which is what a deployment normally uses; `BLOB_READ_WRITE_TOKEN` is the
+  // long-lived static token, for code running outside Vercel. Either is enough
+  // for the SDK to authenticate, so checking only the token would refuse to
+  // start on a perfectly well-configured deployment.
+  if (process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID) {
+    return true;
+  }
+  // Without a store, a deployment would write the short into a `/tmp` that is
+  // gone by the next request and hand the player a path nothing serves — a 404
+  // arriving only after the whole pipeline has run. Say so up front instead.
+  if (process.env.VERCEL) {
+    throw new Error(
+      "No Blob store is attached (neither BLOB_STORE_ID nor BLOB_READ_WRITE_TOKEN is set). Create a public Blob store in the Vercel dashboard and connect it to this project; a deployment has nowhere else to keep a finished short.",
+    );
+  }
+  return false;
+};
 
 /** `projects/<slug>/manifest.json` → `<slug>`. */
 const slugOf = (pathname: string) => pathname.split("/")[1] ?? pathname;
