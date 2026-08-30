@@ -1,11 +1,11 @@
-import { MATH_UNITS, unitCatalogue } from "../curriculum";
+import { MATH_UNITS, unitCatalogue } from "../curriculum.js";
 import {
   COMMON_RULES,
   VISUAL_CONTENT,
   budgetFor,
   narrationRules,
   visualSection,
-} from "./shared";
+} from "./shared.js";
 
 /**
  * 数学. Two quite different videos come in through the same box: "解け" wants a

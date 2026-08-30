@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { paths } from "./config";
-import { manifestSrc } from "./pipeline/buildManifest";
+import { paths } from "./config.js";
+import { manifestSrc } from "./pipeline/buildManifest.js";
 
 export const COMPOSITION_ID = "StudyShort";
 

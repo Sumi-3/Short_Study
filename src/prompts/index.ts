@@ -1,8 +1,8 @@
-import { COURSES, type CourseId, type CourseMeta } from "../courses";
-import { MATH_UNIT_NAMES } from "../curriculum";
-import { generalPrompt } from "./general";
-import { japaneseHistoryPrompt } from "./japaneseHistory";
-import { mathPrompt } from "./math";
+import { COURSES, type CourseId, type CourseMeta } from "../courses.js";
+import { MATH_UNIT_NAMES } from "../curriculum.js";
+import { generalPrompt } from "./general.js";
+import { japaneseHistoryPrompt } from "./japaneseHistory.js";
+import { mathPrompt } from "./math.js";
 
 /**
  * Course metadata plus the prompt that teaches it. Kept apart from

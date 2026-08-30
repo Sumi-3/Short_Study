@@ -1,6 +1,6 @@
 import { z } from "zod/v4";
 import type { Caption } from "@remotion/captions";
-import { COURSE_IDS, type CourseId } from "./courses";
+import { COURSE_IDS, type CourseId } from "./courses.js";
 
 /**
  * Optional richer visual payload. `visual_content` (required by the base schema)

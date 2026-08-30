@@ -1,13 +1,13 @@
 import crypto from "node:crypto";
-import { COURSES, type CourseId } from "../courses";
-import type { JobEvent, JobStatus } from "../progress";
-import { publishProject } from "../storage";
-import type { Script } from "../types";
-import { buildManifest } from "./buildManifest";
-import { generateAudio } from "./generateAudio";
-import { generateCaptions } from "./generateCaptions";
-import { generateScript } from "./generateScript";
-import { mockScript } from "./mockScript";
+import { COURSES, type CourseId } from "../courses.js";
+import type { JobEvent, JobStatus } from "../progress.js";
+import { publishProject } from "../storage.js";
+import type { Script } from "../types.js";
+import { buildManifest } from "./buildManifest.js";
+import { generateAudio } from "./generateAudio.js";
+import { generateCaptions } from "./generateCaptions.js";
+import { generateScript } from "./generateScript.js";
+import { mockScript } from "./mockScript.js";
 
 /**
  * Weighted so the bar tracks wall-clock rather than step count: the Claude call

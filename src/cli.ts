@@ -1,16 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { config, paths } from "./config";
-import { generateScript } from "./pipeline/generateScript";
-import { mockScript } from "./pipeline/mockScript";
-import { generateAudio } from "./pipeline/generateAudio";
-import { generateCaptions } from "./pipeline/generateCaptions";
-import { buildManifest, manifestSrc } from "./pipeline/buildManifest";
-import { checkFigures } from "./pipeline/checkFigures";
-import { renderVideo } from "./render";
-import { scriptSchema, type Script } from "./types";
-import { COURSE_IDS, COURSES, isCourseId, type CourseId } from "./courses";
+import { config, paths } from "./config.js";
+import { generateScript } from "./pipeline/generateScript.js";
+import { mockScript } from "./pipeline/mockScript.js";
+import { generateAudio } from "./pipeline/generateAudio.js";
+import { generateCaptions } from "./pipeline/generateCaptions.js";
+import { buildManifest, manifestSrc } from "./pipeline/buildManifest.js";
+import { checkFigures } from "./pipeline/checkFigures.js";
+import { renderVideo } from "./render.js";
+import { scriptSchema, type Script } from "./types.js";
+import { COURSE_IDS, COURSES, isCourseId, type CourseId } from "./courses.js";
 
 const usage = `Usage: npm run generate -- "<トピック>" [options]
 

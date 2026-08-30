@@ -1,9 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import { config } from "../config";
-import { apiScriptSchema, normalizeVisual, type Script } from "../types";
-import { coursePrompts } from "../prompts";
-import type { CourseId } from "../courses";
+import { config } from "../config.js";
+import { apiScriptSchema, normalizeVisual, type Script } from "../types.js";
+import { coursePrompts } from "../prompts/index.js";
+import type { CourseId } from "../courses.js";
 
 /**
  * Keeps the unit label on the curriculum. An exact name passes; a near miss

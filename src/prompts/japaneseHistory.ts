@@ -4,7 +4,7 @@ import {
   budgetFor,
   narrationRules,
   visualSection,
-} from "./shared";
+} from "./shared.js";
 
 /**
  * 日本史. The failure mode this prompt is written against is the chronicle: a

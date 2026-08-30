@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Caption } from "@remotion/captions";
-import { VIDEO, config, paths } from "../config";
-import type { Manifest, Script } from "../types";
-import type { SceneAudio } from "./generateAudio";
-import { applyDisplaySpelling } from "./captionSpelling";
-import { markPhraseBreaks } from "./captionBreaks";
+import { VIDEO, config, paths } from "../config.js";
+import type { Manifest, Script } from "../types.js";
+import type { SceneAudio } from "./generateAudio.js";
+import { applyDisplaySpelling } from "./captionSpelling.js";
+import { markPhraseBreaks } from "./captionBreaks.js";
 
 const prepareCaptions = (
   narration: string,

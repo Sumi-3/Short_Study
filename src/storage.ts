@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import { paths } from "./config";
-import { manifestSrc as localManifestSrc } from "./pipeline/buildManifest";
-import { newestFirst, summarize, type ShortSummary } from "./shorts";
-import type { Manifest } from "./types";
+import { paths } from "./config.js";
+import { manifestSrc as localManifestSrc } from "./pipeline/buildManifest.js";
+import { newestFirst, summarize, type ShortSummary } from "./shorts.js";
+import type { Manifest } from "./types.js";
 
 /**
  * Where finished shorts live.

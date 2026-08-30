@@ -3,8 +3,8 @@ import path from "node:path";
 import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
 import { parseMedia } from "@remotion/media-parser";
 import { nodeReader } from "@remotion/media-parser/node";
-import { config, paths } from "../config";
-import type { Scene } from "../types";
+import { config, paths } from "../config.js";
+import type { Scene } from "../types.js";
 
 /** A word (or, in Japanese, a short token) with timings relative to the clip. */
 export type WordBoundary = {

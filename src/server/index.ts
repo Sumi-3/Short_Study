@@ -1,10 +1,10 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import { paths } from "../config";
-import { runPipeline } from "../pipeline/run";
-import { listShorts } from "../storage";
-import { isCourseId } from "../courses";
+import { paths } from "../config.js";
+import { runPipeline } from "../pipeline/run.js";
+import { listShorts } from "../storage.js";
+import { isCourseId } from "../courses.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
 const WEB_DIST = path.join(paths.root, "web", "dist");

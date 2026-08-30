@@ -1,4 +1,4 @@
-import type { CourseId } from "./courses";
+import type { CourseId } from "./courses.js";
 
 export type JobStatus =
   | "queued"

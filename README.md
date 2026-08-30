@@ -100,32 +100,33 @@ URL を知られた時点で他人が `ANTHROPIC_API_KEY` を消費できます�
 `staticFile()` は先頭に `/` を足すだけなので絶対URLを渡すと壊れます。
 両方を通すために [assetSrc.ts](src/remotion/assetSrc.ts) を挟んでいます。
 
-### 関数はバンドルしてからデプロイする
-
-`npm run build` は web と**関数の両方**をビルドします（`web:build` + `api:build`）。
+### 相対 import には拡張子が要る
 
 Vercel は TypeScript を**ファイル単位でトランスパイルするだけでバンドルしません**。
-このパッケージは `"type": "module"` なので、`import { runPipeline } from "../pipeline/run"`
+このパッケージは `"type": "module"` なので、`import { runPipeline } from "../src/pipeline/run"`
 がそのまま残った `.js` を Node が ESM として読み、**ESM は相対 import の拡張子省略を
-許さない**ため `ERR_MODULE_NOT_FOUND` で落ちます。ローカルで動くのは tsx と Vite が
-拡張子を補完するからで、素の Node だけが厳格です。
+許さない**ため `ERR_MODULE_NOT_FOUND` で落ちます。
 
-そこで [scripts/build-api.mjs](scripts/build-api.mjs) が実装を1ファイルに束ね、
-相対 import を消してから配ります:
+そのため `api/` と `src/`（`src/remotion/` を除く）の相対 import はすべて
+`.js` 付きで書きます — 参照先が `.ts` でも `.js` と書くのが TypeScript の作法です:
 
-```
-src/functions/generate.ts   実装（typecheck 対象）
-  ↓ esbuild --bundle --packages=external
-api-build/generate.js       相対 import ゼロ。node_modules は bare のまま
-  ↑ export { default } from "../api-build/generate.js"
-api/generate.ts             Vercel がルートとして拾う薄い入口（拡張子つき）
+```ts
+import { runPipeline } from "../src/pipeline/run.js";   // ← 実体は run.ts
+import { coursePrompts } from "./prompts/index.js";     // ← ESM にディレクトリ解決は無い
 ```
 
-入口を `api/` にコミットしてあるのは、生成物を `api/` に直接吐くと、
-ルート検出がビルドより先に走った場合に 404 になるためです。
+ローカルで拡張子なしでも動くのは tsx と Vite が補完するからで、素の Node だけが厳格です。
+つまり**ローカルで動いてもデプロイで落ちる**種類の間違いなので、疑わしいときは
+バンドルせずに変換して素の node で読ませると再現できます:
 
-バンドル時に whisper 経路はスタブへ差し替えています。デプロイ先では実行され得ないのに、
-`import("ffmpeg-static")` がファイルトレースに拾われて 78MB のバイナリを連れてくるからです。
+```bash
+npx tsc --outDir /tmp/probe --module esnext --moduleResolution bundler \
+  --target es2022 --skipLibCheck --noEmit false api/generate.ts
+node -e "import('/tmp/probe/api/generate.js')"
+```
+
+`src/remotion/` だけ拡張子なしのままなのは、そこが Vite と Remotion からしか
+読まれず、`.js` から `.tsx` への解決を新たに当てにしたくないからです。
 
 ### Vercel でできなくなること
 
@@ -136,8 +137,9 @@ api/generate.ts             Vercel がルートとして拾う薄い入口（拡
   ElevenLabs は whisper が前提）
 
 そのため whisper と ffmpeg は [whisperCaptions.ts](src/pipeline/whisperCaptions.ts)
-に隔離し、動的 import にしてあります。`ffmpeg-static` は 78MB のバイナリを同梱するので、
-トップレベル import のままだと使わないのにバンドルへ入ってしまいます。
+に隔離し、動的 import にしたうえで、`vercel.json` の `excludeFiles` で
+`ffmpeg-static` を関数から外しています。44MB のバイナリを、実行され得ない分岐のために
+配ることになるからです。
 
 なお **Blob の URL 自体は公開**です。Vercel Authentication はアプリを保護しますが、
 音声と manifest の URL を知っている人は直接取得できます。

@@ -10,9 +10,7 @@
     "server": "tsx src/server/index.ts",
     "web": "vite --config web/vite.config.ts",
     "dev": "node dev.mjs",
-    "build": "npm run web:build && npm run api:build",
     "web:build": "vite build --config web/vite.config.ts",
-    "api:build": "node scripts/build-api.mjs",
     "studio": "remotion studio",
     "render": "tsx src/render.ts",
     "typecheck": "tsc"
@@ -44,7 +42,6 @@
     "@types/react-dom": "^19.2.2",
     "@types/web": "0.0.166",
     "@vitejs/plugin-react": "^4.7.0",
-    "esbuild": "^0.28.2",
     "tsx": "^4.19.2",
     "typescript": "5.9.3",
     "vite": "^6.4.3"

@@ -5,7 +5,7 @@ import {
   narrationRules,
   structureHeading,
   visualSection,
-} from "./shared";
+} from "./shared.js";
 
 /**
  * The fallback for anything without a course of its own. This is the only

@@ -1,3 +1,7 @@
-// Route entry only — see api/generate.ts.
-// @ts-ignore — generated at build time, absent in a fresh checkout.
-export { default } from "../api-build/shorts.js";
+import { listShorts } from "../src/storage.js";
+
+export default async function handler(): Promise<Response> {
+  return Response.json(await listShorts(), {
+    headers: { "cache-control": "no-store" },
+  });
+}

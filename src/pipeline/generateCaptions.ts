@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Caption } from "@remotion/captions";
-import { config, paths } from "../config";
-import type { SceneAudio, WordBoundary } from "./generateAudio";
+import { config, paths } from "../config.js";
+import type { SceneAudio, WordBoundary } from "./generateAudio.js";
 
 const captionsFromWordBoundaries = (boundaries: WordBoundary[]): Caption[] =>
   boundaries.map((boundary) => ({
@@ -39,7 +39,7 @@ export const generateCaptions = async ({
     } else {
       // Loaded on demand: whisper.cpp and its ffmpeg binary are far too large
       // for a serverless bundle, and nothing on that path runs under `tts`.
-      const { captionsFromWhisper } = await import("./whisperCaptions");
+      const { captionsFromWhisper } = await import("./whisperCaptions.js");
       captionsPerScene.push(await captionsFromWhisper(sceneAudio.filePath));
     }
   }

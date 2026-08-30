@@ -1,4 +1,4 @@
-import type { Subject } from "./types";
+import type { Subject } from "./types.js";
 
 /**
  * A course is what the user picks before typing: it selects the system prompt

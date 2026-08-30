@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { execFileSync } from "node:child_process";
 import type { Caption } from "@remotion/captions";
 import type { WhisperModel } from "@remotion/install-whisper-cpp";
-import { config, paths } from "../config";
+import { config, paths } from "../config.js";
 
 /**
  * The whole `CAPTION_SOURCE=whisper` path, kept in its own module so nothing

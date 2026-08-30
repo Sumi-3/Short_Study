@@ -31,7 +31,7 @@ const num = (value: string | undefined, fallback: number) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
-export { VIDEO } from "./config-video";
+export { VIDEO } from "./config-video.js";
 
 export const config = {
   anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? "",

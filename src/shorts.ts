@@ -1,5 +1,5 @@
-import { courseOf, type CourseId } from "./courses";
-import type { Manifest, Subject } from "./types";
+import { courseOf, type CourseId } from "./courses.js";
+import type { Manifest, Subject } from "./types.js";
 
 /** One card in the feed. */
 export type ShortSummary = {

@@ -1,4 +1,4 @@
-import type { Script, SceneVisual } from "../types";
+import type { Script, SceneVisual } from "../types.js";
 
 type Figure = Extract<SceneVisual, { kind: "figure" }>;
 

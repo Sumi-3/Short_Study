@@ -1,4 +1,4 @@
-import type { Script } from "../types";
+import type { Script } from "../types.js";
 
 /**
  * Stands in for the Claude call when running with `--mock`, so the audio,
