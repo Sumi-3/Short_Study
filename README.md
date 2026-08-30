@@ -79,8 +79,7 @@ Vercel Functions が同じものを読む）。デプロイ先にはリクエス
 # 2. Vercel の Storage タブで Blob ストアを作る
 #    → BLOB_READ_WRITE_TOKEN が自動で入る
 # 3. 環境変数を入れる
-#      ANTHROPIC_API_KEY
-#      SHORT_STUDY_DATA_DIR=/tmp
+#      ANTHROPIC_API_KEY   ← 必須なのはこれだけ
 #      EDGE_VOICE / EDGE_RATE / TARGET_SECONDS …（任意）
 # 4. Settings → Deployment Protection → Vercel Authentication を有効化
 ```
@@ -88,11 +87,12 @@ Vercel Functions が同じものを読む）。デプロイ先にはリクエス
 **4 は省かないでください。** `/api/generate` にはアプリ側の認証がありません。
 URL を知られた時点で他人が `ANTHROPIC_API_KEY` を消費できます。
 
-ローカルとデプロイ先の違いは、動くコードではなく**環境変数2つだけ**です:
+ローカルとデプロイ先で動くコードは同じです。分かれるのは置き場所だけで、
+それも設定ではなく実行環境から決まります:
 
 | | ローカル | Vercel |
 |---|---|---|
-| 生成物の書き込み先 | `public/projects/` | `/tmp`（`SHORT_STUDY_DATA_DIR`） |
+| 生成物の書き込み先 | `public/projects/` | `/tmp`（`VERCEL` を見て自動） |
 | 完成品の置き場 | 同じ場所に残る | Vercel Blob に上げる（`BLOB_READ_WRITE_TOKEN` の有無で分岐） |
 | manifest の `audioSrc` | `projects/…/scene-01.mp3` | `https://….public.blob.vercel-storage.com/…` |
 

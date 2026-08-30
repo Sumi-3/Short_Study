@@ -76,11 +76,17 @@ export const config = {
 /**
  * Where generated projects are written. Normally that is the repo itself, but a
  * deployed build sits on a read-only filesystem with only `/tmp` writable, so
- * the data root has to come apart from the source root. Set
- * `SHORT_STUDY_DATA_DIR=/tmp` there; the finished files are uploaded from it
- * (see src/storage.ts) and the directory is free to vanish afterwards.
+ * the data root has to come apart from the source root there.
+ *
+ * `/tmp` is picked automatically on Vercel rather than left to a setting: it is
+ * the only writable path, so there is nothing for anyone to decide, and
+ * forgetting it would mean an `EROFS` failure on the first narration file.
+ * Whatever is written is uploaded from there (see src/storage.ts) and the
+ * directory is free to vanish afterwards.
  */
-const dataRoot = process.env.SHORT_STUDY_DATA_DIR ?? process.cwd();
+const dataRoot =
+  process.env.SHORT_STUDY_DATA_DIR ??
+  (process.env.VERCEL ? "/tmp" : process.cwd());
 
 export const paths = {
   root: process.cwd(),
