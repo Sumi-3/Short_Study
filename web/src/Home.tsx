@@ -133,16 +133,18 @@ export const Home: React.FC<{
           </p>
         </div>
       ) : (
-        <div className="grid">
-          {visible.map((short, index) => (
-            <button
-              className="grid__cell"
-              key={short.slug}
-              onClick={() => onOpen(visible, index)}
-            >
-              <Thumbnail short={short} />
-            </button>
-          ))}
+        <div className="grid-scroll">
+          <div className="grid">
+            {visible.map((short, index) => (
+              <button
+                className="grid__cell"
+                key={short.slug}
+                onClick={() => onOpen(visible, index)}
+              >
+                <Thumbnail short={short} />
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

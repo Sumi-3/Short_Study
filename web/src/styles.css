@@ -545,14 +545,28 @@ body {
 
 /* ---------- library grid ---------- */
 
-/* Two per row. The card is the video's own 9:16 frame, so at half a phone's
-   width everything inside it has to shrink with the box — see `.thumb`. */
-.grid {
+/*
+ * The scroll box is a separate element from the grid on purpose. When the grid
+ * itself was the flex item (`flex: 1; min-height: 0`), it was shrinkable, and
+ * Chrome pushed that squeeze down into the auto-sized rows: rows came out
+ * 198px tall for cards the aspect ratio made 414px, so every card painted over
+ * the one below it. As a plain block inside a scroller the rows are sized by
+ * the cards, which is the only thing that should size them.
+ */
+.grid-scroll {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+}
+
+/* Two per row. The card is the video's own 9:16 frame, so at half a phone's
+   width everything inside it has to shrink with the box — see `.thumb`. */
+.grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* `minmax(0, 1fr)`, not `1fr`: a grid item's automatic minimum is its
+     content, so a headline that cannot wrap would widen its column and push
+     the second one off the screen. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   padding: 12px 12px 24px;
 }
