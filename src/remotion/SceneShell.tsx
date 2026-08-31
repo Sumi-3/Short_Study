@@ -4,7 +4,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { layout, stageBottom, useTheme, textShadow, withAlpha } from "./theme";
+import { layout, shadowOf, stageBottom, useTheme, withAlpha } from "./theme";
 import { MathText } from "./MathText";
 import type { Scene } from "../types";
 
@@ -54,7 +54,7 @@ const UnitBanner: React.FC<{ unit: string; accent: string }> = ({
           letterSpacing: 2,
           lineHeight: 1.2,
           color: accent,
-          textShadow,
+          textShadow: shadowOf(theme),
         }}
       >
         {unit}
@@ -128,7 +128,7 @@ const ProblemCard: React.FC<{
           border: `3px solid ${withAlpha(accent, 0.55)}`,
           borderRadius: theme.radius === 999 ? 24 : theme.radius,
           padding: "26px 30px",
-          textShadow,
+          textShadow: shadowOf(theme),
           display: "-webkit-box",
           WebkitLineClamp: 8,
           WebkitBoxOrient: "vertical",
@@ -247,7 +247,7 @@ export const SceneShell: React.FC<{
           fontSize: isHook ? 132 : 96,
           lineHeight: 1.18,
           color: theme.ink,
-          textShadow,
+          textShadow: shadowOf(theme),
           opacity: interpolate(frame, [0.15 * fps, 0.6 * fps], [0, 1], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",

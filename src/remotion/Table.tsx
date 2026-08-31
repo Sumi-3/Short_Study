@@ -1,5 +1,5 @@
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { layout, useTheme, textShadow, withAlpha } from "./theme";
+import { layout, shadowOf, useTheme, withAlpha } from "./theme";
 import { useFitToWidth } from "./useFitToWidth";
 import type { SceneVisual } from "../types";
 
@@ -63,7 +63,7 @@ export const Table: React.FC<{ data: Data; accent: string }> = ({
           fontFamily: theme.fontFamily,
           fontSize,
           color: theme.ink,
-          textShadow,
+          textShadow: shadowOf(theme),
         }}
       >
         <tbody>
@@ -131,7 +131,7 @@ export const Table: React.FC<{ data: Data; accent: string }> = ({
             fontWeight: 700,
             fontSize: 38,
             color: accent,
-            textShadow,
+            textShadow: shadowOf(theme),
             opacity: interpolate(
               frame,
               [(0.8 + rows * 0.55) * fps, (1.4 + rows * 0.55) * fps],

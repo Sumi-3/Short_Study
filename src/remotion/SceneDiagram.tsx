@@ -3,7 +3,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { useTheme, textShadow } from "./theme";
+import { shadowOf, useTheme, withAlpha } from "./theme";
 import { SceneShell } from "./SceneShell";
 import { Formula } from "./math/Formula";
 import { Plot } from "./math/Plot";
@@ -135,7 +135,7 @@ const Bars: React.FC<{
                 fontWeight: 700,
                 fontSize: 46,
                 color: theme.ink,
-                textShadow,
+                textShadow: shadowOf(theme),
               }}
             >
               <span>{datum.label}</span>
@@ -150,7 +150,9 @@ const Bars: React.FC<{
               style={{
                 height: 34,
                 borderRadius: 17,
-                backgroundColor: "rgba(255,255,255,0.14)",
+                // The bar's unfilled groove: keyed to the ink so it stays
+                // visible on a light board, where white on white is nothing.
+                backgroundColor: withAlpha(theme.ink, 0.14),
                 overflow: "hidden",
               }}
             >

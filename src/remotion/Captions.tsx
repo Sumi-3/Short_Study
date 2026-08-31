@@ -11,7 +11,7 @@ import {
   type Caption,
   type TikTokPage,
 } from "@remotion/captions";
-import { layout, useTheme, textShadow } from "./theme";
+import { layout, plateOf, shadowOf, useTheme } from "./theme";
 
 /**
  * Japanese tokens arrive back-to-back with only a few milliseconds between
@@ -94,9 +94,9 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
           lineHeight: 1.3,
           textAlign: "center",
           color: theme.ink,
-          textShadow,
+          textShadow: shadowOf(theme),
           // One plate behind the whole block: per-token plates leave seams.
-          backgroundColor: "rgba(9,1,26,0.66)",
+          backgroundColor: plateOf(theme),
           borderRadius: 24,
           padding: "20px 32px",
           // Japanese has no inter-word spaces, so tokens are joined directly.
@@ -124,8 +124,8 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
                 // Scaling the active token would reflow the line, so the
                 // highlight is colour plus a glow only.
                 textShadow: isActive
-                  ? `0 0 28px ${accent}, ${textShadow}`
-                  : textShadow,
+                  ? `0 0 28px ${accent}, ${shadowOf(theme)}`
+                  : shadowOf(theme),
               }}
             >
               {token.text}

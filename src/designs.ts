@@ -13,7 +13,8 @@ export type DesignId =
   | "chalk"
   | "plum"
   | "forest"
-  | "ember";
+  | "ember"
+  | "whiteboard";
 
 export type DesignMeta = {
   id: DesignId;
@@ -29,6 +30,9 @@ export const DESIGNS: readonly DesignMeta[] = [
   { id: "plum", label: "梅", swatch: "#FF7AC8" },
   { id: "forest", label: "深緑", swatch: "#5CFFB0" },
   { id: "ember", label: "熾火", swatch: "#FFA24C" },
+  // The only light one. Its swatch is the board, not a marker, because that is
+  // what actually distinguishes it in a row of dark chips.
+  { id: "whiteboard", label: "ホワイトボード", swatch: "#FBFBF9" },
 ];
 
 export const DEFAULT_DESIGN: DesignId = "indigo";

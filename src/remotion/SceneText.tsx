@@ -3,7 +3,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { useTheme, textShadow } from "./theme";
+import { shadowOf, useTheme } from "./theme";
 import { SceneShell } from "./SceneShell";
 import type { Scene } from "../types";
 
@@ -58,7 +58,7 @@ const Bullet: React.FC<{
           fontSize: 60,
           lineHeight: 1.3,
           color: theme.ink,
-          textShadow,
+          textShadow: shadowOf(theme),
         }}
       >
         {text}

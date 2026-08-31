@@ -19,6 +19,7 @@ const Blob: React.FC<{
   phase: number;
 }> = ({ color, size, from, to, period, phase }) => {
   const frame = useCurrentFrame();
+  const { wash = 1 } = useTheme();
   // Ping-pong so the loop never jumps, and stays cheap to render.
   const t = Math.abs((((frame + phase) % (period * 2)) / period) - 1);
 
@@ -32,10 +33,10 @@ const Blob: React.FC<{
         top: interpolate(t, [0, 1], [from[1], to[1]]),
         backgroundImage: `radial-gradient(closest-side, ${withAlpha(
           color,
-          0.55,
-        )} 0%, ${withAlpha(color, 0.34)} 38%, ${withAlpha(
+          0.55 * wash,
+        )} 0%, ${withAlpha(color, 0.34 * wash)} 38%, ${withAlpha(
           color,
-          0.1,
+          0.1 * wash,
         )} 68%, ${withAlpha(color, 0)} 100%)`,
       }}
     />

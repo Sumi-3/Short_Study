@@ -117,13 +117,17 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
-  /* Everything below is sized in `cqi` against this box rather than in pixels:
-     the same card is a full-screen poster in the feed and half a phone's width
-     in the library grid, and a fixed 26px padding ate a third of the narrow one
-     before the text had anywhere to go. */
-  padding: clamp(9px, 7cqi, 26px);
+  /* Everything *inside* is sized in `cqi` against this box: the same card is a
+     full-screen poster in the feed and half a phone's width in the library, and
+     a fixed 26px padding ate a third of the narrow one before the text had
+     anywhere to go.
+     The padding itself has to be a percentage, not `cqi`. An element is never
+     its own query container, so `cqi` here would resolve against the nearest
+     container *above* — and with none, against the viewport, which is how it
+     stayed at its 26px maximum on a 178px card. A percentage resolves against
+     the parent's width, which is exactly the card. */
+  padding: clamp(10px, 6%, 30px);
   text-align: left;
   overflow: hidden;
 }
@@ -133,48 +137,59 @@ body {
 .thumb__unit {
   flex: none;
   max-width: 100%;
-  font-size: clamp(7px, 3.1cqi, 11px);
+  font-size: clamp(9px, 4.6cqi, 17px);
   font-weight: 900;
-  letter-spacing: clamp(0.2px, 0.45cqi, 1.5px);
-  padding: clamp(3px, 1.4cqi, 5px) clamp(7px, 3.6cqi, 13px);
+  letter-spacing: clamp(0.2px, 0.4cqi, 1.4px);
+  padding: clamp(3px, 1.7cqi, 7px) clamp(8px, 4cqi, 15px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/*
+ * The two `margin-top: auto` below are what make the card feel full.
+ *
+ * The unit is pinned to the top and the running time to the bottom, and the
+ * free space is split between the headline and the topic — so the headline
+ * lands near the middle whatever the card's height, instead of the whole block
+ * huddling in the centre with dead margins above and below it. When the text
+ * is long enough to fill the card the auto margins collapse to nothing and it
+ * simply stacks from the top.
+ */
 .thumb__headline {
-  margin: clamp(8px, 4.5cqi, 16px) 0 0;
-  font-size: clamp(12px, 9cqi, 40px);
+  margin: auto 0 0;
+  font-size: clamp(19px, 16cqi, 62px);
   font-weight: 900;
-  line-height: 1.25;
+  line-height: 1.2;
   /* Long hooks are trimmed rather than pushing the rest off the card. */
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.thumb__rule {
+  margin-top: clamp(7px, 3.6cqi, 15px);
+  width: clamp(34px, 24cqi, 110px);
+  height: clamp(3px, 1.6cqi, 6px);
+  border-radius: 3px;
+  flex: none;
+}
+
+.thumb__topic {
+  margin: auto 0 0;
+  padding-top: clamp(9px, 5cqi, 22px);
+  font-size: clamp(11px, 5.4cqi, 22px);
+  line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.thumb__rule {
-  margin-top: clamp(6px, 3.4cqi, 12px);
-  width: clamp(30px, 22cqi, 96px);
-  height: clamp(3px, 1.4cqi, 5px);
-  border-radius: 3px;
-  flex: none;
-}
-
-.thumb__topic {
-  margin: clamp(9px, 5cqi, 18px) 0 0;
-  font-size: clamp(8px, 3.6cqi, 14px);
-  line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 .thumb__meta {
-  margin: clamp(7px, 4cqi, 14px) 0 0;
-  font-size: clamp(8px, 3.2cqi, 13px);
+  margin: clamp(7px, 3.6cqi, 15px) 0 0;
+  font-size: clamp(10px, 4.2cqi, 17px);
   font-weight: 700;
 }
 
@@ -413,7 +428,10 @@ body {
   outline-offset: 1px;
 }
 
-.composer button {
+/* The submit button only — a descendant selector also caught the voice and
+   design chips nested in the form, painting every design swatch as if it were
+   the selected one. */
+.composer > button {
   padding: 16px;
   border: none;
   border-radius: 999px;
@@ -425,7 +443,7 @@ body {
   cursor: pointer;
 }
 
-.composer button:disabled {
+.composer > button:disabled {
   background: rgba(255, 255, 255, 0.16);
   color: var(--ink-dim);
 }

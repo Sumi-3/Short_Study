@@ -57,6 +57,20 @@ export type Theme = {
   easing: (input: number) => number;
   /** Multiplies every entrance duration. */
   speed: number;
+  /*
+   * The three below exist for `whiteboard`. Every other theme is light ink on
+   * a dark ground, and they all share one drop shadow, one caption plate and
+   * full-strength background washes. A light theme has to invert all three: a
+   * dark blur under dark text is a smudge, a near-black plate swallows the
+   * caption, and a 55%-alpha wash drowns white. Optional, so the dark themes
+   * stay exactly as they were written.
+   */
+  /** Behind the caption text. Defaults to `DARK_PLATE`. */
+  plate?: string;
+  /** Under every piece of text. Defaults to `textShadow`. */
+  textShadow?: string;
+  /** Scales the background wash's opacity. Defaults to 1. */
+  wash?: number;
 };
 
 const SOFT = Easing.bezier(0.16, 1, 0.3, 1);
@@ -131,6 +145,29 @@ export const designs: Record<DesignId, Theme> = {
     radius: 18,
     easing: SPRINGY,
     speed: 0.9,
+  },
+  /*
+   * The one light design: marker on a classroom whiteboard.
+   *
+   * Accents are real marker colours rather than the neon the dark themes use,
+   * because here an accent has to stay legible *as text* on white — `#4CD8FF`
+   * simply disappears. That makes them strong as background washes too, hence
+   * `wash`.
+   */
+  whiteboard: {
+    bg: "#FBFBF9",
+    bgDeep: "#E7E9EC",
+    ink: "#16202E",
+    inkDim: "rgba(22,32,46,0.56)",
+    accents: ["#1F6FEB", "#D92D20", "#0E9F6E", "#7C3AED", "#B45309"],
+    fontFamily: ROUNDED,
+    veil: "rgba(255,255,255,0.5)",
+    radius: 12,
+    easing: CRISP,
+    speed: 0.9,
+    plate: "rgba(255,255,255,0.78)",
+    textShadow: "0 2px 10px rgba(22,32,46,0.14)",
+    wash: 0.3,
   },
   /** Warm and high-contrast, for something that should feel urgent. */
   ember: {
@@ -258,3 +295,9 @@ export const stageBottom =
 
 /** Keeps white text legible over any accent-coloured shape behind it. */
 export const textShadow = "0 8px 32px rgba(0,0,0,0.55)";
+
+/** One plate behind the whole caption block; per-token plates leave seams. */
+export const DARK_PLATE = "rgba(9,1,26,0.66)";
+
+export const shadowOf = (theme: Theme) => theme.textShadow ?? textShadow;
+export const plateOf = (theme: Theme) => theme.plate ?? DARK_PLATE;

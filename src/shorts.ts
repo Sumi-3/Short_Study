@@ -13,6 +13,9 @@ export type ShortSummary = {
   unit: string;
   /** Small category under that unit. Empty on shorts made before it was recorded. */
   subunit: string;
+  /** The look it was made with, so the card matches the video. Empty on shorts
+   * made before designs existed. */
+  design: string;
   createdAt: string;
   manifestSrc: string;
   durationInFrames: number;
@@ -39,6 +42,7 @@ export const summarize = (
     subject: manifest.subject ?? "general",
     unit: manifest.unit ?? "",
     subunit: manifest.subunit ?? "",
+    design: manifest.design ?? "",
     createdAt: manifest.createdAt,
     manifestSrc,
     durationInFrames: manifest.scenes.reduce(
