@@ -17,31 +17,51 @@ import type { ShortSummary } from "./api";
  * are looking at. So the hook stays, small, under the rule.
  */
 /**
- * How big the question can be and still fit the card.
+ * The question as one flowing paragraph.
+ *
+ * `topic` carries line breaks, and they are placed for the video: a 1080px
+ * stage where a break separates the setup from its sub-questions and costs
+ * nothing. The card is a fifth of that width and has room for about nine
+ * lines, so there every break also throws away the rest of the line it ends.
+ * Honouring them shows less of the question, not more — one pasted from a
+ * rendered web page arrives with a break after every symbol and fills the card
+ * with eight one-character lines.
+ */
+const oneParagraph = (text: string) =>
+  text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .join(" ");
+
+/**
+ * How big the question can be, and how many of its lines the card can hold.
  *
  * A fixed size cannot work: these questions run from 「微分積分の基本を教えて」 to a
  * six-line exam problem, and one size either wastes the card or overflows it.
  *
- * The rule is area, not length. Halving the type quadruples what fits, so the
- * size that just fills a fixed box goes as 1/√(characters); the constants are
- * this card's proportions, measured. A hard line break costs extra because it
- * throws away the rest of the line it ends.
+ * Both numbers come from the card's own geometry, measured in `cqi` — hundredths
+ * of the card's content width, which is also what one CJK character measures at
+ * a font size of `1cqi`. So a line holds `100 / size` characters, and the space
+ * left for the question between the labels and the running time is 137 of those
+ * units tall, or `94 / size` lines. Multiply: the card holds `9400 / size²`
+ * characters, so the size that just fills it goes as 1/√(characters). The 82 is
+ * that ideal with a margin, because the estimate assumes perfect packing and
+ * real text breaks around punctuation and latin words.
  *
- * The band is narrow on purpose. Sizing purely to fit put a 22-character
- * question at 28px next to a 178-character one at 11px, and a grid of cards
- * that disagree that much about type size reads as broken rather than as
- * adaptive. Past the floor the question is truncated instead — the same trade
- * the video's problem card makes, which never goes below 32 of its 50.
+ * Past the floor the question is truncated instead of shrinking further — the
+ * same trade the video's problem card makes, which never goes below 32 of its
+ * 50.
  */
 const questionSize = (text: string) => {
-  const weight = text.length + (text.split("\n").length - 1) * 10;
-  const cqi = Math.min(17, Math.max(11, 85 / Math.sqrt(weight)));
+  const cqi = Math.min(17, Math.max(8.5, 82 / Math.sqrt(text.length)));
   return {
     // `cqi` scales with the card; the px bounds keep it readable in the grid
     // and stop it ballooning on the full-screen poster.
     fontSize: `clamp(11px, ${cqi.toFixed(1)}cqi, 44px)`,
-    // Lines that fit the space the smaller type frees up.
-    WebkitLineClamp: Math.min(10, Math.max(4, Math.ceil(83 / cqi))),
+    // `floor`, not `ceil`: a line that only half fits is a line cut through
+    // the middle.
+    WebkitLineClamp: Math.min(12, Math.max(3, Math.floor(94 / cqi))),
   };
 };
 
@@ -51,6 +71,7 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
     ? designs[short.design]
     : themes[short.subject] ?? themes.general;
   const accent = theme.accents[0];
+  const question = oneParagraph(short.topic);
   const seconds = Math.round(short.durationInFrames / short.fps);
 
   return (
@@ -81,8 +102,8 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
         </p>
       ) : null}
 
-      <p className="thumb__question" style={questionSize(short.topic)}>
-        <MathText text={short.topic} />
+      <p className="thumb__question" style={questionSize(question)}>
+        <MathText text={question} />
       </p>
 
       <div className="thumb__rule" style={{ background: accent }} />
