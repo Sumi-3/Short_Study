@@ -23,10 +23,11 @@ import type { Scene } from "../types";
  * 計量" tells them what they are about to practise before they have read a word
  * of the question, so it gets the top of the screen and a size to match.
  */
-const UnitBanner: React.FC<{ unit: string; accent: string }> = ({
-  unit,
-  accent,
-}) => {
+const UnitBanner: React.FC<{
+  unit: string;
+  accent: string;
+  fontSize: number;
+}> = ({ unit, accent, fontSize }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -50,7 +51,7 @@ const UnitBanner: React.FC<{ unit: string; accent: string }> = ({
         style={{
           fontFamily: theme.fontFamily,
           fontWeight: 900,
-          fontSize: 62,
+          fontSize,
           letterSpacing: 2,
           lineHeight: 1.2,
           color: accent,
@@ -73,20 +74,34 @@ const UnitBanner: React.FC<{ unit: string; accent: string }> = ({
   );
 };
 
-/**
- * How much of the poster's frame the question box has to fill: the whole
- * height, less the unit banner above it and the strip the library draws over
- * the bottom, less the chip, the padding and the border of the box itself.
- */
-const POSTER_BOX_HEIGHT = 1340;
-/** Clear of the unit banner, which is 62px of type over a rule at `safeTop`. */
-const POSTER_TOP = 260;
+/** The question box's own frame, shared by the video and the poster. */
+const CARD_PADDING_Y = 26;
+const CARD_PADDING_X = 30;
+const CARD_BORDER = 3;
+const CARD_LINE_HEIGHT = 1.55;
+
+/** 62px reads as 10px on a two-up card; the unit is what the library is
+ *  browsed by, so on a poster it is set larger. */
+const UNIT_SIZE = 62;
+const POSTER_UNIT_SIZE = 84;
+
+/** Clear of the unit banner: 84px of type over a rule, hung at `safeTop`. */
+const POSTER_TOP = 270;
 /** Room for the subunit-and-running-time strip the home screen draws on top. */
-const POSTER_FOOT = 200;
+const POSTER_FOOT = 220;
+/**
+ * The question box on a poster is not sized by its text — it spans everything
+ * between the banner and that strip, so a one-line question is as full a card
+ * as a six-line one.
+ */
+const POSTER_BOX_OUTER = layout.height - POSTER_TOP - POSTER_FOOT;
+/** Inside its padding and border. */
+const POSTER_BOX_HEIGHT = POSTER_BOX_OUTER - CARD_PADDING_Y * 2 - CARD_BORDER * 2;
 /** Inside the box: the frame less the safe margins, the padding and the border. */
-const POSTER_BOX_WIDTH = 838;
+const POSTER_BOX_WIDTH =
+  layout.width - layout.safeX * 2 - CARD_PADDING_X * 2 - CARD_BORDER * 2;
 /** How much of a row real text actually reaches before it has to break. */
-const PACKING = 0.88;
+const PACKING = 0.95;
 
 /**
  * Roughly how wide a string sets, in ems.
@@ -113,20 +128,22 @@ const emsOf = (text: string) => {
  * the sizes down until they fit.
  *
  * The floor truncates rather than shrinking further; the ceiling stops a
- * six-character question from being set in letters half a frame tall.
+ * three-character topic from being set in letters half a frame tall.
  */
 const posterFontSize = (text: string) => {
   const segments = text.split("\n");
 
-  for (let size = 130; size > 56; size -= 2) {
-    // Not the full width: a row breaks at a word or a kinsoku boundary, not
-    // at the last em that would have fitted, so some of every row is lost.
-    const emsPerRow = (POSTER_BOX_WIDTH / size) * PACKING;
+  for (let size = 200; size > 56; size -= 2) {
+    // Whole characters, and not quite the full width: a row breaks at a word
+    // or a kinsoku boundary, never mid-character and rarely at the last em
+    // that would have fitted. Rounding down matters most at the large sizes,
+    // where a row is only four or five characters wide to begin with.
+    const emsPerRow = Math.floor((POSTER_BOX_WIDTH / size) * PACKING);
     const rows = segments.reduce(
       (total, segment) => total + Math.max(1, Math.ceil(emsOf(segment) / emsPerRow)),
       0,
     );
-    if (rows * 1.45 * size <= POSTER_BOX_HEIGHT) {
+    if (rows * CARD_LINE_HEIGHT * size <= POSTER_BOX_HEIGHT) {
       return size;
     }
   }
@@ -162,6 +179,39 @@ const ProblemCard: React.FC<{
           ? 44
           : 50;
 
+  /** The bordered plate the question sits on. */
+  const plate = {
+    fontFamily: theme.fontFamily,
+    fontWeight: 700,
+    fontSize,
+    lineHeight: CARD_LINE_HEIGHT,
+    color: theme.ink,
+    backgroundColor: withAlpha(theme.bgDeep, 0.72),
+    border: `${CARD_BORDER}px solid ${withAlpha(accent, 0.55)}`,
+    borderRadius: theme.radius === 999 ? 24 : theme.radius,
+    padding: `${CARD_PADDING_Y}px ${CARD_PADDING_X}px`,
+    textShadow: shadowOf(theme),
+  } as const;
+
+  /** The question itself, trimmed to the lines there is room for. */
+  const body = {
+    // The question may arrive with its sub-questions and displayed formulas on
+    // their own lines; a long one is unreadable as a wall.
+    whiteSpace: "pre-line",
+    display: "-webkit-box",
+    /* In the video, 12 lines at 32px is 645px of card and the stage between
+       the unit banner and the caption band has around twice that. The poster
+       has no caption band, so its own height is what decides — `floor`,
+       because a line that only half fits is a line cut through the middle. */
+    WebkitLineClamp: poster
+      ? Math.max(3, Math.floor(POSTER_BOX_HEIGHT / (CARD_LINE_HEIGHT * fontSize)))
+      : 12,
+    WebkitBoxOrient: "vertical",
+    overflow: "hidden",
+  } as const;
+
+  const question = <MathText text={text} />;
+
   return (
     <div
       style={{
@@ -177,52 +227,47 @@ const ProblemCard: React.FC<{
         }),
       }}
     >
+      {/* A still card is nothing but the question, so nothing has to say so.
+          In the video the chip marks the section the narration is in. */}
+      {poster ? null : (
+        <div
+          style={{
+            alignSelf: "flex-start",
+            display: "inline-block",
+            backgroundColor: accent,
+            color: theme.bgDeep,
+            fontFamily: theme.fontFamily,
+            fontWeight: 900,
+            fontSize: 30,
+            letterSpacing: 2,
+            padding: "8px 22px",
+            borderRadius: theme.radius,
+            marginBottom: 16,
+          }}
+        >
+          {label}
+        </div>
+      )}
       <div
         style={{
-          alignSelf: "flex-start",
-          display: "inline-block",
-          backgroundColor: accent,
-          color: theme.bgDeep,
-          fontFamily: theme.fontFamily,
-          fontWeight: 900,
-          fontSize: 30,
-          letterSpacing: 2,
-          padding: "8px 22px",
-          borderRadius: theme.radius,
-          marginBottom: 16,
+          ...plate,
+          // On a poster the box is the frame, not a label on it: it spans
+          // everything between the banner and the foot whatever the question
+          // says, and the question sits in the middle of it. In the video it
+          // shrink-wraps the question, which is one element rather than two —
+          // the nesting alone moves the glyphs by a fraction of a pixel.
+          ...(poster
+            ? {
+                height: POSTER_BOX_OUTER,
+                boxSizing: "border-box" as const,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }
+            : body),
         }}
       >
-        {label}
-      </div>
-      <div
-        style={{
-          fontFamily: theme.fontFamily,
-          fontWeight: 700,
-          fontSize,
-          lineHeight: 1.55,
-          color: theme.ink,
-          backgroundColor: withAlpha(theme.bgDeep, 0.72),
-          border: `3px solid ${withAlpha(accent, 0.55)}`,
-          borderRadius: theme.radius === 999 ? 24 : theme.radius,
-          padding: "26px 30px",
-          textShadow: shadowOf(theme),
-          // The question may arrive with its sub-questions and displayed
-          // formulas on their own lines; a long one is unreadable as a wall.
-          whiteSpace: "pre-line",
-          display: "-webkit-box",
-          /* In the video, 12 lines at 32px is 645px of card and the stage
-             between the unit banner and the caption band has around twice
-             that. The poster has no caption band, so its own height is what
-             decides — `floor`, because a line that only half fits is a line
-             cut through the middle. */
-          WebkitLineClamp: poster
-            ? Math.max(3, Math.floor(POSTER_BOX_HEIGHT / (1.45 * fontSize)))
-            : 12,
-          WebkitBoxOrient: "vertical",
-          overflow: "hidden",
-        }}
-      >
-        <MathText text={text} />
+        {poster ? <div style={{ ...body, width: "100%" }}>{question}</div> : question}
       </div>
     </div>
   );
@@ -327,7 +372,11 @@ export const SceneShell: React.FC<{
       }}
     >
       {problem?.unit ? (
-        <UnitBanner unit={problem.unit} accent={accent} />
+        <UnitBanner
+          unit={problem.unit}
+          accent={accent}
+          fontSize={poster ? POSTER_UNIT_SIZE : UNIT_SIZE}
+        />
       ) : null}
 
       {problem ? (
