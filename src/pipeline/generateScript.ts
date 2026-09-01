@@ -4,6 +4,7 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { config } from "../config.js";
 import { apiScriptSchema, normalizeVisual, type Script } from "../types.js";
 import { coursePrompts } from "../prompts/index.js";
+import { budgetFor } from "../prompts/shared.js";
 import { topicsOf } from "../curriculum.js";
 import type { CourseId } from "../courses.js";
 
@@ -76,14 +77,39 @@ export const generateScript = async (
       : {}),
   });
 
-  const response = await client.messages.parse({
-    model: config.anthropicModel,
-    max_tokens: 16000,
-    thinking: { type: "adaptive" },
-    system: course.buildSystemPrompt(config.targetSeconds),
-    messages: [{ role: "user", content: topic }],
-    output_config: { format: zodOutputFormat(apiScriptSchema) },
-  });
+  /*
+   * The ceiling has to follow the scene count, because adaptive thinking spends
+   * from it too.
+   *
+   * A finished scene measures 275-560 characters of JSON, so 1,500 tokens per
+   * scene is generous and the flat 12,000 is headroom for the thinking. At the
+   * old fixed 16,000 a long script just stopped mid-scene and came back as
+   * `stop_reason: max_tokens` with nothing parseable.
+   *
+   * `points` does not depend on the pace, so the course's own pace is not
+   * needed in order to count the scenes.
+   */
+  const scenes = budgetFor(config.targetSeconds).points + 2;
+  const maxTokens = Math.min(64_000, 12_000 + scenes * 1_500);
+
+  /*
+   * Streamed rather than a plain `.parse()`, because the SDK refuses any
+   * non-streaming request whose `max_tokens` implies more than ten minutes of
+   * work — `3600 * max_tokens / 128000 > 600`, i.e. anything over 21,333. A
+   * 12-scene script is already past that. `finalMessage()` still carries
+   * `parsed_output`, so structured outputs survive the switch; nothing here
+   * consumes the intermediate events.
+   */
+  const response = await client.messages
+    .stream({
+      model: config.anthropicModel,
+      max_tokens: maxTokens,
+      thinking: { type: "adaptive" },
+      system: course.buildSystemPrompt(config.targetSeconds),
+      messages: [{ role: "user", content: topic }],
+      output_config: { format: zodOutputFormat(apiScriptSchema) },
+    })
+    .finalMessage();
 
   const parsed = response.parsed_output;
   if (!parsed) {

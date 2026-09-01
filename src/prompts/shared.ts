@@ -20,13 +20,26 @@ export type Budget = {
   points: number;
   totalChars: number;
   perScene: number;
+  /** Floor for one scene, so the budget is written rather than undershot. */
+  minPerScene: number;
 };
 
 export const budgetFor = (
   targetSeconds: number,
   pace: keyof typeof CHARS_PER_SECOND = "prose",
 ): Budget => {
-  const points = Math.max(2, Math.min(4, Math.round((targetSeconds - 14) / 11)));
+  /*
+   * Scenes scale with the target; only the floor of 2 is kept.
+   *
+   * This used to be capped at 4. Because `perScene` is the total divided by the
+   * scene count, that cap did not shorten a long video — it made one: at
+   * TARGET_SECONDS=120 you still got six scenes, each carrying twice the
+   * narration. That is the same explanation read slowly, not a longer one, and
+   * for a worked solution it means steps being merged rather than shown. The
+   * length of the video is the user's decision, so the number of steps follows
+   * it and the characters per scene stay where they were measured.
+   */
+  const points = Math.max(2, Math.round((targetSeconds - 14) / 11));
   const totalChars = Math.round(targetSeconds * CHARS_PER_SECOND[pace]);
 
   return {
@@ -36,6 +49,17 @@ export const budgetFor = (
     // Stated per scene as well: a total is easy to blow past one scene at a
     // time without noticing.
     perScene: Math.round(totalChars / (points + 2)),
+    /*
+     * And a floor, because the failure was the other direction.
+     *
+     * Given only "N文字以内" the model treated N as a ceiling to stay clear of
+     * and wrote about half: 274 characters against a 552 budget, every scene
+     * 20-27 characters against a cap of 46. The characters-per-second figures
+     * above are accurate — measured 4.45 against the 4.6 assumed — so the whole
+     * shortfall was here, and TARGET_SECONDS produced videos 50-65% as long as
+     * it asked for.
+     */
+    minPerScene: Math.round((totalChars / (points + 2)) * 0.85),
   };
 };
 
@@ -44,8 +68,10 @@ narration はそのまま字幕にもなる。読み上げが正しく、かつ�
 
 - 話し言葉。ですます調。1文は短く、40文字以内を目安に切る。
 - 箇条書き記号、括弧書きの補足、URL、絵文字、Markdown は使わない。
-- **1シーンのnarrationは${budget.perScene}文字以内**。全${budget.points + 2}シーンで合計${budget.totalChars}文字前後
-  （${budget.seconds}秒相当）に収める。大きく下回ると説明が駆け足になる。
+- **1シーンのnarrationは${budget.minPerScene}〜${budget.perScene}文字**。全${budget.points + 2}シーンで
+  合計${budget.totalChars}文字前後（${budget.seconds}秒相当）になる。
+  ${budget.minPerScene}文字を下回らないこと。下回ると動画が指定より短くなる。
+  短く書けてしまったシーンは、なぜそうするのかを一言足して埋める。
 
 ## そのまま書いてよいもの（正しく読まれることを実測済み）
 - 算用数字: 98、60、2.65 →「きゅうじゅうはち」等。**漢数字にしない**
