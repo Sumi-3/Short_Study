@@ -1,5 +1,6 @@
 import { designs, themes } from "../../src/remotion/theme";
 import { isDesignId } from "../../src/designs";
+import { formatTopic } from "../../src/topicText";
 import { MathText } from "../../src/remotion/MathText";
 import type { ShortSummary } from "./api";
 
@@ -48,7 +49,7 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
 
       {/* The prompt the user typed, small — the headline is the fast read. */}
       <p className="thumb__topic" style={{ color: theme.inkDim }}>
-        <MathText text={short.topic} />
+        <MathText text={formatTopic(short.topic)} />
       </p>
 
       <p className="thumb__meta" style={{ color: theme.inkDim }}>

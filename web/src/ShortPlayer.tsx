@@ -119,7 +119,16 @@ export const ShortPlayer: React.FC<{
   gate: React.RefObject<AudioGate>;
 }> = ({ manifestSrc, gate }) => {
   const player = useRef<PlayerRef>(null);
-  const [manifest, setManifest] = useState<Manifest | null>(null);
+  /**
+   * The manifest and the address it came from, together.
+   *
+   * They are one piece of state rather than two because they are handed to the
+   * composition as a pair, and a render where the new `manifestSrc` sits beside
+   * the previous `manifest` would be a lie about what is on screen.
+   */
+  const [loaded, setLoaded] = useState<{ src: string; manifest: Manifest } | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   /** A ref so the click handler can never read a stale value and re-start. */
@@ -127,13 +136,21 @@ export const ShortPlayer: React.FC<{
 
   useEffect(() => {
     let cancelled = false;
-    setManifest(null);
     setError(null);
-    setPlaying(false);
     started.current = false;
+    // Silence the outgoing short at once — the viewer has already swiped away
+    // from it, and the next manifest is a fetch away.
+    player.current?.pause();
 
+    /*
+     * The previous manifest deliberately stays in state while the next one
+     * loads. Clearing it would swap `<Player>` out for the placeholder, and a
+     * `<Player>` that unmounts takes its pool of `<audio>` tags with it — the
+     * ones this session unlocked inside a real tap. The replacements would be
+     * new elements that a phone has never allowed to make sound.
+     */
     fetchManifest(manifestSrc)
-      .then((loaded) => !cancelled && setManifest(loaded))
+      .then((manifest) => !cancelled && setLoaded({ src: manifestSrc, manifest }))
       .catch((e) => !cancelled && setError(e instanceof Error ? e.message : String(e)));
 
     return () => {
@@ -157,21 +174,27 @@ export const ShortPlayer: React.FC<{
       instance.removeEventListener("play", onPlay);
       instance.removeEventListener("pause", onPause);
     };
-  }, [manifest]);
+  }, [loaded]);
 
-  // Runs once per mounted short. Swiping to a new one after the first tap
+  // Runs once per short that loads. Swiping to a new one after the first tap
   // starts it without another tap; the first one finds no gesture yet and waits.
   useEffect(() => {
     const instance = player.current;
-    if (!manifest || !instance || !gate.current.unlocked || started.current) {
+    if (!loaded || !instance || started.current) {
+      return;
+    }
+    if (!gate.current.unlocked) {
+      // Nothing may play yet, so park on a frame that looks like the short
+      // rather than the blank one every scene fades in from.
+      instance.seekTo(Math.round(loaded.manifest.fps * 1.2));
       return;
     }
     started.current = true;
     instance.seekTo(0);
-    // The swipe that brought this short on screen, forwarded so the Player
-    // unlocks its audio tags — it checks only that an event was passed.
+    // Forwarded so the Player calls playAllAudios() — the tags it plays are the
+    // ones unlocked by the session's first tap, which is why they still sound.
     instance.play(gate.current.gesture ?? undefined);
-  }, [manifest, gate]);
+  }, [loaded, gate]);
 
   const toggle = useCallback((event: React.MouseEvent) => {
     const instance = player.current;
@@ -206,25 +229,32 @@ export const ShortPlayer: React.FC<{
   // Stable identity: a fresh object here is read as a prop change and costs an
   // audio re-schedule on every render.
   const inputProps = useMemo(
-    () => (manifest ? { manifestSrc, manifest } : null),
-    [manifestSrc, manifest],
+    () => (loaded ? { manifestSrc: loaded.src, manifest: loaded.manifest } : null),
+    [loaded],
   );
 
   const durationInFrames = useMemo(
     () =>
-      manifest
-        ? manifest.scenes.reduce((sum, scene) => sum + scene.durationInFrames, 0)
+      loaded
+        ? loaded.manifest.scenes.reduce(
+            (sum, scene) => sum + scene.durationInFrames,
+            0,
+          )
         : 0,
-    [manifest],
+    [loaded],
   );
 
   if (error) {
     return <div className="player-placeholder">読み込めませんでした: {error}</div>;
   }
 
-  if (!manifest || !inputProps) {
+  // Only before the very first manifest arrives. After that the outgoing short
+  // holds the frame, because unmounting the Player would cost the audio unlock.
+  if (!loaded || !inputProps) {
     return <div className="player-placeholder">読み込み中…</div>;
   }
+
+  const manifest = loaded.manifest;
 
   return (
     <div className="short" onClickCapture={toggle}>

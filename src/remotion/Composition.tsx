@@ -13,6 +13,7 @@ import { SceneText } from "./SceneText";
 import { SceneDiagram } from "./SceneDiagram";
 import { ThemeProvider, accentFor, designs, layout, themes } from "./theme";
 import { isDesignId } from "../designs";
+import { formatTopic } from "../topicText";
 import type { Manifest, ManifestScene } from "../types";
 
 export type StudyShortProps = {
@@ -172,7 +173,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
               problem={
                 scene.visual_type === "hook"
                   ? {
-                      text: manifest.topic,
+                      text: formatTopic(manifest.topic),
                       unit: manifest.unit ?? "",
                       // Anything but a worked problem is a subject, not a
                       // question, and calling it 問題 would read oddly.

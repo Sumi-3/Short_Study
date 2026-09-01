@@ -43,6 +43,8 @@ body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  /* The parked player is positioned against this box's content. */
+  position: relative;
   scroll-snap-type: y mandatory;
   /* Prepending a new short would otherwise shift scrollTop to keep the old one
      in view, cancelling the jump to the freshly generated video. */
@@ -67,6 +69,20 @@ body {
   gap: 12px;
   padding: 12px;
   padding-top: calc(12px + env(safe-area-inset-top));
+}
+
+/*
+ * The one Player, sitting over whichever item is on screen — see Feed.tsx for
+ * why it is not rendered inside the item. Absolute inside the scroll content,
+ * so it travels with the items rather than staying put on screen; its `top` and
+ * `height` come from the measured item height.
+ */
+.feed-item--player {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* It would otherwise contribute a second snap point at the same offset. */
+  scroll-snap-align: none;
 }
 
 .feed-item__topic {
