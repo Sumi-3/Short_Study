@@ -62,10 +62,9 @@ const ProgressBar: React.FC<{ accent: string }> = ({ accent }) => {
 
 const SceneRenderer: React.FC<{
   scene: ManifestScene;
-  pointIndex: number;
   accent: string;
   problem?: { text: string; label: string; unit: string };
-}> = ({ scene, pointIndex, accent, problem }) => {
+}> = ({ scene, accent, problem }) => {
   const { visual } = scene;
 
   if (
@@ -86,7 +85,7 @@ const SceneRenderer: React.FC<{
     return (
       <SceneDiagram
         scene={{ ...scene, visual }}
-        pointIndex={pointIndex}
+        durationInFrames={scene.durationInFrames}
         accent={accent}
       />
     );
@@ -95,7 +94,7 @@ const SceneRenderer: React.FC<{
   return (
     <SceneText
       scene={scene}
-      pointIndex={pointIndex}
+      durationInFrames={scene.durationInFrames}
       accent={accent}
       problem={problem}
     />
@@ -131,7 +130,6 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
   }
 
   let elapsedFrames = 0;
-  let pointIndex = 0;
 
   return (
     <ThemeProvider value={theme}>
@@ -141,9 +139,6 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
       {manifest.scenes.map((scene, index) => {
         const from = elapsedFrames;
         elapsedFrames += scene.durationInFrames;
-        if (scene.visual_type === "point") {
-          pointIndex += 1;
-        }
         const accent = accentFor(theme, index);
 
         return (
@@ -167,7 +162,6 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
             />
             <SceneRenderer
               scene={scene}
-              pointIndex={pointIndex}
               accent={accent}
               problem={
                 scene.visual_type === "hook"

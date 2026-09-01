@@ -76,5 +76,31 @@ export async function* generate(
 
 export const fetchShorts = () => json<ShortSummary[]>("/api/shorts");
 
-export const fetchManifest = (manifestSrc: string) =>
-  json<Manifest>(absolute(manifestSrc));
+/**
+ * A manifest is fetched at most once a session.
+ *
+ * They are immutable — the pipeline writes one per slug and never rewrites it —
+ * so there is nothing to invalidate. The feed depends on this: swiping used to
+ * mean a round-trip to blob storage before the video could appear, and the
+ * card underneath showed through for as long as that took.
+ */
+const manifests = new Map<string, Promise<Manifest>>();
+
+export const fetchManifest = (manifestSrc: string) => {
+  const cached = manifests.get(manifestSrc);
+  if (cached) {
+    return cached;
+  }
+  const pending = json<Manifest>(absolute(manifestSrc)).catch((error) => {
+    // A failure must not be remembered, or one bad moment is permanent.
+    manifests.delete(manifestSrc);
+    throw error;
+  });
+  manifests.set(manifestSrc, pending);
+  return pending;
+};
+
+/** Warms one into the cache; failures are the next real fetch's problem. */
+export const prefetchManifest = (manifestSrc: string) => {
+  void fetchManifest(manifestSrc).catch(() => {});
+};

@@ -194,13 +194,13 @@ export const SceneDiagram: React.FC<{
       }
     >;
   };
-  pointIndex: number;
+  durationInFrames: number;
   accent: string;
-}> = ({ scene, pointIndex, accent }) => {
+}> = ({ scene, durationInFrames, accent }) => {
   const { visual } = scene;
 
   return (
-    <SceneShell scene={scene} pointIndex={pointIndex} accent={accent}>
+    <SceneShell scene={scene} durationInFrames={durationInFrames} accent={accent}>
       {visual.kind === "flow" ? (
         <Flow steps={visual.steps} accent={accent} />
       ) : null}

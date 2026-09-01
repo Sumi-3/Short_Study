@@ -26,10 +26,16 @@ import type { ShortSummary } from "./api";
  * size that just fills a fixed box goes as 1/√(characters); the constants are
  * this card's proportions, measured. A hard line break costs extra because it
  * throws away the rest of the line it ends.
+ *
+ * The band is narrow on purpose. Sizing purely to fit put a 22-character
+ * question at 28px next to a 178-character one at 11px, and a grid of cards
+ * that disagree that much about type size reads as broken rather than as
+ * adaptive. Past the floor the question is truncated instead — the same trade
+ * the video's problem card makes, which never goes below 32 of its 50.
  */
 const questionSize = (text: string) => {
   const weight = text.length + (text.split("\n").length - 1) * 10;
-  const cqi = Math.min(20, Math.max(6.5, 85 / Math.sqrt(weight)));
+  const cqi = Math.min(17, Math.max(11, 85 / Math.sqrt(weight)));
   return {
     // `cqi` scales with the card; the px bounds keep it readable in the grid
     // and stop it ballooning on the full-screen poster.

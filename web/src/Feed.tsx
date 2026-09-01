@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ShortPlayer } from "./ShortPlayer";
 import { Thumbnail } from "./Thumbnail";
-import type { ShortSummary } from "./api";
+import { prefetchManifest, type ShortSummary } from "./api";
 import type { AudioGate } from "./audioGate";
 
 /**
@@ -54,31 +54,42 @@ export const Feed: React.FC<{
     return () => observer.disconnect();
   }, []);
 
+  /*
+   * Which short the player sits on, from the scroll offset.
+   *
+   * This was an IntersectionObserver at a threshold of 0.6, which meant the
+   * incoming short had to be 60% of the way on screen before the player moved
+   * to it — until then the card underneath was what you looked at. Rounding the
+   * offset hands over at the halfway point instead, and it tracks a flick
+   * continuously rather than waiting for a threshold to be crossed.
+   */
   useEffect(() => {
     const container = scroller.current;
-    if (!container) {
+    if (!container || itemHeight === 0) {
       return;
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveIndex(Number((entry.target as HTMLElement).dataset.index));
-          }
-        }
-      },
-      { root: container, threshold: 0.6 },
-    );
+    const onScroll = () => {
+      const nearest = Math.round(container.scrollTop / itemHeight);
+      const next = Math.max(0, Math.min(shorts.length - 1, nearest));
+      setActiveIndex((current) => (current === next ? current : next));
+    };
 
-    // `[data-index]` and not just `.feed-item`: the parked player wears the same
-    // class to inherit its layout, and observing it would report an index of NaN.
-    container
-      .querySelectorAll(".feed-item[data-index]")
-      .forEach((child) => observer.observe(child));
+    onScroll();
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => container.removeEventListener("scroll", onScroll);
+  }, [itemHeight, shorts.length]);
 
-    return () => observer.disconnect();
-  }, [shorts]);
+  // The swipe can go either way, so both neighbours are warmed. By the time one
+  // of them becomes the active short its manifest is already in hand.
+  useEffect(() => {
+    for (const index of [activeIndex + 1, activeIndex - 1]) {
+      const neighbour = shorts[index];
+      if (neighbour) {
+        prefetchManifest(neighbour.manifestSrc);
+      }
+    }
+  }, [activeIndex, shorts]);
 
   const active = shorts[activeIndex];
 

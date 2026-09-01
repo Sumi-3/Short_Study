@@ -153,39 +153,85 @@ const ProblemCard: React.FC<{
   );
 };
 
-const labelFor = (scene: Scene, pointIndex: number) => {
+/*
+ * Only the two scenes that are genuinely a section of their own get a chip.
+ *
+ * Every step used to be stamped "POINT 1", "POINT 2" — which asserted that each
+ * one raises a new point. Often it does not: a step carries on the working the
+ * one before it started, and numbering that as a fresh point tells the viewer
+ * to look for something new when there is nothing new to look for.
+ */
+const labelFor = (scene: Scene) => {
   if (scene.visual_type === "hook") {
     return "問題";
   }
   if (scene.visual_type === "summary") {
     return "まとめ";
   }
-  return `POINT ${pointIndex}`;
+  return null;
 };
 
 /**
  * The chrome every scene shares: the section chip and the on-screen headline
  * (`visual_content`). Children render into the stage area below it.
  */
+/** Frames the stage takes to arrive, and to leave again. */
+const ENTER = 8;
+const LEAVE = 7;
+
 export const SceneShell: React.FC<{
   scene: Scene;
-  pointIndex: number;
+  /** This scene's own length. `useVideoConfig()` reports the whole video's. */
+  durationInFrames: number;
   accent: string;
   /** The question this video answers. Only the hook is given one. */
   problem?: { text: string; label: string; unit: string };
   children?: React.ReactNode;
-}> = ({ scene, pointIndex, accent, problem, children }) => {
+}> = ({ scene, durationInFrames, accent, problem, children }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
   const isHook = scene.visual_type === "hook";
+  const label = labelFor(scene);
+  // A step that continues the one before it says so by leaving its heading
+  // empty; then the stage is only the working, and nothing announces a new
+  // section over the top of it.
+  const heading = problem ? "" : scene.visual_content;
   // With no diagram to sit under it, the headline owns the whole stage —
   // unless the problem card is already using it.
   const centered = !scene.visual && !problem;
 
+  /*
+   * The stage arrives and leaves; the background, unit banner and captions do
+   * not. Scenes are separate `<Sequence>`s with no overlap, so nothing can
+   * literally survive a cut — but fading each stage out as the next fades in
+   * turns the hard cut into a hand-over, which is the part of a PowerPoint
+   * morph that carries across a hard boundary. See the note in
+   * math/Formula.tsx for why the formulas themselves stack rather than morph.
+   */
+  const arrival = interpolate(frame, [0, ENTER], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: theme.easing,
+  });
+  const departure = interpolate(
+    frame,
+    [durationInFrames - LEAVE, durationInFrames],
+    [1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
+
   return (
     <AbsoluteFill
       style={{
+        opacity: arrival * departure,
+        // Scale rather than a slide: a slide would fight the entrance each
+        // headline and formula line already runs.
+        scale: `${interpolate(frame, [0, ENTER], [0.985, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: theme.easing,
+        })}`,
         paddingLeft: layout.safeX,
         paddingRight: layout.safeX,
         paddingTop: layout.safeTop,
@@ -210,7 +256,7 @@ export const SceneShell: React.FC<{
 
       {/* The question is the whole opening. A restatement under it competes
           with the thing the viewer came to read. */}
-      {problem ? null : (
+      {problem || (!label && !heading) ? null : (
       <div
         style={{
           display: "flex",
@@ -220,6 +266,7 @@ export const SceneShell: React.FC<{
           justifyContent: "center",
         }}
       >
+      {label ? (
       <div
         style={{
           alignSelf: "flex-start",
@@ -248,12 +295,15 @@ export const SceneShell: React.FC<{
           ),
         }}
       >
-        {labelFor(scene, pointIndex)}
+        {label}
       </div>
+      ) : null}
 
+      {heading ? (
+      <>
       <div
         style={{
-          marginTop: isHook ? 88 : 56,
+          marginTop: label ? (isHook ? 88 : 56) : 0,
           fontFamily: theme.fontFamily,
           fontWeight: 900,
           fontSize: isHook ? 132 : 96,
@@ -277,7 +327,7 @@ export const SceneShell: React.FC<{
           ),
         }}
       >
-        {scene.visual_content}
+        {heading}
       </div>
 
       {/* Accent rule that wipes in under the headline. */}
@@ -294,6 +344,8 @@ export const SceneShell: React.FC<{
           }),
         }}
       />
+      </>
+      ) : null}
 
       </div>
       )}

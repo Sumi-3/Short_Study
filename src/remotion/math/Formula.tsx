@@ -3,7 +3,7 @@ import katex from "katex";
 import "katex/dist/katex.min.css";
 import { Box } from "@remotion/rough-notation";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { layout, useTheme, textShadow } from "../theme";
+import { layout, shadowOf, useTheme } from "../theme";
 import { useFitToWidth } from "../useFitToWidth";
 
 const render = (latex: string) => {
@@ -40,7 +40,7 @@ const Line: React.FC<{
         // `.katex-display` is a block and would report the container's width.
         // Shrink-wrapping it makes the measured width the formula's own.
         width: "max-content",
-        textShadow,
+        textShadow: shadowOf(theme),
         opacity: interpolate(frame, [delay, delay + 12], [0, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
@@ -161,7 +161,7 @@ export const Formula: React.FC<{
             fontWeight: 700,
             fontSize: dense ? 38 : 42,
             color: accent,
-            textShadow,
+            textShadow: shadowOf(theme),
             opacity: interpolate(frame, [lastDelay + 20, lastDelay + 40], [0, 1], {
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
