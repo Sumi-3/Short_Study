@@ -82,8 +82,15 @@ const ProblemCard: React.FC<{
   const { fps } = useVideoConfig();
   const theme = useTheme();
 
-  // Long questions step down rather than overflowing the card.
-  const fontSize = text.length > 130 ? 38 : text.length > 88 ? 44 : 50;
+  /*
+   * Long questions step down rather than overflowing the card.
+   *
+   * The extra tier is for the exam-style questions that carry their own
+   * sub-questions and displayed formulas — those run past 200 characters and
+   * over ten lines once the line breaks are honoured.
+   */
+  const fontSize =
+    text.length > 200 ? 32 : text.length > 130 ? 38 : text.length > 88 ? 44 : 50;
 
   return (
     <div
@@ -129,8 +136,13 @@ const ProblemCard: React.FC<{
           borderRadius: theme.radius === 999 ? 24 : theme.radius,
           padding: "26px 30px",
           textShadow: shadowOf(theme),
+          // The question may arrive with its sub-questions and displayed
+          // formulas on their own lines; a long one is unreadable as a wall.
+          whiteSpace: "pre-line",
           display: "-webkit-box",
-          WebkitLineClamp: 8,
+          /* 12 lines at 32px is 645px of card, and the stage between the unit
+             banner and the caption band has around twice that. */
+          WebkitLineClamp: 12,
           WebkitBoxOrient: "vertical",
           overflow: "hidden",
         }}

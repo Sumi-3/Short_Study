@@ -222,6 +222,54 @@ export const structureHeading = (budget: Budget) => `# 構成
 2. point: ${budget.points}シーン。1シーンにつき要点は1つだけ。前のシーンを受けて積み上げる。
 3. summary: 1シーン。要点を束ねて、持ち帰る一文で締める。`;
 
+/**
+ * How the question itself should be written back out.
+ *
+ * `topic` is already in the schema and its value was being thrown away — the
+ * user's raw input was kept instead. It is now the model's job, because the
+ * model is the only thing here that can read `ｙ＝ｘ^2＋４ｘ－３` and know which
+ * characters are the formula and which are the sentence. A pattern-matcher
+ * cannot: it has to guess whether a `-` is a minus or a hyphen, whether a `,`
+ * separates points or thousands, and it has no idea what the question means.
+ *
+ * The instruction is narrow on purpose. This is typesetting, not editing — the
+ * question shown on the card has to be the question that was asked.
+ */
+export const TOPIC_RULE = `# topic（画面に出す問題文）
+入力された問題文を、**表記だけ整えて** topic に書く。文そのものは変えない。
+
+整えるもの
+- 全角の英数字・記号は半角に（ｘ→x、４→4、＝→=）。
+  ただし日本語の句読点と括弧（、。「」（））は全角のまま。
+- 等号・不等号の前後に半角スペースを1つ（y=2x+1 → y = 2x+1）。
+  符号や加減の +, - の前後は入力のままでよい。
+- 指数は ^ で書く（x², x2 ではなく x^2）。表示側で上付きになる。
+- <= >= は ≦ ≧ に、掛け算の * は ×、sqrt(2) は √2 に。
+- 列挙の読点のあとに半角スペース（A,B,C → A, B, C）。
+- 行の中の連続した空白は1つにまとめ、行頭・行末の空白は落とす。
+
+LaTeXで書かれていたら、記号に直して読める文にする（$ や \\ は画面に出さない）
+- $...$ や \\( ... \\) の囲みは外す。\\left( \\right) は普通の ( ) に。
+- \\theta→θ、\\pi→π、\\alpha→α、\\beta→β のようにギリシャ文字はそのまま1文字で。
+- \\le \\leq→≦、\\ge \\geq→≧、\\ne→≠、\\times→×、\\div→÷、\\cdot→·、\\pm→±。
+- \\sin \\cos \\tan \\log は sin cos tan log と綴りだけ残す。
+- \\sqrt{2}→√2、\\sqrt{x+1}→√(x+1)。中身が1文字なら括弧は要らない。
+- \\frac{a}{b}→a/b。分子か分母が2文字以上なら (a+1)/(b-1) のように括弧を付ける。
+- x^{2} は x^2 と書く（^ は残す。表示側で上付きになる）。
+- 空欄の記号（[ \\ ア \\ ] など）は [ア] のように詰める。
+
+改行（\\n）を入れる
+- 設問番号「(1)」「(2)」の前で改行する。
+- 入力で独立した行に置かれている式は、その式の前後で改行して1行に独立させる。
+- 全体が1〜2文の短い問題なら改行しない。1行で読める。
+
+してはいけないこと
+- 言い換え、要約、短縮、語尾や文体の変更。
+- 条件・数値・点の名前を足す、削る、並べ替える。
+- 答えや方針を書き足す。「問題:」のような見出しを足す。
+
+入力がすでに整っているなら、1文字も変えずにそのまま写す。`;
+
 export const COMMON_RULES = `- scene_idは1から連番。
 - 事実に自信がないことは書かない。数値を出すなら確かなものだけ。
 - 専門用語は初出時に一言で言い換える。`;

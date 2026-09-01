@@ -1,6 +1,5 @@
 import { designs, themes } from "../../src/remotion/theme";
 import { isDesignId } from "../../src/designs";
-import { formatTopic } from "../../src/topicText";
 import { MathText } from "../../src/remotion/MathText";
 import type { ShortSummary } from "./api";
 
@@ -10,8 +9,12 @@ import type { ShortSummary } from "./api";
  * Built from the manifest rather than rendered as an image: the pipeline never
  * runs Remotion (the browser plays the composition live), so producing a real
  * poster frame would mean bundling the composition on every generation for one
- * PNG. The hook's headline and the subject palette are the two things that
- * actually make a thumbnail readable, and both are already in the manifest.
+ * PNG.
+ *
+ * The question itself is the largest thing on the card. Browsing a library of
+ * shorts means looking for a problem, and only the problem identifies it — the
+ * hook is a punchline, which reads well once you already know which video you
+ * are looking at. So the hook stays, small, under the rule.
  */
 export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
   // Same fallback the composition uses, so a card and its video never disagree.
@@ -42,14 +45,21 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
         {short.unit || "数学"}
       </span>
 
-      <p className="thumb__headline">
-        <MathText text={short.headline} />
+      {/* Shorts made before the small category was recorded simply have none. */}
+      {short.subunit ? (
+        <p className="thumb__subunit" style={{ color: accent }}>
+          {short.subunit}
+        </p>
+      ) : null}
+
+      <p className="thumb__question">
+        <MathText text={short.topic} />
       </p>
+
       <div className="thumb__rule" style={{ background: accent }} />
 
-      {/* The prompt the user typed, small — the headline is the fast read. */}
-      <p className="thumb__topic" style={{ color: theme.inkDim }}>
-        <MathText text={formatTopic(short.topic)} />
+      <p className="thumb__hook" style={{ color: theme.inkDim }}>
+        <MathText text={short.headline} />
       </p>
 
       <p className="thumb__meta" style={{ color: theme.inkDim }}>

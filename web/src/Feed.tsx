@@ -3,7 +3,6 @@ import { ShortPlayer } from "./ShortPlayer";
 import { Thumbnail } from "./Thumbnail";
 import type { ShortSummary } from "./api";
 import type { AudioGate } from "./audioGate";
-import { formatTopic } from "../../src/topicText";
 
 /**
  * The vertical swipe feed.
@@ -97,7 +96,7 @@ export const Feed: React.FC<{
             <div className="phone">
               <Thumbnail short={short} />
             </div>
-            <p className="feed-item__topic">{formatTopic(short.topic)}</p>
+            <p className="feed-item__topic">{short.topic}</p>
           </section>
         ))}
 
@@ -111,7 +110,7 @@ export const Feed: React.FC<{
             <div className="phone">
               <ShortPlayer manifestSrc={active.manifestSrc} gate={gate} />
             </div>
-            <p className="feed-item__topic">{formatTopic(active.topic)}</p>
+            <p className="feed-item__topic">{active.topic}</p>
           </section>
         ) : null}
       </div>

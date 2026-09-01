@@ -14,6 +14,42 @@ import type { CourseId } from "../courses.js";
  * unrecognisable is dropped rather than shown, because a made-up unit is worse
  * than none.
  */
+/**
+ * Digits in the order they appear, however they were written.
+ *
+ * Full-width and superscript forms are folded first, because turning `４` into
+ * `4` and `x²` into `x^2` is exactly what the model was asked to do — the check
+ * has to see through its own instructions to be worth anything.
+ */
+const digitsOf = (text: string) =>
+  text
+    .replace(/[０-９]/g, (digit) =>
+      String.fromCharCode(digit.charCodeAt(0) - 0xfee0),
+    )
+    .replace(/²/g, "2")
+    .replace(/³/g, "3")
+    .replace(/[^0-9]/g, "");
+
+/**
+ * The model's tidied spelling of the question — unless it edited it.
+ *
+ * The prompt is what does the work; this only catches the gross failures, where
+ * a model hands back a title, an answer, or a paraphrase instead of the
+ * question. Every number surviving in order is a cheap signal for that, and
+ * numbers are the part of a maths question that must not quietly change. A
+ * question with no digits in it has nothing to check and nothing to corrupt.
+ */
+const displayTopic = (typed: string, written: string) => {
+  const tidied = written.trim();
+  if (!typed) {
+    return tidied;
+  }
+  if (!tidied) {
+    return typed;
+  }
+  return digitsOf(tidied) === digitsOf(typed) ? tidied : typed;
+};
+
 const resolveUnit = (written: string, allowed: readonly string[] | null) => {
   const unit = written.trim();
   if (!allowed || !unit) {
@@ -119,10 +155,9 @@ export const generateScript = async (
   }
 
   return {
-    // The user's own words, not the model's title for them: this is what the
-    // opening card shows, and a question paraphrased into a heading stops
-    // being the question.
-    topic: topic || parsed.topic,
+    // The same question, spelled consistently — see TOPIC_RULE. Falls back to
+    // exactly what was typed if the model returned something else.
+    topic: displayTopic(topic, parsed.topic),
     ...classify(parsed.unit, course.units),
     // Chosen by the user, not the model; runPipeline overwrites it.
     design: DEFAULT_DESIGN,
