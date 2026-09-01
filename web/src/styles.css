@@ -150,7 +150,9 @@ body {
   align-items: baseline;
   justify-content: space-between;
   gap: clamp(5px, 2.4cqi, 12px);
-  padding: clamp(16px, 10cqi, 44px) clamp(8px, 4.6cqi, 20px) clamp(7px, 3.4cqi, 16px);
+  /* The question box now reaches down to this strip, so the long fade that
+     used to lift the text off the background would only dim the box. */
+  padding: clamp(8px, 4.5cqi, 20px) clamp(8px, 4.6cqi, 20px) clamp(7px, 3.4cqi, 16px);
   /* The floor does the work on a two-up card, where 5.6cqi is only 10px: this
      line is how a short is picked out of the grid, so it stops shrinking with
      the card before it stops being readable. */

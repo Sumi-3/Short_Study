@@ -27,7 +27,9 @@ const UnitBanner: React.FC<{
   unit: string;
   accent: string;
   fontSize: number;
-}> = ({ unit, accent, fontSize }) => {
+  top: number;
+  inset: number;
+}> = ({ unit, accent, fontSize, top, inset }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -41,9 +43,9 @@ const UnitBanner: React.FC<{
     <div
       style={{
         position: "absolute",
-        top: layout.safeTop,
-        left: layout.safeX,
-        right: layout.safeX,
+        top,
+        left: inset,
+        right: inset,
         opacity: appear,
       }}
     >
@@ -85,10 +87,21 @@ const CARD_LINE_HEIGHT = 1.55;
 const UNIT_SIZE = 62;
 const POSTER_UNIT_SIZE = 84;
 
-/** Clear of the unit banner: 84px of type over a rule, hung at `safeTop`. */
-const POSTER_TOP = 270;
+/**
+ * A poster runs to the edges of the frame.
+ *
+ * The video's margins exist so nothing important lands where a phone's UI or a
+ * platform's own furniture sits over the picture. A still card has none of
+ * that on top of it, and every pixel it gives back to the margin is a pixel
+ * the question is not using, so the box is pulled out to `POSTER_SAFE_X` and
+ * the banner is pulled up with it.
+ */
+const POSTER_SAFE_X = 32;
+const POSTER_SAFE_TOP = 56;
+/** Clear of the unit banner: 84px of type over a rule, hung at the top inset. */
+const POSTER_TOP = 200;
 /** Room for the subunit-and-running-time strip the home screen draws on top. */
-const POSTER_FOOT = 220;
+const POSTER_FOOT = 180;
 /**
  * The question box on a poster is not sized by its text — it spans everything
  * between the banner and that strip, so a one-line question is as full a card
@@ -99,21 +112,23 @@ const POSTER_BOX_OUTER = layout.height - POSTER_TOP - POSTER_FOOT;
 const POSTER_BOX_HEIGHT = POSTER_BOX_OUTER - CARD_PADDING_Y * 2 - CARD_BORDER * 2;
 /** Inside the box: the frame less the safe margins, the padding and the border. */
 const POSTER_BOX_WIDTH =
-  layout.width - layout.safeX * 2 - CARD_PADDING_X * 2 - CARD_BORDER * 2;
+  layout.width - POSTER_SAFE_X * 2 - CARD_PADDING_X * 2 - CARD_BORDER * 2;
 /** How much of a row real text actually reaches before it has to break. */
-const PACKING = 0.95;
+const PACKING = 0.92;
 
 /**
  * Roughly how wide a string sets, in ems.
  *
  * Japanese is square — one character, one em — and the latin and digits mixed
- * through a maths question are a little over half that. Close enough to count
- * lines with, which is all it is for.
+ * through a maths question are a little over half that. The cut is at latin-1
+ * rather than at the CJK block, because 「、」「：」「△」 all set full width in a
+ * Japanese face however low their code points are. Close enough to count lines
+ * with, which is all it is for.
  */
 const emsOf = (text: string) => {
   let ems = 0;
   for (const character of text) {
-    ems += character.charCodeAt(0) < 0x2e80 ? 0.6 : 1;
+    ems += character.charCodeAt(0) < 0x0100 ? 0.6 : 1;
   }
   return ems;
 };
@@ -358,8 +373,8 @@ export const SceneShell: React.FC<{
           extrapolateRight: "clamp",
           easing: theme.easing,
         })}`,
-        paddingLeft: layout.safeX,
-        paddingRight: layout.safeX,
+        paddingLeft: poster ? POSTER_SAFE_X : layout.safeX,
+        paddingRight: poster ? POSTER_SAFE_X : layout.safeX,
         // The poster's question box is tall enough to reach the unit banner,
         // which is positioned absolutely and would be painted over.
         paddingTop: poster ? POSTER_TOP : layout.safeTop,
@@ -376,6 +391,8 @@ export const SceneShell: React.FC<{
           unit={problem.unit}
           accent={accent}
           fontSize={poster ? POSTER_UNIT_SIZE : UNIT_SIZE}
+          top={poster ? POSTER_SAFE_TOP : layout.safeTop}
+          inset={poster ? POSTER_SAFE_X : layout.safeX}
         />
       ) : null}
 
