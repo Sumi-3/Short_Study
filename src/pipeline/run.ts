@@ -13,7 +13,7 @@ import { generateScript } from "./generateScript.js";
  * is most of the wait, TTS is a couple of seconds, the rest is disk I/O.
  */
 const STEPS: { status: JobStatus; message: string; progress: number }[] = [
-  { status: "script", message: "台本を書いています", progress: 0.05 },
+  { status: "script", message: "台本を書いています", progress: 0.70 },
   { status: "audio", message: "ナレーションを合成しています", progress: 0.75 },
   { status: "captions", message: "字幕のタイミングを取っています", progress: 0.9 },
   { status: "manifest", message: "動画を組み立てています", progress: 0.96 },

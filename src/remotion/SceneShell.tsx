@@ -155,7 +155,7 @@ const ProblemCard: React.FC<{
 
 const labelFor = (scene: Scene, pointIndex: number) => {
   if (scene.visual_type === "hook") {
-    return "まず結論から";
+    return "問題";
   }
   if (scene.visual_type === "summary") {
     return "まとめ";

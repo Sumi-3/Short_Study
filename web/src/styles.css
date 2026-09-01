@@ -187,14 +187,14 @@ body {
  */
 .thumb__question {
   margin: auto 0 0;
-  font-size: clamp(13px, 10cqi, 42px);
   font-weight: 800;
   line-height: 1.45;
   /* It keeps the line breaks the script gave it. */
   white-space: pre-line;
-  /* A long exam question is trimmed rather than pushing the rest off the card. */
+  /* A long exam question is trimmed rather than pushing the rest off the card.
+     `font-size` and the clamped line count come from questionSize() in
+     Thumbnail.tsx — they depend on how much text there is. */
   display: -webkit-box;
-  -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

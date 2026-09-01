@@ -16,6 +16,29 @@ import type { ShortSummary } from "./api";
  * hook is a punchline, which reads well once you already know which video you
  * are looking at. So the hook stays, small, under the rule.
  */
+/**
+ * How big the question can be and still fit the card.
+ *
+ * A fixed size cannot work: these questions run from 「微分積分の基本を教えて」 to a
+ * six-line exam problem, and one size either wastes the card or overflows it.
+ *
+ * The rule is area, not length. Halving the type quadruples what fits, so the
+ * size that just fills a fixed box goes as 1/√(characters); the constants are
+ * this card's proportions, measured. A hard line break costs extra because it
+ * throws away the rest of the line it ends.
+ */
+const questionSize = (text: string) => {
+  const weight = text.length + (text.split("\n").length - 1) * 10;
+  const cqi = Math.min(20, Math.max(6.5, 85 / Math.sqrt(weight)));
+  return {
+    // `cqi` scales with the card; the px bounds keep it readable in the grid
+    // and stop it ballooning on the full-screen poster.
+    fontSize: `clamp(11px, ${cqi.toFixed(1)}cqi, 44px)`,
+    // Lines that fit the space the smaller type frees up.
+    WebkitLineClamp: Math.min(10, Math.max(4, Math.ceil(83 / cqi))),
+  };
+};
+
 export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
   // Same fallback the composition uses, so a card and its video never disagree.
   const theme = isDesignId(short.design)
@@ -52,7 +75,7 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
         </p>
       ) : null}
 
-      <p className="thumb__question">
+      <p className="thumb__question" style={questionSize(short.topic)}>
         <MathText text={short.topic} />
       </p>
 
