@@ -73,11 +73,74 @@ const UnitBanner: React.FC<{ unit: string; accent: string }> = ({
   );
 };
 
+/**
+ * How much of the poster's frame the question box has to fill: the whole
+ * height, less the unit banner above it and the strip the library draws over
+ * the bottom, less the chip, the padding and the border of the box itself.
+ */
+const POSTER_BOX_HEIGHT = 1340;
+/** Clear of the unit banner, which is 62px of type over a rule at `safeTop`. */
+const POSTER_TOP = 260;
+/** Room for the subunit-and-running-time strip the home screen draws on top. */
+const POSTER_FOOT = 200;
+/** Inside the box: the frame less the safe margins, the padding and the border. */
+const POSTER_BOX_WIDTH = 838;
+/** How much of a row real text actually reaches before it has to break. */
+const PACKING = 0.88;
+
+/**
+ * Roughly how wide a string sets, in ems.
+ *
+ * Japanese is square — one character, one em — and the latin and digits mixed
+ * through a maths question are a little over half that. Close enough to count
+ * lines with, which is all it is for.
+ */
+const emsOf = (text: string) => {
+  let ems = 0;
+  for (const character of text) {
+    ems += character.charCodeAt(0) < 0x2e80 ? 0.6 : 1;
+  }
+  return ems;
+};
+
+/**
+ * The largest size at which the whole question still fits the poster's box.
+ *
+ * Not a formula over the character count, because the question keeps its own
+ * line breaks: a break ends a line wherever it falls, so 「…求めよ。」 followed
+ * by three short lines costs four rows however few characters it holds. The
+ * only honest way to count the rows is to lay each segment out, so this walks
+ * the sizes down until they fit.
+ *
+ * The floor truncates rather than shrinking further; the ceiling stops a
+ * six-character question from being set in letters half a frame tall.
+ */
+const posterFontSize = (text: string) => {
+  const segments = text.split("\n");
+
+  for (let size = 130; size > 56; size -= 2) {
+    // Not the full width: a row breaks at a word or a kinsoku boundary, not
+    // at the last em that would have fitted, so some of every row is lost.
+    const emsPerRow = (POSTER_BOX_WIDTH / size) * PACKING;
+    const rows = segments.reduce(
+      (total, segment) => total + Math.max(1, Math.ceil(emsOf(segment) / emsPerRow)),
+      0,
+    );
+    if (rows * 1.45 * size <= POSTER_BOX_HEIGHT) {
+      return size;
+    }
+  }
+
+  return 56;
+};
+
 const ProblemCard: React.FC<{
   text: string;
   label: string;
   accent: string;
-}> = ({ text, label, accent }) => {
+  /** A still card: no captions are coming, so the question takes the frame. */
+  poster?: boolean;
+}> = ({ text, label, accent, poster }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -89,8 +152,15 @@ const ProblemCard: React.FC<{
    * sub-questions and displayed formulas — those run past 200 characters and
    * over ten lines once the line breaks are honoured.
    */
-  const fontSize =
-    text.length > 200 ? 32 : text.length > 130 ? 38 : text.length > 88 ? 44 : 50;
+  const fontSize = poster
+    ? posterFontSize(text)
+    : text.length > 200
+      ? 32
+      : text.length > 130
+        ? 38
+        : text.length > 88
+          ? 44
+          : 50;
 
   return (
     <div
@@ -140,9 +210,14 @@ const ProblemCard: React.FC<{
           // formulas on their own lines; a long one is unreadable as a wall.
           whiteSpace: "pre-line",
           display: "-webkit-box",
-          /* 12 lines at 32px is 645px of card, and the stage between the unit
-             banner and the caption band has around twice that. */
-          WebkitLineClamp: 12,
+          /* In the video, 12 lines at 32px is 645px of card and the stage
+             between the unit banner and the caption band has around twice
+             that. The poster has no caption band, so its own height is what
+             decides — `floor`, because a line that only half fits is a line
+             cut through the middle. */
+          WebkitLineClamp: poster
+            ? Math.max(3, Math.floor(POSTER_BOX_HEIGHT / (1.45 * fontSize)))
+            : 12,
           WebkitBoxOrient: "vertical",
           overflow: "hidden",
         }}
@@ -186,8 +261,14 @@ export const SceneShell: React.FC<{
   accent: string;
   /** The question this video answers. Only the hook is given one. */
   problem?: { text: string; label: string; unit: string };
+  /**
+   * Drawn as a still card rather than played. No captions arrive, so the stage
+   * runs from the banner to the foot of the frame and the question is set to
+   * fill it — on a two-up home screen the video's own 44px is under 8px.
+   */
+  poster?: boolean;
   children?: React.ReactNode;
-}> = ({ scene, durationInFrames, accent, problem, children }) => {
+}> = ({ scene, durationInFrames, accent, problem, poster, children }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -234,9 +315,12 @@ export const SceneShell: React.FC<{
         })}`,
         paddingLeft: layout.safeX,
         paddingRight: layout.safeX,
-        paddingTop: layout.safeTop,
-        // Stop the stage before the caption band so the two never collide.
-        paddingBottom: layout.height - stageBottom,
+        // The poster's question box is tall enough to reach the unit banner,
+        // which is positioned absolutely and would be painted over.
+        paddingTop: poster ? POSTER_TOP : layout.safeTop,
+        // Stop the stage before the caption band so the two never collide. The
+        // poster has no captions — only the library's own strip along the foot.
+        paddingBottom: poster ? POSTER_FOOT : layout.height - stageBottom,
         // The question and the line that answers it belong together, so they
         // are centred as one group rather than pushed to opposite ends.
         justifyContent: problem ? "center" : "flex-start",
@@ -251,6 +335,7 @@ export const SceneShell: React.FC<{
           text={problem.text}
           label={problem.label}
           accent={accent}
+          poster={poster}
         />
       ) : null}
 
@@ -327,7 +412,9 @@ export const SceneShell: React.FC<{
           ),
         }}
       >
-        {heading}
+        {/* The headline carries the same `a_n`/`x^2` notation the question
+            does, so it is typeset the same way. */}
+        <MathText text={heading} />
       </div>
 
       {/* Accent rule that wipes in under the headline. */}

@@ -1,6 +1,6 @@
 import { AbsoluteFill } from "remotion";
 import { Background } from "./Background";
-import { SceneText } from "./SceneText";
+import { SceneShell } from "./SceneShell";
 import { ThemeProvider, accentFor, designs, layout, themes } from "./theme";
 import { isDesignId } from "../designs";
 import type { Scene, Subject } from "../types";
@@ -76,11 +76,15 @@ export const Poster: React.FC<PosterProps> = ({
     <ThemeProvider value={theme}>
       <AbsoluteFill style={{ backgroundColor: theme.bgDeep }}>
         <Background />
-        <SceneText
+        {/* `SceneShell` directly rather than through `SceneText`: the hook
+            never has bullets, and this is the shell the video draws too, so a
+            card cannot drift from the frame it stands for. */}
+        <SceneShell
           scene={HOOK}
           durationInFrames={POSTER_DURATION}
           accent={accentFor(theme, 0)}
           problem={{ text: topic, unit, label }}
+          poster
         />
       </AbsoluteFill>
     </ThemeProvider>

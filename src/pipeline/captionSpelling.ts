@@ -37,6 +37,49 @@ const POWERS: Record<string, string> = {
   "3乗": "³",
 };
 
+/**
+ * Sequence terms, spelled the way the narration has to say them.
+ *
+ * `a_n` comes back from the synthesiser as 「a アンダーライン n」 — it reads the
+ * underscore out loud — and closing it up to `an` is heard as 「案」. Both
+ * measured. So the narration spells the term in kana and the subscript is put
+ * back here, in the Unicode subscripts, which is as close to typeset as a
+ * caption gets.
+ */
+const TERM_LETTERS: Record<string, string> = {
+  エー: "a",
+  ビー: "b",
+  シー: "c",
+  ディー: "d",
+  エス: "S",
+  ティー: "T",
+  ピー: "P",
+};
+
+const TERM_INDICES: Record<string, string> = {
+  エヌ: "\u2099",
+  ケー: "\u2096",
+  エム: "\u2098",
+  イチ: "\u2081",
+  ニ: "\u2082",
+  サン: "\u2083",
+  ヨン: "\u2084",
+  // The shifted term a_{n+1} is half of what a recurrence says, and the index
+  // has to be taken whole: converting the `エーエヌ` in front of it first would
+  // leave the 「プラスイチ」 stranded outside the subscript.
+  エヌプラスイチ: "\u2099\u208a\u2081",
+  エヌマイナスイチ: "\u2099\u208b\u2081",
+};
+
+const TERMS: Record<string, string> = Object.fromEntries(
+  Object.entries(TERM_LETTERS).flatMap(([letterKana, letter]) =>
+    Object.entries(TERM_INDICES).map(([indexKana, index]) => [
+      letterKana + indexKana,
+      letter + index,
+    ]),
+  ),
+);
+
 /** Unambiguous in kana: nothing else in a maths script spells these. */
 const ALWAYS: Record<string, string> = {
   コサイン: "cos",
@@ -45,6 +88,7 @@ const ALWAYS: Record<string, string> = {
   イコール: "=",
   ルート: "√",
   ...POWERS,
+  ...TERMS,
 };
 
 /**
@@ -70,7 +114,8 @@ const OPERATORS: Record<string, string> = {
  * one token whose たす is part of a verb. Requiring notation on the left tells
  * the two apart: `²たす` converts, `満たす` does not.
  */
-const AFTER_NOTATION = /[0-9A-Za-z²³⁴√πθ°=+−×÷()/.]/;
+const AFTER_NOTATION =
+  /[0-9A-Za-z²³⁴√πθ°=+−×÷()/.₁₂₃₄ₖₘₙ]/;
 
 /**
  * Rejoins a word the boundaries cut up.
