@@ -75,7 +75,7 @@ export const SceneText: React.FC<{
   scene: Scene;
   durationInFrames: number;
   accent: string;
-  problem?: { text: string; label: string; unit: string };
+  problem?: { text: string; points: string[]; label: string; unit: string };
 }> = ({ scene, durationInFrames, accent, problem }) => {
   const items =
     scene.visual?.kind === "bullets" ? scene.visual.items : [];

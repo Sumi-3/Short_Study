@@ -63,7 +63,7 @@ const ProgressBar: React.FC<{ accent: string }> = ({ accent }) => {
 const SceneRenderer: React.FC<{
   scene: ManifestScene;
   accent: string;
-  problem?: { text: string; label: string; unit: string };
+  problem?: { text: string; points: string[]; label: string; unit: string };
 }> = ({ scene, accent, problem }) => {
   const { visual } = scene;
 
@@ -167,6 +167,9 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
                 scene.visual_type === "hook"
                   ? {
                       text: manifest.topic,
+                      // Bullets when the short has them; the question itself
+                      // for one made before the outline existed.
+                      points: manifest.outline ?? [],
                       unit: manifest.unit ?? "",
                       // Anything but a worked problem is a subject, not a
                       // question, and calling it 問題 would read oddly.

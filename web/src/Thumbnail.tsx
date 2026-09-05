@@ -31,6 +31,7 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
       component={Poster}
       inputProps={{
         topic: short.topic,
+        outline: short.outline ?? [],
         unit: short.unit,
         design: short.design,
         subject: short.subject,

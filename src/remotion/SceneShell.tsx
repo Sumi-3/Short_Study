@@ -115,6 +115,8 @@ const POSTER_BOX_WIDTH =
   layout.width - POSTER_SAFE_X * 2 - CARD_PADDING_X * 2 - CARD_BORDER * 2;
 /** How much of a row real text actually reaches before it has to break. */
 const PACKING = 0.92;
+/** The marker and the space after it, in ems of the text beside them. */
+const BULLET_GUTTER = 1.2;
 
 /**
  * Roughly how wide a string sets, in ems.
@@ -147,15 +149,15 @@ const emsOf = (text: string) => {
  * the box it came out in letters a fifth of the frame tall — a slogan rather
  * than a question. Past 130 the box is better left with air in it.
  */
-const posterFontSize = (text: string) => {
-  const segments = text.split("\n");
-
+const posterFontSize = (segments: string[], bulleted: boolean) => {
   for (let size = 130; size > 56; size -= 2) {
     // Whole characters, and not quite the full width: a row breaks at a word
     // or a kinsoku boundary, never mid-character and rarely at the last em
     // that would have fitted. Rounding down matters most at the large sizes,
     // where a row is only four or five characters wide to begin with.
-    const emsPerRow = Math.floor((POSTER_BOX_WIDTH / size) * PACKING);
+    const emsPerRow = Math.floor(
+      (POSTER_BOX_WIDTH / size) * PACKING - (bulleted ? BULLET_GUTTER : 0),
+    );
     const rows = segments.reduce(
       (total, segment) => total + Math.max(1, Math.ceil(emsOf(segment) / emsPerRow)),
       0,
@@ -170,14 +172,22 @@ const posterFontSize = (text: string) => {
 
 const ProblemCard: React.FC<{
   text: string;
+  /** The question as its parts. Falls back to `text` when a short has none. */
+  points: string[];
   label: string;
   accent: string;
   /** A still card: no captions are coming, so the question takes the frame. */
   poster?: boolean;
-}> = ({ text, label, accent, poster }) => {
+}> = ({ text, points, label, accent, poster }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
+
+  // A bulleted card is the same lines with a marker in front of each; the
+  // question is only a paragraph when the short predates the outline.
+  const bulleted = points.length > 0;
+  const lines = bulleted ? points : text.split("\n");
+  const measured = lines.join("\n");
 
   /*
    * Long questions step down rather than overflowing the card.
@@ -187,12 +197,12 @@ const ProblemCard: React.FC<{
    * over ten lines once the line breaks are honoured.
    */
   const fontSize = poster
-    ? posterFontSize(text)
-    : text.length > 200
+    ? posterFontSize(lines, bulleted)
+    : measured.length > 200
       ? 32
-      : text.length > 130
+      : measured.length > 130
         ? 38
-        : text.length > 88
+        : measured.length > 88
           ? 44
           : 50;
 
@@ -227,7 +237,36 @@ const ProblemCard: React.FC<{
     overflow: "hidden",
   } as const;
 
-  const question = <MathText text={text} />;
+  const question = bulleted ? (
+    lines.map((point) => (
+      <div
+        key={point}
+        style={{
+          display: "flex",
+          alignItems: "baseline",
+          gap: `${BULLET_GUTTER * 0.45}em`,
+        }}
+      >
+        <span
+          style={{
+            flex: "none",
+            width: `${BULLET_GUTTER * 0.35}em`,
+            height: `${BULLET_GUTTER * 0.35}em`,
+            borderRadius: "0.1em",
+            backgroundColor: accent,
+            // Baseline alignment puts a box on the baseline itself; nudging it
+            // up by a third of the type size centres it on the line.
+            transform: "translateY(-0.28em)",
+          }}
+        />
+        <span style={{ minWidth: 0 }}>
+          <MathText text={point} />
+        </span>
+      </div>
+    ))
+  ) : (
+    <MathText text={text} />
+  );
 
   return (
     <div
@@ -322,7 +361,7 @@ export const SceneShell: React.FC<{
   durationInFrames: number;
   accent: string;
   /** The question this video answers. Only the hook is given one. */
-  problem?: { text: string; label: string; unit: string };
+  problem?: { text: string; points: string[]; label: string; unit: string };
   /**
    * Drawn as a still card rather than played. No captions arrive, so the stage
    * runs from the banner to the foot of the frame and the question is set to
@@ -335,6 +374,14 @@ export const SceneShell: React.FC<{
   const { fps } = useVideoConfig();
   const theme = useTheme();
   const isHook = scene.visual_type === "hook";
+  /*
+   * The question is set to the same width whether it is a card or the opening
+   * of the video, so tapping the one and getting the other is the same frame
+   * carrying on rather than a reflow. The margin the other scenes keep is
+   * there for the phone's own furniture; nothing but the question is under it
+   * here, and the question would rather have the width.
+   */
+  const inset = poster || problem ? POSTER_SAFE_X : layout.safeX;
   const label = labelFor(scene);
   // A step that continues the one before it says so by leaving its heading
   // empty; then the stage is only the working, and nothing announces a new
@@ -375,8 +422,8 @@ export const SceneShell: React.FC<{
           extrapolateRight: "clamp",
           easing: theme.easing,
         })}`,
-        paddingLeft: poster ? POSTER_SAFE_X : layout.safeX,
-        paddingRight: poster ? POSTER_SAFE_X : layout.safeX,
+        paddingLeft: inset,
+        paddingRight: inset,
         // The poster's question box is tall enough to reach the unit banner,
         // which is positioned absolutely and would be painted over.
         paddingTop: poster ? POSTER_TOP : layout.safeTop,
@@ -394,13 +441,14 @@ export const SceneShell: React.FC<{
           accent={accent}
           fontSize={poster ? POSTER_UNIT_SIZE : UNIT_SIZE}
           top={poster ? POSTER_SAFE_TOP : layout.safeTop}
-          inset={poster ? POSTER_SAFE_X : layout.safeX}
+          inset={inset}
         />
       ) : null}
 
       {problem ? (
         <ProblemCard
           text={problem.text}
+          points={problem.points}
           label={problem.label}
           accent={accent}
           poster={poster}

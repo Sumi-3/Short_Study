@@ -21,6 +21,8 @@ import type { Scene, Subject } from "../types";
  */
 export type PosterProps = {
   topic: string;
+  /** The question as bullet points; empty falls back to the question itself. */
+  outline: string[];
   unit: string;
   design: string;
   subject: Subject;
@@ -65,6 +67,7 @@ export const themeOf = (design: string, subject: Subject) =>
 
 export const Poster: React.FC<PosterProps> = ({
   topic,
+  outline,
   unit,
   design,
   subject,
@@ -83,7 +86,7 @@ export const Poster: React.FC<PosterProps> = ({
           scene={HOOK}
           durationInFrames={POSTER_DURATION}
           accent={accentFor(theme, 0)}
-          problem={{ text: topic, unit, label }}
+          problem={{ text: topic, points: outline, unit, label }}
           poster
         />
       </AbsoluteFill>
