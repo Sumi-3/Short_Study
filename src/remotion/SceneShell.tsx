@@ -142,13 +142,15 @@ const emsOf = (text: string) => {
  * only honest way to count the rows is to lay each segment out, so this walks
  * the sizes down until they fit.
  *
- * The floor truncates rather than shrinking further; the ceiling stops a
- * three-character topic from being set in letters half a frame tall.
+ * The floor truncates rather than shrinking further. The ceiling is what a
+ * short question gets: 「∫_0^π …を求めよ。」 is 28 characters, and left to fill
+ * the box it came out in letters a fifth of the frame tall — a slogan rather
+ * than a question. Past 130 the box is better left with air in it.
  */
 const posterFontSize = (text: string) => {
   const segments = text.split("\n");
 
-  for (let size = 200; size > 56; size -= 2) {
+  for (let size = 130; size > 56; size -= 2) {
     // Whole characters, and not quite the full width: a row breaks at a word
     // or a kinsoku boundary, never mid-character and rarely at the last em
     // that would have fitted. Rounding down matters most at the large sizes,

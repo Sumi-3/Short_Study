@@ -7,8 +7,12 @@ import { Fragment } from "react";
  * mean what they look like, while `x^2y` stops at the 2 — the same reading
  * LaTeX gives it. A subscript needs the braces as often as not, because a
  * sequence's index is usually an expression: `a_{n+1}`, `S_{2n}`.
+ *
+ * "Letter" has to include Greek and ∞, because the bounds of an integral are
+ * where this is most needed: `∫_0^π` was setting its lower bound and leaving
+ * `^π` sitting in the line as two literal characters.
  */
-const SCRIPT = /([_^])(\{[^}]{1,12}\}|[-+]?\d+|[a-zA-Z])/g;
+const SCRIPT = /([_^])(\{[^}]{1,12}\}|[-+]?\d+|[A-Za-z\u0391-\u03c9\u221e])/g;
 
 /**
  * Plain text with exponents and indices set as exponents and indices.
