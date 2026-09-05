@@ -16,16 +16,23 @@ import { layout, plateOf, shadowOf, useTheme } from "./theme";
 /**
  * Japanese tokens arrive back-to-back with only a few milliseconds between
  * them, so time alone never breaks a page — the character budget below is what
- * actually splits the narration. This stays high enough not to fight it.
+ * actually splits the narration. This stays high enough not to fight it: at
+ * the measured 4.45 characters a second a full page is read in about five, and
+ * a window shorter than that would cut a page in half and leave the remainder
+ * on a line of its own.
  */
-const SWITCH_CAPTIONS_EVERY_MS = 2400;
+const SWITCH_CAPTIONS_EVERY_MS = 6000;
 
 /**
  * Inner width is 1080 − 2×88 (safe area) − 2×32 (plate padding) = 840px, and a
- * full-width Japanese glyph is about 1em, so 11 chars at 66px always fits on
- * one line. Going wider wraps and strands a single character on line two.
+ * full-width Japanese glyph is about 1em, so 11 chars at 66px fill one line.
+ *
+ * Two lines are allowed, which is what the band was always sized for: 2 × 66 ×
+ * 1.3 plus the plate's 40px is the 212 of `captionBandHeight`. Holding it to
+ * one line broke phrases that read as one — 「1回目に赤球が出たとき」 arrived as
+ * three pages — and each page then held the screen for barely a second.
  */
-const MAX_CHARS_PER_PAGE = 11;
+const MAX_CHARS_PER_PAGE = 22;
 
 /** A pause this long reads as a phrase boundary. */
 const PHRASE_GAP_MS = 420;

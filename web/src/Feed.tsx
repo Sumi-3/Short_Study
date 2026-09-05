@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ShortPlayer } from "./ShortPlayer";
+import { themeOf } from "../../src/remotion/Poster";
 import { Thumbnail } from "./Thumbnail";
 import { prefetchManifest, type ShortSummary } from "./api";
 import type { AudioGate } from "./audioGate";
@@ -103,11 +104,19 @@ export const Feed: React.FC<{
 
       <div className="feed-scroll" ref={scroller}>
         {shorts.map((short, index) => (
-          <section className="feed-item" key={short.slug} data-index={index}>
+          <section
+            className="feed-item"
+            key={short.slug}
+            data-index={index}
+            /* The video is 9:16 and the screen is taller, so bands are left
+               above and below whatever the padding is. Painting them the
+               video's own deepest colour makes the frame read as reaching the
+               edges instead of sitting in a letterbox. */
+            style={{ background: themeOf(short.design, short.subject).bgDeep }}
+          >
             <div className="phone">
               <Thumbnail short={short} />
             </div>
-            <p className="feed-item__topic">{short.topic}</p>
           </section>
         ))}
 
@@ -116,12 +125,15 @@ export const Feed: React.FC<{
         {active && itemHeight > 0 ? (
           <section
             className="feed-item feed-item--player"
-            style={{ top: activeIndex * itemHeight, height: itemHeight }}
+            style={{
+              top: activeIndex * itemHeight,
+              height: itemHeight,
+              background: themeOf(active.design, active.subject).bgDeep,
+            }}
           >
             <div className="phone">
               <ShortPlayer manifestSrc={active.manifestSrc} gate={gate} />
             </div>
-            <p className="feed-item__topic">{active.topic}</p>
           </section>
         ) : null}
       </div>

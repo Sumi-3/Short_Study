@@ -57,7 +57,10 @@ body {
   display: none;
 }
 
-/* One short per screenful, like a shorts feed. */
+/* One short per screenful, like a shorts feed.
+   No side padding: the video is 9:16 and the screen is taller than that, so
+   width is the only thing that decides how big it can be. Every pixel of
+   padding came straight off the video. */
 .feed-item {
   height: 100%;
   scroll-snap-align: start;
@@ -66,9 +69,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 12px;
-  padding-top: calc(12px + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) 0 0;
 }
 
 /*
@@ -85,19 +86,7 @@ body {
   scroll-snap-align: none;
 }
 
-.feed-item__topic {
-  margin: 0;
-  white-space: pre-line;
-  max-width: min(100%, 520px);
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ink-dim);
-  text-align: center;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+
 
 /*
  * `aspect-ratio` alone collapses here: in a column flex container the box has
@@ -109,10 +98,8 @@ body {
   height: 100%;
   width: auto;
   min-height: 0;
-  border-radius: 20px;
   overflow: hidden;
   background: #000;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
 }
 
 @media (max-aspect-ratio: 9 / 16) {
