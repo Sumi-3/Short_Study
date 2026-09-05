@@ -11,30 +11,25 @@ import type { Caption } from "@remotion/captions";
  */
 
 /**
- * Powers, longest spelling first: 「のにじょう」 has to be tried before
- * 「にじょう」 so the の is swallowed rather than left stranded in front of the
- * exponent.
+ * Powers, written the way a textbook writes them rather than as superscripts.
  *
- * The kanji forms are here for shorts generated before the narration rule
- * changed. They read badly — 「2乗」 splits into `2` and `乗`, and a lone 乗 is
- * as readable as の(る) as it is じょう — which is why the prompt now asks for
- * the kana spelling. Displaying them correctly costs nothing.
+ * These used to become ², and it was wrong in a way only real captions showed:
+ * 「両辺を2乗するのが鍵です」 came out as 「両辺を²するのが鍵です」. 「2乗する」 is a
+ * verb — the exponent is a thing you do to both sides, not a superscript on
+ * anything — and a substitution that cannot tell the two apart has to give up
+ * the superscript. 「2乗」 reads correctly in both positions.
+ *
+ * What is left to do here is normalise the spelling: the narration says
+ * 「にじょう」 because that is what the synthesiser reads correctly, whisper
+ * writes it either way, and the digit form is what the rest of the script uses.
  */
 const POWERS: Record<string, string> = {
-  のにじょう: "²",
-  のさんじょう: "³",
-  のよんじょう: "⁴",
-  にじょう: "²",
-  さんじょう: "³",
-  よんじょう: "⁴",
-  の二乗: "²",
-  の三乗: "³",
-  の2乗: "²",
-  の3乗: "³",
-  二乗: "²",
-  三乗: "³",
-  "2乗": "²",
-  "3乗": "³",
+  にじょう: "2乗",
+  さんじょう: "3乗",
+  よんじょう: "4乗",
+  二乗: "2乗",
+  三乗: "3乗",
+  四乗: "4乗",
 };
 
 /**
@@ -80,6 +75,29 @@ const TERMS: Record<string, string> = Object.fromEntries(
   ),
 );
 
+/**
+ * Greek letters, which the narration spells in kana so they are read at all.
+ *
+ * Unlike the operators, these are not safe as bare substrings: 「アルファベット」
+ * and 「パイプ」 open with letters. The guard is what follows — a Greek name
+ * running straight into more katakana is part of a longer word, while one
+ * followed by kana, kanji, a symbol or nothing is the letter itself.
+ */
+const GREEK: Record<string, string> = {
+  シータ: "θ",
+  パイ: "π",
+  アルファ: "α",
+  ベータ: "β",
+  ガンマ: "γ",
+  デルタ: "δ",
+  ラムダ: "λ",
+  オメガ: "ω",
+  シグマ: "Σ",
+};
+
+/** Katakana and the prolonged sound mark: what a Greek name must not run into. */
+const KATAKANA = /[\u30a0-\u30ff]/;
+
 /** Unambiguous in kana: nothing else in a maths script spells these. */
 const ALWAYS: Record<string, string> = {
   コサイン: "cos",
@@ -106,16 +124,36 @@ const OPERATORS: Record<string, string> = {
 };
 
 /**
+ * An exponent the table above cannot name.
+ *
+ * 「にじょう」 and 「さんじょう」 are spelled out there, but an exponent that is
+ * itself an expression — 「2のnたす1じょう」 — has no fixed spelling, and the kana
+ * was being left in the caption as 「2のn+1じょう」.
+ *
+ * Guarded like the operators, because じょう also opens ordinary words; after a
+ * digit, a letter or another power it can only be an exponent.
+ */
+const POWER_TAIL: Record<string, string> = {
+  じょう: "乗",
+};
+
+/** Everything that is only itself when notation comes before it. */
+const AFTER_NOTATION_ONLY: Record<string, string> = {
+  ...OPERATORS,
+  ...POWER_TAIL,
+};
+
+/**
  * What an operator may follow inside a single token and still be an operator.
  *
  * Word boundaries glue an operator to whatever precedes it — `xのにじょうたす2x`
  * comes back with a `にじょうたす` token — so the head-of-token rule alone would
  * miss it. Replacing the kana anywhere would instead break 「満たす」, which is
  * one token whose たす is part of a verb. Requiring notation on the left tells
- * the two apart: `²たす` converts, `満たす` does not.
+ * the two apart: `2乗たす` converts, `満たす` does not.
  */
 const AFTER_NOTATION =
-  /[0-9A-Za-z²³⁴√πθ°=+−×÷()/.₁₂₃₄ₖₘₙ]/;
+  /[0-9A-Za-z乗√πθ°=+−×÷()/.₁₂₃₄ₖₘₙ]/;
 
 /**
  * Rejoins a word the boundaries cut up.
@@ -175,10 +213,10 @@ const mergeSplitWords = (captions: Caption[], words: string[]): Caption[] => {
 const byLengthDesc = (entries: [string, string][]) =>
   [...entries].sort(([a], [b]) => b.length - a.length);
 
-const applyOperators = (text: string) => {
+const applyGuarded = (text: string) => {
   let out = text;
 
-  for (const [spoken, symbol] of Object.entries(OPERATORS)) {
+  for (const [spoken, symbol] of Object.entries(AFTER_NOTATION_ONLY)) {
     let at = out.indexOf(spoken);
     while (at !== -1) {
       const isHead = at === 0;
@@ -195,8 +233,30 @@ const applyOperators = (text: string) => {
   return out;
 };
 
+const applyGreek = (text: string) => {
+  let out = text;
+
+  for (const [spoken, letter] of byLengthDesc(Object.entries(GREEK))) {
+    let at = out.indexOf(spoken);
+    while (at !== -1) {
+      const next = out[at + spoken.length];
+      if (next !== undefined && KATAKANA.test(next)) {
+        at = out.indexOf(spoken, at + 1);
+        continue;
+      }
+      out = out.slice(0, at) + letter + out.slice(at + spoken.length);
+      at = out.indexOf(spoken, at + letter.length);
+    }
+  }
+
+  return out;
+};
+
 export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
-  const merged = mergeSplitWords(captions, Object.keys(ALWAYS));
+  const merged = mergeSplitWords(captions, [
+    ...Object.keys(ALWAYS),
+    ...Object.keys(GREEK),
+  ]);
   const always = byLengthDesc(Object.entries(ALWAYS));
 
   return merged.map((caption) => {
@@ -204,7 +264,8 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
     for (const [spoken, written] of always) {
       text = text.split(spoken).join(written);
     }
-    text = applyOperators(text);
+    text = applyGreek(text);
+    text = applyGuarded(text);
     return text === caption.text ? caption : { ...caption, text };
   });
 };

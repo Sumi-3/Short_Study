@@ -1,17 +1,16 @@
 import { createContext, useContext } from "react";
 import { Easing } from "remotion";
 import type { DesignId } from "../designs.js";
-import { fontFamily as notoSansJP, loadFont as loadSans } from "@remotion/google-fonts/NotoSansJP";
-import { fontFamily as notoSerifJP, loadFont as loadSerif } from "@remotion/google-fonts/NotoSerifJP";
 import { fontFamily as zenMaru, loadFont as loadRounded } from "@remotion/google-fonts/ZenMaruGothic";
 
 /**
  * Only the renderer downloads webfonts.
  *
  * `loadFont()` eagerly fetches every unicode range of the japanese subset —
- * over a hundred files per family — because the renderer must have every glyph
- * in memory before it captures a frame. A phone browser does not: it already
- * ships Japanese faces, and the stacks below fall through to them.
+ * around 120 files per weight, each behind its own `delayRender()` — because
+ * the renderer must have every glyph in memory before it captures a frame. A
+ * phone browser does not: it already ships Japanese faces, and the stack below
+ * falls through to them.
  *
  * `__STUDY_WEB__` is defined by web/vite.config.ts and undefined in the
  * Remotion bundle, so this is decided at build time rather than by sniffing
@@ -20,22 +19,30 @@ import { fontFamily as zenMaru, loadFont as loadRounded } from "@remotion/google
 const isWebPlayerBuild = typeof __STUDY_WEB__ !== "undefined" && __STUDY_WEB__;
 
 if (!isWebPlayerBuild) {
-  const options = {
-    weights: ["700", "900"] as ("700" | "900")[],
-    subsets: ["japanese", "latin"] as ("japanese" | "latin")[],
+  loadRounded("normal", {
+    weights: ["700", "900"],
+    subsets: ["japanese", "latin"],
     ignoreTooManyRequestsWarning: true,
-  };
-  loadSans("normal", options);
-  loadSerif("normal", options);
-  loadRounded("normal", { ...options, weights: ["700", "900"] });
+  });
 }
 
 /** Device faces first in the browser; the webfont is what the renderer uses. */
 const stack = (webfont: string, ...system: string[]) =>
   [`"${webfont}"`, ...system.map((s) => `"${s}"`), "sans-serif"].join(", ");
 
-const SANS = stack(notoSansJP, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Yu Gothic");
-const SERIF = stack(notoSerifJP, "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP");
+/**
+ * The one face, whatever design is picked.
+ *
+ * The designs used to reach for a sans, a serif and this, which made the
+ * typeface a second thing the picker decided without saying so — 「黒板」 came
+ * out in Mincho because it was a blackboard, not because anyone chose Mincho.
+ * A rounded gothic is the one that suits every design here: it is the face a
+ * Japanese textbook aimed at students is set in, and it stays legible at the
+ * size a question is shown on a two-up card.
+ *
+ * The fallbacks matter more than usual, because the browser never downloads
+ * the webfont (see above) — on a phone what actually paints is ヒラギノ丸ゴ.
+ */
 const ROUNDED = stack(zenMaru, "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans CJK JP");
 
 export const SUBJECTS = ["history", "math", "science", "language", "general"] as const;
@@ -90,7 +97,7 @@ export const designs: Record<DesignId, Theme> = {
     ink: "#FFFFFF",
     inkDim: "rgba(255,255,255,0.6)",
     accents: ["#4CD8FF", "#FFD84D", "#FF63A5", "#5CFFB0", "#B98CFF"],
-    fontFamily: SANS,
+    fontFamily: ROUNDED,
     veil: "rgba(4,9,20,0.44)",
     radius: 10,
     easing: CRISP,
@@ -103,7 +110,7 @@ export const designs: Record<DesignId, Theme> = {
     ink: "#F3F5FF",
     inkDim: "rgba(243,245,255,0.58)",
     accents: ["#8AA4FF", "#7BE0FF", "#C6A0FF", "#FFC97A", "#7CFFD4"],
-    fontFamily: SANS,
+    fontFamily: ROUNDED,
     veil: "rgba(7,8,25,0.46)",
     radius: 22,
     easing: SOFT,
@@ -116,7 +123,7 @@ export const designs: Record<DesignId, Theme> = {
     ink: "#F6E7C1",
     inkDim: "rgba(246,231,193,0.6)",
     accents: ["#F6E7C1", "#9BE8B4", "#FFD08A", "#8FD8FF", "#FFA8A8"],
-    fontFamily: SERIF,
+    fontFamily: ROUNDED,
     veil: "rgba(8,21,15,0.5)",
     radius: 4,
     easing: SOFT,
@@ -176,7 +183,7 @@ export const designs: Record<DesignId, Theme> = {
     ink: "#FFF4EA",
     inkDim: "rgba(255,244,234,0.58)",
     accents: ["#FFA24C", "#FFD84D", "#FF6B6B", "#FFC2A0", "#7BE0FF"],
-    fontFamily: SANS,
+    fontFamily: ROUNDED,
     veil: "rgba(21,6,2,0.46)",
     radius: 8,
     easing: CRISP,
@@ -192,7 +199,7 @@ export const themes: Record<Subject, Theme> = {
     ink: "#FFF6E6",
     inkDim: "rgba(255,246,230,0.62)",
     accents: ["#F0B93B", "#E0653A", "#8FA95A", "#79A6C0", "#D98F6A"],
-    fontFamily: SERIF,
+    fontFamily: ROUNDED,
     veil: "rgba(14,8,1,0.46)",
     radius: 8,
     easing: SOFT,
@@ -205,7 +212,7 @@ export const themes: Record<Subject, Theme> = {
     ink: "#FFFFFF",
     inkDim: "rgba(255,255,255,0.6)",
     accents: ["#4CD8FF", "#FFD84D", "#FF63A5", "#5CFFB0", "#B98CFF"],
-    fontFamily: SANS,
+    fontFamily: ROUNDED,
     veil: "rgba(4,9,20,0.44)",
     radius: 10,
     easing: CRISP,
@@ -231,7 +238,7 @@ export const themes: Record<Subject, Theme> = {
     ink: "#FFFFFF",
     inkDim: "rgba(255,255,255,0.6)",
     accents: ["#FF7FC0", "#FFD93D", "#7FE6FF", "#B4FF7F", "#FF9E6B"],
-    fontFamily: SANS,
+    fontFamily: ROUNDED,
     veil: "rgba(12,3,24,0.44)",
     radius: 18,
     easing: SOFT,
@@ -244,7 +251,7 @@ export const themes: Record<Subject, Theme> = {
     ink: "#FFFFFF",
     inkDim: "rgba(255,255,255,0.62)",
     accents: ["#FFE500", "#00E5FF", "#FF2D95", "#4DFF7C", "#FF8A00"],
-    fontFamily: SANS,
+    fontFamily: ROUNDED,
     veil: "rgba(10,1,28,0.42)",
     radius: 999,
     easing: SOFT,
