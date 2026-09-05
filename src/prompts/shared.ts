@@ -285,6 +285,38 @@ export const TOPIC_RULE = `# topic（画面に出す問題文）
 直すのは表記だけ。文そのものは入力のまま。
 入力がすでに教科書の表記で整っているなら、1文字も変えずにそのまま写す。`;
 
+/**
+ * The question, taken apart.
+ *
+ * The library shows this rather than the question itself. A card in a list is
+ * scanned, not read: 「円に内接する四角形ABCDにおいて、AB = BC = 7, CD = 5, DA = 3
+ * であるとき、cos Bの値を求めなさい。」 is one sentence a reader has to parse
+ * before they know whether it is the short they wanted, and four lines they can
+ * take in at a glance say the same thing.
+ *
+ * The model writes it, not a splitter here, because knowing which clause is a
+ * condition and which is the question is reading comprehension.
+ */
+export const OUTLINE_RULE = `# outline（一覧に出す箇条書き）
+topic と同じ問題を、一覧で見て一瞬で分かる箇条書きにする。
+
+- **1行1項目。改行で区切って3〜5行。1行は20文字以内。**
+- 与えられた条件を1項目ずつ。**最後の項目を「何を求めるか」にする。**
+- 文にしない。「〜である」「〜します」「〜とする」は書かない。体言止め。
+- 数式は topic と同じ表記のまま写す（_ ^ 記号も含めて）。
+- 行頭に「・」「-」「1.」を付けない。記号は自動で付く。
+- 問題に無い条件を足さない。解き方や答えを書かない。
+
+    入力: 円に内接する四角形ABCDにおいて、AB = BC = 7, CD = 5, DA = 3
+          であるとき、cos Bの値を求めなさい。
+    outline: "円に内接する四角形ABCD\\nAB = BC = 7\\nCD = 5, DA = 3\\ncos B を求める"
+
+    入力: ∫_0^π x sinx/(1+cos^2x) dx を求めよ。
+    outline: "定積分 ∫_0^π\\n被積分関数 x sinx/(1+cos^2x)\\n値を求める"
+
+概念の説明（「とは」「教えて」）なら、条件の代わりに扱う内容を並べ、
+最後の項目を「何が分かるか」にする。`;
+
 export const COMMON_RULES = `- scene_idは1から連番。
 - 事実に自信がないことは書かない。数値を出すなら確かなものだけ。
 - 専門用語は初出時に一言で言い換える。`;

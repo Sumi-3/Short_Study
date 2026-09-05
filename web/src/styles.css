@@ -558,26 +558,116 @@ body {
   overflow-y: auto;
 }
 
-/* Two per row. The card is the video's own 9:16 frame, so at half a phone's
-   width everything inside it has to shrink with the box — see `.thumb`. */
+/* One per row, each as tall as its own contents.
+   Two per row was a wall of 9:16 posters, and the question inside a poster
+   scaled onto half a phone's width came out at 9px — legible only in the
+   sense that the pixels were there. A full-width row can be read. */
 .grid {
   display: grid;
   /* `minmax(0, 1fr)`, not `1fr`: a grid item's automatic minimum is its
-     content, so a headline that cannot wrap would widen its column and push
-     the second one off the screen. */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+     content, so a line that cannot wrap would widen the column and push the
+     card off the screen. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
   padding: 12px 12px 24px;
 }
 
 .grid__cell {
+  display: block;
+  width: 100%;
   padding: 0;
   border: 0;
   background: #000;
   border-radius: 14px;
   overflow: hidden;
-  aspect-ratio: 9 / 16;
+  /* A button centres its text; a card does not. */
+  text-align: left;
   cursor: pointer;
+}
+
+/* ---------- library card ---------- */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px 12px;
+}
+
+.card__head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+
+.card__unit {
+  flex: none;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  padding: 4px 11px;
+  border-radius: 8px;
+}
+
+.card__subunit {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 700;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* The question, taken apart. Three to five lines a reader takes in at a
+   glance rather than one sentence they have to parse. */
+.card__points {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.card__points li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.card__points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  /* Half a line down, so the square sits on the first line's centre however
+     many lines the point runs to. */
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+/* Shorts made before the outline existed: the whole question, trimmed. */
+.card__topic {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card__foot {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 /* ---------- feed ---------- */

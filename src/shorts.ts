@@ -5,6 +5,11 @@ import type { Manifest, Subject } from "./types.js";
 export type ShortSummary = {
   slug: string;
   topic: string;
+  /**
+   * The question as bullet points — what the library card shows. Empty on
+   * shorts made before it was recorded, and the card falls back to `topic`.
+   */
+  outline: string[];
   /** The hook scene's on-screen line — what the thumbnail leads with. */
   headline: string;
   course: CourseId;
@@ -34,6 +39,7 @@ export const summarize = (
   return {
     slug,
     topic: manifest.topic,
+    outline: manifest.outline ?? [],
     // The hook's on-screen line is written to be readable at a glance, which is
     // exactly what a thumbnail needs — the raw topic is the user's whole prompt
     // sentence.

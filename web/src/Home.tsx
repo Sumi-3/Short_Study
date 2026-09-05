@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { MATH_TAXONOMY, splitUnit } from "../../src/curriculum";
-import { Thumbnail } from "./Thumbnail";
+import { LibraryCard } from "./LibraryCard";
 import type { ShortSummary } from "./api";
 
 const ALL = "すべて";
@@ -35,7 +35,7 @@ const Bar: React.FC<{
 );
 
 /**
- * The library: three cascading curriculum filters over a two-column grid.
+ * The library: three cascading curriculum filters over a list of cards.
  *
  * Only categories that actually have a video are offered — an empty chip is a
  * dead end, and the curriculum has nine courses and ninety-one topics, almost
@@ -141,7 +141,7 @@ export const Home: React.FC<{
                 key={short.slug}
                 onClick={() => onOpen(visible, index)}
               >
-                <Thumbnail short={short} />
+                <LibraryCard short={short} />
               </button>
             ))}
           </div>

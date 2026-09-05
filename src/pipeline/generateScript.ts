@@ -1,6 +1,6 @@
 import { DEFAULT_DESIGN } from "../designs.js";
-import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
+import { anthropic } from "./anthropic.js";
 import { config } from "../config.js";
 import { apiScriptSchema, normalizeVisual, type Script } from "../types.js";
 import { coursePrompts } from "../prompts/index.js";
@@ -81,18 +81,7 @@ export const generateScript = async (
     );
   }
 
-  const client = new Anthropic({
-    apiKey: config.anthropicApiKey,
-    // The SDK has no dedicated option for this, so it goes in as a header —
-    // and only when set, since an empty value is rejected.
-    ...(config.anthropicWorkspaceId
-      ? {
-          defaultHeaders: {
-            "anthropic-workspace-id": config.anthropicWorkspaceId,
-          },
-        }
-      : {}),
-  });
+  const client = anthropic();
 
   /*
    * The ceiling has to follow the scene count, because adaptive thinking spends
@@ -139,6 +128,8 @@ export const generateScript = async (
     // The same question, spelled consistently — see TOPIC_RULE. Falls back to
     // exactly what was typed if the model returned something else.
     topic: displayTopic(topic, parsed.topic),
+    // Filled in by `runPipeline` from its own call — see generateOutline.ts.
+    outline: [],
     ...classify(parsed.unit, course.units),
     // Chosen by the user, not the model; runPipeline overwrites it.
     design: DEFAULT_DESIGN,

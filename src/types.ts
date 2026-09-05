@@ -205,6 +205,8 @@ export type Subject = (typeof SUBJECTS)[number];
 
 export const scriptSchema = z.object({
   topic: z.string(),
+  /** The question as short bullet points, for the library card. */
+  outline: z.array(z.string()).default([]),
   /** Curriculum unit, e.g. "数A 図形の性質". Shown above the question. */
   unit: z.string().default(""),
   /**
@@ -604,6 +606,8 @@ export type ManifestScene = Scene & {
 
 export type Manifest = {
   topic: string;
+  /** The question as bullet points. Absent on shorts made before it existed. */
+  outline?: string[];
   /** The look this short was made with; absent on ones made before designs. */
   design?: string;
   unit: string;

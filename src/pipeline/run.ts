@@ -6,6 +6,7 @@ import { publishProject } from "../storage.js";
 import { buildManifest } from "./buildManifest.js";
 import { generateAudio } from "./generateAudio.js";
 import { generateCaptions } from "./generateCaptions.js";
+import { generateOutline } from "./generateOutline.js";
 import { generateScript } from "./generateScript.js";
 
 /**
@@ -59,6 +60,15 @@ export async function* runPipeline({
 
     const slug = makeSlug(topic);
 
+    /*
+     * Started here and collected below, so it runs while the narration is
+     * being synthesised and timed. It is a second model call and would
+     * otherwise add its whole latency to a generation; overlapped, it costs
+     * nothing. A card without it falls back to showing the question, so a
+     * failure here must not lose the video — hence the swallowed rejection.
+     */
+    const outline = generateOutline(script.topic).catch(() => [] as string[]);
+
     yield at(1);
     const sceneAudios = await generateAudio({
       scenes: script.scenes,
@@ -71,7 +81,11 @@ export async function* runPipeline({
 
     yield at(3);
     const manifest = buildManifest({
-      script: { ...script, design: design ?? DEFAULT_DESIGN },
+      script: {
+        ...script,
+        outline: await outline,
+        design: design ?? DEFAULT_DESIGN,
+      },
       slug,
       sceneAudios,
       captionsPerScene,
