@@ -160,10 +160,14 @@ const VISUAL_DOCS = {
     visual_segments = 線分。[{from, to, label, dashed, emphasis, ticks, arrow}] を1〜10本
         from / to は visual_points の label
         label = 長さなどの短い文字（不要なら空文字列）
-        dashed = true で破線。立体を平面に描くときの「隠れた辺」に使う
-        emphasis = true でアクセント色の太線。求めるものを1本だけ強調する
+        dashed = true で破線。立体の隠れた辺や、追加した補助線に使う
+        emphasis = 0 は通常線、1〜5 は色の役割を表す整数で、同じ番号は同じ色の太線になる
+            対応する辺どうしを同じ番号、別の組や補助線を別番号、求める辺を独立した番号にする
+            例: AB と DE は emphasis:1、BC と EF は emphasis:2、補助線 AD は emphasis:3, dashed:true
+            色はデザインで変わる。シーンをまたいで同じ役割の番号を保ち、「赤い辺」のように色名で呼ばず点名で説明する
+            色だけに頼らず label の数値・"?"、等しさの ticks、補助線の dashed を併用する。色は必要な組だけに使う
         ticks = 等しい辺の印の本数（0〜3）。**同じ本数の辺どうしが等しい**
-            合同・相似の証明では、対応する辺に同じ本数を付ける。不要なら0
+            等しいと分かっている辺に同じ本数を付ける。相似で対応するだけの辺は同色にし、等長の印は付けない。不要なら0
         arrow = true で to 側に矢じり。ベクトルはこれで描く
     visual_angles   = 角の印。[{at, from, to, label, ticks}] を0〜3個
         at が頂点、from と to がその両側の点。90度なら自動で直角記号になる

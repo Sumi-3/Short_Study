@@ -76,6 +76,18 @@ for (const { text, points } of fixtures) {
   }
 }
 
+// The former 56px estimate floor could approve a poster taller than its
+// frame. Check both raw text and numbered outlines well beyond that floor;
+// SSR can guard the estimate and fixed budget, but cannot exercise DOM fit.
+for (const outlined of [false, true]) {
+  const lines = [...Array.from({ length: 100 }, (_, i) => `条件${i + 1}として、すべての数値と範囲を省略せずに残す。`), "(1) 最後の問いを求めよ。"];
+  const html = renderCard(outlined ? "" : lines.join("\n"), outlined ? lines : [], true);
+  assert.ok(html.includes(mathText(outlined ? "最後の問いを求めよ。" : lines.join("\n"))));
+  assert.match(html, /height:1540px;min-height:0;display:flex;align-items:center/);
+  const size = Number(html.match(/font-weight:700;font-size:([\d.]+)px;line-height:1.55/)?.[1]);
+  assert.ok(size > 0 && size < 56, `long poster must shrink below 56px, got ${size}`);
+}
+
 let manifests = 0;
 let scenes = 0;
 for (const file of await readdir(new URL("../public/projects/", import.meta.url), { recursive: true })) {

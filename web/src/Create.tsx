@@ -1,15 +1,77 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { COURSES } from "../../src/courses";
 import { DEFAULT_DESIGN, DESIGNS, type DesignId } from "../../src/designs";
 import { VOICES } from "../../src/voices";
 import type { JobEvent } from "./api";
 import { playSample } from "./voiceSamples";
 
+/**
+ * Roughly how long each step runs, in seconds. Only the shape of the creep
+ * depends on these, never where it ends up — the next event is what settles a
+ * step — so being wrong here costs a bar that fills a little fast or a little
+ * slow, not one that lies about the milestone.
+ */
+const APPROACH_SECONDS: Partial<Record<JobEvent["status"], number>> = {
+  queued: 3,
+  // The Claude call. Far and away the longest wait in a run.
+  script: 16,
+  audio: 5,
+  captions: 5,
+  manifest: 2,
+};
+
+/**
+ * Creeps toward the step's weight instead of jumping to it.
+ *
+ * `runPipeline` reports a step as it *starts*, and the weights are how much of
+ * the wall clock is done once that step *ends*. So 「台本を書いています」at
+ * 0.70 means "this will be 70% when it finishes", not "we are at 70%" — but
+ * the bar read it literally and sat at 70% for the whole Claude call, which is
+ * the one step long enough for anyone to watch.
+ *
+ * The approach is exponential, so it never quite arrives: only the next event
+ * completes a step, and a bar that reached the target early would stall just
+ * as visibly as one that jumped there.
+ */
+const useCreepingProgress = (job: JobEvent) => {
+  const settled = job.status === "done" || job.status === "error";
+  const [shown, setShown] = useState(0);
+  /* The rendered value, kept in a ref so a new step can pick up exactly where
+     the last one left off without making `shown` an effect dependency. */
+  const latest = useRef(0);
+
+  useEffect(() => {
+    if (settled) {
+      latest.current = job.progress;
+      setShown(job.progress);
+      return;
+    }
+
+    const from = latest.current;
+    const startedAt = performance.now();
+    const tau = (APPROACH_SECONDS[job.status] ?? 8) * 1000;
+
+    // Coarser than a frame on purpose: the fill already carries a 0.4s CSS
+    // transition, so this only has to keep the target moving.
+    const timer = setInterval(() => {
+      const elapsed = performance.now() - startedAt;
+      const next = job.progress - (job.progress - from) * Math.exp(-elapsed / tau);
+      latest.current = next;
+      setShown(next);
+    }, 250);
+
+    return () => clearInterval(timer);
+  }, [job.status, job.progress, settled]);
+
+  return shown;
+};
+
 const JobCard: React.FC<{ job: JobEvent; onDismiss: () => void }> = ({
   job,
   onDismiss,
 }) => {
   const settled = job.status === "done" || job.status === "error";
+  const progress = useCreepingProgress(job);
 
   return (
     <div className={`job job--${job.status}`}>
@@ -20,11 +82,11 @@ const JobCard: React.FC<{ job: JobEvent; onDismiss: () => void }> = ({
             ✕
           </button>
         ) : (
-          <span className="job__percent">{Math.round(job.progress * 100)}%</span>
+          <span className="job__percent">{Math.round(progress * 100)}%</span>
         )}
       </div>
       <div className="job__track">
-        <div className="job__fill" style={{ width: `${job.progress * 100}%` }} />
+        <div className="job__fill" style={{ width: `${progress * 100}%` }} />
       </div>
       {job.error ? <p className="job__error">{job.error}</p> : null}
     </div>

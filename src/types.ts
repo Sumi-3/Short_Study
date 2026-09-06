@@ -5,6 +5,16 @@ import type { Caption } from "@remotion/captions";
 import { COURSE_IDS, type CourseId } from "./courses.js";
 
 /**
+ * Reuse emphasis rather than adding color fields: even nested properties grow
+ * the already-full structured-output grammar. The API gets one integer type;
+ * the SDK moves its bounds to a description and Zod validates 0–5 locally.
+ * Boolean compatibility belongs only to the local manifest schema, so it
+ * cannot add a union to the API grammar.
+ * Angles/circles keep their existing marks until grammar headroom is proven.
+ */
+const figureEmphasisSchema = z.number().int().min(0).max(5);
+
+/**
  * Optional richer visual payload. `visual_content` (required by the base schema)
  * always holds a plain-text version of the same thing, so a scene without
  * `visual` still renders — it just falls back to animated text.
@@ -123,8 +133,8 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
         label: z.string(),
         /** A hidden edge in a solid's projection. */
         dashed: z.boolean(),
-        /** The segment the scene is about — drawn in the accent colour. */
-        emphasis: z.boolean(),
+        /** 0: ordinary; 1–5: stable palette roles. Old booleans keep their look. */
+        emphasis: z.union([figureEmphasisSchema, z.boolean()]),
         /** Hash marks: segments carrying the same count are equal in length. */
         ticks: z.number(),
         /** Draws an arrowhead at `to`, making the segment a vector. */
@@ -330,7 +340,7 @@ export const apiScriptSchema = z.object({
           to: z.string(),
           label: z.string(),
           dashed: z.boolean(),
-          emphasis: z.boolean(),
+          emphasis: figureEmphasisSchema,
           /** Equal-length hash marks; 0 for none. */
           ticks: z.number(),
           /** Arrowhead at `to`, for a vector. */

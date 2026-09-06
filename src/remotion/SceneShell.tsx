@@ -139,13 +139,16 @@ const emsOf = (text: string) => {
  * only honest way to count the rows is to lay each segment out, so this walks
  * the sizes down until they fit.
  *
- * DOM fitting handles overflow below the estimated floor without hiding text.
+ * There is no readability floor: losing a condition changes the problem, so
+ * unusually long questions must get smaller rather than lose their ending.
+ * DOM fitting covers the dividers, question gaps and actual font metrics that
+ * this estimate cannot count, including overflow at the last positive size.
  * The ceiling is what a short question gets: 「∫_0^π …を求めよ。」 is 28 characters, and left to fill
  * the box it came out in letters a fifth of the frame tall — a slogan rather
  * than a question. Past 130 the box is better left with air in it.
  */
 const posterFontSize = (segments: string[], outlined: boolean) => {
-  for (let size = 130; size > 56; size -= 2) {
+  for (let size = 130; size > 2; size -= 2) {
     // Whole characters, and not quite the full width: a row breaks at a word
     // or a kinsoku boundary, never mid-character and rarely at the last em
     // that would have fitted. Rounding down matters most at the large sizes,
@@ -162,7 +165,7 @@ const posterFontSize = (segments: string[], outlined: boolean) => {
     }
   }
 
-  return 56;
+  return 2;
 };
 
 const ProblemCard: React.FC<{
@@ -187,8 +190,8 @@ const ProblemCard: React.FC<{
   // The opening can spend its vertical space on complete sentences. Start
   // larger even for long questions, then fit the actual wrapped block instead
   // of silently dropping the thirteenth line (often the second question).
-  // Posters keep the same complete content, but start at 56–130px because the
-  // library displays them much smaller and they have no caption band.
+  // Posters estimate up to 130px, with no readability floor: the library has
+  // no caption band, but even its longer questions must keep every condition.
   const fontSize = poster
     ? posterFontSize(lines, outlined)
     : measured.length > 200 ? 44 : measured.length > 130 ? 48
@@ -250,7 +253,12 @@ const ProblemCard: React.FC<{
         {/* A bounded viewport lets the shared fitter count labels, dividers,
             wrapped questions and webfont metrics together. Full text takes
             priority over the nominal size only when that measured block spills. */}
-        <div ref={viewportRef} style={{ height: "100%", minHeight: 0, display: "flex", alignItems: "center" }}>
+        {/* On a poster the available space is known. A percentage inside the
+            flex-sized parent can be indefinite and grow with its content;
+            measuring that as the budget would approve the very overflow we
+            need to shrink. Use composition pixels, unaffected by Thumbnail's
+            display scale, and leave the video's measurement path unchanged. */}
+        <div ref={viewportRef} style={{ height: poster ? POSTER_BOX_OUTER : "100%", minHeight: 0, display: "flex", alignItems: "center" }}>
           <div
             ref={contentRef}
             style={{

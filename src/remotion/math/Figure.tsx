@@ -3,6 +3,7 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "../clamped";
 import { useTheme, withAlpha } from "../theme";
 import type { SceneVisual } from "../../types";
+import { figureRoleColor } from "./figureRoleColor";
 
 type FigureData = Extract<SceneVisual, { kind: "figure" }>;
 
@@ -52,7 +53,9 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
       ...data.points.map((p) => ({ x0: p.x, x1: p.x, y0: p.y, y1: p.y })),
       // Axes are meaningless if the origin is off the page.
       ...(data.axes ? [{ x0: 0, x1: 0, y0: 0, y1: 0 }] : []),
-      ...data.circles.flatMap((circle) => {
+      // Early boolean manifests predate circles; an absent list must not
+      // prevent their existing edges from rendering.
+      ...(data.circles ?? []).flatMap((circle) => {
         const center = byLabel.get(circle.center);
         if (!center) {
           return [];
@@ -248,7 +251,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
 
       {/* Circles, drawn the way a compass draws them: starting at the top and
           sweeping round. */}
-      {data.circles.map((circle, index) => {
+      {(data.circles ?? []).map((circle, index) => {
         const center = at(circle.center);
         if (!center) {
           return null;
@@ -350,7 +353,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           last so they sit on top of whatever they cross. */}
       {[...data.segments]
         .map((segment, index) => ({ segment, index }))
-        .sort((a, b) => Number(a.segment.emphasis) - Number(b.segment.emphasis))
+        .sort((a, b) => Number(Boolean(a.segment.emphasis)) - Number(Boolean(b.segment.emphasis)))
         .map(({ segment, index }) => {
           const from = at(segment.from);
           const to = at(segment.to);
@@ -368,7 +371,10 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
             y: from.y + (to.y - from.y) * grow,
           };
           const color = segment.emphasis
-            ? accent
+            // Boolean manifests used the scene's rotating accent. Numeric
+            // roles stay fixed across scenes so corresponding edges retain
+            // their identity as the explanation moves to the next step.
+            ? segment.emphasis === true ? accent : figureRoleColor(theme, segment.emphasis)
             : segment.dashed
               ? theme.inkDim
               : theme.ink;
@@ -490,7 +496,9 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           : (
               <g>
                 {/* Concentric arcs, the notation for "these angles are equal". */}
-                {Array.from({ length: Math.max(1, angle.ticks) }, (_, tick) => {
+                {/* Before equal-angle ticks existed, every marked angle had
+                    one arc. Keep that notation when reading those manifests. */}
+                {Array.from({ length: Math.max(1, angle.ticks ?? 0) }, (_, tick) => {
                   const r = radius + tick * 14;
                   return (
                     <path

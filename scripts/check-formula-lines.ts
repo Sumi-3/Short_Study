@@ -55,7 +55,7 @@ const fixtures: Partial<ApiScript["scenes"][number]>[] = [
   { visual_kind: "formula" },
   { visual_kind: "plot", visual_range: [-2, 2, -2, 2], visual_curves: [{ expr: "x^2", expr_y: "", label: "", region: "" }] },
   { visual_kind: "figure", visual_points: [{ x: 0, y: 0, label: "A" }, { x: 1, y: 0, label: "B" }],
-    visual_segments: [{ from: "A", to: "B", label: "", dashed: false, emphasis: false, ticks: 0, arrow: false }] },
+    visual_segments: [{ from: "A", to: "B", label: "", dashed: false, emphasis: 0, ticks: 0, arrow: false }] },
   { visual_kind: "table", visual_table: [["x", "1"], ["y", "2"]] },
   { visual_kind: "tree", visual_table: [["A", "B"], ["A", "C"]] },
   { visual_kind: "venn", visual_items: ["A", "B"], visual_values: [1, 2, 3, 4] },
