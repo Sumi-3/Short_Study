@@ -288,8 +288,15 @@ export const layout = {
    * a fixed top, because its height varies with the line count. Measuring from
    * the bottom keeps it at a constant distance from the edge and lets it grow
    * upward into space the stage has already reserved.
+   *
+   * Moving the old 190px inset to 100px returns 90px to the diagram/working
+   * stage. At a 390px-wide full-frame phone preview this is about 36 CSS px
+   * (100 * 390 / 1080), allowing roughly a 34px home-indicator inset. This is
+   * a full-frame viewing allowance, not a guarantee for every social app's
+   * overlay; keeping 100px rather than going flush leaves an edge buffer.
+   * The band and gap stay unchanged, so captions still have two full lines.
    */
-  captionBottom: 190,
+  captionBottom: 100,
   /** Two lines at 66px/1.3 plus the plate's 20px padding, rounded up. */
   captionBandHeight: 212,
   /** Breathing room between the stage and the tallest caption. */

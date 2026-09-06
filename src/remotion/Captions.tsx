@@ -31,6 +31,8 @@ const SWITCH_CAPTIONS_EVERY_MS = 6000;
  * 1.3 plus the plate's 40px is the 212 of `captionBandHeight`. Holding it to
  * one line broke phrases that read as one — 「1回目に赤球が出たとき」 arrived as
  * three pages — and each page then held the screen for barely a second.
+ * Lowering `captionBottom` only moves this same band: its width, 66px type
+ * and 212px height did not change, so the 22-character budget must stay too.
  */
 const MAX_CHARS_PER_PAGE = 22;
 

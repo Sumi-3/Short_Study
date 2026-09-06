@@ -24,7 +24,7 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
   }),
   z.object({
     kind: z.literal("formula"),
-    /** LaTeX, one entry per line. Several lines read as a derivation. */
+    /** LaTeX, optionally prefixed with a line annotation such as [underline]. */
     lines: z.array(z.string()).min(1).max(3),
     caption: z.string(),
   }),
@@ -103,6 +103,14 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
   }),
   z.object({
     kind: z.literal("figure"),
+    /**
+     * Local manifest fields only: the API reuses the otherwise idle
+     * `visual_items` / `visual_caption` channels. Two short lines leave the
+     * diagram readable on a portrait stage. Optional so old manifests still
+     * parse and play without migration (the player also reads JSON directly).
+     */
+    lines: z.array(z.string()).max(2).optional(),
+    caption: z.string().optional(),
     /** `label` doubles as the id everything else references. */
     points: z.array(
       z.object({ x: z.number(), y: z.number(), label: z.string() }),
@@ -156,6 +164,9 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
   }),
   z.object({
     kind: z.literal("plot"),
+    /** Same companion working as figure; these are not API scene fields. */
+    lines: z.array(z.string()).max(2).optional(),
+    caption: z.string().optional(),
     xRange: z.tuple([z.number(), z.number()]),
     yRange: z.tuple([z.number(), z.number()]),
     curves: z
@@ -272,13 +283,19 @@ export const apiScriptSchema = z.object({
         "dot",
         "none",
       ]),
-      /** `bullets` items, `flow` steps, or `formula` LaTeX lines. */
+      /**
+       * `bullets` items, `flow` steps, `formula` LaTeX lines, or up to two
+       * companion LaTeX lines for `figure` / `plot`. Annotation markers live
+       * inside those strings, too: the API scene stays at 19 required fields
+       * instead of adding a twentieth and hitting the compiled grammar limit.
+       * Data-chart kinds keep their existing meanings for this channel.
+       */
       visual_items: z.array(z.string()),
       /** Used by `bars`; empty otherwise. */
       visual_bars: z.array(z.object({ label: z.string(), value: z.number() })),
-      /** Used by `bars`; empty otherwise. */
+      /** Data-chart units; `figure` reuses "axes" to request coordinate axes. */
       visual_unit: z.string(),
-      /** Used by `formula` and `plot`; empty otherwise. */
+      /** Short supplement for math/data visuals, including figure and plot. */
       visual_caption: z.string(),
       /** Used by `plot` and `scatter`; empty otherwise. */
       visual_curves: z.array(
@@ -525,6 +542,8 @@ export const normalizeVisual = (
       }
       return {
         kind: "figure",
+        lines: scene.visual_items.filter((line) => line.trim()).slice(0, 2),
+        caption: scene.visual_caption,
         points,
         segments: segments.map((segment) => ({
           ...segment,
@@ -576,6 +595,8 @@ export const normalizeVisual = (
       const shade = scene.visual_shade;
       return {
         kind: "plot",
+        lines: scene.visual_items.filter((line) => line.trim()).slice(0, 2),
+        caption: scene.visual_caption,
         xRange: [xMin, xMax],
         yRange: [yMin, yMax],
         curves,

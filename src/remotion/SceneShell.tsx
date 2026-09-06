@@ -2,6 +2,7 @@ import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "./clamped";
 import { layout, shadowOf, stageBottom, useTheme, withAlpha } from "./theme";
 import { MathText } from "./MathText";
+import { Formula } from "./math/Formula";
 import type { Scene } from "../types";
 
 /**
@@ -379,6 +380,11 @@ export const SceneShell: React.FC<{
   // With no diagram to sit under it, the headline owns the whole stage —
   // unless the problem card is already using it.
   const centered = !scene.visual && !problem;
+  const companion =
+    scene.visual?.kind === "figure" || scene.visual?.kind === "plot"
+      ? scene.visual
+      : undefined;
+  const hasCompanion = Boolean(companion?.lines?.length || companion?.caption);
 
   /*
    * The stage arrives and leaves; the background, unit banner and captions do
@@ -521,9 +527,30 @@ export const SceneShell: React.FC<{
           marginTop: scene.visual ? 56 : 0,
           minHeight: 0,
           overflow: "hidden",
+          // Only combined scenes need a grid. Giving the existing SVG its own
+          // shrinking row preserves its aspect ratio; side-by-side columns
+          // would halve the width of both the labels and the working on 9:16.
+          // No companion fields means the old rendering path, including old
+          // manifests whose JSON never went through the new Zod schema.
+          ...(hasCompanion ? {
+            display: "grid",
+            gridTemplateRows: "minmax(0, 1fr) auto",
+            gap: 20,
+            flexBasis: 0,
+          } : {}),
         }}
       >
-        {children}
+        {hasCompanion ? (
+          <>
+            <div style={{ minHeight: 0 }}>{children}</div>
+            <Formula
+              lines={companion?.lines ?? []}
+              caption={companion?.caption ?? ""}
+              accent={accent}
+              compact
+            />
+          </>
+        ) : children}
       </div>
     </AbsoluteFill>
   );

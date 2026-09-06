@@ -5,7 +5,9 @@
       "Bash(grep -rn \"rgba\\(\\\\|#[0-9a-fA-F]\\\\{3,6\\\\}\\\\b\\\\|color:\" web/src --include=\"*.tsx\")",
       "Bash(node /Users/sumi/.claude/plugins/cache/openai-codex/codex/1.0.6/scripts/codex-companion.mjs task --background --write ' *)",
       "Bash(node \"/Users/sumi/.claude/plugins/cache/openai-codex/codex/1.0.6/scripts/codex-companion.mjs\" status task-mtpez3em-z97hoa --wait --timeout-ms 900000)",
-      "Bash(node \"/Users/sumi/.claude/plugins/cache/openai-codex/codex/1.0.6/scripts/codex-companion.mjs\" result task-mtpez3em-z97hoa)"
+      "Bash(node \"/Users/sumi/.claude/plugins/cache/openai-codex/codex/1.0.6/scripts/codex-companion.mjs\" result task-mtpez3em-z97hoa)",
+      "Bash(cd /Users/sumi/.claude/plugins/cache/openai-codex/codex/1.0.6 && grep -rn \"gpt-5\\\\|spark\\\\|DEFAULT_MODEL\\\\|model\" scripts/lib/codex.mjs | head -30; echo \"=== prompts/args model handling ===\"; grep -rn \"gpt-5\" scripts/ skills/ commands/ agents/ prompts/ 2>/dev/null | head -20)",
+      "Read(//Users/sumi/.claude/plugins/cache/openai-codex/codex/1.0.6/**)"
     ]
   },
   "enabledPlugins": {
