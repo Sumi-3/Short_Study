@@ -99,6 +99,9 @@ const annotations = {
  * us compare it with the row, then undo Player/stage/fit scales; the padding
  * must be in the same unscaled pixels as the height fitter's measurement.
  */
+/** Generous next to the 4px stroke and 14-20px padding an annotation uses. */
+const ROOM_CAP = 160;
+
 const Row: React.FC<{
   derivation: boolean;
   text: boolean;
@@ -116,39 +119,58 @@ const Row: React.FC<{
       if (!rect.width || !rect.height) return;
       const scaleX = rect.width / element.offsetWidth;
       const scaleY = rect.height / element.offsetHeight;
+      /*
+       * Undoing the applied scale converts screen pixels back into the layout
+       * pixels the height fitter works in — but it divides the measurement
+       * error by that same number, and this padding is one of the fitter's
+       * own inputs. Below roughly a tenth the loop stops being stable: a
+       * shrunk block measures a larger overflow, the overflow grows the row,
+       * the taller row shrinks the block again. WebKit rode that loop to a
+       * 21-million-pixel row and scaled the formula to nothing; Blink
+       * happened to settle. Keep the last good reading instead of feeding a
+       * degenerate one back in.
+       */
+      if (!(scaleX > 0.1) || !(scaleY > 0.1)) return;
       let x = 0;
       let y = 0;
       for (const svg of Array.from(element.querySelectorAll("svg"))) {
         // KaTeX radicals deliberately draw a huge SVG behind a clipped span;
         // it is the rough annotation's overflow that belongs in the padding.
         if (svg.closest(".katex")) continue;
-        const matrix = svg.getScreenCTM();
-        if (!matrix || !svg.querySelector("path")) continue;
-        const box = svg.getBBox();
-        // Highlight uses a stroke as tall as the text, regardless of the
-        // shared 4px outline prop. SVG geometry alone omits that whole band.
-        const stroke = Math.max(...Array.from(
-          svg.querySelectorAll("path"),
-          (path) => parseFloat(getComputedStyle(path).strokeWidth) || 0,
-        )) / 2;
-        for (const [cx, cy] of [
-          [box.x - stroke, box.y - stroke],
-          [box.x + box.width + stroke, box.y + box.height + stroke],
-        ]) {
-          const point = new DOMPoint(cx, cy).matrixTransform(matrix);
-          // Eight extra pixels cover stroke joins and DOM rounding.
-          // Symmetric padding keeps the equation centred even when the
-          // hand-drawn mark is asymmetric.
-          x = Math.max(
-            x, (rect.left - point.x) / scaleX + 8, (point.x - rect.right) / scaleX + 8,
-          );
-          y = Math.max(
-            y, (rect.top - point.y) / scaleY + 8, (point.y - rect.bottom) / scaleY + 8,
-          );
-        }
+        if (!svg.querySelector("path")) continue;
+        /*
+         * The drawn box in screen pixels, straight from layout.
+         *
+         * This was `getBBox()` mapped through `getScreenCTM()`, which is the
+         * textbook way to ask where a path landed — but the two engines do
+         * not agree on the matrix for an absolutely positioned annotation
+         * overlay, and WebKit's answer put the mark hundreds of pixels
+         * outside its own row. A client rect needs no matrix, already
+         * includes the stroke, and is measured the same way as `rect` just
+         * above, so the subtraction below compares like with like.
+         */
+        const markRect = svg.getBoundingClientRect();
+        if (!markRect.width || !markRect.height) continue;
+        // Eight extra pixels cover stroke joins and DOM rounding. Symmetric
+        // padding keeps the equation centred even when the hand-drawn mark
+        // is asymmetric.
+        x = Math.max(
+          x,
+          (rect.left - markRect.left) / scaleX + 8,
+          (markRect.right - rect.right) / scaleX + 8,
+        );
+        y = Math.max(
+          y,
+          (rect.top - markRect.top) / scaleY + 8,
+          (markRect.bottom - rect.bottom) / scaleY + 8,
+        );
       }
-      x = Math.ceil(x - 0.001);
-      y = Math.ceil(y - 0.001);
+      // A rough annotation is drawn one stroke plus a little padding outside
+      // the row. Anything past this is a measurement artefact rather than
+      // ink, and letting it through is what turns a bad reading into a row
+      // taller than the frame.
+      x = Math.min(Math.ceil(x - 0.001), ROOM_CAP);
+      y = Math.min(Math.ceil(y - 0.001), ROOM_CAP);
       setRoom((old) => old.x === x && old.y === y ? old : { x, y });
     };
     const resize = new ResizeObserver(measure);
