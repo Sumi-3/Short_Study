@@ -103,8 +103,9 @@ const Row: React.FC<{
   derivation: boolean;
   text: boolean;
   gap: number;
+  textOffsetX: number;
   children: React.ReactNode;
-}> = ({ derivation, text, gap, children }) => {
+}> = ({ derivation, text, gap, textOffsetX, children }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [room, setRoom] = useState({ x: 0, y: 0 });
   useLayoutEffect(() => {
@@ -163,11 +164,18 @@ const Row: React.FC<{
     };
   }, []);
   return (
-    <div style={{
-      alignSelf: text ? "flex-start" : "center",
-      paddingBlock: Math.max(derivation ? 0 : 22, room.y),
-      paddingInline: room.x,
-    }}>
+    <div
+      data-formula-measure
+      style={{
+        alignSelf: text ? "flex-start" : "center",
+        paddingBlock: Math.max(derivation ? 0 : 22, room.y),
+        paddingInline: room.x,
+        // Scaling the full placement box around its centre keeps equations
+        // centred. Offset only prose before that transform so its rendered
+        // left edge remains the stage's content edge after a width fit.
+        transform: text ? `translateX(${textOffsetX}px)` : undefined,
+      }}
+    >
       <div ref={ref} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap }}>
         {children}
       </div>
@@ -218,7 +226,14 @@ export const Formula: React.FC<{
   const gap = compact ? 24
     : shown.length >= 5 ? 12 : shown.length === 4 ? 18 : dense ? 26 : 36;
   const arrowSize = shown.length >= 4 ? 36 : dense ? 48 : 56;
-  const { viewportRef, contentRef, scale, height } = useFitToStage(compact);
+  const { viewportRef, contentRef, scale, height, width } = useFitToStage(compact);
+  // Compact companions are explanatory labels beside a diagram, not captions:
+  // sharing the stage edge makes those short lines scan naturally with normal
+  // statements while formulas still retain their centred visual anchor.
+  const contentInset = 40;
+  const textOffsetX = scale === 0
+    ? 0
+    : (contentInset - (1 - scale) * width / 2) / scale - contentInset;
 
   // Circle's outside ellipse reaches further than a rectangular box. Reserve
   // that room before fitting, rather than clipping the annotation at the edge.
@@ -256,7 +271,9 @@ export const Formula: React.FC<{
           // motion. Scaling this natural block includes every fixed-size gap.
           padding: "24px 40px",
           flexShrink: 0,
-          width: "max-content",
+          // This is the placement box, rather than the width-fit measurement
+          // box: text rows can start at its left edge while maths is centred.
+          width: "100%",
           scale: String(scale),
           transformOrigin: "center",
           boxSizing: "border-box",
@@ -289,7 +306,13 @@ export const Formula: React.FC<{
           );
 
           return (
-            <Row key={index} derivation={derivation} text={text} gap={gap}>
+            <Row
+              key={index}
+              derivation={derivation}
+              text={text}
+              gap={gap}
+              textOffsetX={textOffsetX}
+            >
               {derivation && index > 0 ? (
                 <div
                   style={{
@@ -322,6 +345,7 @@ export const Formula: React.FC<{
         {caption ? (
           <div
             ref={register(shown.length)}
+            data-formula-measure
             style={{
               marginTop: compact ? 8 : dense ? 24 : 32,
               fontFamily: theme.fontFamily,
