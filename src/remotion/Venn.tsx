@@ -1,4 +1,5 @@
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "./clamped";
 import { useTheme, withAlpha } from "./theme";
 import type { SceneVisual } from "../types";
 
@@ -78,11 +79,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
     return { x: mean.x + (dx / length) * push, y: mean.y + (dy / length) * push };
   };
 
-  const grow = interpolate(frame, [0.5 * fps, 1.2 * fps], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: theme.easing,
-  });
+  const grow = clamped(frame, [0.5 * fps, 1.2 * fps], [0, 1], theme.easing);
 
   return (
     <div
@@ -124,10 +121,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
                 width={WIDTH}
                 height={HEIGHT}
                 fill={withAlpha(accent, 0.45)}
-                opacity={interpolate(frame, [1.4 * fps, 2 * fps], [0, 1], {
-                  extrapolateLeft: "clamp",
-                  extrapolateRight: "clamp",
-                })}
+                opacity={clamped(frame, [1.4 * fps, 2 * fps], [0, 1])}
               />
             );
             for (let index = 0; index < centres.length; index++) {
@@ -215,10 +209,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
               fontSize={44}
               fontWeight={900}
               textAnchor="middle"
-              opacity={interpolate(frame, [start, start + 0.3 * fps], [0, 1], {
-                extrapolateLeft: "clamp",
-                extrapolateRight: "clamp",
-              })}
+              opacity={clamped(frame, [start, start + 0.3 * fps], [0, 1])}
               stroke={theme.bgDeep}
               strokeWidth={8}
               paintOrder="stroke"
@@ -236,10 +227,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
             fontSize={36}
             fontWeight={700}
             textAnchor="middle"
-            opacity={interpolate(frame, [2.2 * fps, 2.7 * fps], [0, 1], {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-            })}
+            opacity={clamped(frame, [2.2 * fps, 2.7 * fps], [0, 1])}
           >
             {data.caption}
           </text>

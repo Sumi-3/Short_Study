@@ -1,4 +1,5 @@
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "../clamped";
 import { useTheme } from "../theme";
 import { Axes, ChartCaption, MarkLines } from "./Axes";
 import { HEIGHT, PAD, WIDTH, niceTicks, plotHeight, scaleX } from "./scale";
@@ -64,11 +65,12 @@ export const DotPlot: React.FC<{ data: Data; accent: string }> = ({
 
       {stacked.map((dot, index) => {
         const start = (1.0 + index * 0.07) * fps;
-        const drop = interpolate(frame, [start, start + 0.32 * fps], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        });
+        const drop = clamped(
+          frame,
+          [start, start + 0.32 * fps],
+          [0, 1],
+          theme.easing,
+        );
         const resting = baseline - step / 2 - dot.level * step;
 
         return (

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "../clamped";
 import { useTheme, withAlpha } from "../theme";
 import type { SceneVisual } from "../../types";
 
@@ -147,11 +148,12 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
   };
 
   const fade = (start: number, duration = 0.3) =>
-    interpolate(frame, [start * fps, (start + duration) * fps], [0, 1], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: theme.easing,
-    });
+    clamped(
+      frame,
+      [start * fps, (start + duration) * fps],
+      [0, 1],
+      theme.easing,
+    );
 
   const segmentStart = (index: number) => 0.7 + index * 0.22;
   const lastSegmentEnd =
@@ -268,16 +270,10 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           onCircle(a1).x
         } ${onCircle(a1).y}`;
         const start = 0.55 + index * 0.3;
-        const sweep = interpolate(
+        const sweep = clamped(
           frame,
           [start * fps, (start + 0.65) * fps],
-          [0, 1],
-          {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: theme.easing,
-          },
-        );
+          [0, 1], theme.easing);
         const outwards = outward(center);
 
         if (!whole) {
@@ -363,16 +359,10 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           }
 
           const start = segmentStart(index);
-          const grow = interpolate(
+          const grow = clamped(
             frame,
             [start * fps, (start + 0.4) * fps],
-            [0, 1],
-            {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-              easing: theme.easing,
-            },
-          );
+            [0, 1], theme.easing);
           const tip = {
             x: from.x + (to.x - from.x) * grow,
             y: from.y + (to.y - from.y) * grow,

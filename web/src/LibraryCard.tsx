@@ -1,5 +1,5 @@
 import { MathText } from "../../src/remotion/MathText";
-import { themeOf } from "../../src/remotion/Poster";
+import { themeOf } from "../../src/remotion/theme";
 import type { ShortSummary } from "./api";
 
 /**

@@ -1,6 +1,9 @@
 import { createContext, useContext } from "react";
 import { Easing } from "remotion";
-import type { DesignId } from "../designs.js";
+// No `.js`: everything under `src/remotion` is bundled rather than run by
+// Node, and the bundler resolves the extensionless path. It was a type-only
+// import before, which is erased and so never had to resolve at all.
+import { isDesignId, type DesignId } from "../designs";
 import { fontFamily as zenMaru, loadFont as loadRounded } from "@remotion/google-fonts/ZenMaruGothic";
 
 /**
@@ -299,6 +302,17 @@ export const stageBottom =
   layout.captionBottom -
   layout.captionBandHeight -
   layout.captionGap;
+
+/**
+ * The palette a short is drawn in.
+ *
+ * A short made before designs existed has no `design`, so it falls back to the
+ * theme its subject picked — exactly the look it was made with. The video, its
+ * poster and the library's own chrome all have to agree on this, so they all
+ * come here rather than each repeating the fallback.
+ */
+export const themeOf = (design: string | undefined, subject: Subject) =>
+  isDesignId(design) ? designs[design] : themes[subject] ?? themes.general;
 
 /** Keeps white text legible over any accent-coloured shape behind it. */
 export const textShadow = "0 8px 32px rgba(0,0,0,0.55)";

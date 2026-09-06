@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "./clamped";
 import { useTheme, withAlpha } from "./theme";
 import type { SceneVisual } from "../types";
 
@@ -114,12 +115,10 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
           const parent =
             nodes.find((candidate) => candidate.children.includes(node)) ?? root;
           const start = columnStart(node.depth);
-          const draw = interpolate(
+          const draw = clamped(
             frame,
             [start * fps, (start + 0.4) * fps],
-            [0, 1],
-            { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: theme.easing },
-          );
+            [0, 1], theme.easing);
           if (draw <= 0) {
             return null;
           }
@@ -149,20 +148,15 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
           cy={y(root)}
           r={11}
           fill={accent}
-          opacity={interpolate(frame, [0.4 * fps, 0.7 * fps], [0, 1], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-          })}
+          opacity={clamped(frame, [0.4 * fps, 0.7 * fps], [0, 1])}
         />
 
         {nodes.map((node) => {
           const start = columnStart(node.depth) + 0.3;
-          const appear = interpolate(
+          const appear = clamped(
             frame,
             [start * fps, (start + 0.3) * fps],
-            [0, 1],
-            { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: theme.easing },
-          );
+            [0, 1], theme.easing);
           const isLeaf = node.children.length === 0;
 
           return (
@@ -194,12 +188,10 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
           fontSize={44}
           fontWeight={900}
           textAnchor="end"
-          opacity={interpolate(
+          opacity={clamped(
             frame,
             [columnStart(depth) * fps + 0.6 * fps, columnStart(depth) * fps + 1.1 * fps],
-            [0, 1],
-            { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-          )}
+            [0, 1])}
         >
           全{leaves}通り
         </text>
@@ -211,12 +203,10 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
             fill={theme.inkDim}
             fontSize={34}
             fontWeight={700}
-            opacity={interpolate(
+            opacity={clamped(
               frame,
               [columnStart(depth) * fps + 0.6 * fps, columnStart(depth) * fps + 1.1 * fps],
-              [0, 1],
-              { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-            )}
+              [0, 1])}
           >
             {data.caption}
           </text>

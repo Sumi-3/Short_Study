@@ -4,9 +4,8 @@ import {
   POSTER_SIZE,
   Poster,
   posterFrame,
-  themeOf,
 } from "../../src/remotion/Poster";
-import { withAlpha } from "../../src/remotion/theme";
+import { themeOf, withAlpha } from "../../src/remotion/theme";
 import type { ShortSummary } from "./api";
 
 /**

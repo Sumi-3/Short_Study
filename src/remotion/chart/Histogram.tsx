@@ -1,4 +1,5 @@
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "../clamped";
 import { useTheme, withAlpha } from "../theme";
 import { Axes, ChartCaption, MarkLines } from "./Axes";
 import { HEIGHT, PAD, WIDTH, scaleX, scaleY } from "./scale";
@@ -48,11 +49,12 @@ export const Histogram: React.FC<{ data: Data; accent: string }> = ({
 
       {bins.map((bin, index) => {
         const start = (1.1 + index * 0.12) * fps;
-        const grow = interpolate(frame, [start, start + 0.45 * fps], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        });
+        const grow = clamped(
+          frame,
+          [start, start + 0.45 * fps],
+          [0, 1],
+          theme.easing,
+        );
         const height = (baseline - y(bin.count)) * grow;
 
         return (

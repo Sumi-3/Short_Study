@@ -1,8 +1,7 @@
 import { AbsoluteFill } from "remotion";
 import { Background } from "./Background";
 import { SceneShell } from "./SceneShell";
-import { ThemeProvider, accentFor, designs, layout, themes } from "./theme";
-import { isDesignId } from "../designs";
+import { ThemeProvider, accentFor, layout, themeOf } from "./theme";
 import type { Scene, Subject } from "../types";
 
 /**
@@ -53,17 +52,6 @@ export const POSTER_DURATION = 300;
  * 8 frames. Everything has settled by 0.8s, and nothing has moved on yet.
  */
 export const posterFrame = (fps: number) => Math.round(fps * 0.8);
-
-/**
- * The palette a short is drawn in.
- *
- * The same fallback the composition makes, so a card and its video are the
- * same colour even for a short made before designs existed. Exported because
- * the library's own chrome sits on top of the frame and has to read against
- * it — white text over the whiteboard design is nothing at all.
- */
-export const themeOf = (design: string, subject: Subject) =>
-  isDesignId(design) ? designs[design] : themes[subject] ?? themes.general;
 
 export const Poster: React.FC<PosterProps> = ({
   topic,

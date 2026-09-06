@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "../clamped";
 import { useTheme, withAlpha } from "../theme";
 import { compileExpression } from "./expression";
 
@@ -26,7 +27,6 @@ const WIDTH = 904;
 const HEIGHT = 800;
 const PAD = 46;
 const SAMPLES = 240;
-
 
 /** Nice-ish tick step so a range like [-3, 3] gets 1s, not 0.6s. */
 const tickStep = (span: number) => {
@@ -186,11 +186,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
     return polygons;
   }, [compiled, data.shade, xMin, xMax, yMin, yMax]);
 
-  const axesProgress = interpolate(frame, [0, 0.7 * fps], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: theme.easing,
-  });
+  const axesProgress = clamped(frame, [0, 0.7 * fps], [0, 1], theme.easing);
 
   const zeroY = yMin <= 0 && yMax >= 0 ? toY(0) : null;
   const zeroX = xMin <= 0 && xMax >= 0 ? toX(0) : null;
@@ -287,11 +283,12 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
       {data.shade && compiled[0]?.fn && regionPolygons.length === 0
         ? (() => {
             const [from, to] = data.shade;
-            const grow = interpolate(frame, [1.6 * fps, 2.6 * fps], [0, 1], {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-              easing: theme.easing,
-            });
+            const grow = clamped(
+              frame,
+              [1.6 * fps, 2.6 * fps],
+              [0, 1],
+              theme.easing,
+            );
             const end = from + (to - from) * grow;
             const steps = 80;
             const points: string[] = [`${toX(from)},${toY(0)}`];
@@ -320,11 +317,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
           key={`region${index}`}
           points={polygon.join(" ")}
           fill={withAlpha(accent, 0.28)}
-          opacity={interpolate(frame, [1.6 * fps, 2.3 * fps], [0, 1], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: theme.easing,
-          })}
+          opacity={clamped(frame, [1.6 * fps, 2.3 * fps], [0, 1], theme.easing)}
         />
       ))}
 
@@ -332,11 +325,12 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
       {compiled.map((curve, index) => {
         const color = curveColors[index % curveColors.length];
         const start = (0.8 + index * 0.5) * fps;
-        const drawn = interpolate(frame, [start, start + 1.1 * fps], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        });
+        const drawn = clamped(
+          frame,
+          [start, start + 1.1 * fps],
+          [0, 1],
+          theme.easing,
+        );
 
         // Break the path wherever the curve leaves the plotted window, so a
         // pole like 1/x does not get joined across the asymptote.
@@ -390,11 +384,12 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
       {/* Older manifests predate this field. */}
       {(data.points ?? []).map((point, index) => {
         const start = (1.9 + index * 0.35) * fps;
-        const pop = interpolate(frame, [start, start + 0.45 * fps], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        });
+        const pop = clamped(
+          frame,
+          [start, start + 0.45 * fps],
+          [0, 1],
+          theme.easing,
+        );
         if (pop <= 0) {
           return null;
         }
@@ -446,10 +441,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
         return (
           <g
             key={`legend-${curve.expr}`}
-            opacity={interpolate(frame, [start, start + 0.4 * fps], [0, 1], {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-            })}
+            opacity={clamped(frame, [start, start + 0.4 * fps], [0, 1])}
           >
             <rect
               x={PAD}

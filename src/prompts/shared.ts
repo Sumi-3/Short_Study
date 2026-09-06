@@ -232,11 +232,6 @@ LaTeX と expr は別物。formula は LaTeX、plot の expr は上に挙げた�
   }`;
 };
 
-export const structureHeading = (budget: Budget) => `# 構成
-1. hook: 1シーン。問題について。
-2. point: ${budget.points}シーン。1シーンにつき要点は1つだけ。前のシーンを受けて積み上げる。
-3. summary: 1シーン。要点を束ねて、持ち帰る一文で締める。`;
-
 /**
  * How the question itself should be written back out.
  *
@@ -298,7 +293,7 @@ export const TOPIC_RULE = `# topic（画面に出す問題文）
  * condition and which is the question is reading comprehension.
  */
 export const OUTLINE_RULE = `# outline（一覧に出す箇条書き）
-topic と同じ問題を、一覧で見て一瞬で分かる箇条書きにする。
+topic と同じ問題文を、一覧で見て一瞬で分かる箇条書き形式にする。
 
 - **1行1項目。改行で区切って3〜5行。1行は20文字以内。**
 - **区切る場所は意味の切れ目。文字数で割らない。**

@@ -1,4 +1,5 @@
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "../clamped";
 import { useTheme } from "../theme";
 import {
   HEIGHT,
@@ -26,15 +27,8 @@ export const Axes: React.FC<{
   const { fps } = useVideoConfig();
   const theme = useTheme();
 
-  const sweep = interpolate(frame, [0.2 * fps, 0.8 * fps], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: theme.easing,
-  });
-  const labels = interpolate(frame, [0.7 * fps, 1.1 * fps], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
+  const sweep = clamped(frame, [0.2 * fps, 0.8 * fps], [0, 1], theme.easing);
+  const labels = clamped(frame, [0.7 * fps, 1.1 * fps], [0, 1]);
 
   const yTicks = yDomain ? niceTicks(yDomain[0], yDomain[1], 4) : [];
 
@@ -153,11 +147,12 @@ export const MarkLines: React.FC<{
     <g>
       {marks.map((mark, index) => {
         const start = (delay + index * 0.35) * fps;
-        const draw = interpolate(frame, [start, start + 0.4 * fps], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        });
+        const draw = clamped(
+          frame,
+          [start, start + 0.4 * fps],
+          [0, 1],
+          theme.easing,
+        );
         const ceiling = top + index * 46;
 
         return (
@@ -214,10 +209,7 @@ export const ChartCaption: React.FC<{ text: string; accent: string; delay: numbe
       fontWeight={700}
       textAnchor="middle"
       fontFamily={theme.fontFamily}
-      opacity={interpolate(frame, [delay * fps, (delay + 0.4) * fps], [0, 1], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      })}
+      opacity={clamped(frame, [delay * fps, (delay + 0.4) * fps], [0, 1])}
     >
       {text}
     </text>

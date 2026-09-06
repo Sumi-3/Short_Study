@@ -3,6 +3,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { clamped } from "./clamped";
 import { shadowOf, useTheme, withAlpha } from "./theme";
 import { SceneShell } from "./SceneShell";
 import { Formula } from "./math/Formula";
@@ -49,11 +50,12 @@ const Flow: React.FC<{ steps: string[]; accent: string }> = ({
               flexDirection: "column",
               alignItems: "center",
               gap: compact ? 10 : 20,
-              opacity: interpolate(frame, [start, start + 0.35 * fps], [0, 1], {
-                extrapolateLeft: "clamp",
-                extrapolateRight: "clamp",
-                easing: theme.easing,
-              }),
+              opacity: clamped(
+                frame,
+                [start, start + 0.35 * fps],
+                [0, 1],
+                theme.easing,
+              ),
               scale: interpolate(frame, [start, start + 0.5 * fps], [0.85, 1], {
                 extrapolateLeft: "clamp",
                 extrapolateRight: "clamp",
@@ -118,11 +120,12 @@ const Bars: React.FC<{
     >
       {data.map((datum, index) => {
         const start = (0.9 + index * 0.35) * fps;
-        const grow = interpolate(frame, [start, start + 0.9 * fps], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        });
+        const grow = clamped(
+          frame,
+          [start, start + 0.9 * fps],
+          [0, 1],
+          theme.easing,
+        );
 
         return (
           <div key={datum.label} style={{ display: "flex", flexDirection: "column", gap: 12 }}>

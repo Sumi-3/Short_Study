@@ -1,9 +1,5 @@
-import {
-  AbsoluteFill,
-  interpolate,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "./clamped";
 import { layout, shadowOf, stageBottom, useTheme, withAlpha } from "./theme";
 import { MathText } from "./MathText";
 import type { Scene } from "../types";
@@ -33,11 +29,7 @@ const UnitBanner: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
-  const appear = interpolate(frame, [0, 0.4 * fps], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: theme.easing,
-  });
+  const appear = clamped(frame, [0, 0.4 * fps], [0, 1], theme.easing);
 
   return (
     <div
@@ -271,16 +263,13 @@ const ProblemCard: React.FC<{
   return (
     <div
       style={{
-        opacity: interpolate(frame, [0, 0.35 * fps], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        }),
-        translate: interpolate(frame, [0, 0.5 * fps], ["0px -24px", "0px 0px"], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        }),
+        opacity: clamped(frame, [0, 0.35 * fps], [0, 1], theme.easing),
+        translate: clamped(
+          frame,
+          [0, 0.5 * fps],
+          ["0px -24px", "0px 0px"],
+          theme.easing,
+        ),
       }}
     >
       {/* A still card is nothing but the question, so nothing has to say so.
@@ -399,17 +388,11 @@ export const SceneShell: React.FC<{
    * morph that carries across a hard boundary. See the note in
    * math/Formula.tsx for why the formulas themselves stack rather than morph.
    */
-  const arrival = interpolate(frame, [0, ENTER], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: theme.easing,
-  });
-  const departure = interpolate(
+  const arrival = clamped(frame, [0, ENTER], [0, 1], theme.easing);
+  const departure = clamped(
     frame,
     [durationInFrames - LEAVE, durationInFrames],
-    [1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-  );
+    [1, 0]);
 
   return (
     <AbsoluteFill
@@ -417,11 +400,7 @@ export const SceneShell: React.FC<{
         opacity: arrival * departure,
         // Scale rather than a slide: a slide would fight the entrance each
         // headline and formula line already runs.
-        scale: `${interpolate(frame, [0, ENTER], [0.985, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        })}`,
+        scale: `${clamped(frame, [0, ENTER], [0.985, 1], theme.easing)}`,
         paddingLeft: inset,
         paddingRight: inset,
         // The poster's question box is tall enough to reach the unit banner,
@@ -479,21 +458,11 @@ export const SceneShell: React.FC<{
           letterSpacing: 2,
           padding: "12px 28px",
           borderRadius: theme.radius,
-          opacity: interpolate(frame, [0, 0.3 * fps], [0, 1], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: theme.easing,
-          }),
-          translate: interpolate(
+          opacity: clamped(frame, [0, 0.3 * fps], [0, 1], theme.easing),
+          translate: clamped(
             frame,
             [0, 0.4 * fps],
-            ["-40px 0px", "0px 0px"],
-            {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-              easing: theme.easing,
-            },
-          ),
+            ["-40px 0px", "0px 0px"], theme.easing),
         }}
       >
         {label}
@@ -511,21 +480,16 @@ export const SceneShell: React.FC<{
           lineHeight: 1.18,
           color: theme.ink,
           textShadow: shadowOf(theme),
-          opacity: interpolate(frame, [0.15 * fps, 0.6 * fps], [0, 1], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: theme.easing,
-          }),
-          translate: interpolate(
+          opacity: clamped(
+            frame,
+            [0.15 * fps, 0.6 * fps],
+            [0, 1],
+            theme.easing,
+          ),
+          translate: clamped(
             frame,
             [0.15 * fps, 0.7 * fps],
-            ["0px 44px", "0px 0px"],
-            {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-              easing: theme.easing,
-            },
-          ),
+            ["0px 44px", "0px 0px"], theme.easing),
         }}
       >
         {/* The headline carries the same `a_n`/`x^2` notation the question
@@ -540,11 +504,7 @@ export const SceneShell: React.FC<{
           height: 12,
           borderRadius: 6,
           backgroundColor: accent,
-          width: interpolate(frame, [0.4 * fps, 1.1 * fps], [0, 260], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: theme.easing,
-          }),
+          width: clamped(frame, [0.4 * fps, 1.1 * fps], [0, 260], theme.easing),
         }}
       />
       </>

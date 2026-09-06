@@ -1,4 +1,5 @@
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "./clamped";
 import { layout, shadowOf, useTheme, withAlpha } from "./theme";
 import { useFitToWidth } from "./useFitToWidth";
 import type { SceneVisual } from "../types";
@@ -78,16 +79,10 @@ export const Table: React.FC<{ data: Data; accent: string }> = ({
                   // Cells within a row still arrive left to right, so a long
                   // row reads as being written rather than stamped.
                   const cell = start + columnIndex * 0.06 * fps;
-                  const appear = interpolate(
+                  const appear = clamped(
                     frame,
                     [cell, cell + 0.3 * fps],
-                    [0, 1],
-                    {
-                      extrapolateLeft: "clamp",
-                      extrapolateRight: "clamp",
-                      easing: theme.easing,
-                    },
-                  );
+                    [0, 1], theme.easing);
                   const isLabel = columnIndex === 0;
                   const arrow = ARROWS.has(text.trim());
 
@@ -132,12 +127,10 @@ export const Table: React.FC<{ data: Data; accent: string }> = ({
             fontSize: 38,
             color: accent,
             textShadow: shadowOf(theme),
-            opacity: interpolate(
+            opacity: clamped(
               frame,
               [(0.8 + rows * 0.55) * fps, (1.4 + rows * 0.55) * fps],
-              [0, 1],
-              { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-            ),
+              [0, 1]),
           }}
         >
           {data.caption}

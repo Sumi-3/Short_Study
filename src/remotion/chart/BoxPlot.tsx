@@ -1,4 +1,5 @@
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "../clamped";
 import { accentFor, useTheme, withAlpha } from "../theme";
 import { Axes, ChartCaption } from "./Axes";
 import { HEIGHT, PAD, WIDTH, niceTicks, scaleX } from "./scale";
@@ -56,12 +57,10 @@ export const BoxPlot: React.FC<{ data: Data; accent: string }> = ({
         const start = (1.0 + index * 0.5) * fps;
 
         const step = (offset: number, length = 0.4) =>
-          interpolate(
+          clamped(
             frame,
             [start + offset * fps, start + (offset + length) * fps],
-            [0, 1],
-            { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: theme.easing },
-          );
+            [0, 1], theme.easing);
 
         const whisker = step(0);
         const boxGrow = step(0.35);

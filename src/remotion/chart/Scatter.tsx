@@ -1,4 +1,5 @@
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "../clamped";
 import { useTheme } from "../theme";
 import { Axes, ChartCaption } from "./Axes";
 import { HEIGHT, PAD, WIDTH, niceTicks, scaleX, scaleY } from "./scale";
@@ -60,11 +61,12 @@ export const Scatter: React.FC<{ data: Data; accent: string }> = ({
 
       {data.points.map((point, index) => {
         const start = (1.0 + index * 0.05) * fps;
-        const pop = interpolate(frame, [start, start + 0.3 * fps], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        });
+        const pop = clamped(
+          frame,
+          [start, start + 0.3 * fps],
+          [0, 1],
+          theme.easing,
+        );
 
         return (
           <circle
@@ -83,12 +85,10 @@ export const Scatter: React.FC<{ data: Data; accent: string }> = ({
       {/* Correlation, once the cloud is complete. */}
       {data.trend
         ? (() => {
-            const draw = interpolate(
+            const draw = clamped(
               frame,
               [settled * fps, (settled + 0.6) * fps],
-              [0, 1],
-              { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: theme.easing },
-            );
+              [0, 1], theme.easing);
             const line = compileExpression(data.trend);
             if (!line) {
               return null;

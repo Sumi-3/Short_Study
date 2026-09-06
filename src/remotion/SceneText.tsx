@@ -1,8 +1,5 @@
-import {
-  interpolate,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "./clamped";
 import { shadowOf, useTheme } from "./theme";
 import { SceneShell } from "./SceneShell";
 import type { Scene } from "../types";
@@ -24,21 +21,16 @@ const Bullet: React.FC<{
         display: "flex",
         alignItems: "center",
         gap: 28,
-        opacity: interpolate(frame, [start, start + 0.4 * fps], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        }),
-        translate: interpolate(
+        opacity: clamped(
+          frame,
+          [start, start + 0.4 * fps],
+          [0, 1],
+          theme.easing,
+        ),
+        translate: clamped(
           frame,
           [start, start + 0.55 * fps],
-          ["0px 36px", "0px 0px"],
-          {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-            easing: theme.easing,
-          },
-        ),
+          ["0px 36px", "0px 0px"], theme.easing),
       }}
     >
       <div

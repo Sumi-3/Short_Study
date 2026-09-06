@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { themeOf } from "../../src/remotion/theme";
 import { ShortPlayer } from "./ShortPlayer";
-import { themeOf } from "../../src/remotion/Poster";
 import { Thumbnail } from "./Thumbnail";
 import { prefetchManifest, type ShortSummary } from "./api";
 import type { AudioGate } from "./audioGate";

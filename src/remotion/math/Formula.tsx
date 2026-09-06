@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import { Box } from "@remotion/rough-notation";
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { clamped } from "../clamped";
 import { layout, shadowOf, useTheme } from "../theme";
 import { useFitToWidth } from "../useFitToWidth";
 
@@ -41,16 +42,13 @@ const Line: React.FC<{
         // Shrink-wrapping it makes the measured width the formula's own.
         width: "max-content",
         textShadow: shadowOf(theme),
-        opacity: interpolate(frame, [delay, delay + 12], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        }),
-        translate: interpolate(frame, [delay, delay + 16], ["0px 20px", "0px 0px"], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: theme.easing,
-        }),
+        opacity: clamped(frame, [delay, delay + 12], [0, 1], theme.easing),
+        translate: clamped(
+          frame,
+          [delay, delay + 16],
+          ["0px 20px", "0px 0px"],
+          theme.easing,
+        ),
       }}
       dangerouslySetInnerHTML={{ __html: html }}
     />
@@ -112,10 +110,7 @@ export const Formula: React.FC<{
                   fontSize: arrowSize,
                   lineHeight: 1,
                   color: accent,
-                  opacity: interpolate(frame, [delay - 8, delay], [0, 1], {
-                    extrapolateLeft: "clamp",
-                    extrapolateRight: "clamp",
-                  }),
+                  opacity: clamped(frame, [delay - 8, delay], [0, 1]),
                 }}
               >
                 ↓
@@ -127,10 +122,11 @@ export const Formula: React.FC<{
                 color={accent}
                 strokeWidth={4}
                 padding={{ top: 14, right: 20, bottom: 14, left: 20 }}
-                progress={interpolate(frame, [lastDelay + 18, lastDelay + 45], [0, 1], {
-                  extrapolateLeft: "clamp",
-                  extrapolateRight: "clamp",
-                })}
+                progress={clamped(
+                  frame,
+                  [lastDelay + 18, lastDelay + 45],
+                  [0, 1],
+                )}
               >
                 <Line
                   latex={latex}
@@ -162,10 +158,7 @@ export const Formula: React.FC<{
             fontSize: dense ? 38 : 42,
             color: accent,
             textShadow: shadowOf(theme),
-            opacity: interpolate(frame, [lastDelay + 20, lastDelay + 40], [0, 1], {
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-            }),
+            opacity: clamped(frame, [lastDelay + 20, lastDelay + 40], [0, 1]),
           }}
         >
           {caption}
