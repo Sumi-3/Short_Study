@@ -96,7 +96,8 @@ const VISUAL_DOCS = {
   bars: `- "bars":    量の比較が意味を持つときだけ。データは確かなものに限る
     visual_bars = 2〜5本、visual_unit = 単位`,
   formula: `- "formula": 定義式・公式・式変形と、その理由を見せる
-    visual_items = 数式と短い文章を混在させて1〜6行。配列の順に表示される。
+    visual_items = 数式と短い文章を混在させて原則3〜4行、短ければ1〜2行、最大6行。配列の順に表示される。
+    大きな文字を保つため、5〜6行は短い式のときだけ。分数や長い理由は次のシーンへ分け、途中式を省かない。
     数式行は LaTeX、文章行は先頭に [text] を付ける。
     マーカーなし・全行LaTeXの複数行なら ↓ でつながり、最後の行が囲まれる
     例: ["(a+b)^2", "a^2 + 2ab + b^2"]
@@ -114,7 +115,7 @@ const VISUAL_DOCS = {
     複数の条件は1行に [bracket] x>0,\\quad y>0 のようにまとめる。
     装飾は見る場所を案内するために使う。全行を強調せず、その説明で意味のある行に絞る。
     文章行は、式変形の根拠・次の一手の理由・場合分けの宣言が式だけでは伝わらない場所に挟む。
-    1行20文字程度、長くても24文字を目安に、改行せず一息で読める要点にする。6行を埋めるためには足さない。
+    文章行は12〜14文字程度、長くても16文字を目安にする。長い理由はシーンを分けて音声で補い、6行を埋めるためには足さない。
     良い例: ["x^2-5x+6=0", "[text] 和が5、積が6の2数を探す", "(x-2)(x-3)=0",
              "[text][underline] どちらかの因数が0", "[box] x=2,3"]
     悪い例: ["x+2=5", "[text] 次に計算します", "x=3"]（変形の根拠にならない）
@@ -313,48 +314,41 @@ export const TOPIC_RULE = `# topic（画面に出す問題文）
 入力がすでに教科書の表記で整っているなら、1文字も変えずにそのまま写す。`;
 
 /**
- * The question, taken apart.
- *
- * The library shows this rather than the question itself. A card in a list is
- * scanned, not read: 「円に内接する四角形ABCDにおいて、AB = BC = 7, CD = 5, DA = 3
- * であるとき、cos Bの値を求めなさい。」 is one sentence a reader has to parse
- * before they know whether it is the short they wanted, and four lines they can
- * take in at a glance say the same thing.
- *
- * The model writes it, not a splitter here, because knowing which clause is a
- * condition and which is the question is reading comprehension.
+ * The opening has room for the actual problem, and losing a qualification can
+ * change its answer. Keep complete conditions and requests in the existing
+ * string channel; explicit numbers distinguish every question without growing
+ * the script's 19-field schema. Even a single request gets (1), so new data
+ * never depends on the legacy last-line convention.
  */
-export const OUTLINE_RULE = `# outline（一覧に出す箇条書き）
-topic と同じ問題文を、一覧で見て一瞬で分かる箇条書き形式にする。
+export const OUTLINE_RULE = `# outline（冒頭と一覧に出す問題文）
+topic の設定・条件・すべての問いを、省略せず読みやすい順に整える。
 
-- **1行1項目。改行で区切って3〜5行。1行は20文字以内。**
-- **区切る場所は意味の切れ目。文字数で割らない。**
-  1行は、それだけ読んで意味が通る1つのまとまりにする。
-    設定が1つ／条件が1つ／定義が1つ／問われていることが1つ。
-  - 1つの条件を2行に割らない。
-      悪い例: 「1回目に赤球が出た」＋「とき2回目も赤球」
-      良い例: 「1回目が赤球のとき2回目も赤球」
-  - 関係のない2つを1行に詰め込まない。
-      悪い例: 「円に内接する四角形ABCDでAB=BC=7」
-      良い例: 「円に内接する四角形ABCD」＋「AB = BC = 7」
-  - 同じ種類のものは、20文字に収まる範囲でまとめる。1つずつ別行にしない。
-      辺の長さが4本あって20文字を超えるなら、2行に分けて残りを次の行へ。
-  - 数式は途中で折らない。20文字を超える式は、それだけで1行にする。
-- 与えられた条件を1項目ずつ。**最後の項目を「何を求めるか」にする。**
-- 文にしない。「〜である」「〜します」「〜とする」は書かない。体言止め。
-- 数式は topic と同じ表記のまま写す（_ ^ 記号も含めて）。
-- 行頭に「・」「-」「1.」を付けない。記号は自動で付く。
-- 問題に無い条件を足さない。解き方や答えを書かない。
+- **1行1つの意味のまとまり。目安は4〜10行、1行25〜45文字。短い問題は1行でもよい。**
+  行数・文字数を守るために情報を削らない。長い文は画面で折り返される。
+- **対象の定義、数値、範囲、単位、場合分け、条件どうしの関係をすべて残す。**
+  「〜である」「〜とする」などの文を使い、体言止めに縮めない。
+  元の文を活かし、単独で読んでも何の条件か分かる形にする。
+- 共通の設定・条件を先に書き、その後に問われていることをすべて並べる。
+- **問いは各行の先頭に半角の (1) (2) のような番号を付ける。単問でも (1) を付ける。**
+  元の設問番号と順番を保つ。番号がない複数の問いは入力順に採番する。
+  1つの問いを1項目とし、「何を」「どうするか」（求めよ・示せ・証明せよ）まで書く。
+  問い固有の条件はその問いに含め、別の共通条件にしない。
+- 条件の行頭には番号も「・」「-」も付けない。問い以外に設問番号を使わない。
+- 数式は topic と同じ表記のまま写す（_ ^ 記号も含めて）。式の途中で分断しない。
+- 問題に無い条件・解き方・答えは足さない。
 
     入力: 円に内接する四角形ABCDにおいて、AB = BC = 7, CD = 5, DA = 3
           であるとき、cos Bの値を求めなさい。
-    outline: "円に内接する四角形ABCD\\nAB = BC = 7\\nCD = 5, DA = 3\\ncos B を求める"
+    outline: "四角形ABCDは円に内接している。\\n辺の長さは AB = BC = 7, CD = 5, DA = 3 である。\\n(1) cos Bの値を求めなさい。"
+
+    入力: 関数f(x)=x^2-4x+3について、(1) f(x)=0を解け。(2) 0≦x≦3での最小値を求めよ。
+    outline: "関数f(x)=x^2-4x+3について、次の問いに答えよ。\\n(1) f(x)=0を解け。\\n(2) 0≦x≦3におけるf(x)の最小値を求めよ。"
 
     入力: ∫_0^π x sinx/(1+cos^2x) dx を求めよ。
-    outline: "定積分 ∫_0^π\\n被積分関数 x sinx/(1+cos^2x)\\n値を求める"
+    outline: "(1) ∫_0^π x sinx/(1+cos^2x) dx を求めよ。"
 
-概念の説明（「とは」「教えて」）なら、条件の代わりに扱う内容を並べ、
-最後の項目を「何が分かるか」にする。`;
+概念の説明（「とは」「教えて」）なら、扱う内容を先に説明し、
+最後に「何を理解するか」を (1) から始まる問いとして書く。`;
 
 export const COMMON_RULES = `- scene_idは1から連番。
 - 事実に自信がないことは書かない。数値を出すなら確かなものだけ。

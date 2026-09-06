@@ -4,6 +4,8 @@ import { layout, shadowOf, stageBottom, useTheme, withAlpha } from "./theme";
 import { MathText } from "./MathText";
 import { Formula } from "./math/Formula";
 import type { Scene } from "../types";
+import { parseProblemOutline } from "../problemOutline";
+import { useFitToStage } from "./useFitToStage";
 
 /**
  * The question, shown from the very first frame of the hook.
@@ -108,8 +110,8 @@ const POSTER_BOX_WIDTH =
   layout.width - POSTER_SAFE_X * 2 - CARD_PADDING_X * 2 - CARD_BORDER * 2;
 /** How much of a row real text actually reaches before it has to break. */
 const PACKING = 0.92;
-/** The marker and the space after it, in ems of the text beside them. */
-const BULLET_GUTTER = 1.2;
+/** Numbered questions need a hanging indent; conditions use the full width. */
+const QUESTION_GUTTER = 1.8;
 
 /**
  * Roughly how wide a string sets, in ems.
@@ -137,21 +139,21 @@ const emsOf = (text: string) => {
  * only honest way to count the rows is to lay each segment out, so this walks
  * the sizes down until they fit.
  *
- * The floor truncates rather than shrinking further. The ceiling is what a
- * short question gets: 「∫_0^π …を求めよ。」 is 28 characters, and left to fill
+ * DOM fitting handles overflow below the estimated floor without hiding text.
+ * The ceiling is what a short question gets: 「∫_0^π …を求めよ。」 is 28 characters, and left to fill
  * the box it came out in letters a fifth of the frame tall — a slogan rather
  * than a question. Past 130 the box is better left with air in it.
  */
-const posterFontSize = (segments: string[], bulleted: boolean) => {
+const posterFontSize = (segments: string[], outlined: boolean) => {
   for (let size = 130; size > 56; size -= 2) {
     // Whole characters, and not quite the full width: a row breaks at a word
     // or a kinsoku boundary, never mid-character and rarely at the last em
     // that would have fitted. Rounding down matters most at the large sizes,
     // where a row is only four or five characters wide to begin with.
     const emsPerRow = Math.floor(
-      (POSTER_BOX_WIDTH / size) * PACKING - (bulleted ? BULLET_GUTTER : 0),
+      (POSTER_BOX_WIDTH / size) * PACKING - (outlined ? QUESTION_GUTTER : 0),
     );
-    const rows = segments.reduce(
+    const rows = segments.flatMap((segment) => segment.split("\n")).reduce(
       (total, segment) => total + Math.max(1, Math.ceil(emsOf(segment) / emsPerRow)),
       0,
     );
@@ -176,202 +178,46 @@ const ProblemCard: React.FC<{
   const { fps } = useVideoConfig();
   const theme = useTheme();
 
-  // A bulleted card is the same lines with a marker in front of each; the
-  // question is only a paragraph when the short predates the outline.
-  const bulleted = points.length > 0;
-  const lines = bulleted ? points : text.split("\n");
+  const { conditions, questions } = parseProblemOutline(points);
+  const outlined = conditions.length + questions.length > 0;
+  const lines = outlined
+    ? [...conditions, ...questions.map((question) => question.text)]
+    : text.split("\n");
   const measured = lines.join("\n");
-  // `OUTLINE_RULE` makes the final item the thing to find. Keeping that
-  // knowledge in the card avoids another generated field: the structured
-  // output schema is already at the grammar-size limit.
-  const conditions = bulleted ? lines.slice(0, -1) : [];
-  const questionLine = bulleted ? lines.at(-1) : undefined;
-
-  /*
-   * Long questions step down rather than overflowing the card.
-   *
-   * The extra tier is for the exam-style questions that carry their own
-   * sub-questions and displayed formulas — those run past 200 characters and
-   * over ten lines once the line breaks are honoured.
-   */
+  // The opening can spend its vertical space on complete sentences. Start
+  // larger even for long questions, then fit the actual wrapped block instead
+  // of silently dropping the thirteenth line (often the second question).
+  // Posters keep the same complete content, but start at 56–130px because the
+  // library displays them much smaller and they have no caption band.
   const fontSize = poster
-    ? posterFontSize(lines, bulleted)
-    : measured.length > 200
-      ? 32
-      : measured.length > 130
-        ? 38
-        : measured.length > 88
-          ? 44
-          : 50;
-
-  /** The bordered plate the question sits on. */
-  const plate = {
-    fontFamily: theme.fontFamily,
-    fontWeight: 700,
-    fontSize,
-    lineHeight: CARD_LINE_HEIGHT,
-    color: theme.ink,
-    backgroundColor: withAlpha(theme.bgDeep, 0.72),
-    border: `${CARD_BORDER}px solid ${withAlpha(accent, 0.55)}`,
-    borderRadius: theme.radius === 999 ? 24 : theme.radius,
-    padding: `${CARD_PADDING_Y}px ${CARD_PADDING_X}px`,
-    textShadow: shadowOf(theme),
-  } as const;
-
-  /** The question itself, trimmed to the lines there is room for. */
-  const body = {
-    // The question may arrive with its sub-questions and displayed formulas on
-    // their own lines; a long one is unreadable as a wall.
-    whiteSpace: "pre-line",
-    display: "-webkit-box",
-    /* In the video, 12 lines at 32px is 645px of card and the stage between
-       the unit banner and the caption band has around twice that. The poster
-       has no caption band, so its own height is what decides — `floor`,
-       because a line that only half fits is a line cut through the middle. */
-    WebkitLineClamp: poster
-      ? Math.max(3, Math.floor(POSTER_BOX_HEIGHT / (CARD_LINE_HEIGHT * fontSize)))
-      : 12,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-  } as const;
-
-  const conditionRow = (point: string) => (
-    <div
-      key={point}
-      style={{
-        display: "flex",
-        alignItems: "baseline",
-        gap: `${BULLET_GUTTER * 0.45}em`,
-      }}
-    >
-      <span
-        style={{
-          flex: "none",
-          width: `${BULLET_GUTTER * 0.35}em`,
-          height: `${BULLET_GUTTER * 0.35}em`,
-          borderRadius: "0.1em",
-          backgroundColor: accent,
-          // Baseline alignment puts a box on the baseline itself; nudging it
-          // up by a third of the type size centres it on the line.
-          transform: "translateY(-0.28em)",
-        }}
-      />
-      <span style={{ minWidth: 0 }}>
-        <MathText text={point} />
-      </span>
-    </div>
-  );
-
-  const questionRow = questionLine ? (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "baseline",
-        gap: `${BULLET_GUTTER * 0.28}em`,
-        // A video has room to make the hand-off explicit. A poster is read at
-        // a much smaller size, so its marker alone separates the last row
-        // without spending any of the text box's line budget on this rule;
-        // a one-item outline has nothing above it to divide from.
-        ...(poster || conditions.length === 0
-          ? {}
-          : {
-              marginTop: "0.35em",
-              paddingTop: "0.35em",
-              borderTop: `2px solid ${withAlpha(accent, 0.5)}`,
-            }),
-      }}
-    >
-      <span
-        style={{
-          flex: "none",
-          // The chip and the gap still fit inside `BULLET_GUTTER`, so this
-          // takes no more horizontal room than the rows `posterFontSize()`
-          // already budgets for.
-          // Sized against this span's *own* font-size, which the line below
-          // shrinks: `width: 1em` here is one 「問」, not one line of card text.
-          // Expressing it in card-text ems instead silently multiplied the two
-          // together and drew the chip at a third of its intended size.
-          width: "1.75em",
-          height: "1.75em",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          // Filled rather than outlined, like the 「問題」 chip above the card.
-          // An outlined 「問」 at this size put the border straight through the
-          // glyph's own strokes: at 23px in a 33px box the character has more
-          // strokes than it has pixels to draw them in, and it came out as a
-          // smudge. Reversing it out of a solid chip spends those pixels on
-          // one shape instead of two, which is why the header chip stays
-          // legible at a similar size.
-          backgroundColor: accent,
-          borderRadius: "0.18em",
-          color: theme.bgDeep,
-          fontFamily: theme.fontFamily,
-          fontWeight: 900,
-          fontSize: "0.42em",
-          lineHeight: 1,
-          // Unlike the condition square, this is a Japanese textbook-like
-          // 「問」 tag. Its letter and outline still identify the row when an
-          // accent has little contrast against a light design.
-          transform: "translateY(-0.04em)",
-        }}
-      >
-        問
-      </span>
-      <span style={{ minWidth: 0 }}>
-        <MathText text={questionLine} />
-      </span>
-    </div>
-  ) : null;
-
-  const question = bulleted ? (
-    <>
-      {conditions.length > 0 && !poster ? (
-        <div
-          style={{
-            color: theme.inkDim,
-            fontFamily: theme.fontFamily,
-            fontWeight: 900,
-            fontSize: "0.48em",
-            letterSpacing: "0.14em",
-            lineHeight: 1,
-            marginBottom: "0.42em",
-          }}
-        >
-          条件
-        </div>
-      ) : null}
-      {conditions.map(conditionRow)}
-      {questionRow}
-    </>
-  ) : (
-    <MathText text={text} />
-  );
+    ? posterFontSize(lines, outlined)
+    : measured.length > 200 ? 44 : measured.length > 130 ? 48
+      : measured.length > 88 ? 52 : 56;
+  const { viewportRef, contentRef, scale } = useFitToStage(false);
 
   return (
     <div
       style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        minHeight: 0,
         opacity: clamped(frame, [0, 0.35 * fps], [0, 1], theme.easing),
-        translate: clamped(
-          frame,
-          [0, 0.5 * fps],
-          ["0px -24px", "0px 0px"],
-          theme.easing,
-        ),
+        translate: clamped(frame, [0, 0.5 * fps], ["0px -24px", "0px 0px"], theme.easing),
       }}
     >
-      {/* A still card is nothing but the question, so nothing has to say so.
-          In the video the chip marks the section the narration is in. */}
       {poster ? null : (
         <div
           style={{
             alignSelf: "flex-start",
-            display: "inline-block",
             backgroundColor: accent,
             color: theme.bgDeep,
             fontFamily: theme.fontFamily,
             fontWeight: 900,
-            fontSize: 30,
+            // A section label must remain legible at phone playback size,
+            // independently of the problem's character-count tier.
+            fontSize: 36,
+            lineHeight: 1.3,
             letterSpacing: 2,
             padding: "8px 22px",
             borderRadius: theme.radius,
@@ -383,24 +229,71 @@ const ProblemCard: React.FC<{
       )}
       <div
         style={{
-          ...plate,
-          // On a poster the box is the frame, not a label on it: it spans
-          // everything between the banner and the foot whatever the question
-          // says, and the question sits in the middle of it. The clamp lives
-          // on the inner body in both modes because the condition heading and
-          // the question divider have to be counted with their own rows.
-          ...(poster
-            ? {
-                height: POSTER_BOX_OUTER,
-                boxSizing: "border-box" as const,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }
-            : {}),
+          /*
+           * The box that knows how much room there is, not the box that gets
+           * painted. Those were one element, which meant the plate always
+           * stood as tall as the stage: a four-line question sat in the
+           * middle of twelve lines of empty border. The fitter still needs a
+           * definite height to measure against, so this keeps `flex: 1` and
+           * the visible plate below hugs the text instead.
+           */
+          flex: 1,
+          minHeight: 0,
+          fontFamily: theme.fontFamily,
+          fontWeight: 700,
+          fontSize,
+          lineHeight: CARD_LINE_HEIGHT,
+          color: theme.ink,
+          textShadow: shadowOf(theme),
         }}
       >
-        <div style={{ ...body, width: poster ? "100%" : undefined }}>{question}</div>
+        {/* A bounded viewport lets the shared fitter count labels, dividers,
+            wrapped questions and webfont metrics together. Full text takes
+            priority over the nominal size only when that measured block spills. */}
+        <div ref={viewportRef} style={{ height: "100%", minHeight: 0, display: "flex", alignItems: "center" }}>
+          <div
+            ref={contentRef}
+            style={{
+              width: "100%",
+              flexShrink: 0,
+              whiteSpace: "pre-line",
+              overflowWrap: "anywhere",
+              scale: String(scale),
+              backgroundColor: withAlpha(theme.bgDeep, 0.72),
+              border: `${CARD_BORDER}px solid ${withAlpha(accent, 0.55)}`,
+              borderRadius: theme.radius === 999 ? 24 : theme.radius,
+              padding: `${CARD_PADDING_Y}px ${CARD_PADDING_X}px`,
+              boxSizing: "border-box",
+            }}
+          >
+            {outlined ? (
+              <>
+                {conditions.length > 0 && !poster ? (
+                  // A fixed label size avoids the old 0.48em heading shrinking
+                  // to 15px precisely when a long question needs orientation.
+                  <div style={{ color: theme.inkDim, fontWeight: 900, fontSize: 36, letterSpacing: "0.14em", lineHeight: 1.2, marginBottom: 16 }}>
+                    条件
+                  </div>
+                ) : null}
+                {conditions.map((condition, index) => (
+                  <div key={index}><MathText text={condition} /></div>
+                ))}
+                <div style={conditions.length ? { marginTop: "0.35em", paddingTop: "0.35em", borderTop: `2px solid ${withAlpha(accent, 0.5)}` } : undefined}>
+                  {questions.map((question, index) => (
+                    <div key={index} style={{ display: "flex", alignItems: "baseline", gap: "0.25em", marginTop: index ? "0.25em" : 0 }}>
+                      {/* Numbers stay as large as the question so each answer
+                          later in the video has an unmistakable reference. */}
+                      <span style={{ color: accent, fontWeight: 900, flexShrink: 0, minWidth: `${QUESTION_GUTTER - 0.25}em` }}>
+                        {question.number === null ? "問" : `(${question.number})`}
+                      </span>
+                      <span style={{ minWidth: 0 }}><MathText text={question.text} /></span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : <MathText text={text} />}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -498,7 +391,10 @@ export const SceneShell: React.FC<{
         paddingRight: inset,
         // The poster's question box is tall enough to reach the unit banner,
         // which is positioned absolutely and would be painted over.
-        paddingTop: poster ? POSTER_TOP : layout.safeTop,
+        // The complete problem now uses the available height, so explicitly
+        // reserve the banner (74.4 + 18 + 5px) and 32px below its rule.
+        paddingTop: poster ? POSTER_TOP : problem?.unit
+          ? layout.safeTop + UNIT_SIZE * 1.2 + 18 + 5 + 32 : layout.safeTop,
         // Stop the stage before the caption band so the two never collide. The
         // poster has no captions — only the library's own strip along the foot.
         paddingBottom: poster ? POSTER_FOOT : layout.height - stageBottom,
@@ -610,8 +506,8 @@ export const SceneShell: React.FC<{
         style={{
           // Only a real diagram claims the leftover space. An empty stage that
           // grows would push the headline back to the top of the frame.
-          flexGrow: scene.visual ? 1 : 0,
-          marginTop: scene.visual ? 56 : 0,
+          flexGrow: !problem && scene.visual ? 1 : 0,
+          marginTop: !problem && scene.visual ? 56 : 0,
           minHeight: 0,
           overflow: "hidden",
           // Only combined scenes need a grid. Giving the existing SVG its own

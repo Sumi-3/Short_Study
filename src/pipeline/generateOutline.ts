@@ -26,8 +26,9 @@ export const generateOutline = async (topic: string): Promise<string[]> => {
 
   const response = await anthropic().messages.parse({
     model: config.anthropicModel,
-    max_tokens: 1_000,
-    system: `あなたは数学の問題を一覧用に要約します。\n\n${OUTLINE_RULE}`,
+    // Complete conditions and multiple requests need more room than a list summary.
+    max_tokens: 2_000,
+    system: `あなたは数学の問題を、条件とすべての問いを保って画面用に整えます。\n\n${OUTLINE_RULE}`,
     messages: [{ role: "user", content: topic }],
     output_config: { format: zodOutputFormat(outlineSchema) },
   });

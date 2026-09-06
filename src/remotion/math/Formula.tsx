@@ -91,16 +91,19 @@ const annotations = {
   bracket: Bracket,
 } as const;
 
-/**
- * Rough marks live outside CSS layout bounds. Measure their actual SVG paths,
- * including the circle's sqrt(2) expansion and seeded wobble, instead of
- * estimating a tall fraction's enclosure from font size. getBBox includes the
- * complete path even while its stroke is being revealed. Screen matrices let
- * us compare it with the row, then undo Player/stage/fit scales; the padding
- * must be in the same unscaled pixels as the height fitter's measurement.
- */
 /** Generous next to the 4px stroke and 14-20px padding an annotation uses. */
 const ROOM_CAP = 160;
+
+/**
+ * A row, plus the room its rough mark needs outside CSS layout bounds.
+ *
+ * The mark is measured rather than estimated from font size, because the
+ * circle's sqrt(2) expansion and the seeded wobble are not derivable from the
+ * type — and a tall fraction's enclosure even less so. The padding has to come
+ * back in the unscaled pixels the height fitter works in, which is what the
+ * division by the applied scale below is for, and also what makes that
+ * division dangerous; see the guard inside.
+ */
 
 const Row: React.FC<{
   derivation: boolean;
@@ -241,10 +244,14 @@ export const Formula: React.FC<{
   const revealFrame = frame / timing;
   const lastDelay = (0.8 + Math.max(0, shown.length - 1) * 0.9) * fps;
   const dense = shown.length >= 3;
-  // Keep the legacy 1–3-row sizes; four rows and five/six rows step down
-  // before height fitting, so the extra prose uses space rather than crowding.
-  const baseFontSize = compact ? 52
-    : shown.length >= 5 ? 48 : shown.length === 4 ? 54 : dense ? 58 : 66;
+  // New scripts use 3–4 rows so larger maths and 86%-size reasons can stay
+  // readable. Keep six-row legacy scripts complete at a more modest 60px;
+  // useFitToStage still fits fractions, marks and captions as one block.
+  // Spending less height on display-math margins below avoids immediately
+  // undoing this increase with the height fitter. Completeness wins only
+  // when the actual block is too tall/wide, rather than hiding a later answer.
+  const baseFontSize = compact ? 58
+    : shown.length >= 5 ? 60 : shown.length === 4 ? 64 : dense ? 70 : 76;
   const gap = compact ? 24
     : shown.length >= 5 ? 12 : shown.length === 4 ? 18 : dense ? 26 : 36;
   const arrowSize = shown.length >= 4 ? 36 : dense ? 48 : 56;
@@ -282,7 +289,7 @@ export const Formula: React.FC<{
       <div
         ref={contentRef}
         data-formula-content
-        className={derivation ? undefined : "formula-statements"}
+        className={derivation ? "formula-derivation" : "formula-statements"}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -302,13 +309,12 @@ export const Formula: React.FC<{
           minWidth: 0,
         }}
       >
-        {/* Display math normally adds an em of margin on each side vertically.
-            Keep that old spacing for derivations, but annotate the actual math
-            in statement mode: circling those margins would circle empty space
-            and take height away from the companion diagram. */}
-        {!derivation ? (
-          <style>{`.formula-statements .katex-display { margin: 0; }`}</style>
-        ) : null}
+        {/* Default 1em margins would spend 720px on empty space at six
+            60px rows, forcing even short equations back down in size. A
+            quarter em plus the existing gaps/arrows keeps derivations clear;
+            statement marks still enclose only the actual mathematical ink. */}
+        <style>{`.formula-derivation .katex-display { margin: 0.25em 0; }
+          .formula-statements .katex-display { margin: 0; }`}</style>
         {shown.map(({ latex, annotation, text }, index) => {
           const delay = (0.8 + index * 0.9) * fps;
           const isLast = index === shown.length - 1;
@@ -321,7 +327,7 @@ export const Formula: React.FC<{
               text={text}
               delay={delay}
               color={theme.ink}
-              fontSize={text ? fontSize * 0.72 : fontSize}
+              fontSize={text ? fontSize * 0.86 : fontSize}
               timing={timing}
               measureRef={register(index)}
             />
