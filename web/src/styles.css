@@ -1,12 +1,37 @@
 :root {
-  --bg: #0b0121;
-  --panel: #170a3c;
-  --ink: #ffffff;
-  --ink-dim: rgba(255, 255, 255, 0.58);
-  --accent: #ffe500;
-  --accent-2: #00e5ff;
-  --line: rgba(255, 255, 255, 0.12);
-  color-scheme: dark;
+  --bg: #f5f7fa;
+  --panel: #ffffff;
+  --ink: #18181b;
+  --ink-dim: rgba(24, 24, 27, 0.62);
+  --accent: #0f62fe;
+  --accent-2: #7c3aed;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(15, 98, 254, 0.1);
+  --line: rgba(24, 24, 27, 0.12);
+  --line-soft: rgba(24, 24, 27, 0.08);
+  --control-bg: rgba(255, 255, 255, 0.78);
+  --field-bg: rgba(255, 255, 255, 0.92);
+  --control-disabled-bg: rgba(24, 24, 27, 0.04);
+  --control-disabled-ink: rgba(24, 24, 27, 0.65);
+  --surface-shadow: 0 1px 2px rgba(15, 23, 42, 0.06),
+    0 10px 24px rgba(15, 23, 42, 0.08);
+  --surface-shadow-strong: 0 1px 2px rgba(15, 23, 42, 0.08),
+    0 16px 40px rgba(15, 23, 42, 0.12);
+  --tabs-shadow: 0 -10px 24px rgba(15, 23, 42, 0.06);
+  --overlay-scrim: rgba(0, 0, 0, 0.42);
+  --overlay-scrim-strong: rgba(0, 0, 0, 0.58);
+  --overlay-ink: rgba(255, 255, 255, 0.96);
+  --overlay-ink-dim: rgba(255, 255, 255, 0.82);
+  --overlay-panel: rgba(255, 255, 255, 0.94);
+  --overlay-panel-ink: #111827;
+  --overlay-line: rgba(255, 255, 255, 0.24);
+  --overlay-text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  --success: #16a34a;
+  --error: #e11d48;
+  --error-ink: #9f1239;
+  --black: #000;
+  --white: #fff;
+  color-scheme: light;
 }
 
 * {
@@ -99,7 +124,9 @@ body {
   width: auto;
   min-height: 0;
   overflow: hidden;
-  background: #000;
+  /* The letterbox is the video frame itself; it stays pure black so the
+     composition's edge reads like a screen rather than app chrome. */
+  background: var(--black);
 }
 
 @media (max-aspect-ratio: 9 / 16) {
@@ -199,6 +226,8 @@ body {
   cursor: pointer;
 }
 
+/* This lives over the video, not the page, so it keeps the dark scrim and
+   light text that still read cleanly against moving footage. */
 .short__overlay {
   position: absolute;
   inset: 0;
@@ -207,15 +236,15 @@ body {
   align-items: center;
   justify-content: center;
   gap: 14px;
-  background: rgba(6, 0, 18, 0.42);
+  background: var(--overlay-scrim);
 }
 
 .short__play {
   width: 84px;
   height: 84px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.94);
-  color: #0b0121;
+  background: var(--overlay-panel);
+  color: var(--overlay-panel-ink);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -226,7 +255,7 @@ body {
 .short__hint {
   margin: 0;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.86);
+  color: var(--overlay-ink-dim);
 }
 
 /* ---------- seek bar ---------- */
@@ -247,7 +276,7 @@ body {
   position: relative;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.24);
+  background: var(--overlay-line);
   transition: height 0.12s ease;
 }
 
@@ -284,8 +313,8 @@ body {
   font-size: 13px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: #fff;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  color: var(--overlay-ink);
+  text-shadow: var(--overlay-text-shadow);
 }
 
 .player-placeholder {
@@ -297,16 +326,17 @@ body {
   text-align: center;
   font-size: 14px;
   line-height: 1.8;
-  color: var(--ink-dim);
+  color: var(--overlay-ink-dim);
 }
 
 .job {
   width: min(100%, 460px);
   padding: 14px 16px;
   border-radius: 16px;
-  background: rgba(23, 10, 60, 0.94);
+  background: var(--panel);
   backdrop-filter: blur(12px);
   border: 1px solid var(--line);
+  box-shadow: var(--surface-shadow-strong);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -338,7 +368,7 @@ body {
 .job__track {
   height: 5px;
   border-radius: 3px;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--line-soft);
   overflow: hidden;
 }
 
@@ -349,18 +379,18 @@ body {
 }
 
 .job--done .job__fill {
-  background: #4dff7c;
+  background: var(--success);
 }
 
 .job--error .job__fill {
-  background: #ff2d95;
+  background: var(--error);
 }
 
 .job__error {
   margin: 0;
   font-size: 12px;
   line-height: 1.6;
-  color: #ff8fbe;
+  color: var(--error-ink);
   word-break: break-word;
 }
 
@@ -382,13 +412,18 @@ body {
   padding: 14px;
   border-radius: 14px;
   border: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--field-bg);
   color: var(--ink);
   font: inherit;
   /* 16px keeps iOS Safari from zooming in on focus. */
   font-size: 16px;
   line-height: 1.6;
   resize: none;
+}
+
+.composer textarea::placeholder {
+  color: var(--ink-dim);
+  opacity: 1;
 }
 
 .composer textarea:focus {
@@ -404,7 +439,7 @@ body {
   border: none;
   border-radius: 999px;
   background: var(--accent);
-  color: #12042e;
+  color: var(--accent-ink);
   font: inherit;
   font-weight: 700;
   font-size: 16px;
@@ -412,8 +447,8 @@ body {
 }
 
 .composer > button:disabled {
-  background: rgba(255, 255, 255, 0.16);
-  color: var(--ink-dim);
+  background: var(--control-disabled-bg);
+  color: var(--control-disabled-ink);
 }
 
 
@@ -433,8 +468,9 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border-top: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--panel);
   backdrop-filter: blur(14px);
+  box-shadow: var(--tabs-shadow);
 }
 
 .tabs__button {
@@ -514,7 +550,7 @@ body {
   padding: 6px 13px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: transparent;
+  background: var(--control-bg);
   color: var(--ink-dim);
   font: inherit;
   font-size: 12px;
@@ -526,7 +562,7 @@ body {
 .chip.is-on {
   border-color: transparent;
   background: var(--accent);
-  color: #12042e;
+  color: var(--accent-ink);
 }
 
 /* ---------- library grid ---------- */
@@ -564,9 +600,11 @@ body {
   width: 100%;
   padding: 0;
   border: 0;
-  background: #000;
+  background: var(--panel);
   border-radius: 14px;
   overflow: hidden;
+  box-shadow: var(--surface-shadow);
+  border: 1px solid var(--line);
   /* A button centres its text; a card does not. */
   text-align: left;
   cursor: pointer;
@@ -684,8 +722,8 @@ body {
   height: 34px;
   border: 0;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.5);
-  color: var(--ink);
+  background: var(--overlay-scrim-strong);
+  color: var(--white);
   font-size: 15px;
   cursor: pointer;
 }
@@ -733,7 +771,7 @@ body {
   width: 44px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.28);
+  background: var(--control-bg);
   color: var(--ink);
   font-size: 14px;
   line-height: 1;
@@ -742,7 +780,8 @@ body {
 
 .voice__play:active {
   border-color: var(--accent);
-  color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 
 .field select {
@@ -750,7 +789,7 @@ body {
   padding: 11px 12px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.28);
+  background: var(--field-bg);
   color: var(--ink);
   font: inherit;
   font-size: 15px;
@@ -769,7 +808,7 @@ body {
   padding: 8px 14px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: transparent;
+  background: var(--control-bg);
   color: var(--ink-dim);
   font: inherit;
   font-size: 13px;
@@ -779,6 +818,7 @@ body {
 
 .swatch.is-on {
   border-color: var(--accent);
+  background: var(--accent-soft);
   color: var(--ink);
 }
 
