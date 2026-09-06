@@ -1,3 +1,4 @@
+import { FORMULA_MAX_LINES, COMPANION_MAX_LINES } from "./formulaLines.js";
 import { DEFAULT_DESIGN } from "./designs.js";
 import { z } from "zod/v4";
 import type { Caption } from "@remotion/captions";
@@ -24,8 +25,8 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
   }),
   z.object({
     kind: z.literal("formula"),
-    /** LaTeX, optionally prefixed with a line annotation such as [underline]. */
-    lines: z.array(z.string()).min(1).max(3),
+    /** LaTeX or [text] prose; either can carry an emphasis prefix. */
+    lines: z.array(z.string()).min(1).max(FORMULA_MAX_LINES),
     caption: z.string(),
   }),
   z.object({
@@ -109,7 +110,7 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
      * diagram readable on a portrait stage. Optional so old manifests still
      * parse and play without migration (the player also reads JSON directly).
      */
-    lines: z.array(z.string()).max(2).optional(),
+    lines: z.array(z.string()).max(COMPANION_MAX_LINES).optional(),
     caption: z.string().optional(),
     /** `label` doubles as the id everything else references. */
     points: z.array(
@@ -165,7 +166,7 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("plot"),
     /** Same companion working as figure; these are not API scene fields. */
-    lines: z.array(z.string()).max(2).optional(),
+    lines: z.array(z.string()).max(COMPANION_MAX_LINES).optional(),
     caption: z.string().optional(),
     xRange: z.tuple([z.number(), z.number()]),
     yRange: z.tuple([z.number(), z.number()]),
@@ -284,8 +285,8 @@ export const apiScriptSchema = z.object({
         "none",
       ]),
       /**
-       * `bullets` items, `flow` steps, `formula` LaTeX lines, or up to two
-       * companion LaTeX lines for `figure` / `plot`. Annotation markers live
+       * `bullets` items, `flow` steps, up to six mixed `formula` lines, or two
+       * companion math/prose lines for `figure` / `plot`. Type and annotation markers live
        * inside those strings, too: the API scene stays at 19 required fields
        * instead of adding a twentieth and hitting the compiled grammar limit.
        * Data-chart kinds keep their existing meanings for this channel.
@@ -409,7 +410,7 @@ export const normalizeVisual = (
         : undefined;
     }
     case "formula": {
-      const lines = scene.visual_items.filter(Boolean).slice(0, 3);
+      const lines = scene.visual_items.filter((line) => line.trim()).slice(0, FORMULA_MAX_LINES);
       return lines.length
         ? { kind: "formula", lines, caption: scene.visual_caption }
         : undefined;
@@ -542,7 +543,7 @@ export const normalizeVisual = (
       }
       return {
         kind: "figure",
-        lines: scene.visual_items.filter((line) => line.trim()).slice(0, 2),
+        lines: scene.visual_items.filter((line) => line.trim()).slice(0, COMPANION_MAX_LINES),
         caption: scene.visual_caption,
         points,
         segments: segments.map((segment) => ({
@@ -595,7 +596,7 @@ export const normalizeVisual = (
       const shade = scene.visual_shade;
       return {
         kind: "plot",
-        lines: scene.visual_items.filter((line) => line.trim()).slice(0, 2),
+        lines: scene.visual_items.filter((line) => line.trim()).slice(0, COMPANION_MAX_LINES),
         caption: scene.visual_caption,
         xRange: [xMin, xMax],
         yRange: [yMin, yMax],

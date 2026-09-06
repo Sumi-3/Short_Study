@@ -181,6 +181,11 @@ const ProblemCard: React.FC<{
   const bulleted = points.length > 0;
   const lines = bulleted ? points : text.split("\n");
   const measured = lines.join("\n");
+  // `OUTLINE_RULE` makes the final item the thing to find. Keeping that
+  // knowledge in the card avoids another generated field: the structured
+  // output schema is already at the grammar-size limit.
+  const conditions = bulleted ? lines.slice(0, -1) : [];
+  const questionLine = bulleted ? lines.at(-1) : undefined;
 
   /*
    * Long questions step down rather than overflowing the card.
@@ -230,33 +235,115 @@ const ProblemCard: React.FC<{
     overflow: "hidden",
   } as const;
 
-  const question = bulleted ? (
-    lines.map((point) => (
-      <div
-        key={point}
+  const conditionRow = (point: string) => (
+    <div
+      key={point}
+      style={{
+        display: "flex",
+        alignItems: "baseline",
+        gap: `${BULLET_GUTTER * 0.45}em`,
+      }}
+    >
+      <span
         style={{
-          display: "flex",
-          alignItems: "baseline",
-          gap: `${BULLET_GUTTER * 0.45}em`,
+          flex: "none",
+          width: `${BULLET_GUTTER * 0.35}em`,
+          height: `${BULLET_GUTTER * 0.35}em`,
+          borderRadius: "0.1em",
+          backgroundColor: accent,
+          // Baseline alignment puts a box on the baseline itself; nudging it
+          // up by a third of the type size centres it on the line.
+          transform: "translateY(-0.28em)",
+        }}
+      />
+      <span style={{ minWidth: 0 }}>
+        <MathText text={point} />
+      </span>
+    </div>
+  );
+
+  const questionRow = questionLine ? (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "baseline",
+        gap: `${BULLET_GUTTER * 0.28}em`,
+        // A video has room to make the hand-off explicit. A poster is read at
+        // a much smaller size, so its marker alone separates the last row
+        // without spending any of the text box's line budget on this rule;
+        // a one-item outline has nothing above it to divide from.
+        ...(poster || conditions.length === 0
+          ? {}
+          : {
+              marginTop: "0.35em",
+              paddingTop: "0.35em",
+              borderTop: `2px solid ${withAlpha(accent, 0.5)}`,
+            }),
+      }}
+    >
+      <span
+        style={{
+          flex: "none",
+          // The chip and the gap still fit inside `BULLET_GUTTER`, so this
+          // takes no more horizontal room than the rows `posterFontSize()`
+          // already budgets for.
+          // Sized against this span's *own* font-size, which the line below
+          // shrinks: `width: 1em` here is one 「問」, not one line of card text.
+          // Expressing it in card-text ems instead silently multiplied the two
+          // together and drew the chip at a third of its intended size.
+          width: "1.75em",
+          height: "1.75em",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          // Filled rather than outlined, like the 「問題」 chip above the card.
+          // An outlined 「問」 at this size put the border straight through the
+          // glyph's own strokes: at 23px in a 33px box the character has more
+          // strokes than it has pixels to draw them in, and it came out as a
+          // smudge. Reversing it out of a solid chip spends those pixels on
+          // one shape instead of two, which is why the header chip stays
+          // legible at a similar size.
+          backgroundColor: accent,
+          borderRadius: "0.18em",
+          color: theme.bgDeep,
+          fontFamily: theme.fontFamily,
+          fontWeight: 900,
+          fontSize: "0.42em",
+          lineHeight: 1,
+          // Unlike the condition square, this is a Japanese textbook-like
+          // 「問」 tag. Its letter and outline still identify the row when an
+          // accent has little contrast against a light design.
+          transform: "translateY(-0.04em)",
         }}
       >
-        <span
+        問
+      </span>
+      <span style={{ minWidth: 0 }}>
+        <MathText text={questionLine} />
+      </span>
+    </div>
+  ) : null;
+
+  const question = bulleted ? (
+    <>
+      {conditions.length > 0 && !poster ? (
+        <div
           style={{
-            flex: "none",
-            width: `${BULLET_GUTTER * 0.35}em`,
-            height: `${BULLET_GUTTER * 0.35}em`,
-            borderRadius: "0.1em",
-            backgroundColor: accent,
-            // Baseline alignment puts a box on the baseline itself; nudging it
-            // up by a third of the type size centres it on the line.
-            transform: "translateY(-0.28em)",
+            color: theme.inkDim,
+            fontFamily: theme.fontFamily,
+            fontWeight: 900,
+            fontSize: "0.48em",
+            letterSpacing: "0.14em",
+            lineHeight: 1,
+            marginBottom: "0.42em",
           }}
-        />
-        <span style={{ minWidth: 0 }}>
-          <MathText text={point} />
-        </span>
-      </div>
-    ))
+        >
+          条件
+        </div>
+      ) : null}
+      {conditions.map(conditionRow)}
+      {questionRow}
+    </>
   ) : (
     <MathText text={text} />
   );
@@ -299,9 +386,9 @@ const ProblemCard: React.FC<{
           ...plate,
           // On a poster the box is the frame, not a label on it: it spans
           // everything between the banner and the foot whatever the question
-          // says, and the question sits in the middle of it. In the video it
-          // shrink-wraps the question, which is one element rather than two —
-          // the nesting alone moves the glyphs by a fraction of a pixel.
+          // says, and the question sits in the middle of it. The clamp lives
+          // on the inner body in both modes because the condition heading and
+          // the question divider have to be counted with their own rows.
           ...(poster
             ? {
                 height: POSTER_BOX_OUTER,
@@ -310,10 +397,10 @@ const ProblemCard: React.FC<{
                 alignItems: "center",
                 justifyContent: "center",
               }
-            : body),
+            : {}),
         }}
       >
-        {poster ? <div style={{ ...body, width: "100%" }}>{question}</div> : question}
+        <div style={{ ...body, width: poster ? "100%" : undefined }}>{question}</div>
       </div>
     </div>
   );
@@ -548,6 +635,7 @@ export const SceneShell: React.FC<{
               caption={companion?.caption ?? ""}
               accent={accent}
               compact
+              durationInFrames={durationInFrames}
             />
           </>
         ) : children}

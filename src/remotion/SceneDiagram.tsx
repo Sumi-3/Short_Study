@@ -211,7 +211,12 @@ export const SceneDiagram: React.FC<{
         <Bars data={visual.data} unit={visual.unit} accent={accent} />
       ) : null}
       {visual.kind === "formula" ? (
-        <Formula lines={visual.lines} caption={visual.caption} accent={accent} />
+        <Formula
+          lines={visual.lines}
+          caption={visual.caption}
+          accent={accent}
+          durationInFrames={durationInFrames}
+        />
       ) : null}
       {visual.kind === "plot" ? <Plot data={visual} accent={accent} /> : null}
       {visual.kind === "figure" ? (
