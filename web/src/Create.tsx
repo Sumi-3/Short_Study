@@ -3,6 +3,7 @@ import { COURSES } from "../../src/courses";
 import { DEFAULT_DESIGN, DESIGNS, type DesignId } from "../../src/designs";
 import { VOICES } from "../../src/voices";
 import type { JobEvent } from "./api";
+import { playSample } from "./voiceSamples";
 
 const JobCard: React.FC<{ job: JobEvent; onDismiss: () => void }> = ({
   job,
@@ -64,23 +65,41 @@ export const Create: React.FC<{
         <div className="field">
           <span className="field__label">声</span>
           {/* A select rather than chips: fourteen of them would be three rows
-              of scrolling, and this is a set-and-forget choice. */}
-          <select value={voice} onChange={(e) => setVoice(e.target.value)}>
-            <optgroup label="日本語ボイス">
-              {VOICES.filter((entry) => entry.native).map((entry) => (
-                <option key={entry.id} value={entry.id}>
-                  {entry.label}（{entry.gender === "female" ? "女性" : "男性"}）
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="多言語ボイス（日本語も話せます）">
-              {VOICES.filter((entry) => !entry.native).map((entry) => (
-                <option key={entry.id} value={entry.id}>
-                  {entry.label}（{entry.gender === "female" ? "女性" : "男性"}）
-                </option>
-              ))}
-            </optgroup>
-          </select>
+              of scrolling, and this is a set-and-forget choice. Picking one
+              plays it, because the label narrows the field down but only the
+              sample settles it. */}
+          <div className="voice">
+            <select
+              value={voice}
+              onChange={(e) => {
+                setVoice(e.target.value);
+                playSample(e.target.value);
+              }}
+            >
+              <optgroup label="日本語ボイス">
+                {VOICES.filter((entry) => entry.native).map((entry) => (
+                  <option key={entry.id} value={entry.id}>
+                    {entry.label}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="多言語ボイス（日本語も話せます）">
+                {VOICES.filter((entry) => !entry.native).map((entry) => (
+                  <option key={entry.id} value={entry.id}>
+                    {entry.label}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+            <button
+              type="button"
+              className="voice__play"
+              onClick={() => playSample(voice)}
+              aria-label="声を試聴する"
+            >
+              ▶
+            </button>
+          </div>
         </div>
 
         <div className="field">

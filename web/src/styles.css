@@ -716,6 +716,35 @@ body {
   color: var(--ink-dim);
 }
 
+.voice {
+  display: flex;
+  gap: 8px;
+}
+
+/* The select takes the space; the button stays a square regardless of how long
+   the impression reads. */
+.voice select {
+  flex: 1;
+  min-width: 0;
+}
+
+.voice__play {
+  flex: none;
+  width: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.voice__play:active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .field select {
   width: 100%;
   padding: 11px 12px;
