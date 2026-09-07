@@ -6,6 +6,9 @@ import type { AudioGate } from "./audioGate";
 import type { Manifest } from "../../src/types";
 
 const PLAYER_STYLE = { width: "100%", height: "100%" } as const;
+const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5] as const;
+const PAUSE_OVERLAY_HOLD_MS = 700;
+const PAUSE_OVERLAY_FADE_MS = 200;
 
 const clock = (seconds: number) => {
   const whole = Math.max(0, Math.floor(seconds));
@@ -96,6 +99,36 @@ const Scrubber: React.FC<{
   );
 };
 
+const SpeedControl: React.FC<{
+  playbackRate: number;
+  onChange: (playbackRate: number) => void;
+}> = ({ playbackRate, onChange }) => {
+  return (
+    <label
+      className="speed-control"
+      // The parent uses capture phase for its whole-surface play/pause target.
+      // Keep this as well as its closest() check so a speed change is never a
+      // play/pause tap when the control's markup changes later.
+      onPointerDown={(event) => event.stopPropagation()}
+      onClick={(event) => event.stopPropagation()}
+    >
+      <span className="speed-control__label">速度</span>
+      <select
+        className="speed-control__select"
+        value={playbackRate}
+        onChange={(event) => onChange(Number(event.target.value))}
+        aria-label="再生速度"
+      >
+        {PLAYBACK_RATES.map((rate) => (
+          <option key={rate} value={rate}>
+            {rate}x
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+};
+
 /**
  * Plays a generated short in the browser with no MP4 involved: `<Player>` runs
  * the same React composition the renderer uses, so a finished manifest is
@@ -131,8 +164,39 @@ export const ShortPlayer: React.FC<{
   );
   const [error, setError] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  // `gate` is deliberately a ref for the audio path. This small mirror is
+  // only for rendering the first-tap prompt after that ref changes.
+  const [audioUnlocked, setAudioUnlocked] = useState(() => gate.current.unlocked);
+  const [pauseOverlay, setPauseOverlay] = useState<"hidden" | "shown" | "fading">(
+    "hidden",
+  );
   /** A ref so the click handler can never read a stale value and re-start. */
   const started = useRef(false);
+  const pauseOverlayTimers = useRef<number[]>([]);
+  /** Set while the app pauses on its own, so `onPause` can tell the two apart. */
+  const programmaticPause = useRef(false);
+
+  const clearPauseOverlayTimers = useCallback(() => {
+    pauseOverlayTimers.current.forEach((timer) => window.clearTimeout(timer));
+    pauseOverlayTimers.current = [];
+  }, []);
+
+  const showPauseOverlay = useCallback(() => {
+    clearPauseOverlayTimers();
+    setPauseOverlay("shown");
+    pauseOverlayTimers.current = [
+      window.setTimeout(() => {
+        setPauseOverlay("fading");
+      }, PAUSE_OVERLAY_HOLD_MS),
+      window.setTimeout(() => {
+        setPauseOverlay("hidden");
+        pauseOverlayTimers.current = [];
+      }, PAUSE_OVERLAY_HOLD_MS + PAUSE_OVERLAY_FADE_MS),
+    ];
+  }, [clearPauseOverlayTimers]);
+
+  useEffect(() => clearPauseOverlayTimers, [clearPauseOverlayTimers]);
 
   useEffect(() => {
     let cancelled = false;
@@ -140,7 +204,18 @@ export const ShortPlayer: React.FC<{
     started.current = false;
     // Silence the outgoing short at once — the viewer has already swiped away
     // from it, and the next manifest is a fetch away.
-    player.current?.pause();
+    //
+    // This pause is the app's, not the viewer's. Without the flag it reaches
+    // the same handler a tap does, so every swipe dropped the scrim and the
+    // play mark over the incoming short until it started — the one place the
+    // overlay has nothing to say, since nobody asked for a pause.
+    // Only when there is something to pause: on the first mount there is no
+    // player yet, no `pause` event follows, and a flag set here would still be
+    // standing when the viewer makes their first real pause.
+    if (player.current) {
+      programmaticPause.current = true;
+      player.current.pause();
+    }
 
     /*
      * The previous manifest deliberately stays in state while the next one
@@ -164,8 +239,23 @@ export const ShortPlayer: React.FC<{
       return;
     }
 
-    const onPlay = () => setPlaying(true);
-    const onPause = () => setPlaying(false);
+    const onPlay = () => {
+      clearPauseOverlayTimers();
+      setPauseOverlay("hidden");
+      // Belt and braces: a pause() on an already-paused player emits nothing,
+      // so the flag would outlive the swipe it was set for.
+      programmaticPause.current = false;
+      setPlaying(true);
+    };
+    const onPause = () => {
+      setPlaying(false);
+      const wasProgrammatic = programmaticPause.current;
+      programmaticPause.current = false;
+      if (gate.current.unlocked && !wasProgrammatic) {
+        setAudioUnlocked(true);
+        showPauseOverlay();
+      }
+    };
 
     instance.addEventListener("play", onPlay);
     instance.addEventListener("pause", onPause);
@@ -174,7 +264,7 @@ export const ShortPlayer: React.FC<{
       instance.removeEventListener("play", onPlay);
       instance.removeEventListener("pause", onPause);
     };
-  }, [loaded]);
+  }, [clearPauseOverlayTimers, gate, loaded, showPauseOverlay]);
 
   // Runs once per short that loads. Swiping to a new one after the first tap
   // starts it without another tap; the first one finds no gesture yet and waits.
@@ -204,7 +294,7 @@ export const ShortPlayer: React.FC<{
     // Capture phase runs before the scrubber's own handlers, so its
     // stopPropagation cannot keep a drag from also toggling playback. Ask
     // where the click came from instead.
-    if ((event.target as HTMLElement).closest(".scrubber")) {
+    if ((event.target as HTMLElement).closest(".scrubber, .speed-control")) {
       return;
     }
     // The event is passed on rather than dropped: the Player warms a pool of
@@ -218,6 +308,7 @@ export const ShortPlayer: React.FC<{
       // Inside the click, which is the only place the first unlock of the
       // session can happen. Everything after this may start on its own.
       gate.current.unlocked = true;
+      setAudioUnlocked(true);
       instance.seekTo(0);
       instance.play(event);
       return;
@@ -267,6 +358,7 @@ export const ShortPlayer: React.FC<{
         compositionHeight={manifest.height}
         fps={manifest.fps}
         initialFrame={Math.round(manifest.fps * 1.2)}
+        playbackRate={playbackRate}
         loop
         controls={false}
         clickToPlay={false}
@@ -274,11 +366,15 @@ export const ShortPlayer: React.FC<{
       />
 
       {playing ? null : (
-        <div className="short__overlay">
+        <div
+          className={`short__overlay${
+            audioUnlocked ? ` short__overlay--${pauseOverlay}` : ""
+          }`}
+        >
           <div className="short__play" aria-hidden>
             ▶
           </div>
-          <p className="short__hint">タップして再生</p>
+          {audioUnlocked ? null : <p className="short__hint">タップして再生</p>}
         </div>
       )}
 
@@ -287,6 +383,8 @@ export const ShortPlayer: React.FC<{
         durationInFrames={durationInFrames}
         fps={manifest.fps}
       />
+
+      <SpeedControl playbackRate={playbackRate} onChange={setPlaybackRate} />
     </div>
   );
 };

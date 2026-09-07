@@ -237,6 +237,18 @@ body {
   justify-content: center;
   gap: 14px;
   background: var(--overlay-scrim);
+  transition: opacity 0.2s ease;
+}
+
+/* A mid-video pause needs to reveal the frame again. The element stays in the
+   player surface after fading so the surface itself remains the resume target. */
+.short__overlay--fading,
+.short__overlay--hidden {
+  opacity: 0;
+}
+
+.short__overlay--hidden {
+  pointer-events: none;
 }
 
 .short__play {
@@ -256,6 +268,41 @@ body {
   margin: 0;
   font-size: 13px;
   color: var(--overlay-ink-dim);
+}
+
+/* ---------- playback speed ---------- */
+
+.speed-control {
+  position: absolute;
+  right: 14px;
+  bottom: 52px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px 6px 10px;
+  border-radius: 22px;
+  background: var(--overlay-panel);
+  color: var(--overlay-panel-ink);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--surface-shadow);
+  cursor: pointer;
+}
+
+.speed-control__label {
+  white-space: nowrap;
+}
+
+.speed-control__select {
+  min-height: 32px;
+  border: 0;
+  border-radius: 16px;
+  padding: 0 4px;
+  background: var(--control-bg);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 
 /* ---------- seek bar ---------- */
