@@ -1,7 +1,10 @@
 import {
   AbsoluteFill,
+  Html5Audio,
+  Internals,
   Sequence,
   useCurrentFrame,
+  useRemotionEnvironment,
   useVideoConfig,
   type CalculateMetadataFunction,
 } from "remotion";
@@ -41,6 +44,18 @@ const FALLBACK_AUDIO = {
   // reads as a short that plays with no sound at all.
   pauseWhenBuffering: true,
 } as const;
+
+// Remotion's preservePitch prop covers the standard property; older Safari
+// needs the prefixed one too. Keep the ref stable so frames do not detach and
+// reattach it, and let Html5Audio reuse the Player's gesture-unlocked tag pool.
+const preserveNarrationPitch = (element: HTMLAudioElement | null) => {
+  if (!element) return;
+  element.preservesPitch = true;
+  if ("webkitPreservesPitch" in element) {
+    (element as HTMLAudioElement & { webkitPreservesPitch: boolean })
+      .webkitPreservesPitch = true;
+  }
+};
 
 const ProgressBar: React.FC<{ accent: string }> = ({ accent }) => {
   const frame = useCurrentFrame();
@@ -101,6 +116,15 @@ const SceneRenderer: React.FC<{
 };
 
 export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
+  // This hook is internal in Remotion 4.0.518, not a public API: recheck it on
+  // upgrades. Reading the Player context avoids changing inputProps identity,
+  // which would re-schedule narration and repeat syllables.
+  const { playbackRate } = Internals.usePlaybackRate();
+  const environment = useRemotionEnvironment();
+  // Keep frame-accurate decoding at 1x. Only the Player trades it for the
+  // browser's pitch-preserving time stretch; exports always keep the old path.
+  const usePitchPreservingAudio =
+    environment.isPlayer && !environment.isRendering && playbackRate !== 1;
   // Everything below reads its palette, typeface and easing from here, so the
   // whole video changes character with the design it was made with.
   const theme = themeOf(manifest?.design, manifest?.subject ?? "general");
@@ -143,18 +167,41 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
             durationInFrames={scene.durationInFrames}
             name={`Scene ${scene.scene_id} (${scene.visual_type})`}
           >
-            <Audio
-              src={assetSrc(scene.audioSrc)}
-              durationInFrames={Math.ceil(
-                scene.audioDurationInSeconds * manifest.fps,
-              )}
-              // Every scene is its own mp3, so without this each one only
-              // starts downloading as its sequence begins — fine from disk,
-              // a race against the playhead over a network. Mounting two
-              // seconds early gives the fetch somewhere to happen.
-              premountFor={Math.round(manifest.fps * 2)}
-              fallbackHtml5AudioProps={FALLBACK_AUDIO}
-            />
+            {usePitchPreservingAudio ? (
+              // Html5Audio lacks Audio's timing props, so give it the same
+              // local timeline in a Sequence. Do not pass playbackRate again:
+              // Html5Audio already multiplies by the Player's context rate.
+              <Sequence
+                layout="absolute-fill"
+                durationInFrames={Math.ceil(
+                  scene.audioDurationInSeconds * manifest.fps,
+                )}
+                premountFor={Math.round(manifest.fps * 2)}
+              >
+                <Html5Audio
+                  src={assetSrc(scene.audioSrc)}
+                  ref={preserveNarrationPitch}
+                  preservePitch
+                  // Preserve CORS and buffering behavior when reusing the
+                  // shared tags. Buffering holds the frame during a route swap
+                  // instead of letting the explanation run ahead of the voice.
+                  {...FALLBACK_AUDIO}
+                />
+              </Sequence>
+            ) : (
+              <Audio
+                src={assetSrc(scene.audioSrc)}
+                durationInFrames={Math.ceil(
+                  scene.audioDurationInSeconds * manifest.fps,
+                )}
+                // Every scene is its own mp3, so without this each one only
+                // starts downloading as its sequence begins — fine from disk,
+                // a race against the playhead over a network. Mounting two
+                // seconds early gives the fetch somewhere to happen.
+                premountFor={Math.round(manifest.fps * 2)}
+                fallbackHtml5AudioProps={FALLBACK_AUDIO}
+              />
+            )}
             <SceneRenderer
               scene={scene}
               accent={accent}

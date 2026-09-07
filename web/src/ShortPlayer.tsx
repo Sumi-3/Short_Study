@@ -7,8 +7,13 @@ import type { Manifest } from "../../src/types";
 
 const PLAYER_STYLE = { width: "100%", height: "100%" } as const;
 const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5] as const;
-const PAUSE_OVERLAY_HOLD_MS = 700;
-const PAUSE_OVERLAY_FADE_MS = 200;
+const PAUSE_OVERLAY_HOLD_MS = 800;
+const PAUSE_OVERLAY_FADE_MS = 320;
+// Share the fade duration with CSS so the timer never removes it mid-motion.
+const PAUSE_OVERLAY_STYLE = {
+  "--pause-overlay-fade": `${PAUSE_OVERLAY_FADE_MS}ms`,
+} as React.CSSProperties;
+const rateLabel = (rate: number) => `${Number.isInteger(rate) ? rate.toFixed(1) : rate}×`;
 
 const clock = (seconds: number) => {
   const whole = Math.max(0, Math.floor(seconds));
@@ -105,14 +110,16 @@ const SpeedControl: React.FC<{
 }> = ({ playbackRate, onChange }) => {
   return (
     <label
-      className="speed-control"
+      className={`speed-control${playbackRate !== 1 ? " is-adjusted" : ""}`}
       // The parent uses capture phase for its whole-surface play/pause target.
       // Keep this as well as its closest() check so a speed change is never a
       // play/pause tap when the control's markup changes later.
       onPointerDown={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
     >
-      <span className="speed-control__label">速度</span>
+      <span className="speed-control__value" aria-hidden>{rateLabel(playbackRate)}</span>
+      {/* Keep the native picker for touch and keyboard access. Its transparent
+          hit area is larger than the text, without painting over the lesson. */}
       <select
         className="speed-control__select"
         value={playbackRate}
@@ -121,7 +128,7 @@ const SpeedControl: React.FC<{
       >
         {PLAYBACK_RATES.map((rate) => (
           <option key={rate} value={rate}>
-            {rate}x
+            {rateLabel(rate)}
           </option>
         ))}
       </select>
@@ -168,7 +175,7 @@ export const ShortPlayer: React.FC<{
   // `gate` is deliberately a ref for the audio path. This small mirror is
   // only for rendering the first-tap prompt after that ref changes.
   const [audioUnlocked, setAudioUnlocked] = useState(() => gate.current.unlocked);
-  const [pauseOverlay, setPauseOverlay] = useState<"hidden" | "shown" | "fading">(
+  const [pauseOverlay, setPauseOverlay] = useState<"hidden" | "shown" | "fading" | "settled">(
     "hidden",
   );
   /** A ref so the click handler can never read a stale value and re-start. */
@@ -190,7 +197,8 @@ export const ShortPlayer: React.FC<{
         setPauseOverlay("fading");
       }, PAUSE_OVERLAY_HOLD_MS),
       window.setTimeout(() => {
-        setPauseOverlay("hidden");
+        // Keep a small corner reminder once the explanation is fully visible.
+        setPauseOverlay("settled");
         pauseOverlayTimers.current = [];
       }, PAUSE_OVERLAY_HOLD_MS + PAUSE_OVERLAY_FADE_MS),
     ];
@@ -202,6 +210,10 @@ export const ShortPlayer: React.FC<{
     let cancelled = false;
     setError(null);
     started.current = false;
+    // The corner reminder belongs to the viewer's pause on this short. Cancel
+    // its timers too, or an outgoing pause can reappear over the next short.
+    clearPauseOverlayTimers();
+    setPauseOverlay("hidden");
     // Silence the outgoing short at once — the viewer has already swiped away
     // from it, and the next manifest is a fetch away.
     //
@@ -231,7 +243,7 @@ export const ShortPlayer: React.FC<{
     return () => {
       cancelled = true;
     };
-  }, [manifestSrc]);
+  }, [manifestSrc, clearPauseOverlayTimers]);
 
   useEffect(() => {
     const instance = player.current;
@@ -368,13 +380,30 @@ export const ShortPlayer: React.FC<{
       {playing ? null : (
         <div
           className={`short__overlay${
-            audioUnlocked ? ` short__overlay--${pauseOverlay}` : ""
+            audioUnlocked ? ` short__overlay--paused short__overlay--${pauseOverlay}` : ""
           }`}
+          style={PAUSE_OVERLAY_STYLE}
         >
-          <div className="short__play" aria-hidden>
-            ▶
-          </div>
-          {audioUnlocked ? null : <p className="short__hint">タップして再生</p>}
+          {audioUnlocked ? (
+            <>
+              <div className="short__pause-feedback" aria-hidden>
+                <span className="short__pause-symbol" />
+                <span className="short__pause-title">一時停止</span>
+                <span className="short__pause-hint">タップでつづきを再生</span>
+              </div>
+              {pauseOverlay !== "hidden" ? (
+                <div className="short__pause-status" role="status">
+                  <span className="short__pause-symbol" aria-hidden />
+                  一時停止
+                </div>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <div className="short__play" aria-hidden>▶</div>
+              <p className="short__hint">タップして再生</p>
+            </>
+          )}
         </div>
       )}
 

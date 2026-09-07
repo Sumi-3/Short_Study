@@ -226,8 +226,7 @@ body {
   cursor: pointer;
 }
 
-/* This lives over the video, not the page, so it keeps the dark scrim and
-   light text that still read cleanly against moving footage. */
+/* The first-tap prompt keeps its scrim until the audio has been unlocked. */
 .short__overlay {
   position: absolute;
   inset: 0;
@@ -237,18 +236,113 @@ body {
   justify-content: center;
   gap: 14px;
   background: var(--overlay-scrim);
-  transition: opacity 0.2s ease;
-}
-
-/* A mid-video pause needs to reveal the frame again. The element stays in the
-   player surface after fading so the surface itself remains the resume target. */
-.short__overlay--fading,
-.short__overlay--hidden {
-  opacity: 0;
-}
-
-.short__overlay--hidden {
   pointer-events: none;
+}
+
+/* A paused explanation is for reading. Confine the glass to the feedback
+   itself, then leave only a corner reminder instead of dimming the frame. */
+.short__overlay--paused {
+  background: transparent;
+}
+
+.short__overlay--hidden {
+  visibility: hidden;
+}
+
+.short__pause-feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 26px 18px;
+  border: 1px solid var(--overlay-line);
+  border-radius: 24px;
+  background: var(--overlay-scrim);
+  color: var(--overlay-ink);
+  box-shadow: var(--surface-shadow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  /* Only fill backwards: keeping the animation's final opacity would override
+     the later fade transition and make the feedback disappear abruptly. */
+  animation: pause-arrive 180ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  transition: opacity var(--pause-overlay-fade) ease,
+    transform var(--pause-overlay-fade) cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.short__pause-symbol {
+  display: inline-flex;
+  justify-content: space-between;
+  width: 22px;
+  height: 26px;
+  flex: none;
+}
+
+.short__pause-symbol::before,
+.short__pause-symbol::after {
+  content: "";
+  width: 35%;
+  height: 100%;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.short__pause-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.short__pause-hint {
+  font-size: 11px;
+  color: var(--overlay-ink-dim);
+}
+
+.short__overlay--fading .short__pause-feedback,
+.short__overlay--settled .short__pause-feedback {
+  opacity: 0;
+  transform: translateY(-5px) scale(0.98);
+}
+
+.short__overlay--settled .short__pause-feedback {
+  visibility: hidden;
+}
+
+.short__pause-status {
+  position: absolute;
+  left: 18px;
+  bottom: 49px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--overlay-ink-dim);
+  text-shadow: var(--overlay-text-shadow);
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity var(--pause-overlay-fade) ease;
+}
+
+.short__pause-status .short__pause-symbol {
+  width: 8px;
+  height: 10px;
+}
+
+.short__overlay--fading .short__pause-status,
+.short__overlay--settled .short__pause-status {
+  opacity: 1;
+}
+
+@keyframes pause-arrive {
+  from { opacity: 0; scale: 0.94; }
+  to { opacity: 1; scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .short__overlay--paused .short__pause-feedback {
+    animation: none;
+    transition-property: opacity;
+    transform: none;
+  }
 }
 
 .short__play {
@@ -274,34 +368,61 @@ body {
 
 .speed-control {
   position: absolute;
-  right: 14px;
-  bottom: 52px;
-  min-height: 44px;
+  right: 6px;
+  bottom: 34px;
+  width: 56px;
+  height: 44px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 8px 6px 10px;
-  border-radius: 22px;
-  background: var(--overlay-panel);
-  color: var(--overlay-panel-ink);
-  font-size: 13px;
-  font-weight: 700;
-  box-shadow: var(--surface-shadow);
+  justify-content: center;
+  color: var(--overlay-ink-dim);
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
   cursor: pointer;
 }
 
-.speed-control__label {
+.speed-control__value {
   white-space: nowrap;
+  opacity: 0.7;
+  text-shadow: var(--overlay-text-shadow);
+  transition: opacity 160ms ease;
 }
 
+.speed-control.is-adjusted .speed-control__value {
+  opacity: 1;
+  color: var(--overlay-ink);
+  font-weight: 800;
+  font-size: 12px;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 4px;
+}
+
+.speed-control:hover .speed-control__value,
+.speed-control:focus-within .speed-control__value {
+  opacity: 1;
+}
+
+.speed-control:has(:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+  border-radius: 8px;
+}
+
+/* The native picker owns the entire transparent 56×44 target. Keeping it in
+   the DOM also keeps native keyboard navigation and the phone's choice sheet. */
 .speed-control__select {
-  min-height: 32px;
-  border: 0;
-  border-radius: 16px;
-  padding: 0 4px;
-  background: var(--control-bg);
-  color: inherit;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background: var(--overlay-panel);
+  color: var(--overlay-panel-ink);
   font: inherit;
+  /* A 16px form control avoids focus zoom on iOS; the visible text is smaller. */
+  font-size: 16px;
   cursor: pointer;
 }
 
