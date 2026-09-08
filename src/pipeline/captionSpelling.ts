@@ -11,13 +11,15 @@ import type { Caption } from "@remotion/captions";
  */
 
 /**
- * Powers, written the way a textbook writes them rather than as superscripts.
+ * Normalise powers before deciding whether they belong to an expression.
  *
  * These used to become ², and it was wrong in a way only real captions showed:
  * 「両辺を2乗するのが鍵です」 came out as 「両辺を²するのが鍵です」. 「2乗する」 is a
  * verb — the exponent is a thing you do to both sides, not a superscript on
- * anything — and a substitution that cannot tell the two apart has to give up
- * the superscript. 「2乗」 reads correctly in both positions.
+ * anything. That forced the old unconditional replacement to use 「2乗」 in
+ * both positions. We can now restore superscripts because applyPowers checks
+ * the base AND the following verb across token boundaries, after normalising
+ * all spellings. A token starting with 「2乗」 alone is not evidence of a base.
  *
  * What is left to do here is normalise the spelling: the narration says
  * 「にじょう」 because that is what the synthesiser reads correctly, whisper
@@ -30,7 +32,27 @@ const POWERS: Record<string, string> = {
   二乗: "2乗",
   三乗: "3乗",
   四乗: "4乗",
+  "2乗": "2乗",
+  "3乗": "3乗",
+  "4乗": "4乗",
 };
+
+/**
+ * Keep 「の」 with the exponent so removing it does not leave an empty timed
+ * token. Like プラスマイナス and かっこ1, these are literal merge keys.
+ */
+const POWER_PHRASES = Object.fromEntries(
+  Object.entries(POWERS).map(([spoken, written]) => [`の${spoken}`, `の${written}`]),
+);
+
+/**
+ * Only whole unsigned integers: guessing the scope of a decimal, algebraic or
+ * nested fraction could change the maths. Denominators must be nonzero; digit
+ * strings stay strings so large values are not rounded through Number.
+ * Actual matches become literal merge keys below, avoiding both a finite
+ * favourites table and a regex that mergeSplitWords cannot see.
+ */
+const FRACTION = /(?<![0-9A-Za-z０-９一二三四五六七八九十百千万億兆零〇./])(?<!ぶんの)(?<!分の)([1-9][0-9]*)(?:ぶんの|分の)(0|[1-9][0-9]*)(?![0-9A-Za-z０-９一二三四五六七八九十百千万億兆零〇./]|ぶんの|分の)/g;
 
 /**
  * Sequence terms, spelled the way the narration has to say them.
@@ -121,6 +143,7 @@ const ALWAYS: Record<string, string> = {
     Array.from({ length: 9 }, (_, index) => [`かっこ${index + 1}`, `(${index + 1})`]),
   ),
   ...POWERS,
+  ...POWER_PHRASES,
   ...TERMS,
 };
 
@@ -168,7 +191,26 @@ const AFTER_NOTATION_ONLY: Record<string, string> = {
  * the two apart: `2乗たす` converts, `満たす` does not.
  */
 const AFTER_NOTATION =
-  /[0-9A-Za-z乗√πθ°=+−×÷()/.₁₂₃₄ₖₘₙ]/;
+  /[0-9A-Za-z乗√πθαβγδλωΣ°=+−×÷()/.₁₂₃₄ₖₘₙ²³⁴]/;
+
+// Operators and opening brackets can precede operators, but cannot be a base.
+const POWER_BASE = /[0-9A-Za-zπθαβγδλωΣ)）\]₁₂₃₄ₖₘₙ]/;
+const SUPERSCRIPTS: Record<string, string> = { "2": "²", "3": "³", "4": "⁴" };
+
+const applyPowers = (text: string, context: string, offset: number) =>
+  text.replace(/(の)?([234])乗/g, (spoken, particle: string | undefined, power: string, at: number) => {
+    const before = context[offset + at - 1];
+    const after = context.slice(offset + at + spoken.length);
+    // 「xの2乗する」 is awkward but still verbal. Include inflections such as
+    // して・しない・すれば・される, even when TTS puts them in the next token.
+    const verbal = /^\s*(?:す[るれ]|し|さ[れせ]|せ[ずぬよ])/.test(after);
+    // Bare 「12乗」 is the twelfth power, not 1². Numeric bases need 「の」;
+    // narration already requires it, whereas x2乗 and (x+1)2乗 are unambiguous.
+    const ambiguousDigits = !particle && before !== undefined && /[0-9]/.test(before);
+    return before && POWER_BASE.test(before) && !verbal && !ambiguousDigits
+      ? SUPERSCRIPTS[power]
+      : spoken;
+  });
 
 /**
  * Rejoins a word the boundaries cut up.
@@ -178,31 +220,38 @@ const AFTER_NOTATION =
  * tokens, `の` + `に` + `じょう`. Nothing about the split is predictable, so the
  * window grows until it spells one of the words being looked for.
  *
- * Shortest window first — `の` + `に` + `じょう` + `は` also contains
- * 「のにじょう」, and taking it would swallow the 「は」 and its timing along
- * with the exponent.
+ * Prefer the longest word at the same start (エーエヌプラスイチ must not
+ * stop at エーエヌ), then take only the tokens needed to complete it. This
+ * preserves neighbouring words and their timings, including the 「は」 after
+ * 「のにじょう」. A character per token bounds the window by key length.
  */
-const MAX_SPAN = 4;
-
 const mergeSplitWords = (captions: Caption[], words: string[]): Caption[] => {
   const merged: Caption[] = [];
+  const maxSpan = Math.max(0, ...words.map((word) => word.length));
   let index = 0;
 
   while (index < captions.length) {
     let span = 1;
-
-    for (let width = 2; width <= Math.min(MAX_SPAN, captions.length - index); width++) {
-      const window = captions.slice(index, index + width);
-      const joined = window.map((caption) => caption.text).join("");
-      const completesAWord = words.some(
-        (word) =>
-          joined.includes(word) &&
-          !window.some((caption) => caption.text.includes(word)),
-      );
-      if (completesAWord) {
-        span = width;
-        break;
+    const lookahead = captions.slice(index, index + maxSpan);
+    const joined = lookahead.map((caption) => caption.text).join("");
+    const firstLength = captions[index].text.length;
+    let bestStart = Infinity;
+    let bestEnd = 0;
+    for (const word of words) {
+      let at = joined.indexOf(word);
+      while (at !== -1 && at < firstLength) {
+        const end = at + word.length;
+        if (end > firstLength && (at < bestStart || (at === bestStart && end > bestEnd))) {
+          bestStart = at;
+          bestEnd = end;
+        }
+        at = joined.indexOf(word, at + 1);
       }
+    }
+    let covered = firstLength;
+    while (covered < bestEnd) {
+      covered += lookahead[span].text.length;
+      span++;
     }
 
     if (span === 1) {
@@ -268,19 +317,37 @@ const applyGreek = (text: string) => {
 };
 
 export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
-  const merged = mergeSplitWords(captions, [
+  const fractionMatches = Array.from(captions.map((caption) => caption.text).join("").matchAll(FRACTION));
+  const fractions = [...new Set(fractionMatches.map((match) => match[0]))];
+  const fractionStarts = new Set(fractionMatches.map((match) => match.index));
+  // Merge fractions first: a smaller word must not consume half of one. A
+  // character per token is the worst split, so key length bounds the window
+  // even for multi-digit fractions (the former four-token window could not).
+  const fractionMerged = mergeSplitWords(captions, fractions);
+  const merged = mergeSplitWords(fractionMerged, [
     ...Object.keys(ALWAYS),
     ...Object.keys(GREEK),
   ]);
   const always = byLengthDesc(Object.entries(ALWAYS));
 
-  return merged.map((caption) => {
-    let text = caption.text;
+  let sourceOffset = 0;
+  const normalised = merged.map((caption) => {
+    // Keep the full-context guard even when a decimal's prefix is another token.
+    let text = caption.text.replace(FRACTION, (spoken, denominator, numerator, at) =>
+      fractionStarts.has(sourceOffset + at) ? `${numerator}/${denominator}` : spoken);
+    sourceOffset += caption.text.length;
     for (const [spoken, written] of always) {
       text = text.split(spoken).join(written);
     }
     text = applyGreek(text);
     text = applyGuarded(text);
+    return text === caption.text ? caption : { ...caption, text };
+  });
+  const context = normalised.map((caption) => caption.text).join("");
+  let offset = 0;
+  return normalised.map((caption) => {
+    const text = applyPowers(caption.text, context, offset);
+    offset += caption.text.length;
     return text === caption.text ? caption : { ...caption, text };
   });
 };

@@ -45,10 +45,13 @@ const Bar: React.FC<{
 export const Home: React.FC<{
   shorts: ShortSummary[];
   onOpen: (list: ShortSummary[], index: number) => void;
-}> = ({ shorts, onOpen }) => {
+  onDelete: (slug: string) => Promise<void>;
+}> = ({ shorts, onOpen, onDelete }) => {
   const [major, setMajor] = useState<string | null>(null);
   const [middle, setMiddle] = useState<string | null>(null);
   const [small, setSmall] = useState<string | null>(null);
+  const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const filed = useMemo(
     () => shorts.map((short) => ({ short, ...splitUnit(short.unit) })),
@@ -113,6 +116,27 @@ export const Home: React.FC<{
     setSmall(null);
   };
 
+  const remove = async (short: ShortSummary) => {
+    // A native confirmation deliberately interrupts the tap: deletion is an
+    // irreversible secondary action, so it should never ride on the card-open
+    // gesture or need a custom modal before a phone-sized library is usable.
+    if (!window.confirm(`「${short.topic}」を削除しますか？\nこの操作は元に戻せません。`)) {
+      return;
+    }
+
+    setDeleteError(null);
+    setDeletingSlug(short.slug);
+    try {
+      await onDelete(short.slug);
+    } catch (error) {
+      setDeleteError(
+        `削除できませんでした: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    } finally {
+      setDeletingSlug(null);
+    }
+  };
+
   return (
     <div className="home">
       <div className="home__filters">
@@ -134,15 +158,24 @@ export const Home: React.FC<{
         </div>
       ) : (
         <div className="grid-scroll">
+          {deleteError ? (
+            <p className="home__delete-error" role="alert">
+              {deleteError}
+            </p>
+          ) : null}
           <div className="grid">
             {visible.map((short, index) => (
-              <button
+              <div
                 className="grid__cell"
                 key={short.slug}
-                onClick={() => onOpen(visible, index)}
               >
-                <LibraryCard short={short} />
-              </button>
+                <LibraryCard
+                  short={short}
+                  onOpen={() => onOpen(visible, index)}
+                  onDelete={() => remove(short)}
+                  deleting={deletingSlug === short.slug}
+                />
+              </div>
             ))}
           </div>
         </div>

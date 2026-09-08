@@ -3,7 +3,13 @@ import { Create } from "./Create";
 import { Feed } from "./Feed";
 import { Home } from "./Home";
 import { newAudioGate } from "./audioGate";
-import { fetchShorts, generate, type JobEvent, type ShortSummary } from "./api";
+import {
+  deleteShort,
+  fetchShorts,
+  generate,
+  type JobEvent,
+  type ShortSummary,
+} from "./api";
 import type { DesignId } from "../../src/designs";
 
 type Tab = "home" | "shorts" | "create";
@@ -48,18 +54,28 @@ export const App: React.FC = () => {
   const [shuffleKey, setShuffleKey] = useState(0);
 
   const refreshShorts = useCallback(async () => {
-    try {
-      const list = await fetchShorts();
-      setShorts(list);
-      return list;
-    } catch {
-      return [];
-    }
+    const list = await fetchShorts();
+    setShorts(list);
+    return list;
   }, []);
 
   useEffect(() => {
-    void refreshShorts();
+    void refreshShorts().catch(() => {});
   }, [refreshShorts]);
+
+  const removeShort = async (slug: string) => {
+    await deleteShort(slug);
+    await refreshShorts();
+    setViewing((current) => {
+      if (!current?.list.some((short) => short.slug === slug)) {
+        return current;
+      }
+      // The parked Player must never be repointed at a manifest just removed
+      // from storage. Closing this feed ends that player cleanly; the next
+      // open creates its one stable player as usual.
+      return null;
+    });
+  };
 
   const random = useMemo(
     () => shuffled(shorts),
@@ -130,6 +146,7 @@ export const App: React.FC = () => {
           <Home
             shorts={shorts}
             onOpen={(list, index) => setViewing({ list, index })}
+            onDelete={removeShort}
           />
         ) : null}
 

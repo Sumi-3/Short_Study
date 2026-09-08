@@ -1,4 +1,9 @@
-import { listShorts } from "../src/storage.js";
+import {
+  deleteProject,
+  isProjectSlug,
+  listShorts,
+  ProjectDeleteError,
+} from "../src/storage.js";
 
 export async function GET(): Promise<Response> {
   try {
@@ -11,6 +16,27 @@ export async function GET(): Promise<Response> {
     return Response.json(
       { error: error instanceof Error ? error.message : String(error) },
       { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(request: Request): Promise<Response> {
+  const slug = new URL(request.url).searchParams.get("slug") ?? "";
+  // Reject this at the HTTP boundary as well as in storage, so malformed input
+  // is never mistaken for a storage outage; storage repeats the guard for any
+  // future non-HTTP caller.
+  if (!isProjectSlug(slug)) {
+    return Response.json({ error: "invalid project slug" }, { status: 400 });
+  }
+
+  try {
+    await deleteProject(slug);
+    return Response.json({ deleted: true });
+  } catch (error) {
+    const status = error instanceof ProjectDeleteError ? error.status : 500;
+    return Response.json(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status },
     );
   }
 }

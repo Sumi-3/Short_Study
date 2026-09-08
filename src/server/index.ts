@@ -3,7 +3,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { paths } from "../config.js";
 import { runPipeline } from "../pipeline/run.js";
-import { listShorts } from "../storage.js";
+import {
+  deleteProject,
+  isProjectSlug,
+  listShorts,
+  ProjectDeleteError,
+} from "../storage.js";
 import { isCourseId } from "../courses.js";
 import { isDesignId } from "../designs.js";
 import { isVoiceId } from "../voices.js";
@@ -109,6 +114,24 @@ const server = http.createServer(async (req, res) => {
 
     if (route === "/api/shorts" && req.method === "GET") {
       return sendJson(res, 200, await listShorts());
+    }
+
+    if (route === "/api/shorts" && req.method === "DELETE") {
+      const slug = url.searchParams.get("slug") ?? "";
+      // Keep malformed slugs out of storage entirely; deleteProject repeats the
+      // check because it is also callable without this router.
+      if (!isProjectSlug(slug)) {
+        return sendJson(res, 400, { error: "invalid project slug" });
+      }
+      try {
+        await deleteProject(slug);
+        return sendJson(res, 200, { deleted: true });
+      } catch (error) {
+        if (error instanceof ProjectDeleteError) {
+          return sendJson(res, error.status, { error: error.message });
+        }
+        throw error;
+      }
     }
 
     // Narration and manifests, served where staticFile() expects them.

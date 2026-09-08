@@ -76,6 +76,11 @@ export async function* generate(
 
 export const fetchShorts = () => json<ShortSummary[]>("/api/shorts");
 
+export const deleteShort = (slug: string) =>
+  json<{ deleted: true }>(`/api/shorts?slug=${encodeURIComponent(slug)}`, {
+    method: "DELETE",
+  });
+
 /**
  * A manifest is fetched at most once a session.
  *

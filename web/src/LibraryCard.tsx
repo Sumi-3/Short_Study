@@ -16,7 +16,12 @@ import type { ShortSummary } from "./api";
  * which clause is a condition and which is the question asked is comprehension,
  * not punctuation.
  */
-export const LibraryCard: React.FC<{ short: ShortSummary }> = ({ short }) => {
+export const LibraryCard: React.FC<{
+  short: ShortSummary;
+  onOpen: () => void;
+  onDelete: () => void;
+  deleting: boolean;
+}> = ({ short, onOpen, onDelete, deleting }) => {
   const theme = themeOf(short.design, short.subject);
   const accent = theme.accents[0];
   const seconds = Math.round(short.durationInFrames / short.fps);
@@ -33,39 +38,52 @@ export const LibraryCard: React.FC<{ short: ShortSummary }> = ({ short }) => {
         color: theme.ink,
       }}
     >
-      <div className="card__head">
-        <span
-          className="card__unit"
-          style={{ background: accent, color: theme.bgDeep }}
-        >
-          {short.unit || "数学"}
-        </span>
-        {short.subunit ? (
-          <span className="card__subunit" style={{ color: accent }}>
-            {short.subunit}
+      <button className="card__open" type="button" onClick={onOpen}>
+        <div className="card__head">
+          <span
+            className="card__unit"
+            style={{ background: accent, color: theme.bgDeep }}
+          >
+            {short.unit || "数学"}
           </span>
-        ) : null}
-      </div>
+          {short.subunit ? (
+            <span className="card__subunit" style={{ color: accent }}>
+              {short.subunit}
+            </span>
+          ) : null}
+        </div>
 
-      {points.length > 0 ? (
-        <ul className="card__points" style={{ "--accent": accent } as React.CSSProperties}>
-          {points.map((point) => (
-            <li key={point}>
-              <MathText text={point} />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        // Shorts made before the outline existed have only the question, and
-        // the question is a paragraph rather than a list.
-        <p className="card__topic">
-          <MathText text={short.topic} />
+        {points.length > 0 ? (
+          <ul className="card__points" style={{ "--accent": accent } as React.CSSProperties}>
+            {points.map((point) => (
+              <li key={point}>
+                <MathText text={point} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          // Shorts made before the outline existed have only the question, and
+          // the question is a paragraph rather than a list.
+          <p className="card__topic">
+            <MathText text={short.topic} />
+          </p>
+        )}
+
+        <p className="card__foot" style={{ color: theme.inkDim }}>
+          {seconds}秒
         </p>
-      )}
-
-      <p className="card__foot" style={{ color: theme.inkDim }}>
-        {seconds}秒
-      </p>
+      </button>
+      <div className="card__actions">
+        <button
+          className="card__delete"
+          type="button"
+          onClick={onDelete}
+          disabled={deleting}
+          aria-label={`「${short.topic}」を削除`}
+        >
+          {deleting ? "削除中…" : "削除"}
+        </button>
+      </div>
     </div>
   );
 };
