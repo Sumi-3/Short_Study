@@ -788,6 +788,7 @@ body {
 /* ---------- library card ---------- */
 
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: inherit;
@@ -799,7 +800,8 @@ body {
   align-items: stretch;
   gap: 10px;
   width: 100%;
-  padding: 14px 16px 6px;
+  /* The persistent menu trigger occupies the top-right corner. */
+  padding: 14px 58px 6px 16px;
   border: 0;
   background: transparent;
   color: inherit;
@@ -884,27 +886,86 @@ body {
   font-weight: 700;
 }
 
-.card__actions {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 12px 8px;
+.card__menu {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 1;
 }
 
-.card__delete {
-  min-width: 64px;
-  min-height: 44px;
-  padding: 0 14px;
-  border: 1px solid var(--error);
+/* A 40px tap target painted as nothing but the dots: this sits on every card
+   in the library, so a bordered box would read as a row of buttons rather than
+   as the card's own quiet corner. */
+.card__menu-trigger {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  padding: 0 0 5px;
+  border: 0;
   border-radius: 10px;
   background: transparent;
-  color: var(--error-ink);
+  color: var(--card-menu-ink-dim);
   font: inherit;
-  font-size: 13px;
+  font-size: 21px;
   font-weight: 800;
+  line-height: 1;
   cursor: pointer;
 }
 
-.card__delete:disabled {
+.card__menu-trigger:hover,
+.card__menu-trigger[aria-expanded="true"] {
+  background: var(--card-menu-accent);
+  color: var(--card-menu-deep);
+}
+
+.card__menu-popover {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  min-width: 96px;
+  padding: 4px;
+  border: 1px solid var(--card-menu-accent);
+  border-radius: 10px;
+  background: var(--card-menu-deep);
+}
+
+.card__menu-item {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--card-menu-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Irreversible, so it is coloured against the accent the rest of the card is
+   built from. `--error` rather than `--error-ink`: the popover sits on the
+   card's own deep colour, which the darker of the two rose tokens disappears
+   into. */
+.card__menu-item--danger {
+  color: var(--error);
+}
+
+.card__menu-item:hover,
+.card__menu-item:focus-visible {
+  background: var(--card-menu-accent);
+  color: var(--card-menu-deep);
+}
+
+.card__menu-item--danger:hover,
+.card__menu-item--danger:focus-visible {
+  background: var(--error);
+  color: #fff;
+}
+
+.card__menu-item:disabled {
   cursor: wait;
   opacity: 0.65;
 }

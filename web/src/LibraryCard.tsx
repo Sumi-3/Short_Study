@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { MathText } from "../../src/remotion/MathText";
 import { themeOf } from "../../src/remotion/theme";
 import type { ShortSummary } from "./api";
@@ -25,9 +26,50 @@ export const LibraryCard: React.FC<{
   const theme = themeOf(short.design, short.subject);
   const accent = theme.accents[0];
   const seconds = Math.round(short.durationInFrames / short.fps);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menu = useRef<HTMLDivElement>(null);
   // The summary comes off a JSON API that may be an older deploy than this
   // bundle, and a card is not worth taking the whole screen down for.
   const points = short.outline ?? [];
+  const menuItems = [
+    {
+      id: "delete",
+      label: deleting ? "削除中…" : "削除",
+      ariaLabel: `「${short.topic}」を削除`,
+      disabled: deleting,
+      danger: true,
+      onSelect: onDelete,
+    },
+  ];
+
+  useEffect(() => {
+    if (!menuOpen) {
+      return;
+    }
+
+    const closeIfOutside = (event: PointerEvent) => {
+      if (!menu.current?.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+    const closeOnScroll = () => setMenuOpen(false);
+
+    document.addEventListener("pointerdown", closeIfOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    // A menu anchored to a card should not float away from that card while a
+    // reader is moving through the library.
+    window.addEventListener("scroll", closeOnScroll, true);
+    return () => {
+      document.removeEventListener("pointerdown", closeIfOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("scroll", closeOnScroll, true);
+    };
+  }, [menuOpen]);
 
   return (
     <div
@@ -36,7 +78,11 @@ export const LibraryCard: React.FC<{
         background: `linear-gradient(150deg, ${theme.bg} 0%, ${theme.bgDeep} 100%)`,
         fontFamily: theme.fontFamily,
         color: theme.ink,
-      }}
+        "--card-menu-accent": accent,
+        "--card-menu-deep": theme.bgDeep,
+        "--card-menu-ink": theme.ink,
+        "--card-menu-ink-dim": theme.inkDim,
+      } as React.CSSProperties}
     >
       <button className="card__open" type="button" onClick={onOpen}>
         <div className="card__head">
@@ -73,16 +119,44 @@ export const LibraryCard: React.FC<{
           {seconds}秒
         </p>
       </button>
-      <div className="card__actions">
+      <div className="card__menu" ref={menu}>
         <button
-          className="card__delete"
+          className="card__menu-trigger"
           type="button"
-          onClick={onDelete}
-          disabled={deleting}
-          aria-label={`「${short.topic}」を削除`}
+          onClick={(event) => {
+            event.stopPropagation();
+            setMenuOpen((open) => !open);
+          }}
+          aria-label={`「${short.topic}」の操作メニュー`}
+          aria-expanded={menuOpen}
+          aria-controls={`card-menu-${short.slug}`}
         >
-          {deleting ? "削除中…" : "削除"}
+          ⋯
         </button>
+        {menuOpen ? (
+          <div className="card__menu-popover" id={`card-menu-${short.slug}`} role="menu">
+            {menuItems.map((item) => (
+              <button
+                className={`card__menu-item${item.danger ? " card__menu-item--danger" : ""}`}
+                key={item.id}
+                type="button"
+                role="menuitem"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  // Closed before the item runs: `onSelect` opens a native
+                  // confirmation, and a menu still standing behind a dialog the
+                  // reader has just dismissed is one more thing to put away.
+                  setMenuOpen(false);
+                  item.onSelect();
+                }}
+                disabled={item.disabled}
+                aria-label={item.ariaLabel}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
     </div>
   );
