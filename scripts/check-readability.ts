@@ -171,6 +171,19 @@ assert.match(integral, /font-size:1\.5em/);
 assert.match(integral, /<sub[^>]*>0<\/sub>/);
 assert.match(integral, /<sup[^>]*>π<\/sup>/);
 assert.match(mathText("∑_{k=1}^{n} k"), /font-size:1\.5em/);
+assert.match(mathText("Σ_{k=1}^{n} k"), /font-size:1\.5em/);
+// Underneath, in the flow. An absolutely positioned condition overlapped the
+// lim glyphs by 7.3px; keeping it in the line is what makes the line grow to
+// hold it, so the column must not be positioned out of the flow again.
+const limit = mathText("lim_{n→∞} a_n");
+assert.match(limit, /flex-direction:column/);
+assert.doesNotMatch(limit, /position:absolute/);
+assert.ok(limit.includes("n→∞"));
+const latexLimit = mathText("\\lim_{n \\to ∞} a_n");
+assert.ok(latexLimit.includes("lim"));
+assert.ok(latexLimit.includes("n → ∞"));
+assert.doesNotMatch(latexLimit, /\\/);
+assert.doesNotMatch(mathText("Π_{k=1}^{n} k"), /font-size:1\.5em/);
 // Prose must not pick up a display-size glyph it never asked for.
 assert.doesNotMatch(mathText("面積を求める"), /font-size:1\.5em/);
 

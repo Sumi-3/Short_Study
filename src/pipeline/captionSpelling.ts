@@ -105,6 +105,10 @@ const GREEK: Record<string, string> = {
   デルタ: "δ",
   ラムダ: "λ",
   オメガ: "ω",
+  // Keep Σ: spoken 「シグマ」 also names statistical σ, and captions have no
+  // reliable semantic context to turn only summations into ∑. MathText makes
+  // both capital-sigma code points display-size operators, so this is visible
+  // consistently without introducing that statistical false positive.
   シグマ: "Σ",
 };
 
@@ -133,6 +137,7 @@ const ALWAYS: Record<string, string> = {
   コサイン: "cos",
   サイン: "sin",
   タンジェント: "tan",
+  リミット: "lim",
   イコール: "=",
   ルート: "√",
   // Run before guarded プラス/マイナス, and merge split TTS tokens as one word.

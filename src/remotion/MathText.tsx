@@ -13,7 +13,11 @@ import { Fraction } from "./Fraction";
  * where this is most needed: `∫_0^π` was setting its lower bound and leaving
  * `^π` sitting in the line as two literal characters.
  */
-const SCRIPT = /([_^])(\{[^}]{1,12}\}|[-+]?\d+|[A-Za-z\u0391-\u03c9\u221e])/g;
+const SCRIPT_VALUE = "\\{[^}]{1,12}\\}|[-+]?\\d+|[A-Za-zΑ-ω∞]";
+const SCRIPT = new RegExp(`([_^])(${SCRIPT_VALUE})`, "g");
+
+/** `lim` and the condition that belongs under it, taken as one unit. */
+const LIMIT = new RegExp(`lim_(${SCRIPT_VALUE})`, "g");
 
 /**
  * An intentionally small fraction syntax. Plain text cannot reveal whether
@@ -32,7 +36,7 @@ const FRACTION = /\\frac\{([^{}]*)\}\{([^{}]*)\}/g;
  * what the same symbol looks like in the worked solution beside it — KaTeX
  * gives it its own display-size glyph.
  */
-const OPERATORS = "∫∬∭∮∑∏";
+const OPERATORS = "∫∬∭∮∑Σ∏";
 const LARGE_OPERATOR = new RegExp(`[${OPERATORS}]`, "g");
 
 /**
@@ -56,6 +60,59 @@ const OPERATOR_STYLE: React.CSSProperties = {
 };
 
 /**
+ * `lim` with its condition underneath, the way it is typeset.
+ *
+ * This was first tried as an absolutely positioned subscript, so the line could
+ * not grow: the condition landed 7.3px inside the `lim` glyphs and there was
+ * nowhere to move it — at line-height 1.55 an 18px line leaves 3.6px of leading
+ * under the glyph box while the 0.55em condition needs 9.9px. Painting outside
+ * the line is what made it illegible, so it lays out in the flow instead and
+ * the line grows to hold it. The card's fitter absorbs that, and formulas are
+ * worth the room.
+ */
+const LIMIT_STYLE: React.CSSProperties = {
+  display: "inline-flex",
+  flexDirection: "column",
+  alignItems: "center",
+  verticalAlign: "middle",
+  lineHeight: 1.04,
+  margin: "0 0.14em",
+};
+
+/** Wide conditions like `n→∞` set the unit's width; `lim` centres over them. */
+const LIMIT_CONDITION_STYLE: React.CSSProperties = {
+  fontSize: "0.55em",
+  lineHeight: 1.04,
+  whiteSpace: "nowrap",
+};
+
+/**
+ * Question text is mostly prose, yet accepting `\\frac` makes occasional
+ * LaTeX spillover inevitable. Keep the few commands whose plain symbols fit
+ * this renderer; for anything else remove only the slash, because deleting an
+ * unknown command would silently discard part of the question while showing
+ * the slash is worse than leaving its readable name as prose.
+ */
+const normaliseCommands = (text: string) =>
+  text
+    .replace(/\\sqrt\{([^{}]*)\}/g, "√$1")
+    .replace(/\\(lim|sum|prod|int|to|infty|theta|pi|le|ge|times|cdot)/g, (_, command: string) => ({
+      lim: "lim",
+      sum: "∑",
+      prod: "∏",
+      int: "∫",
+      to: "→",
+      infty: "∞",
+      theta: "θ",
+      pi: "π",
+      le: "≦",
+      ge: "≧",
+      times: "×",
+      cdot: "・",
+    })[command]!)
+    .replace(/\\(?!frac(?:\{|$))/g, "");
+
+/**
  * Plain text with fractions, exponents and indices set as mathematical text.
  *
  * The question shown at the top of a video is the user's own sentence, typed
@@ -68,13 +125,15 @@ const OPERATOR_STYLE: React.CSSProperties = {
  * maths in it, and prose is what most of it has to stay.
  */
 export const MathText: React.FC<{ text: string }> = ({ text }) => {
+  const source = normaliseCommands(text);
   const parts: React.ReactNode[] = [];
   let cursor = 0;
 
   const marks = [
-    ...text.matchAll(SCRIPT),
-    ...text.matchAll(FRACTION),
-    ...text.matchAll(LARGE_OPERATOR),
+    ...source.matchAll(LIMIT),
+    ...source.matchAll(SCRIPT),
+    ...source.matchAll(FRACTION),
+    ...source.matchAll(LARGE_OPERATOR),
   ].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
   for (const match of marks) {
@@ -84,7 +143,20 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
       continue;
     }
     if (at > cursor) {
-      parts.push(text.slice(cursor, at));
+      parts.push(source.slice(cursor, at));
+    }
+    if (match[0].startsWith("lim_")) {
+      const condition = match[1];
+      parts.push(
+        <span key={at} style={LIMIT_STYLE}>
+          <span>lim</span>
+          <span style={LIMIT_CONDITION_STYLE}>
+            {condition.startsWith("{") ? condition.slice(1, -1) : condition}
+          </span>
+        </span>,
+      );
+      cursor = at + match[0].length;
+      continue;
     }
     if (OPERATORS.includes(match[0])) {
       parts.push(
@@ -122,7 +194,7 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
     );
     cursor = at + whole.length;
   }
-  parts.push(text.slice(cursor));
+  parts.push(source.slice(cursor));
 
   return (
     <>

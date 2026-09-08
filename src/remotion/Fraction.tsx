@@ -23,7 +23,7 @@ export const Fraction: React.FC<{
       verticalAlign: "middle",
       // Cards use 16px body text. A 0.58em fraction is only 9.28px there,
       // while the 11px floor leaves the 66px video captions unchanged.
-      fontSize: "max(0.58em, 11px)",
+      fontSize: "max(0.68em, 11px)",
       lineHeight: 1.08,
       // Against the 1em text on either side the stack reads as one glyph, so
       // it needs the sidebearing a glyph would have.

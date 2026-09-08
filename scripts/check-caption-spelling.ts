@@ -83,6 +83,7 @@ for (const [spoken, written] of [
   ["エーエヌプラスイチ", "aₙ₊₁"], ["エーエヌマイナスイチ", "aₙ₋₁"],
   ["パイプとアルファベット", "パイプとアルファベット"],
   ["シータとパイとガンマとデルタとラムダとオメガとシグマ", "θとπとγとδとλとωとΣ"],
+  ["エヌがむげんだいのときのリミット", "エヌがむげんだいのときのlim"],
   ["対角線を引く", "対角線を引く"],
 ]) {
   assert.equal(shown([spoken]), written, spoken);
@@ -95,6 +96,7 @@ for (const [spoken, written] of [
   ["2ぶんの1", "1/2"], ["3分の2", "2/3"], ["137ぶんの29", "29/137"],
   ["のにじょう", "の2乗"], ["エーエヌプラスイチ", "aₙ₊₁"],
   ["エーエヌマイナスイチ", "aₙ₋₁"], ["かっこ1", "(1)"],
+  ["リミット", "lim"],
 ]) {
   const splits = [[...spoken], ...Array.from({ length: spoken.length - 1 }, (_, i) => [spoken.slice(0, i + 1), spoken.slice(i + 1)])];
   for (const parts of splits) {
