@@ -16,24 +16,18 @@ import { Fraction } from "./Fraction";
 const SCRIPT = /([_^])(\{[^}]{1,12}\}|[-+]?\d+|[A-Za-z\u0391-\u03c9\u221e])/g;
 
 /**
- * PROTOTYPE \u2014 under investigation.
+ * An intentionally small fraction syntax. Plain text cannot reveal whether
+ * `3√19/4` means `(3√19)/4` or `3√(19/4)`, and it may not be maths at all
+ * (`9/8に公開`). The generator therefore marks the two bounds explicitly.
  *
- * A slash fraction whose two halves are each unmistakably complete: digits, one
- * letter (Latin or Greek), or a bracketed placeholder like `[\u30a4]`. Both sides
- * must sit against a boundary, so `x/2` and `\u03c0/4` stack while `sinC/2` does not.
- *
- * The lookbehind for `\u221a` is the whole difficulty in one character. The problem
- * statements really contain `3\u221a19/4`, which is (3\u221a19)/4 \u2014 the same line goes on
- * to say \u304a\u3088\u305d3.27. Stacking the `19/4` the way this pattern otherwise would
- * puts the fraction under the radical and draws 3\u221a(19/4) = 6.54 instead. Prose
- * gives no way to tell the two apart, so anything with a radical, a digit or a
- * letter pressed against the numerator is left as a slash.
+ * Braces inside either half, including nested fractions, stay literal. That is
+ * the same shallow trade-off as `SCRIPT`, and keeps this prose renderer from
+ * becoming a partial LaTeX parser.
  */
-const FRACTION =
-  /(?<![0-9A-Za-z\u0391-\u03c9\u221a.\/])(\d+|[A-Za-z\u0391-\u03c9])\/(\d+|[A-Za-z\u0391-\u03c9]|\[[^\]]{1,4}\])(?![0-9A-Za-z\u0391-\u03c9.\/])/g;
+const FRACTION = /\\frac\{([^{}]*)\}\{([^{}]*)\}/g;
 
 /**
- * Plain text with exponents and indices set as exponents and indices.
+ * Plain text with fractions, exponents and indices set as mathematical text.
  *
  * The question shown at the top of a video is the user's own sentence, typed
  * into a web form — so it arrives as `x^3 - 3x^2` or `a_{n+1} = a_n + 3` while
@@ -48,10 +42,9 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
   const parts: React.ReactNode[] = [];
   let cursor = 0;
 
-  const marks = [
-    ...text.matchAll(SCRIPT),
-    ...text.matchAll(FRACTION),
-  ].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+  const marks = [...text.matchAll(SCRIPT), ...text.matchAll(FRACTION)].sort(
+    (a, b) => (a.index ?? 0) - (b.index ?? 0),
+  );
 
   for (const match of marks) {
     const at = match.index ?? 0;
@@ -62,9 +55,13 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
     if (at > cursor) {
       parts.push(text.slice(cursor, at));
     }
-    if (match[0].includes("/")) {
+    if (match[0].startsWith("\\frac{")) {
       parts.push(
-        <Fraction key={at} numerator={match[1]} denominator={match[2]} />,
+        <Fraction
+          key={at}
+          numerator={<MathText text={match[1]} />}
+          denominator={<MathText text={match[2]} />}
+        />,
       );
       cursor = at + match[0].length;
       continue;

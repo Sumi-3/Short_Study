@@ -147,6 +147,19 @@ assert.match(legacyDerivation, /class="formula-derivation"/);
 assert.equal((legacyDerivation.match(/↓/g) ?? []).length, 1);
 assert.equal(mathText("x=±2"), "x=±2");
 
+// Only explicit bounds make a slash safe to typeset: prose can contain dates
+// and adjacent radicals whose fraction boundary cannot be inferred.
+const compositeFraction = mathText("\\frac{3√19}{4}");
+assert.match(compositeFraction, /3√19/);
+assert.match(compositeFraction, /border-top/);
+assert.doesNotMatch(compositeFraction, /\\frac/);
+const scriptedFraction = mathText("\\frac{x^2}{2}");
+assert.match(scriptedFraction, /<sup[^>]*>2<\/sup>/);
+assert.match(scriptedFraction, /border-top/);
+assert.equal(mathText("\\frac{3√19}{4"), "\\frac{3√19}{4");
+assert.equal(mathText("3√19/4"), "3√19/4");
+assert.equal(mathText("9/8に公開"), "9/8に公開");
+
 let manifests = 0;
 let scenes = 0;
 for (const file of await readdir(new URL("../public/projects/", import.meta.url), { recursive: true })) {

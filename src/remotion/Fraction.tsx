@@ -1,14 +1,15 @@
 /**
  * A stacked fraction, sized to sit inside a line of running text.
  *
- * PROTOTYPE — under investigation, not wired into anything permanently.
- *
- * The halves are set at 0.52em so the whole stack is about 1.15em tall, which
- * fits the 1.3 line-height the captions and the problem card already use. Any
- * larger and the stack grows out of its line box: the caption band is 212px,
- * which is exactly two 66px lines plus the plate's padding, with no slack.
+ * Caption text is 66px at line-height 1.3, so each of its two line boxes is
+ * 85.8px and the 212px band has no spare vertical room. Two 0.58em halves at
+ * 1.08 line-height make a 1.253em (82.7px) stack; increasing that size lets a
+ * two-line caption expand upward into the explanation.
  */
-export const Fraction: React.FC<{ numerator: string; denominator: string }> = ({
+export const Fraction: React.FC<{
+  numerator: React.ReactNode;
+  denominator: React.ReactNode;
+}> = ({
   numerator,
   denominator,
 }) => (
@@ -20,7 +21,9 @@ export const Fraction: React.FC<{ numerator: string; denominator: string }> = ({
       // The bar, rather than the baseline of either half, is what should line
       // up with the surrounding text.
       verticalAlign: "middle",
-      fontSize: "0.58em",
+      // Cards use 16px body text. A 0.58em fraction is only 9.28px there,
+      // while the 11px floor leaves the 66px video captions unchanged.
+      fontSize: "max(0.58em, 11px)",
       lineHeight: 1.08,
       // Against the 1em text on either side the stack reads as one glyph, so
       // it needs the sidebearing a glyph would have.
