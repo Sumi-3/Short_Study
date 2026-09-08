@@ -1,5 +1,49 @@
 import { Fragment } from "react";
+import katex from "katex";
+// LibraryCard can load MathText without Formula, so the fonts belong here too.
+import "katex/dist/katex.min.css";
 import { Fraction } from "./Fraction";
+
+/**
+ * Only the author can locate a formula in prose without changing its meaning.
+ * Doubled/escaped dollars are literal, and ambiguous or unfinished delimiters
+ * stay visible rather than swallowing part of the question.
+ */
+export const MathText: React.FC<{ text: string }> = ({ text }) => {
+  if (!text.includes("$")) return <LegacyMathText text={text} />;
+
+  const delimiters = [...text.matchAll(/\\[\s\S]|\$+/g)]
+    .filter((match) => match[0].startsWith("$"));
+  const parts: React.ReactNode[] = [];
+  let cursor = 0;
+  for (let i = 0; i < delimiters.length - 1; i++) {
+    const open = delimiters[i];
+    const close = delimiters[i + 1];
+    if (open[0] !== "$" || close[0] !== "$") continue;
+    const tex = text.slice(open.index + 1, close.index);
+    i++;
+    if (!tex.trim()) continue;
+
+    parts.push(text.slice(cursor, open.index));
+    try {
+      const html = katex.renderToString(tex, {
+        displayMode: false,
+        throwOnError: false,
+        output: "html",
+      });
+      parts.push(<span key={open.index} dangerouslySetInnerHTML={{ __html: html }} />);
+    } catch {
+      // Unexpected renderer failures must retain the source as escaped prose.
+      parts.push(text.slice(open.index, close.index + 1));
+    }
+    cursor = close.index + 1;
+  }
+  parts.push(text.slice(cursor));
+  return <>{parts.map((part, index) => <Fragment key={index}>{part}</Fragment>)}</>;
+};
+
+// The hand-positioned branches below are a fallback for existing data without
+// $ delimiters. Keeping their metrics preserves already-generated videos.
 
 /**
  * `^` or `_` followed by a braced group, a signed number, or a single letter.
@@ -87,8 +131,8 @@ const LIMIT_CONDITION_STYLE: React.CSSProperties = {
 };
 
 /**
- * Question text is mostly prose, yet accepting `\\frac` makes occasional
- * LaTeX spillover inevitable. Keep the few commands whose plain symbols fit
+ * Legacy question text accepted `\\frac`, making occasional LaTeX spillover
+ * inevitable. Keep the few commands whose plain symbols fit
  * this renderer; for anything else remove only the slash, because deleting an
  * unknown command would silently discard part of the question while showing
  * the slash is worse than leaving its readable name as prose.
@@ -112,19 +156,7 @@ const normaliseCommands = (text: string) =>
     })[command]!)
     .replace(/\\(?!frac(?:\{|$))/g, "");
 
-/**
- * Plain text with fractions, exponents and indices set as mathematical text.
- *
- * The question shown at the top of a video is the user's own sentence, typed
- * into a web form — so it arrives as `x^3 - 3x^2` or `a_{n+1} = a_n + 3` while
- * every formula inside the video goes through KaTeX and is properly typeset.
- * Reading `a_n` in the question and `aₙ` in the working makes them look like
- * different problems.
- *
- * This is deliberately not a LaTeX renderer: the string is prose with a little
- * maths in it, and prose is what most of it has to stay.
- */
-export const MathText: React.FC<{ text: string }> = ({ text }) => {
+const LegacyMathText: React.FC<{ text: string }> = ({ text }) => {
   const source = normaliseCommands(text);
   const parts: React.ReactNode[] = [];
   let cursor = 0;
@@ -171,8 +203,8 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
       parts.push(
         <Fraction
           key={at}
-          numerator={<MathText text={match[1]} />}
-          denominator={<MathText text={match[2]} />}
+          numerator={<LegacyMathText text={match[1]} />}
+          denominator={<LegacyMathText text={match[2]} />}
         />,
       );
       cursor = at + match[0].length;

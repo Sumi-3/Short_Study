@@ -45,6 +45,22 @@
 
 - 小さく範囲の決まった依頼はフォアグラウンド、長引きそう・多段・オープンエンドなものは
   バックグラウンド（`--background`）。
+
+### バックグラウンドに回ったら、自分で取りに行く
+
+**`codex-rescue` は結果を取りに行くことを禁止された転送係**（エージェント定義に
+"Do not ... monitor progress, poll status, fetch results" / "Do not call ... `status`, `result`"）。
+バックグラウンドのジョブは**完了通知が来ない**。`Agent` ツールの `run_in_background: false` は
+サブエージェント側の話で、Codex ジョブには効かない。`task` に `--wait` は無い
+（あるのは `review` 系だけ）ので、ブロックする唯一の方法は `--background` を付けないこと。
+
+依頼文が長く多段だと、エージェントは自分の判断でバックグラウンドを選ぶ。つまり**長い依頼は
+ほぼ確実にバックグラウンドになる**。投げたら以下で自分で取りに行くこと。待っても何も来ない。
+
+```
+node "$HOME/.claude/plugins/cache/openai-codex/codex/<version>/scripts/codex-companion.mjs" status <task-id>
+node "$HOME/.claude/plugins/cache/openai-codex/codex/<version>/scripts/codex-companion.mjs" result <task-id>
+```
 - **タスクに合わせて `--model` を必ず明示する**（下表）。
 - 前回の Codex 作業の続き（「続けて」「さっきの直して」「もっと掘って」）は `--resume` を付ける。
 - 調査・レビューだけで編集させたくない時はその旨を明記する（既定は書き込み可）。

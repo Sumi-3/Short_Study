@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { registerHooks } from "node:module";
 import React from "react";
+import katex from "katex";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Player } from "@remotion/player";
 import { parseProblemOutline } from "../src/problemOutline.js";
@@ -31,6 +32,41 @@ const render = (component: React.ComponentType<any>, inputProps: any) => {
   return html;
 };
 const mathText = (text: string) => renderToStaticMarkup(React.createElement(MathText, { text }));
+const literalText = (text: string) => renderToStaticMarkup(React.createElement(React.Fragment, null, text));
+const inlineMath = (tex: string) => `<span>${katex.renderToString(tex, {
+  displayMode: false, throwOnError: false, output: "html",
+})}</span>`;
+
+// Compare complete markup so prose, units and dates cannot accidentally join
+// math mode, nor can the legacy normalizer alter TeX before KaTeX sees it.
+for (const tex of [
+  "x^2+4x-3", String.raw`\frac{3\sqrt{19}}{4}`,
+  String.raw`\lim_{n \to \infty} a_n`, String.raw`\sum_{k=1}^{n} k^2`,
+]) {
+  const html = mathText(`9/8に公開。$${tex}$ の値を求めよ。単位はkm/h。`);
+  assert.equal(html, `9/8に公開。${inlineMath(tex)} の値を求めよ。単位はkm/h。`);
+  assert.match(html, /class="katex"/);
+  assert.doesNotMatch(html, /katex-display|cjk_fallback/);
+}
+assert.equal(mathText("$x^2$ と $a_n$"), `${inlineMath("x^2")} と ${inlineMath("a_n")}`);
+assert.equal(mathText("日本語だけ。単位km/h、9/8に公開。"), "日本語だけ。単位km/h、9/8に公開。");
+for (const source of [
+  "$", "$$", "$$$", "前$$後", "前$$x^2$$後", "前$ $後", "前$\n$後",
+  "前$x^2 後", String.raw`前$\frac{3}{4} 後`, "前$x^2$$後",
+  String.raw`価格\$5です`, String.raw`前\$x^2\$後`,
+  "前$<b>&後",
+]) assert.equal(mathText(source), literalText(source), source);
+assert.equal(mathText("前$$中 $x$ 後$$"), `前$$中 ${inlineMath("x")} 後$$`);
+assert.equal(mathText("$x$ 後$未完"), `${inlineMath("x")} 後$未完`);
+assert.equal(mathText(String.raw`価格\$5 と $x$`), String.raw`価格\$5 と ${inlineMath("x")}`);
+assert.equal(mathText(String.raw`\\$x$`), String.raw`\\${inlineMath("x")}`);
+assert.equal(mathText(String.raw`$x+\$5$`), inlineMath(String.raw`x+\$5`));
+const malformed = mathText(String.raw`前$\frac{1}{$後`);
+assert.match(malformed, /class="katex-error"/);
+assert.ok(malformed.startsWith("前<span>"));
+assert.ok(malformed.endsWith("</span>後"));
+assert.ok(malformed.includes(String.raw`\frac{1}{`));
+
 const scene = { scene_id: 1, visual_type: "hook", visual_content: "", narration: "説明" };
 const renderCard = (text: string, points: string[], poster = false) => render(SceneShell, {
   scene, durationInFrames: 300, accent: "#ffcc00", poster,
@@ -54,6 +90,8 @@ assert.deepEqual(parseProblemOutline(["条件", "(1) 第一問", "補足条件",
 // Each compatibility branch is rendered, so a correct parser cannot mask a
 // dropped paragraph, a missing lone question, or a hidden earlier question.
 const fixtures = [
+  { text: "条件 $x^2+4x-3=0$ を満たす値を求めよ。", points: [] },
+  { text: "", points: [String.raw`値は $\frac{3\sqrt{19}}{4}$ である。`, "(1) $a_n$ の値を求めよ。"] },
   { text: "古い問題文の段落\nx^2の値を求めよ。", points: [] },
   { text: "", points: ["値を求める"] },
   { text: "", points: ["(1) x^2の値を求めよ。"] },
@@ -186,6 +224,23 @@ assert.doesNotMatch(latexLimit, /\\/);
 assert.doesNotMatch(mathText("Π_{k=1}^{n} k"), /font-size:1\.5em/);
 // Prose must not pick up a display-size glyph it never asked for.
 assert.doesNotMatch(mathText("面積を求める"), /font-size:1\.5em/);
+for (const html of [compositeFraction, scriptedFraction, integral, limit, mathText("∑_{k=1}^{n} k^2")]) {
+  assert.doesNotMatch(html, /class="katex"/);
+}
+
+const { LibraryCard } = await import("../web/src/LibraryCard.js");
+for (const outline of [[], ["(1) $x^2$ の値を求めよ。"]]) {
+  const html = renderToStaticMarkup(React.createElement(LibraryCard, {
+    short: {
+      slug: "inline-math", topic: "$x^2$ の値を求めよ。", outline,
+      headline: "", course: "math", subject: "math", unit: "数学", subunit: "",
+      design: "", createdAt: "", manifestSrc: "", durationInFrames: 300, fps: 30,
+    },
+    onOpen() {}, onDelete() {}, deleting: false,
+  }));
+  assert.ok(html.includes(inlineMath("x^2")));
+  assert.ok(html.includes("の値を求めよ。"));
+}
 
 let manifests = 0;
 let scenes = 0;
