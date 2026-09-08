@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { Fraction } from "./Fraction";
 
 /**
  * `^` or `_` followed by a braced group, a signed number, or a single letter.
@@ -13,6 +14,23 @@ import { Fragment } from "react";
  * `^π` sitting in the line as two literal characters.
  */
 const SCRIPT = /([_^])(\{[^}]{1,12}\}|[-+]?\d+|[A-Za-z\u0391-\u03c9\u221e])/g;
+
+/**
+ * PROTOTYPE \u2014 under investigation.
+ *
+ * A slash fraction whose two halves are each unmistakably complete: digits, one
+ * letter (Latin or Greek), or a bracketed placeholder like `[\u30a4]`. Both sides
+ * must sit against a boundary, so `x/2` and `\u03c0/4` stack while `sinC/2` does not.
+ *
+ * The lookbehind for `\u221a` is the whole difficulty in one character. The problem
+ * statements really contain `3\u221a19/4`, which is (3\u221a19)/4 \u2014 the same line goes on
+ * to say \u304a\u3088\u305d3.27. Stacking the `19/4` the way this pattern otherwise would
+ * puts the fraction under the radical and draws 3\u221a(19/4) = 6.54 instead. Prose
+ * gives no way to tell the two apart, so anything with a radical, a digit or a
+ * letter pressed against the numerator is left as a slash.
+ */
+const FRACTION =
+  /(?<![0-9A-Za-z\u0391-\u03c9\u221a.\/])(\d+|[A-Za-z\u0391-\u03c9])\/(\d+|[A-Za-z\u0391-\u03c9]|\[[^\]]{1,4}\])(?![0-9A-Za-z\u0391-\u03c9.\/])/g;
 
 /**
  * Plain text with exponents and indices set as exponents and indices.
@@ -30,10 +48,26 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
   const parts: React.ReactNode[] = [];
   let cursor = 0;
 
-  for (const match of text.matchAll(SCRIPT)) {
+  const marks = [
+    ...text.matchAll(SCRIPT),
+    ...text.matchAll(FRACTION),
+  ].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+
+  for (const match of marks) {
     const at = match.index ?? 0;
+    // Two patterns over one string can overlap; the earlier one wins.
+    if (at < cursor) {
+      continue;
+    }
     if (at > cursor) {
       parts.push(text.slice(cursor, at));
+    }
+    if (match[0].includes("/")) {
+      parts.push(
+        <Fraction key={at} numerator={match[1]} denominator={match[2]} />,
+      );
+      cursor = at + match[0].length;
+      continue;
     }
     const [whole, marker, raw] = match;
     const Tag = marker === "_" ? "sub" : "sup";

@@ -49,6 +49,21 @@
 - 前回の Codex 作業の続き（「続けて」「さっきの直して」「もっと掘って」）は `--resume` を付ける。
 - 調査・レビューだけで編集させたくない時はその旨を明記する（既定は書き込み可）。
 
+### Remotion スキルを使わせる
+
+Remotion に触れる依頼（`src/remotion/`、`@remotion/player` を使う `web/`、字幕、レンダリング）
+では、**prompt に読むべきスキルを名指しで書く**。リポジトリ直下の [AGENTS.md](AGENTS.md) を
+Codex は自動で読むので導線自体は通っているが、名指しした方が確実に読む。
+
+```
+着手前に .agents/skills/remotion-markup/SKILL.md を読むこと。
+（DOM 計測が絡むなら .agents/skills/remotion-markup/measuring-dom-nodes.md も）
+```
+
+どのスキルかは AGENTS.md の対応表から選ぶ。ルーター
+（`.agents/skills/remotion-best-practices/SKILL.md`）**内のリンクは壊れている**
+（`REFERENCE.md` を指すが実体は `SKILL.md`）ので、ルーターを辿らせず直接指定する。
+
 ### モデルの選び方
 
 タスクの重さで選ぶ。**指定を省くと `.codex/config.toml` の既定にフォールバックする**ので、

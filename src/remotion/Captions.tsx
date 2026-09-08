@@ -11,6 +11,7 @@ import {
   type Caption,
   type TikTokPage,
 } from "@remotion/captions";
+import { Fraction, WHOLE_FRACTION } from "./Fraction";
 import { layout, plateOf, shadowOf, useTheme } from "./theme";
 
 /**
@@ -137,7 +138,18 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
                   : shadowOf(theme),
               }}
             >
-              {token.text}
+              {/* A fraction is guaranteed to be a whole token: the pipeline
+                  merges the kana it was split across before rewriting it, so
+                  matching the token entire needs no guess about where the
+                  numerator starts. */}
+              {(() => {
+                const frac = WHOLE_FRACTION.exec(token.text);
+                return frac ? (
+                  <Fraction numerator={frac[1]} denominator={frac[2]} />
+                ) : (
+                  token.text
+                );
+              })()}
             </span>
           );
         })}
