@@ -140,9 +140,9 @@ export const Home: React.FC<{
   return (
     <div className="home">
       <div className="home__filters">
-        <Bar label="大分類" options={majors} value={major} onPick={pickMajor} />
-        <Bar label="中分類" options={middles} value={middle} onPick={pickMiddle} />
-        <Bar label="小分類" options={smalls} value={small} onPick={setSmall} />
+        <Bar label="学年" options={majors} value={major} onPick={pickMajor} />
+        <Bar label="分野" options={middles} value={middle} onPick={pickMiddle} />
+        <Bar label="単元" options={smalls} value={small} onPick={setSmall} />
       </div>
 
       {visible.length === 0 ? (

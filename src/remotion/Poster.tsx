@@ -25,8 +25,6 @@ export type PosterProps = {
   unit: string;
   design: string;
   subject: Subject;
-  /** 問題 for a worked problem, テーマ otherwise — the composition's own rule. */
-  label: string;
 };
 
 /**
@@ -59,7 +57,6 @@ export const Poster: React.FC<PosterProps> = ({
   unit,
   design,
   subject,
-  label,
 }) => {
   const theme = themeOf(design, subject);
 
@@ -74,7 +71,7 @@ export const Poster: React.FC<PosterProps> = ({
           scene={HOOK}
           durationInFrames={POSTER_DURATION}
           accent={accentFor(theme, 0)}
-          problem={{ text: topic, points: outline, unit, label }}
+          problem={{ text: topic, points: outline, unit }}
           poster
         />
       </AbsoluteFill>

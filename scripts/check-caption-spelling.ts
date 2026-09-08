@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import type { Caption } from "@remotion/captions";
 import { applyDisplaySpelling } from "../src/pipeline/captionSpelling.js";
+import { WHOLE_FRACTION } from "../src/remotion/Fraction.js";
 
 const captions = (parts: string[]): Caption[] => parts.map((text, index) => ({
   text, startMs: index * 100, endMs: (index + 1) * 100,
@@ -42,14 +43,26 @@ for (const [spoken, written] of [
 
 const shown = (parts: string[]) => applyDisplaySpelling(captions(parts)).map((c) => c.text).join("");
 
+const extendedFractions = [
+  ["4分のπ", "π/4"], ["4ぶんのπ", "π/4"], ["4分のパイ", "π/4"],
+  ["4分の3ルート19", "3√19/4"], ["4ぶんの3ルート19", "3√19/4"],
+  ["4分の3√19", "3√19/4"], ["2分のルート3", "√3/2"],
+  ["2分のx", "x/2"], ["n分のm", "m/n"],
+  ["π分の2", "2/π"], ["パイ分の2", "2/π"], ["θ分のα", "α/θ"],
+  ["シータ分のアルファ", "α/θ"], ["x分の3ルート19", "3√19/x"],
+  ["2分の√x", "√x/2"], ["2分のA", "A/2"], ["Σ分の1", "1/Σ"],
+  ["3分の0", "0/3"],
+];
+
 for (const [spoken, written] of [
+  ...extendedFractions,
   ["2ぶんの1", "1/2"], ["2分の1", "1/2"],
   ["3分の2", "2/3"], ["3ぶんの2", "2/3"],
   ["12分の11", "11/12"], ["137ぶんの29", "29/137"],
   ["9999999999999999999分の2", "2/9999999999999999999"],
   ["3分の0", "0/3"], ["0分の1", "0分の1"],
   ["1.2分の1", "1.2分の1"], ["2分の1.5", "2分の1.5"],
-  ["n分のm", "n分のm"], ["12分の1と2分の1", "1/12と1/2"],
+  ["12分の1と2分の1", "1/12と1/2"],
   ["2分の1と1.2分の1", "1/2と1.2分の1"],
   ["2分の1と2分の1万", "1/2と2分の1万"],
   ["2分の1分の3", "2分の1分の3"], ["2ぶんの1ぶんの3", "2ぶんの1ぶんの3"],
@@ -78,6 +91,7 @@ for (const [spoken, written] of [
 // Every possible two-token cut, plus the character-by-character worst case,
 // exercises literal keys independently of the synthesiser's chosen boundaries.
 for (const [spoken, written] of [
+  ...extendedFractions,
   ["2ぶんの1", "1/2"], ["3分の2", "2/3"], ["137ぶんの29", "29/137"],
   ["のにじょう", "の2乗"], ["エーエヌプラスイチ", "aₙ₊₁"],
   ["エーエヌマイナスイチ", "aₙ₋₁"], ["かっこ1", "(1)"],
@@ -93,7 +107,38 @@ for (const [spoken, written] of [
     assert.deepEqual(result[2], input.at(-1));
     assert.deepEqual(result[1], { ...input[1], text: written, endMs: input.at(-2)!.endMs, pageBreakAfter: false });
     assert.deepEqual(input, original, "input captions must not be mutated");
+    if (written.includes("/")) {
+      assert.deepEqual(WHOLE_FRACTION.exec(result[1].text)?.slice(1), written.split("/"));
+    }
   }
+}
+
+// Guards must see neighbours even when the synthesiser cuts exactly at a
+// decimal point or 「分の」. A valid occurrence elsewhere must not enable it.
+for (const [spoken, written] of [
+  ["1.2分の1", "1.2分の1"], ["2分の1.5", "2分の1.5"],
+  ["1.2分のπ", "1.2分のπ"], ["4分の3ルート19.5", "4分の3√19.5"],
+  ["4分の1.3ルート19", "4分の1.3√19"],
+  ["2分の1分の3", "2分の1分の3"], ["2ぶんの1ぶんの3", "2ぶんの1ぶんの3"],
+  ["2分のπぶんの3", "2分のπぶんの3"], ["x分のy分のz", "x分のy分のz"],
+  ["2分の1と1.2分の1", "1/2と1.2分の1"],
+  ["2分の1と2分の1万", "1/2と2分の1万"],
+  ["0分のπ", "0分のπ"], ["xy分の1", "xy分の1"], ["2分のxy", "2分のxy"],
+  ["2分のπx", "2分のπx"], ["√2分の1", "√2分の1"],
+  ["ルート2分の1", "√2分の1"],
+]) {
+  for (const parts of [[spoken], [...spoken], ...Array.from({ length: spoken.length - 1 }, (_, i) =>
+    [spoken.slice(0, i + 1), spoken.slice(i + 1)])]) {
+    assert.equal(shown(parts), written, JSON.stringify(parts));
+  }
+}
+
+// Slash fragments carry no spoken bounds and must not be joined as fractions.
+for (const parts of [["π/", "4"], ["3", "√", "19/", "4"], ["1", "/", "2"]]) {
+  assert.deepEqual(applyDisplaySpelling(captions(parts)), captions(parts));
+}
+for (const text of ["答えはπ/4", "π/4です", "π/", "19/", "1.2/3", "1/2.3", "1/2/3", "1/0", "xy/2", "3√19/4です"]) {
+  assert.equal(WHOLE_FRACTION.test(text), false, text);
 }
 
 for (const parts of [

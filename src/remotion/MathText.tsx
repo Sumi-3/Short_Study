@@ -27,6 +27,35 @@ const SCRIPT = /([_^])(\{[^}]{1,12}\}|[-+]?\d+|[A-Za-z\u0391-\u03c9\u221e])/g;
 const FRACTION = /\\frac\{([^{}]*)\}\{([^{}]*)\}/g;
 
 /**
+ * The operators a typesetter draws taller than the text around them. At a
+ * body-text 1em an `∫` is a thin stroke barely above x-height, which is not
+ * what the same symbol looks like in the worked solution beside it — KaTeX
+ * gives it its own display-size glyph.
+ */
+const OPERATORS = "∫∬∭∮∑∏";
+const LARGE_OPERATOR = new RegExp(`[${OPERATORS}]`, "g");
+
+/**
+ * 1.5em is as large as the glyph can be drawn without paying for it in layout.
+ *
+ * An inline box contributes `font-size × line-height` to the line, so the 0.68
+ * here keeps this span's contribution at 1.02em — inside the line-height the
+ * problem card and the library card already run at, which is why enlarging the
+ * operator does not push the lines apart the way a stacked fraction does. The
+ * offset then drops the taller glyph back onto the text's own baseline.
+ */
+const OPERATOR_STYLE: React.CSSProperties = {
+  fontSize: "1.5em",
+  lineHeight: 0.68,
+  verticalAlign: "-0.16em",
+  // The glyph's own side bearing is enlarged along with it, which opens a gap
+  // wide enough to read as a space before the bounds — `∫ ₀^π` rather than the
+  // bounds sitting against the operator. Taking back a tenth of the enlarged em
+  // closes it without letting the two collide.
+  marginRight: "-0.1em",
+};
+
+/**
  * Plain text with fractions, exponents and indices set as mathematical text.
  *
  * The question shown at the top of a video is the user's own sentence, typed
@@ -42,9 +71,11 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
   const parts: React.ReactNode[] = [];
   let cursor = 0;
 
-  const marks = [...text.matchAll(SCRIPT), ...text.matchAll(FRACTION)].sort(
-    (a, b) => (a.index ?? 0) - (b.index ?? 0),
-  );
+  const marks = [
+    ...text.matchAll(SCRIPT),
+    ...text.matchAll(FRACTION),
+    ...text.matchAll(LARGE_OPERATOR),
+  ].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
   for (const match of marks) {
     const at = match.index ?? 0;
@@ -54,6 +85,15 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
     }
     if (at > cursor) {
       parts.push(text.slice(cursor, at));
+    }
+    if (OPERATORS.includes(match[0])) {
+      parts.push(
+        <span key={at} style={OPERATOR_STYLE}>
+          {match[0]}
+        </span>,
+      );
+      cursor = at + 1;
+      continue;
     }
     if (match[0].startsWith("\\frac{")) {
       parts.push(

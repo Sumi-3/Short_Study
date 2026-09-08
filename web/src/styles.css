@@ -846,25 +846,13 @@ body {
   gap: 7px;
 }
 
+/* No bullet: the model already opens each question with its own (1), (2), and
+   a marker in front of that numbers the same line twice. The conditions above
+   them are sentences rather than list items, so the gap alone separates them. */
 .card__points li {
-  position: relative;
-  padding-left: 18px;
   font-size: 18px;
   font-weight: 700;
   line-height: 1.4;
-}
-
-.card__points li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  /* Half a line down, so the square sits on the first line's centre however
-     many lines the point runs to. */
-  top: 0.55em;
-  width: 7px;
-  height: 7px;
-  border-radius: 2px;
-  background: var(--accent);
 }
 
 /* Shorts made before the outline existed: the whole question, trimmed. */

@@ -175,11 +175,10 @@ const ProblemCard: React.FC<{
   text: string;
   /** The question as its parts. Falls back to `text` when a short has none. */
   points: string[];
-  label: string;
   accent: string;
   /** A still card: no captions are coming, so the question takes the frame. */
   poster?: boolean;
-}> = ({ text, points, label, accent, poster }) => {
+}> = ({ text, points, accent, poster }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -213,27 +212,9 @@ const ProblemCard: React.FC<{
         translate: clamped(frame, [0, 0.5 * fps], ["0px -24px", "0px 0px"], theme.easing),
       }}
     >
-      {poster ? null : (
-        <div
-          style={{
-            alignSelf: "flex-start",
-            backgroundColor: accent,
-            color: theme.bgDeep,
-            fontFamily: theme.fontFamily,
-            fontWeight: 900,
-            // A section label must remain legible at phone playback size,
-            // independently of the problem's character-count tier.
-            fontSize: 36,
-            lineHeight: 1.3,
-            letterSpacing: 2,
-            padding: "8px 22px",
-            borderRadius: theme.radius,
-            marginBottom: 16,
-          }}
-        >
-          {label}
-        </div>
-      )}
+      {/* No 問題 chip. The card is the first thing the video shows, under the
+          unit banner and around the question itself — nothing else it could be
+          announcing — and the poster has gone without one all along. */}
       <div
         style={{
           /*
@@ -346,7 +327,7 @@ export const SceneShell: React.FC<{
   durationInFrames: number;
   accent: string;
   /** The question this video answers. Only the hook is given one. */
-  problem?: { text: string; points: string[]; label: string; unit: string };
+  problem?: { text: string; points: string[]; unit: string };
   /**
    * Drawn as a still card rather than played. No captions arrive, so the stage
    * runs from the banner to the foot of the frame and the question is set to
@@ -432,7 +413,6 @@ export const SceneShell: React.FC<{
         <ProblemCard
           text={problem.text}
           points={problem.points}
-          label={problem.label}
           accent={accent}
           poster={poster}
         />

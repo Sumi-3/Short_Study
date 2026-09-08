@@ -34,9 +34,6 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
         unit: short.unit,
         design: short.design,
         subject: short.subject,
-        // Anything but a worked problem is a subject, not a question — the
-        // rule the composition follows.
-        label: short.course === "math" ? "問題" : "テーマ",
       }}
       compositionWidth={POSTER_SIZE.width}
       compositionHeight={POSTER_SIZE.height}

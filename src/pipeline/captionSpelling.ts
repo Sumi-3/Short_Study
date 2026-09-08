@@ -46,15 +46,6 @@ const POWER_PHRASES = Object.fromEntries(
 );
 
 /**
- * Only whole unsigned integers: guessing the scope of a decimal, algebraic or
- * nested fraction could change the maths. Denominators must be nonzero; digit
- * strings stay strings so large values are not rounded through Number.
- * Actual matches become literal merge keys below, avoiding both a finite
- * favourites table and a regex that mergeSplitWords cannot see.
- */
-const FRACTION = /(?<![0-9A-Za-z０-９一二三四五六七八九十百千万億兆零〇./])(?<!ぶんの)(?<!分の)([1-9][0-9]*)(?:ぶんの|分の)(0|[1-9][0-9]*)(?![0-9A-Za-z０-９一二三四五六七八九十百千万億兆零〇./]|ぶんの|分の)/g;
-
-/**
  * Sequence terms, spelled the way the narration has to say them.
  *
  * `a_n` comes back from the synthesiser as 「a アンダーライン n」 — it reads the
@@ -119,6 +110,23 @@ const GREEK: Record<string, string> = {
 
 /** Katakana and the prolonged sound mark: what a Greek name must not run into. */
 const KATAKANA = /[\u30a0-\u30ff]/;
+
+/**
+ * 「分の」 fixes the order and scope, including 「4分の3ルート19」. A slash
+ * alone cannot supply those bounds. Actual matches remain literal merge keys
+ * so even a radical or a Greek name split into characters stays one fraction.
+ * Exclude partial decimals and chained fractions; keep digits as strings to
+ * avoid rounding large integers. Numeric denominators must be nonzero.
+ */
+const FRACTION_LETTER = `(?:[A-Za-zΑ-ΡΣ-ω]|(?:${Object.keys(GREEK).join("|")})(?![\\u30a0-\\u30ff]))`;
+const FRACTION_ATOM = `(?:0|[1-9][0-9]*|${FRACTION_LETTER})`;
+const FRACTION_NUMERATOR = `(?:${FRACTION_ATOM}?(?:ルート|√)${FRACTION_ATOM}|${FRACTION_ATOM})`;
+const FRACTION_EDGE = "[0-9A-Za-zΑ-ΡΣ-ω０-９一二三四五六七八九十百千万億兆零〇./√]";
+const FRACTION = new RegExp(
+  `(?<!${FRACTION_EDGE})(?<!ルート)(?<!ぶんの)(?<!分の)([1-9][0-9]*|${FRACTION_LETTER})` +
+  `(?:ぶんの|分の)(${FRACTION_NUMERATOR})(?!${FRACTION_EDGE}|ルート|ぶんの|分の)`,
+  "g",
+);
 
 /** Unambiguous in kana: nothing else in a maths script spells these. */
 const ALWAYS: Record<string, string> = {

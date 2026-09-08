@@ -184,7 +184,7 @@ export const splitUnit = (unit: string) => {
     : { major: unit.slice(0, space), middle: unit.slice(space + 1) };
 };
 
-/** 大分類 → 中分類 → 小分類, in curriculum order. */
+/** 学年 → 分野 → 単元, in curriculum order. */
 export const MATH_TAXONOMY = MATH_UNITS.map((unit) => ({
   ...splitUnit(unit.name),
   name: unit.name,

@@ -34,7 +34,7 @@ const mathText = (text: string) => renderToStaticMarkup(React.createElement(Math
 const scene = { scene_id: 1, visual_type: "hook", visual_content: "", narration: "説明" };
 const renderCard = (text: string, points: string[], poster = false) => render(SceneShell, {
   scene, durationInFrames: 300, accent: "#ffcc00", poster,
-  problem: { text, points, label: "問題", unit: "数学" },
+  problem: { text, points, unit: "数学" },
 });
 
 assert.deepEqual(parseProblemOutline([]), { conditions: [], questions: [] });
@@ -74,6 +74,9 @@ for (const { text, points } of fixtures) {
       if (question.number) assert.ok(html.includes(`>(${question.number})</span>`));
     }
     assert.doesNotMatch(html, />問<\/span>/);
+    // The opening card announces itself; a 問題 chip above it only repeats
+    // what the question underneath already is.
+    assert.doesNotMatch(html, />問題</);
     if (parsed.questions.length && parsed.questions.every((question) => question.number === null)) {
       assert.doesNotMatch(html, /min-width:1.55em/);
     }
@@ -159,6 +162,17 @@ assert.match(scriptedFraction, /border-top/);
 assert.equal(mathText("\\frac{3√19}{4"), "\\frac{3√19}{4");
 assert.equal(mathText("3√19/4"), "3√19/4");
 assert.equal(mathText("9/8に公開"), "9/8に公開");
+
+// The integral is drawn at 1.5em with a line-height that keeps its inline box
+// at 1.02em, so it cannot push the card's lines apart; measured at 0px growth
+// on a 16px/24px library card. Its bounds must still be scripts, not literals.
+const integral = mathText("∫_0^π x dx");
+assert.match(integral, /font-size:1\.5em/);
+assert.match(integral, /<sub[^>]*>0<\/sub>/);
+assert.match(integral, /<sup[^>]*>π<\/sup>/);
+assert.match(mathText("∑_{k=1}^{n} k"), /font-size:1\.5em/);
+// Prose must not pick up a display-size glyph it never asked for.
+assert.doesNotMatch(mathText("面積を求める"), /font-size:1\.5em/);
 
 let manifests = 0;
 let scenes = 0;

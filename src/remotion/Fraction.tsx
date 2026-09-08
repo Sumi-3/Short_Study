@@ -44,5 +44,5 @@ export const Fraction: React.FC<{
   </span>
 );
 
-/** Exactly the shape `applyDisplaySpelling` emits: whole unsigned integers. */
-export const WHOLE_FRACTION = /^([1-9][0-9]*)\/(0|[1-9][0-9]*)$/;
+/** Match the whole token merged from 「分の」; never infer bounds inside prose. */
+export const WHOLE_FRACTION = /^((?:(?:0|[1-9][0-9]*|[A-Za-zΑ-ΡΣ-ω])?√)?(?:0|[1-9][0-9]*|[A-Za-zΑ-ΡΣ-ω]))\/([1-9][0-9]*|[A-Za-zΑ-ΡΣ-ω])$/;
