@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { z } from "zod/v4";
-import { parseFormulaLine } from "../src/formulaLines.js";
+import { assertFormulaCarry, parseFormulaLine } from "../src/formulaLines.js";
 import { apiScriptSchema, normalizeVisual, sceneVisualSchema, type ApiScript } from "../src/types.js";
 
 // Prefixes share an existing string channel. Guard both marker orders and
@@ -20,6 +20,24 @@ for (const line of ["x^2-5x+6=0", "[0,1]", "[unknown] x", "[text]   ", "[box] ",
 }
 assert.equal(parseFormulaLine("[text][text] 本文").latex, "[text] 本文");
 assert.equal(parseFormulaLine("[box][underline] x").latex, "[underline] x");
+
+// Substitution is an incoming edge, independent of the target's decoration.
+// Preserve old parse shapes and bracketed maths, including malformed prefixes.
+assert.deepEqual(parseFormulaLine("[substitute: x=2 を代入] y=2^2+1"), {
+  latex: "y=2^2+1", annotation: null, text: false, substitution: "x=2 を代入",
+});
+for (const prefix of ["[substitute: x=2 を代入][box]", "[box] [substitute: x=2 を代入]"]) {
+  assert.deepEqual(parseFormulaLine(`${prefix} y=5`), {
+    latex: "y=5", annotation: "box", text: false, substitution: "x=2 を代入",
+  });
+}
+assert.equal(parseFormulaLine("[substitute: x=2 を代入] [0,1]").latex, "[0,1]");
+for (const line of [
+  "[substitute] x=2", "[substitute: ] x=2", "[substitute: x=2 を代入] ",
+  "[substitute: a[1] を代入] x=2", "[text][substitute: x=2 を代入] 本文",
+  "[substitute: x=2 を代入][carry] y=5",
+]) assert.deepEqual(parseFormulaLine(line), { latex: line, annotation: null, text: false });
+assert.equal(parseFormulaLine("[substitute: x=2][substitute: y=3] z=5").latex, "[substitute: y=3] z=5");
 
 // Check the actual schema exported for structured outputs, including required
 // keys. The local manifest limit must not grow the compiled API grammar.
@@ -85,6 +103,46 @@ for (const fixture of fixtures) {
   if (visual?.kind === "scatter") assert.equal(visual.xLabel, "[text] x軸");
 }
 
+// Only an explicit, verified copy connects scenes; blank headings alone do not.
+assert.deepEqual(parseFormulaLine("[carry] x+2=5"), {
+  latex: "x+2=5", annotation: "carry", text: false,
+});
+const previous = { ...base, visual_items: ["[plain] x+2=5", "[text] 両辺から2を引く"] };
+const continued = { ...base, visual_items: ["[carry] x+2=5", "[box] x=3"] };
+for (const before of ["formula", "figure", "plot"]) {
+  for (const after of ["formula", "figure", "plot"]) {
+    assert.doesNotThrow(() => assertFormulaCarry([
+      { ...previous, visual_kind: before }, { ...continued, visual_kind: after },
+    ]));
+  }
+}
+for (const invalid of [
+  [continued],
+  [{ ...previous, visual_kind: "bullets" }, continued],
+  [{ ...previous, visual_type: "summary" }, continued],
+  [previous, { ...continued, visual_type: "hook" }],
+  [previous, { ...continued, visual_content: "別の問い" }],
+  [previous, { ...continued, visual_items: ["[carry] x+2=6", "x=4"] }],
+  [previous, { ...continued, visual_items: ["[carry] x+2=5"] }],
+  [previous, { ...continued, visual_items: ["x=3", "[carry] x+2=5"] }],
+  [previous, { ...continued, visual_items: ["[text][carry] x+2=5", "x=3"] }],
+  [previous, { ...continued, visual_items: ["[carry] x+2=5", "[carry] x+2=5", "x=3"] }],
+  [{ ...previous, visual_items: ["x=3", "x+2=5"] }, continued],
+  [{ ...previous, visual_items: ["[box] x+2=5"] }, continued],
+  [{ ...previous, visual_items: ["[strike] x+2=5"] }, continued],
+  [previous, { ...continued, visual_items: [...continued.visual_items, ...Array(5).fill("x=3")] }],
+  [previous, { ...continued, visual_kind: "plot", visual_items: [...continued.visual_items, "x=3"] }],
+]) assert.throws(() => assertFormulaCarry(invalid), /\[carry\]/);
+assert.doesNotThrow(() => assertFormulaCarry([
+  previous, { ...continued, visual_items: ["y=7"] },
+]));
+// A substitution-only marker disables automatic answer boxing too, so its
+// unfinished result remains eligible for a verified carry into the next scene.
+assert.doesNotThrow(() => assertFormulaCarry([
+  { ...base, visual_items: ["y=x+3", "[substitute: x=2 を代入] y=2+3"] },
+  { ...base, visual_items: ["[carry] y=2+3", "[box] y=5"] },
+]));
+
 let manifests = 0;
 for (const file of await readdir(new URL("../public/projects/", import.meta.url), { recursive: true })) {
   if (!file.endsWith("/manifest.json")) continue;
@@ -103,4 +161,4 @@ for (const file of await readdir(new URL("../public/projects/", import.meta.url)
   }
   manifests++;
 }
-console.log(`PASS: markers, six/two-row limits, 19 required API fields, all 14 kinds, ${manifests} existing manifests`);
+console.log(`PASS: markers, verified formula/figure/plot continuity, six/two-row limits, 19 required API fields, all 14 kinds, ${manifests} existing manifests`);

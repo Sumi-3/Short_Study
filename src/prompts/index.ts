@@ -8,7 +8,7 @@ import { mathPrompt } from "./math.js";
  * every prompt string.
  */
 export type Course = CourseMeta & {
-  buildSystemPrompt: (targetSeconds: number) => string;
+  buildSystemPrompt: () => string;
   /** Allowed `unit` values; `null` lets the model write its own. */
   units: readonly string[] | null;
 };

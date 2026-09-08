@@ -93,7 +93,7 @@ Vercel Functions が同じものを読む）。デプロイ先にはリクエス
 #    → BLOB_READ_WRITE_TOKEN が自動で入る
 # 3. 環境変数を入れる
 #      ANTHROPIC_API_KEY   ← 必須なのはこれだけ
-#      EDGE_VOICE / EDGE_RATE / TARGET_SECONDS …（任意）
+#      EDGE_VOICE / EDGE_RATE …（任意）
 # 4. Settings → Deployment Protection → Vercel Authentication を有効化
 ```
 
@@ -199,7 +199,7 @@ npm run studio -- --props=public/projects/mock/props.json
 - `TTS_PROVIDER` — `edge`（無料・デフォルト）/ `elevenlabs`
 - `CAPTION_SOURCE` — `tts`（デフォルト）/ `whisper`
 - `EDGE_VOICE` / `EDGE_RATE` / `EDGE_PITCH` — 声質（後述）
-- `TARGET_SECONDS` — 動画の目安の長さ。台本のシーン数に反映（デフォルト 50）
+- 尺は問題の難しさから自動決定。生成上限は10シーン・ナレーション552文字（約120秒、実際の再生時間はTTSとシーン間の余白で決まる）。旧 `TARGET_SECONDS` は参照しない。
 
 ### 声を変える
 

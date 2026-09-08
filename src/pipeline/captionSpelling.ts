@@ -105,6 +105,21 @@ const ALWAYS: Record<string, string> = {
   タンジェント: "tan",
   イコール: "=",
   ルート: "√",
+  // Run before guarded プラス/マイナス, and merge split TTS tokens as one word.
+  プラスマイナス: "±",
+  /*
+   * Sub-question numbers. The narration says 「かっこ1」 because the synthesiser
+   * reads a bare 「(1)」 as a pause rather than a number, and the caption is the
+   * same words read rather than heard, so it wants the notation back.
+   *
+   * Spelled out per digit rather than matched with a pattern: `mergeSplitWords`
+   * above reassembles a token the synthesiser split by looking for these exact
+   * keys, and a regular expression cannot take part in that. Nine is past any
+   * real exam question.
+   */
+  ...Object.fromEntries(
+    Array.from({ length: 9 }, (_, index) => [`かっこ${index + 1}`, `(${index + 1})`]),
+  ),
   ...POWERS,
   ...TERMS,
 };

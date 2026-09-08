@@ -81,8 +81,8 @@ export const config = {
   whisperVersion: env("WHISPER_VERSION") ?? "1.5.5",
   language: "ja" as const,
 
-  /** Target length, fed to the script prompt as a scene-count hint. */
-  targetSeconds: num(env("TARGET_SECONDS"), 50),
+  // TARGET_SECONDS was removed: explanation complexity sets length; the shared
+  // script budget is a deployment safety ceiling, not a user-selected duration.
   /** Silence appended after each scene's narration, in seconds. */
   scenePaddingSeconds: num(env("SCENE_PADDING_SECONDS"), 0.35),
 } as const;

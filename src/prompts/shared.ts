@@ -14,38 +14,60 @@
  */
 const CHARS_PER_SECOND = { math: 4.6, prose: 5.2 } as const;
 
+/**
+ * Budget for the 300s Vercel function: reserve 170s for script generation,
+ * 20s for outline/captions/manifest/upload, and 30s for variance. The remaining
+ * 80s allow ten sequential TTS requests at an assumed 8s each. This is a
+ * conservative operating budget, not a latency guarantee: existing manifests
+ * record playback (16 projects, 4–6 scenes, 25–70s), NOT synthesis wall time.
+ * Revisit these assumptions with production timing, especially for Whisper.
+ * 120s of estimated speech and 20s per scene also bound request size; neither
+ * is a target to fill. Actual playback is determined by TTS plus scene padding.
+ */
+export const MAX_SCRIPT_SCENES = 10;
+const MAX_NARRATION_SECONDS = 120;
+const MAX_SCENE_SECONDS = 20;
+
 export type Budget = {
   seconds: number;
-  /** How many `point` scenes fit between the fixed hook and summary. */
+  maxScenes: number;
+  /** Maximum point count with one hook and one summary, never a quota. */
   points: number;
   totalChars: number;
   perScene: number;
 };
 
 export const budgetFor = (
-  targetSeconds: number,
   pace: keyof typeof CHARS_PER_SECOND = "prose",
-): Budget => {
-  const points = Math.max(2, Math.min(4, Math.round((targetSeconds - 14) / 11)));
-  const totalChars = Math.round(targetSeconds * CHARS_PER_SECOND[pace]);
+): Budget => ({
+  seconds: MAX_NARRATION_SECONDS,
+  maxScenes: MAX_SCRIPT_SCENES,
+  points: MAX_SCRIPT_SCENES - 2,
+  totalChars: Math.floor(MAX_NARRATION_SECONDS * CHARS_PER_SECOND[pace]),
+  perScene: Math.floor(MAX_SCENE_SECONDS * CHARS_PER_SECOND[pace]),
+});
 
-  return {
-    seconds: targetSeconds,
-    points,
-    totalChars,
-    // Stated per scene as well: a total is easy to blow past one scene at a
-    // time without noticing.
-    perScene: Math.round(totalChars / (points + 2)),
-  };
+/** Validate before TTS; silently slicing scenes could drop a requested answer. */
+export const assertScriptBudget = (
+  scenes: readonly { narration: string }[],
+  budget: Budget,
+) => {
+  if (scenes.length > budget.maxScenes ||
+      scenes.some((scene) => scene.narration.length > budget.perScene) ||
+      scenes.reduce((sum, scene) => sum + scene.narration.length, 0) > budget.totalChars) {
+    throw new Error(`解説が生成上限（${budget.maxScenes}シーン・合計${budget.totalChars}文字・1シーン${budget.perScene}文字）を超えました。問題を設問ごとに分けてください。`);
+  }
 };
+
+export const scriptMaxTokens = (budget: Budget) => 12_000 + budget.maxScenes * 1_500;
 
 export const narrationRules = (budget: Budget) => `# narration（音声読み上げ用）
 narration はそのまま字幕にもなる。読み上げが正しく、かつ字幕として読みやすい表記にする。
 
 - 話し言葉。ですます調。1文は短く、40文字以内を目安に切る。
 - 箇条書き記号、括弧書きの補足、URL、絵文字、Markdown は使わない。
-- **1シーンのnarrationは${budget.perScene}文字以内**。全${budget.points + 2}シーンで合計${budget.totalChars}文字前後
-  （${budget.seconds}秒相当）に収める。大きく下回ると説明が駆け足になる。
+- **1シーンは最大${budget.perScene}文字、全体は最大${budget.maxScenes}シーン・合計${budget.totalChars}文字**（読み上げ換算で最大約${budget.seconds}秒）。
+  これは生成処理を守る上限で、目標ではない。必要な説明が済んだら終える。短くても水増ししない。
 
 ## そのまま書いてよいもの（正しく読まれることを実測済み）
 - 算用数字: 98、60、2.65 →「きゅうじゅうはち」等。**漢数字にしない**
@@ -53,8 +75,12 @@ narration はそのまま字幕にもなる。読み上げが正しく、かつ�
 - 分数 1/2 →「2ぶんの1」。**「2ぶんの1」と書かず「1/2」と書く**
 - 根号 √7 →「ルート7」
 
-## 音にならないので必ず日本語の語に開くもの
+## 読みを安定させるため必ず日本語の語に開くもの
+- 設問番号 (1)、(2) は narration では「かっこ1」「かっこ2」と書く。
+  括弧記号は語に開き、番号は算用数字のままにする（「かっこイチ」「一」にはしない）。
+  visual_content や visual_items の画面表記は (1)、(2) のままでよい。
 - = は完全に無音になる → 「イコール」または「は」と書く
+- ± は「プラスマイナス」と書く（記号の読みは未検証なので、他の演算記号と同じくカナに統一する）
 - + - × ÷ → 「たす」「ひく」「かける」「わる」
 - x^2 → 「xのにじょう」、x^3 → 「xのさんじょう」。**ひらがなで書き、「の」を省かない**
   「2乗」「二乗」と書くと数字と「乗」に分断され、単独の「乗」が「の」と読まれる。
@@ -69,7 +95,7 @@ narration はそのまま字幕にもなる。読み上げが正しく、かつ�
 - 数字とカタカナを直接つなげない。「98コサインB」ではなく「98かけるコサインB」。
   つなげると読み上げの語の切れ目がずれる
 
-字幕では コサイン→cos、イコール→=、かける→×、にじょう→2乗、シータ→θ、パイ→π
+字幕では プラスマイナス→±、コサイン→cos、イコール→=、かける→×、にじょう→2乗、シータ→θ、パイ→π
 のように自動で書き言葉に戻して表示される（xの2乗+2x のように組み上がる）。
 読み上げのための表記なので、遠慮なくカタカナ・ひらがなで書いてよい。`;
 
@@ -109,7 +135,28 @@ const VISUAL_DOCS = {
     [underline] 定義・使う条件に下線、[circle] 注目する値を丸囲み、[highlight] 今使う公式を蛍光色で強調、
     [strike] 条件に合わず除外する候補を打ち消し、[bracket] 同時に使う条件のまとまりを左右の括弧で囲む、
     [box] 確定した答えを囲む、[plain] 装飾せず並べる。
-    1行でも [text] または装飾マーカーを使ったら、そのシーン全体で ↓ と最後の自動囲みは出ない。
+    [substitute: x=2 を代入] は代入後の数式行の先頭に付ける。直前の数式とその行の間に ↓、
+    矢印の右横に「x=2 を代入」が出る。独立した [text] 行は追加しない。
+    例: ["y=x^2+1", "[substitute: x=2 を代入] y=2^2+1", "[box] y=5"]。
+    具体的な値・式を文字に代入するときだけ使い、単なる整理・展開・移項には使わない。
+    先頭行、[text] の直後、除外した式の直後には使わず、代入元の数式を必ず直前に置く。
+    [box] など装飾1つと併用できる（[substitute: x=2 を代入][box] y=5、逆順も可）。
+    [text] や [carry] と同じ行には重ねない。[carry] の次の新しい数式行には使える。
+    説明は12〜14文字程度、長くても16文字を目安にし、x=2 のような本文表記にする。
+    説明に角括弧・改行・LaTeXコマンドは入れない。長い説明は横の列で折り返され、全文を含めて縮小されるため、
+    理由の詳細は音声で補い、複数の代入はシーンを分ける。矢印と説明の高さも使うので式は少なめにする。
+    行数枠は代入後の式と合わせて1行のまま。figure / plot の2行併記でも使える。
+    [carry] は前シーンから続く式変形の再掲専用。前後とも point で formula または figure/plot の式併記、
+    かつ前の最終数式をそのまま整理・計算する場合だけ、現在の visual_content を空文字にし、
+    前の最終数式の装飾を外して「[carry] 同じLaTeX」を現在の visual_items の先頭に必ず写す。
+    再掲は「前の式」と淡く静止表示される。読み上げ直さず、その式から次の変形を説明する。
+    [carry] に [text] や別の装飾は重ねない。再掲の次に必ず新しい数式行を置く。
+    同じ公式を別の対象に使うだけ、別問、別の定理、答えの吟味では使わない。
+    前の最終数式が [box] の確定答え、[strike] の除外候補なら使わない。
+    再掲も最大6行（図との併記は2行）のうち1行を使う。必要なら新しい変形を次のシーンに分ける。
+    継続途中の最後の式には [plain] を付け、自動の答え囲みを避ける。
+    1行でも [text]・装飾・[substitute: 説明] を使ったら、そのシーン全体で自動の ↓ と最後の自動囲みは出ない。
+    ただし [substitute: 説明] を付けた数式の直前だけは、明示した説明付き ↓ が出る。
     マーカーのない行はそのまま出る。必要な答えには明示的に [box] を付ける。
     例: ["[underline] x>0", "[strike] x=-2", "[box] x=2"]
     複数の条件は1行に [bracket] x>0,\\quad y>0 のようにまとめる。
@@ -123,6 +170,7 @@ const VISUAL_DOCS = {
     良い組合せ: 画面「[text] 積が0なら因数のどちらかが0」／音声「両方がゼロでなければ、かけてもゼロにはなりません。」
     悪い組合せ: 画面にも音声にも「両方がゼロでなければ、かけてもゼロにはなりません。」
     文章中の簡単な式は x^2、a_n、x>0 のような本文表記。指数・添字は表示できるが、$ やLaTeXコマンドは使わない。
+    ± は数式行では LaTeX の \\pm、[text] 文章行ではリテラルの ± を使う（文章に \\pm は書かない）。
     分数など複雑な式は別の数式行に置く。数式行の中に日本語を混ぜるときは必ず \\text{} で囲む
     （"極大値10" は数式扱いになって崩れる。"\\text{極大値}10" と書く）`,
   plot: `- "plot":    座標平面。グラフ・曲線・領域を見せる
@@ -150,7 +198,8 @@ const VISUAL_DOCS = {
         [{x, y, label}] を1〜3個。label は "(-1, -1)" のような短い文字列。不要なら空配列
     visual_items = グラフと同時に見せる短い数式／[text]文章行を合計0〜2個（不要なら空配列）。図の下に表示される。
         接点と接線の式、塗った領域と定積分、交点と方程式の対応を説明するときに使う。
-        formula と同じ行頭マーカーを使える。併記では ↓ も最後の自動囲みも出ない。
+        formula と同じ行頭マーカーを使える。併記では自動の ↓ も最後の自動囲みも出ない。
+        [substitute: 説明] の明示的な矢印は出る。
         例: ["[underline] f'(1)=2", "[box] y=2x-1"]
     visual_caption = 図・式の関係を示す12文字以内の補足（不要なら空文字列）。式がなくても表示する`,
   figure: `- "figure":  図形そのものを描く。三角形・円・立体など、幾何の問題では必ず使う
@@ -184,8 +233,9 @@ const VISUAL_DOCS = {
         （△ABCを x=0〜3、△DEFを x=5〜8 に置く。全体が自動で画面に収まる）
     visual_items = 図と同時に見せる短い数式／[text]文章行を合計0〜2個（不要なら空配列）。図の下に表示される。
         図の辺・角に定理をあてはめるときは、図を消さずに公式と代入式をここへ置く。
-        formula と同じ行頭マーカーを使える。併記では ↓ も最後の自動囲みも出ない。
-        例: ["[highlight] c^2=a^2+b^2", "[box] c^2=3^2+4^2=25"]
+        formula と同じ行頭マーカーを使える。併記では自動の ↓ も最後の自動囲みも出ない。
+        [substitute: 説明] の明示的な矢印は出る。
+        例: ["[highlight] c^2=a^2+b^2", "[substitute: a=3,b=4 を代入][box] c^2=3^2+4^2=25"]
     visual_caption = 図・式の関係を示す12文字以内の補足（不要なら空文字列）。式がなくても表示する`,
   table: `- "table":    表。行と列で意味が決まるものは、箇条書きでも式でも代用できない
     visual_table = 1行ずつの配列。2〜6行、1行あたり1〜8セル

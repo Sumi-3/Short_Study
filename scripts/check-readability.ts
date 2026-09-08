@@ -73,6 +73,11 @@ for (const { text, points } of fixtures) {
       assert.ok(html.includes(mathText(question.text)));
       if (question.number) assert.ok(html.includes(`>(${question.number})</span>`));
     }
+    assert.doesNotMatch(html, />問<\/span>/);
+    if (parsed.questions.length && parsed.questions.every((question) => question.number === null)) {
+      assert.doesNotMatch(html, /min-width:1.55em/);
+    }
+    if (parsed.conditions.length && parsed.questions.length) assert.match(html, /border-top:2px solid/);
   }
 }
 
@@ -87,6 +92,60 @@ for (const outlined of [false, true]) {
   const size = Number(html.match(/font-weight:700;font-size:([\d.]+)px;line-height:1.55/)?.[1]);
   assert.ok(size > 0 && size < 56, `long poster must shrink below 56px, got ${size}`);
 }
+
+// Exercise new marker markup as well as legacy manifests. SSR can check static
+// carry visibility and type sizes, while measured shrink still needs a browser.
+const { Formula } = await import("../src/remotion/math/Formula.js");
+for (const [count, compact, expected] of [
+  [2, false, 60], [3, false, 56], [4, false, 52], [6, false, 48], [2, true, 46],
+] as const) {
+  const html = render(Formula, {
+    lines: ["[text][underline] 両辺を2で割る", ...Array(count - 1).fill("[plain] x=2")],
+    caption: "符号に注意", accent: "#ffcc00", compact, durationInFrames: 300,
+  });
+  assert.ok(html.includes(`font-size:${expected}px;line-height:1.3`));
+  assert.ok(html.includes("両辺を2で割る"));
+}
+const carryHtml = render(Formula, {
+  lines: ["[carry] x=2", "[box] x^2=4"], caption: "前の式を二乗", accent: "#ffcc00", durationInFrames: 300,
+});
+assert.ok(carryHtml.includes("前の式"));
+assert.match(carryHtml, /opacity:0.68;translate:0px 0px/);
+assert.ok(!carryHtml.includes("[carry]"));
+
+// The incoming edge must survive statement/companion mode without turning
+// unrelated conditions or prose into implications. This checks markup only;
+// the label's wrapped height and fitted placement still require a browser.
+for (const compact of [false, true]) {
+  const html = render(Formula, {
+    lines: ["[highlight] y=x^2+1", "[substitute: x=2 を代入][box] y=5"],
+    caption: "", accent: "#ffcc00", compact, durationInFrames: 300,
+  });
+  assert.match(html, /class="formula-statements"/);
+  assert.equal((html.match(/↓/g) ?? []).length, 1);
+  assert.equal((html.match(/data-formula-substitution/g) ?? []).length, 1);
+  assert.ok(html.includes("x=2 を代入"));
+  assert.ok(!html.includes("[substitute:"));
+  assert.match(html, /grid-template-columns:1fr auto 1fr/);
+}
+const label = "前に求めたx=2とy=3をそれぞれ対応する文字に代入する";
+const longLabelHtml = render(Formula, {
+  lines: ["[carry] z=x+y", `[substitute: ${label}] z=2+3`, "[text] 和を求める", "[box] z=5"],
+  caption: "", accent: "#ffcc00", durationInFrames: 300,
+});
+assert.ok(longLabelHtml.includes(label));
+assert.match(longLabelHtml, /overflow-wrap:anywhere;white-space:normal/);
+assert.equal((longLabelHtml.match(/↓/g) ?? []).length, 1);
+for (const lines of [["[substitute: x=2 を代入] y=5"], ["[text] 条件", "[substitute: x=2 を代入] y=5"]]) {
+  const html = render(Formula, { lines, caption: "", accent: "#ffcc00", durationInFrames: 300 });
+  assert.ok(!html.includes("↓"), "no arrow without an immediately preceding equation");
+}
+const legacyDerivation = render(Formula, {
+  lines: ["x+2=5", "x=3"], caption: "", accent: "#ffcc00", durationInFrames: 300,
+});
+assert.match(legacyDerivation, /class="formula-derivation"/);
+assert.equal((legacyDerivation.match(/↓/g) ?? []).length, 1);
+assert.equal(mathText("x=±2"), "x=±2");
 
 let manifests = 0;
 let scenes = 0;

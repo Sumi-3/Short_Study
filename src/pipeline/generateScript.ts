@@ -4,7 +4,8 @@ import { anthropic } from "./anthropic.js";
 import { config } from "../config.js";
 import { apiScriptSchema, normalizeVisual, type Script } from "../types.js";
 import { coursePrompts } from "../prompts/index.js";
-import { budgetFor } from "../prompts/shared.js";
+import { assertScriptBudget, budgetFor, scriptMaxTokens } from "../prompts/shared.js";
+import { assertFormulaCarry } from "../formulaLines.js";
 import { topicsOf } from "../curriculum.js";
 import type { CourseId } from "../courses.js";
 
@@ -92,17 +93,18 @@ export const generateScript = async (
    * old fixed 16,000 a long script just stopped mid-scene and came back as
    * `stop_reason: max_tokens` with nothing parseable.
    *
-   * `points` does not depend on the pace, so the course's own pace is not
-   * needed in order to count the scenes.
+   * Reserve for the maximum allowed script, since the model chooses its actual
+   * scene count in this same call. No unreachable 64k clamp: ten scenes need
+   * 12,000 + 10 * 1,500 = 27,000 tokens including adaptive thinking.
    */
-  const scenes = budgetFor(config.targetSeconds).points + 2;
-  const maxTokens = Math.min(64_000, 12_000 + scenes * 1_500);
+  const budget = budgetFor("math");
+  const maxTokens = scriptMaxTokens(budget);
 
   /*
    * Streamed rather than a plain `.parse()`, because the SDK refuses any
    * non-streaming request whose `max_tokens` implies more than ten minutes of
-   * work — `3600 * max_tokens / 128000 > 600`, i.e. anything over 21,333. A
-   * 12-scene script is already past that. `finalMessage()` still carries
+   * work — `3600 * max_tokens / 128000 > 600`, i.e. anything over 21,333. Our
+   * ten-scene safety ceiling is already past that. `finalMessage()` still carries
    * `parsed_output`, so structured outputs survive the switch; nothing here
    * consumes the intermediate events.
    */
@@ -111,7 +113,7 @@ export const generateScript = async (
       model: config.anthropicModel,
       max_tokens: maxTokens,
       thinking: { type: "adaptive" },
-      system: course.buildSystemPrompt(config.targetSeconds),
+      system: course.buildSystemPrompt(),
       messages: [{ role: "user", content: topic }],
       output_config: { format: zodOutputFormat(apiScriptSchema) },
     })
@@ -123,6 +125,9 @@ export const generateScript = async (
       `Claude returned no parseable script (stop_reason: ${response.stop_reason}).`,
     );
   }
+
+  assertScriptBudget(parsed.scenes, budget);
+  assertFormulaCarry(parsed.scenes);
 
   return {
     // The same question, spelled consistently — see TOPIC_RULE. Falls back to

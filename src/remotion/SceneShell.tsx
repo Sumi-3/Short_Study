@@ -147,19 +147,22 @@ const emsOf = (text: string) => {
  * the box it came out in letters a fifth of the frame tall — a slogan rather
  * than a question. Past 130 the box is better left with air in it.
  */
-const posterFontSize = (segments: string[], outlined: boolean) => {
+const posterFontSize = (segments: { text: string; numbered: boolean }[]) => {
   for (let size = 130; size > 2; size -= 2) {
     // Whole characters, and not quite the full width: a row breaks at a word
     // or a kinsoku boundary, never mid-character and rarely at the last em
     // that would have fitted. Rounding down matters most at the large sizes,
     // where a row is only four or five characters wide to begin with.
-    const emsPerRow = Math.floor(
-      (POSTER_BOX_WIDTH / size) * PACKING - (outlined ? QUESTION_GUTTER : 0),
-    );
-    const rows = segments.flatMap((segment) => segment.split("\n")).reduce(
-      (total, segment) => total + Math.max(1, Math.ceil(emsOf(segment) / emsPerRow)),
-      0,
-    );
+    // Only numbered rows spend width on a hanging indent. Charging every
+    // condition or unnumbered question for it would shrink the poster early.
+    const rows = segments.reduce((total, segment) => {
+      const emsPerRow = Math.max(1, Math.floor(
+        (POSTER_BOX_WIDTH / size) * PACKING - (segment.numbered ? QUESTION_GUTTER : 0),
+      ));
+      return total + segment.text.split("\n").reduce(
+        (sum, line) => sum + Math.max(1, Math.ceil(emsOf(line) / emsPerRow)), 0,
+      );
+    }, 0);
     if (rows * CARD_LINE_HEIGHT * size <= POSTER_BOX_HEIGHT) {
       return size;
     }
@@ -184,16 +187,17 @@ const ProblemCard: React.FC<{
   const { conditions, questions } = parseProblemOutline(points);
   const outlined = conditions.length + questions.length > 0;
   const lines = outlined
-    ? [...conditions, ...questions.map((question) => question.text)]
-    : text.split("\n");
-  const measured = lines.join("\n");
+    ? [...conditions.map((text) => ({ text, numbered: false })),
+      ...questions.map((question) => ({ text: question.text, numbered: question.number !== null }))]
+    : [{ text, numbered: false }];
+  const measured = lines.map((line) => line.text).join("\n");
   // The opening can spend its vertical space on complete sentences. Start
   // larger even for long questions, then fit the actual wrapped block instead
   // of silently dropping the thirteenth line (often the second question).
   // Posters estimate up to 130px, with no readability floor: the library has
   // no caption band, but even its longer questions must keep every condition.
   const fontSize = poster
-    ? posterFontSize(lines, outlined)
+    ? posterFontSize(lines)
     : measured.length > 200 ? 44 : measured.length > 130 ? 48
       : measured.length > 88 ? 52 : 56;
   const { viewportRef, contentRef, scale } = useFitToStage(false);
@@ -289,11 +293,14 @@ const ProblemCard: React.FC<{
                 <div style={conditions.length ? { marginTop: "0.35em", paddingTop: "0.35em", borderTop: `2px solid ${withAlpha(accent, 0.5)}` } : undefined}>
                   {questions.map((question, index) => (
                     <div key={index} style={{ display: "flex", alignItems: "baseline", gap: "0.25em", marginTop: index ? "0.25em" : 0 }}>
-                      {/* Numbers stay as large as the question so each answer
-                          later in the video has an unmistakable reference. */}
-                      <span style={{ color: accent, fontWeight: 900, flexShrink: 0, minWidth: `${QUESTION_GUTTER - 0.25}em` }}>
-                        {question.number === null ? "問" : `(${question.number})`}
-                      </span>
+                      {/* Only numbered rows need a gutter. Omitting the span
+                          also removes the flex gap for unnumbered rows, so
+                          either kind can wrap naturally even in a mixed list. */}
+                      {question.number !== null ? (
+                        <span style={{ color: accent, fontWeight: 900, flexShrink: 0, minWidth: `${QUESTION_GUTTER - 0.25}em` }}>
+                          {`(${question.number})`}
+                        </span>
+                      ) : null}
                       <span style={{ minWidth: 0 }}><MathText text={question.text} /></span>
                     </div>
                   ))}
@@ -467,13 +474,18 @@ export const SceneShell: React.FC<{
       ) : null}
 
       {heading ? (
-      <>
+      // A wrapped heading is one title: underline its whole block rather
+      // than a short last line. fit-content hugs a single line and caps a
+      // wrapped block at the available width, without scale-sensitive DOM
+      // measurements or a feedback loop between the rule and the text.
+      <div style={{ width: "fit-content", maxWidth: "100%" }}>
       <div
         style={{
           marginTop: label ? (isHook ? 88 : 56) : 0,
           fontFamily: theme.fontFamily,
           fontWeight: 900,
-          fontSize: isHook ? 132 : 96,
+          fontSize: isHook ? 124 : 90,
+          overflowWrap: "anywhere",
           lineHeight: 1.18,
           color: theme.ink,
           textShadow: shadowOf(theme),
@@ -501,10 +513,12 @@ export const SceneShell: React.FC<{
           height: 12,
           borderRadius: 6,
           backgroundColor: accent,
-          width: clamped(frame, [0.4 * fps, 1.1 * fps], [0, 260], theme.easing),
+          width: "100%",
+          transformOrigin: "left center",
+          scale: `${clamped(frame, [0.4 * fps, 1.1 * fps], [0, 1], theme.easing)} 1`,
         }}
       />
-      </>
+      </div>
       ) : null}
 
       </div>

@@ -39,8 +39,9 @@ const Line: React.FC<{
   color: string;
   fontSize: number;
   timing: number;
+  carried?: boolean;
   measureRef: (el: HTMLDivElement | null) => void;
-}> = ({ latex, text, delay, color, fontSize, timing, measureRef }) => {
+}> = ({ latex, text, delay, color, fontSize, timing, carried = false, measureRef }) => {
   const frame = useCurrentFrame() / timing;
   const theme = useTheme();
   const html = useMemo(() => text ? "" : render(latex), [latex, text]);
@@ -60,8 +61,8 @@ const Line: React.FC<{
         // Shrink-wrapping it makes the measured width the formula's own.
         width: "max-content",
         textShadow: shadowOf(theme),
-        opacity: clamped(frame, [delay, delay + 12], [0, 1], theme.easing),
-        translate: clamped(
+        opacity: carried ? 0.68 : clamped(frame, [delay, delay + 12], [0, 1], theme.easing),
+        translate: carried ? "0px 0px" : clamped(
           frame,
           [delay, delay + 16],
           ["0px 20px", "0px 0px"],
@@ -215,6 +216,9 @@ const Row: React.FC<{
  * Any explicit marker opts the whole block into annotated statements;
  * inserting a derivation arrow between a rejected candidate and a condition
  * would assert a mathematical implication that the author did not mean.
+ * A [substitute: reason] explicitly connects only its incoming edge, even in
+ * statement mode; restoring all arrows would also connect unrelated rows.
+ * It still opts out of automatic boxing, so authors mark the actual answer.
  * Companion lines use that same statement layout even without markers, since
  * their reference is the diagram above, not necessarily the preceding line.
  */
@@ -232,17 +236,18 @@ export const Formula: React.FC<{
   // Limits belong to authoring/validation. Rendering never hides a row to fit.
   const shown = lines.map(parseFormulaLine);
   const derivation = !compact && shown.every(
-    (line) => line.annotation === null && !line.text,
+    (line) => line.annotation === null && !line.text && !line.substitution,
   );
   // Six rows need longer to arrive than three. Short narration must still
   // show the last answer/annotation before SceneShell's seven-frame exit.
   // Long scenes retain the existing cadence; only the entrance is compressed.
-  const naturalEnd = (0.8 + Math.max(0, shown.length - 1) * 0.9) * fps + 45;
+  const newLineCount = shown.filter((line) => line.annotation !== "carry").length;
+  const naturalEnd = (0.8 + Math.max(0, newLineCount - 1) * 0.9) * fps + 45;
   const timing = durationInFrames === undefined
     ? 1
     : Math.min(1, Math.max(1, durationInFrames - 7 - fps * 0.5) / naturalEnd);
   const revealFrame = frame / timing;
-  const lastDelay = (0.8 + Math.max(0, shown.length - 1) * 0.9) * fps;
+  const lastDelay = (0.8 + Math.max(0, newLineCount - 1) * 0.9) * fps;
   const dense = shown.length >= 3;
   // New scripts use 3–4 rows so larger maths and 86%-size reasons can stay
   // readable. Keep six-row legacy scripts complete at a more modest 60px;
@@ -315,12 +320,14 @@ export const Formula: React.FC<{
             statement marks still enclose only the actual mathematical ink. */}
         <style>{`.formula-derivation .katex-display { margin: 0.25em 0; }
           .formula-statements .katex-display { margin: 0; }`}</style>
-        {shown.map(({ latex, annotation, text }, index) => {
-          const delay = (0.8 + index * 0.9) * fps;
+        {shown.map(({ latex, annotation, text, substitution }, index) => {
+          const carried = annotation === "carry";
+          const newIndex = index - (shown[0]?.annotation === "carry" ? 1 : 0);
+          const delay = (0.8 + Math.max(0, newIndex) * 0.9) * fps;
           const isLast = index === shown.length - 1;
           const kind = annotation ??
             (derivation && isLast && shown.length > 1 ? "box" : "plain");
-          const Mark = kind === "plain" ? null : annotations[kind];
+          const Mark = kind === "plain" || kind === "carry" ? null : annotations[kind];
           const line = (
             <Line
               latex={latex}
@@ -329,6 +336,7 @@ export const Formula: React.FC<{
               color={theme.ink}
               fontSize={text ? fontSize * 0.86 : fontSize}
               timing={timing}
+              carried={carried}
               measureRef={register(index)}
             />
           );
@@ -341,7 +349,35 @@ export const Formula: React.FC<{
               gap={gap}
               textOffsetX={textOffsetX}
             >
-              {derivation && index > 0 ? (
+              {carried ? (
+                // A stable label and muted ink make the repeated premise distinct
+                // from a newly revealed step without shrinking its mathematical ink.
+                <div data-formula-carry style={{
+                  fontFamily: theme.fontFamily, fontSize: fontSize * 0.62,
+                  lineHeight: 1, color: theme.ink, opacity: 0.68,
+                }}>前の式</div>
+              ) : null}
+              {substitution && index > 0 && !shown[index - 1].text ? (
+                // Keep the arrow on the equations' centreline and the reason
+                // beside it. A bounded prose column wraps long labels without
+                // truncation; its full height and the gap are inside Row so
+                // useFitToStage reserves them, including in diagram companions.
+                // This width is independent of the fitted result: no measured
+                // scale is divided back into a layout input.
+                <div data-formula-substitution style={{
+                  display: "grid", gridTemplateColumns: "1fr auto 1fr",
+                  alignItems: "center", columnGap: 16,
+                  width: compact ? 620 : 720,
+                  opacity: clamped(revealFrame, [delay - 8, delay], [0, 1]),
+                }}>
+                  <span style={{ gridColumn: 2, color: accent, fontSize: arrowSize, lineHeight: 1 }}>↓</span>
+                  <span style={{
+                    gridColumn: 3, minWidth: 0, fontFamily: theme.fontFamily,
+                    fontWeight: 700, fontSize: fontSize * 0.7, lineHeight: 1.35,
+                    color: theme.ink, overflowWrap: "anywhere", whiteSpace: "normal",
+                  }}><MathText text={substitution} /></span>
+                </div>
+              ) : derivation && index > 0 ? (
                 <div
                   style={{
                     fontSize: arrowSize,
@@ -375,10 +411,14 @@ export const Formula: React.FC<{
             ref={register(shown.length)}
             data-formula-measure
             style={{
-              marginTop: compact ? 8 : dense ? 24 : 32,
+              // Recover most of the added text height from the old empty margin.
+              // Both width fit and stage fit still include the caption and marks;
+              // 5–6 rows and diagram companions start lower to avoid always shrinking.
+              marginTop: compact ? 0 : dense ? 8 : 16,
               fontFamily: theme.fontFamily,
               fontWeight: 700,
-              fontSize: (compact ? 30 : dense ? 38 : 42) * fit,
+              fontSize: (compact ? 46 : shown.length >= 5 ? 48 : shown.length === 4 ? 52 : dense ? 56 : 60) * fit,
+              lineHeight: 1.3,
               width: "max-content",
               color: accent,
               textShadow: shadowOf(theme),
