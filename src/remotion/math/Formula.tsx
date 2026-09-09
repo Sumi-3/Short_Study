@@ -15,7 +15,7 @@ import { layout, shadowOf, useTheme, withAlpha } from "../theme";
 import { useFitToWidth } from "../useFitToWidth";
 import { useFitToStage } from "../useFitToStage";
 import { MathText } from "../MathText";
-import { parseFormulaLine } from "../../formulaLines";
+import { FORMULA_MAX_LINES, parseFormulaLine } from "../../formulaLines";
 export { parseFormulaLine } from "../../formulaLines";
 
 const render = (latex: string) => {
@@ -38,10 +38,12 @@ const Line: React.FC<{
   color: string;
   fontSize: number;
   timing: number;
+  /** この行が属する segment の開始 frame。run でなければ 0。 */
+  from: number;
   carried?: boolean;
   measureRef: (el: HTMLDivElement | null) => void;
-}> = ({ latex, text, delay, color, fontSize, timing, carried = false, measureRef }) => {
-  const frame = useCurrentFrame() / timing;
+}> = ({ latex, text, delay, color, fontSize, timing, from, carried = false, measureRef }) => {
+  const frame = (useCurrentFrame() - from) / timing;
   const theme = useTheme();
   const html = useMemo(() => text ? "" : render(latex), [latex, text]);
 
@@ -199,6 +201,40 @@ const Row: React.FC<{
 };
 
 /**
+ * 窓で切る run のために、各行の layout 上の位置を測る。`offsetTop` / `offsetHeight` は transform を
+ * 無視するので、fitter が content に掛ける scale や、窓の translate に左右されない。
+ */
+const useRowGeometry = (
+  stackRef: React.RefObject<HTMLDivElement | null>,
+  enabled: boolean,
+) => {
+  const [rows, setRows] = useState<{ top: number; bottom: number }[]>([]);
+  useLayoutEffect(() => {
+    const stack = stackRef.current;
+    if (!enabled || !stack) return;
+    const measure = () => {
+      const next = Array.from(stack.children, (child) =>
+        child instanceof HTMLElement
+          ? { top: child.offsetTop, bottom: child.offsetTop + child.offsetHeight }
+          : { top: 0, bottom: 0 },
+      );
+      setRows((old) =>
+        old.length === next.length &&
+        old.every((row, index) => row.top === next[index].top && row.bottom === next[index].bottom)
+          ? old
+          : next,
+      );
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(stack);
+    for (const child of Array.from(stack.children)) observer.observe(child);
+    measure();
+    return () => observer.disconnect();
+  }, [stackRef, enabled]);
+  return rows;
+};
+
+/**
  * marker のない単独 formula は従来の derivation、すなわち arrow と最後の box を保つ。step は morph して
  * 消さず見せ続けるため、short を追う人が substitution とそれを正当化する formula を比較できる。
  * 明示的な marker が一つでもあれば block 全体を annotated statement にする。棄却候補と条件の間へ
@@ -213,7 +249,13 @@ export const Formula: React.FC<{
   accent: string;
   compact?: boolean;
   durationInFrames?: number;
-}> = ({ lines, caption, accent, compact = false, durationInFrames }) => {
+  /**
+   * run（FormulaRun）にまたがる描画で、各シーンの行がいつ現れるか。`lines` は segment の順に
+   * 連結してあり、segment k はその `count` 行を `from` から出す。省略時は全行を frame 0 から
+   * 始まる 1 つの segment として扱うので、従来の呼び出しの挙動は変わらない。
+   */
+  segments?: readonly { from: number; durationInFrames: number; count: number }[];
+}> = ({ lines, caption, accent, compact = false, durationInFrames, segments }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -223,16 +265,47 @@ export const Formula: React.FC<{
   const derivation = !compact && shown.every(
     (line) => line.annotation === null && !line.text && !line.substitution,
   );
-  // 6 row は3 rowより到着に時間がかかる。短い narration でも SceneShell の7 frame exit 前に最後の
-  // answer/annotation を見せなければならない。長い scene は従来の cadence を保ち、圧縮するのは entrance
-  // だけにする。
-  const newLineCount = shown.filter((line) => line.annotation !== "carry").length;
-  const naturalEnd = (0.8 + Math.max(0, newLineCount - 1) * 0.9) * fps + 45;
-  const timing = durationInFrames === undefined
-    ? 1
-    : Math.min(1, Math.max(1, durationInFrames - 7 - fps * 0.5) / naturalEnd);
-  const revealFrame = frame / timing;
-  const lastDelay = (0.8 + Math.max(0, newLineCount - 1) * 0.9) * fps;
+  /*
+   * 6 row は3 rowより到着に時間がかかる。短い narration でも SceneShell の7 frame exit 前に最後の
+   * answer/annotation を見せなければならない。長い scene は従来の cadence を保ち、圧縮するのは entrance
+   * だけにする。
+   *
+   * 圧縮率は segment ごとに、その音声の尺で出す。run では後ろの segment ほど遅く始まるが、
+   * 各行は自分の segment の開始 frame から数えるので、シーン内で見せていた cadence がそのまま保たれる。
+   */
+  const cadence = (count: number, duration?: number) => {
+    const lastDelay = (0.8 + Math.max(0, count - 1) * 0.9) * fps;
+    const naturalEnd = lastDelay + 45;
+    const timing = duration === undefined
+      ? 1
+      : Math.min(1, Math.max(1, duration - 7 - fps * 0.5) / naturalEnd);
+    return { timing, lastDelay };
+  };
+  const plan: { from: number; timing: number; delay: number }[] = [];
+  const whole = { from: 0, durationInFrames, count: shown.length };
+  let cursor = 0;
+  for (const segment of segments ?? [whole]) {
+    const own = shown.slice(cursor, cursor + segment.count);
+    // 先頭の [carry] は再掲であり、新しく現れる行として数えない。
+    const leadingCarry = own[0]?.annotation === "carry" ? 1 : 0;
+    const { timing } = cadence(
+      own.filter((line) => line.annotation !== "carry").length,
+      segment.durationInFrames,
+    );
+    own.forEach((_, local) => plan.push({
+      from: segment.from,
+      timing,
+      delay: (0.8 + Math.max(0, local - leadingCarry) * 0.9) * fps,
+    }));
+    cursor += segment.count;
+  }
+  // caption は最後の segment の最後の行のあとに出る。
+  const last = segments?.at(-1) ?? whole;
+  const ending = cadence(
+    shown.slice(shown.length - last.count).filter((line) => line.annotation !== "carry").length,
+    last.durationInFrames,
+  );
+  const captionFrame = (frame - last.from) / ending.timing;
   const dense = shown.length >= 3;
   // 新しい script は3–4 rowにして、より大きい maths と86%サイズの reason を読めるようにする。6 rowの
   // 旧 script は控えめな60pxで完全に残す。useFitToStage は分数・mark・caption を一つの block として
@@ -262,51 +335,44 @@ export const Formula: React.FC<{
   );
   const fontSize = baseFontSize * fit;
 
-  return (
-    <div
-      ref={viewportRef}
-      data-formula-viewport
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: compact ? height * scale : "100%",
-        minHeight: 0,
-        minWidth: 0,
-      }}
-    >
-      <div
-        ref={contentRef}
-        data-formula-content
-        className={derivation ? "formula-derivation" : "formula-statements"}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap,
-          // 外側の24px reserve には line の20px entrance motion も含む。この自然な block を scale すれば、
-          // 固定サイズの gap をすべて含められる。
-          padding: "24px 40px",
-          flexShrink: 0,
-          // これは width-fit の測定 box ではなく placement box。text row は左端から始めつつ、maths は中央に
-          // 置ける。
-          width: "100%",
-          scale: String(scale),
-          transformOrigin: "center",
-          boxSizing: "border-box",
-          minWidth: 0,
-        }}
-      >
-        {/* default の1em margin では60pxの6 rowで720pxを空白に使い、短い equation まで縮めざるを得ない。
-            1/4em と既存の gap/arrow なら derivation を明瞭に保てる。statement mark は依然として実際の
-            mathematical ink だけを囲む。 */}
-        <style>{`.formula-derivation .katex-display { margin: 0.25em 0; }
-          .formula-statements .katex-display { margin: 0; }`}</style>
-        {shown.map(({ latex, annotation, text, substitution }, index) => {
+  /*
+   * run が FORMULA_MAX_LINES を超えると、全行を積んだままでは fitter が行数ぶん縮める（latex-probe の
+   * 4 シーン 9 行は 0.66 倍まで落ちた）。そこで行は流し込みのまま、高さを固定した窓で切り、segment が
+   * 始まるたびに古い行を上へ送る。窓の高さは連続する FORMULA_MAX_LINES 行のうち最も高い組で決めるので、
+   * 中身が入れ替わっても content の高さは動かず、useFitToStage は 1 度測った scale を保つ。行の位置は
+   * offsetTop / offsetHeight から出す。どちらも transform を無視するので、fitter の scale を割り戻す
+   * 帰還は生じない。1 シーンの formula と 6 行以下の run はこの経路を通らず、従来どおり全行を積む。
+   */
+  const windowed = Boolean(segments) && !compact && shown.length > FORMULA_MAX_LINES;
+  const stackRef = useRef<HTMLDivElement>(null);
+  const rows = useRowGeometry(stackRef, windowed);
+  let clipHeight: number | undefined;
+  let offset = 0;
+  if (windowed && segments && rows.length === shown.length && rows.length) {
+    clipHeight = 0;
+    for (let index = 0; index < rows.length; index++) {
+      const top = rows[Math.max(0, index - FORMULA_MAX_LINES + 1)].top;
+      clipHeight = Math.max(clipHeight, rows[index].bottom - top);
+    }
+    // segment の最後の行が窓の下端に来るまで送る。送りは境界から 12 frame かけ、戻ることはない。
+    let end = 0;
+    let previous = 0;
+    for (const segment of segments) {
+      end += segment.count;
+      if (end === 0) continue;
+      const target = Math.max(0, rows[Math.min(end, rows.length) - 1].bottom - clipHeight);
+      if (frame >= segment.from) {
+        offset = clamped(frame, [segment.from, segment.from + 12], [previous, target], theme.easing);
+      }
+      previous = target;
+    }
+  }
+
+  const rowsJsx = shown.map(({ latex, annotation, text, substitution }, index) => {
           const carried = annotation === "carry";
-          const newIndex = index - (shown[0]?.annotation === "carry" ? 1 : 0);
-          const delay = (0.8 + Math.max(0, newIndex) * 0.9) * fps;
+          // segment の count が行数と食い違っても描画は落とさず、最後の段の時刻に寄せる。
+          const { from, timing, delay } = plan[index] ?? plan.at(-1) ?? { from: 0, timing: 1, delay: 0 };
+          const revealFrame = (frame - from) / timing;
           const isLast = index === shown.length - 1;
           const kind = annotation ??
             (derivation && isLast && shown.length > 1 ? "box" : "plain");
@@ -319,6 +385,7 @@ export const Formula: React.FC<{
               color={theme.ink}
               fontSize={text ? fontSize * 0.86 : fontSize}
               timing={timing}
+              from={from}
               carried={carried}
               measureRef={register(index)}
             />
@@ -385,7 +452,85 @@ export const Formula: React.FC<{
               ) : line}
             </Row>
           );
-        })}
+        });
+
+  return (
+    <div
+      ref={viewportRef}
+      data-formula-viewport
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: compact ? height * scale : "100%",
+        minHeight: 0,
+        minWidth: 0,
+      }}
+    >
+      <div
+        ref={contentRef}
+        data-formula-content
+        className={derivation ? "formula-derivation" : "formula-statements"}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap,
+          // 外側の24px reserve には line の20px entrance motion も含む。この自然な block を scale すれば、
+          // 固定サイズの gap をすべて含められる。
+          padding: "24px 40px",
+          flexShrink: 0,
+          // これは width-fit の測定 box ではなく placement box。text row は左端から始めつつ、maths は中央に
+          // 置ける。
+          width: "100%",
+          scale: String(scale),
+          transformOrigin: "center",
+          boxSizing: "border-box",
+          minWidth: 0,
+        }}
+      >
+        {/* default の1em margin では60pxの6 rowで720pxを空白に使い、短い equation まで縮めざるを得ない。
+            1/4em と既存の gap/arrow なら derivation を明瞭に保てる。statement mark は依然として実際の
+            mathematical ink だけを囲む。 */}
+        <style>{`.formula-derivation .katex-display { margin: 0.25em 0; }
+          .formula-statements .katex-display { margin: 0; }`}</style>
+        {windowed ? (
+          // 窓の高さは measured な行位置から出す。測り終えるまでは切らずに流し、最初の layout で確定する。
+          <div
+            style={{
+              // 切るのは縦だけ。`overflow: hidden` は横も切るので、行が content の内幅（904 − 80 の
+              // padding）より広いと両端が欠ける。幅の予算は useFitToWidth が 848 に収めるが、annotation の
+              // 余白（最大 160px × 2）はその外に出るので、左右に 200px ずつ余裕を持たせて箱を広げ、
+              // 同じ量の padding で行の中心を元の位置に戻す。
+              width: "100%",
+              marginInline: -200,
+              paddingInline: 200,
+              boxSizing: "content-box",
+              height: clipHeight,
+              overflow: clipHeight === undefined ? undefined : "hidden",
+              // 送り出される行は上端で消える。境界で急に欠けて見えないよう、動き始めた分だけ上端を透かす。
+              ...(offset > 0 ? {
+                maskImage: `linear-gradient(to bottom, transparent 0, black ${Math.min(48, offset)}px)`,
+                WebkitMaskImage: `linear-gradient(to bottom, transparent 0, black ${Math.min(48, offset)}px)`,
+              } : {}),
+            }}
+          >
+            <div
+              ref={stackRef}
+              style={{
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap,
+                translate: `0px ${-offset}px`,
+              }}
+            >
+              {rowsJsx}
+            </div>
+          </div>
+        ) : rowsJsx}
 
         {caption ? (
           <div
@@ -402,7 +547,7 @@ export const Formula: React.FC<{
               width: "max-content",
               color: accent,
               textShadow: shadowOf(theme),
-              opacity: clamped(revealFrame, [lastDelay + 20, lastDelay + 40], [0, 1]),
+              opacity: clamped(captionFrame, [ending.lastDelay + 20, ending.lastDelay + 40], [0, 1]),
             }}
           >
             {caption}

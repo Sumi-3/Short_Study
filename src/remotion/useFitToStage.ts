@@ -47,12 +47,13 @@ export const useFitToStage = (compact: boolean) => {
       const computed = getComputedStyle(content);
       const horizontalPadding = parseFloat(computed.paddingLeft) +
         parseFloat(computed.paddingRight);
+      // 直下の子に限らず、`data-formula-measure` を持つ子孫すべてを測る。run の窓（Formula の
+      // windowed 経路）では行が clip の中にあり、直下ではない。従来の呼び出しでは子孫と直下は同じ集合。
       const naturalWidth = Math.max(
         0,
-        ...Array.from(content.children, (child) =>
-          child instanceof HTMLElement && child.dataset.formulaMeasure !== undefined
-            ? child.offsetWidth
-            : 0,
+        ...Array.from(
+          content.querySelectorAll<HTMLElement>("[data-formula-measure]"),
+          (child) => child.offsetWidth,
         ),
       ) + horizontalPadding;
       const scale = Math.min(
@@ -73,10 +74,8 @@ export const useFitToStage = (compact: boolean) => {
     observer.observe(content);
     // 全幅の placement box は rough mark が1 rowだけを広げても resize しない。測定済み row も
     // 監視し、遅れて加わる SVG padding を stage 外へ逃がさず同じ intrinsic-width fit に含める。
-    for (const child of Array.from(content.children)) {
-      if (child instanceof HTMLElement && child.dataset.formulaMeasure !== undefined) {
-        observer.observe(child);
-      }
+    for (const child of Array.from(content.querySelectorAll("[data-formula-measure]"))) {
+      observer.observe(child);
     }
     observer.observe(compact ? stage : viewport);
     measure();

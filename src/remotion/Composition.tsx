@@ -14,6 +14,8 @@ import { Background } from "./Background";
 import { Captions } from "./Captions";
 import { SceneText } from "./SceneText";
 import { SceneDiagram } from "./SceneDiagram";
+import { FormulaRun } from "./FormulaRun";
+import { sceneRuns } from "./sceneRuns";
 import { ThemeProvider, accentFor, layout, themeOf } from "./theme";
 import type { Manifest, ManifestScene } from "../types";
 
@@ -143,6 +145,16 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
     );
   }
 
+  /*
+   * 連続する formula の point は 1 つの run として、舞台だけを先に置く。音声・字幕・単独シーンの
+   * 舞台は従来どおりシーンごとの `<Sequence>` に入れるので、時間軸は動かない。run の舞台を
+   * シーン列より先に描くのは、字幕を舞台の上に重ねるためである。同じ時刻に run の舞台と単独
+   * シーンの舞台が同時に立つことはないので、両者の前後関係は問題にならない。
+   */
+  const runs = sceneRuns(manifest.scenes);
+  const runOf = manifest.scenes.map((_, index) =>
+    runs.find((run) => index >= run.first && index < run.first + run.count)!,
+  );
   let elapsedFrames = 0;
 
   return (
@@ -150,10 +162,28 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
     <AbsoluteFill style={{ backgroundColor: theme.bgDeep }}>
       <Background />
 
+      {runs.filter((run) => run.count > 1).map((run) => (
+        <Sequence
+          key={`run-${run.first}`}
+          from={run.from}
+          durationInFrames={run.durationInFrames}
+          name={`Scenes ${manifest.scenes[run.first].scene_id}–${
+            manifest.scenes[run.first + run.count - 1].scene_id
+          } (formula run)`}
+        >
+          <FormulaRun
+            scenes={manifest.scenes.slice(run.first, run.first + run.count)}
+            // run は 1 つの舞台なので accent も 1 つ。先頭シーンのものを run 全体とその字幕に使う。
+            accent={accentFor(theme, run.first)}
+          />
+        </Sequence>
+      ))}
+
       {manifest.scenes.map((scene, index) => {
         const from = elapsedFrames;
         elapsedFrames += scene.durationInFrames;
-        const accent = accentFor(theme, index);
+        const run = runOf[index];
+        const accent = accentFor(theme, run.first);
 
         return (
           <Sequence
@@ -194,6 +224,8 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
                 fallbackHtml5AudioProps={FALLBACK_AUDIO}
               />
             )}
+            {/* run に入ったシーンの舞台は上の FormulaRun が描いている。 */}
+            {run.count === 1 ? (
             <SceneRenderer
               scene={scene}
               accent={accent}
@@ -208,6 +240,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
                   : undefined
               }
             />
+            ) : null}
             <Captions captions={scene.captions} accent={accent} />
           </Sequence>
         );

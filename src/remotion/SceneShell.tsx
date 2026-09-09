@@ -317,8 +317,13 @@ export const SceneShell: React.FC<{
    * question はそこを満たす。2列の home screen では video の44pxは8px未満になる。
    */
   poster?: boolean;
+  /**
+   * run（FormulaRun）にまたがる舞台で、シーンごとに切り替わる見出し。`from` はこの Sequence 内の
+   * frame。省略時は `scene.visual_content` を frame 0 から出す。
+   */
+  headings?: readonly { text: string; from: number }[];
   children?: React.ReactNode;
-}> = ({ scene, durationInFrames, accent, problem, poster, children }) => {
+}> = ({ scene, durationInFrames, accent, problem, poster, headings, children }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -333,6 +338,7 @@ export const SceneShell: React.FC<{
   // 前 step の続きを示す step は heading を空にする。その場合 stage には計算だけがあり、上で新しい
   // section を告知するものはない。
   const heading = problem ? "" : scene.visual_content;
+  const headingList = problem ? [] : headings ?? (heading ? [{ text: heading, from: 0 }] : []);
   // 下に置く diagram がないなら headline が stage 全体を使う。ただし problem card がすでに使っている場合を除く。
   const centered = !scene.visual && !problem;
   const companion =
@@ -343,9 +349,11 @@ export const SceneShell: React.FC<{
 
   /*
    * 入退場するのは stage で、background・unit banner・caption は残る。scene は重なりのない別々の
-   * `<Sequence>` なので、実際に cut をまたいで残るものはない。しかし各 stage を fade out しながら次を
-   * fade in すると、hard cut は hand-over になる。これは hard boundary を越えて伝わる PowerPoint morph
-   * の部分である。formula 自体を morph せず積み重ねる理由は math/Formula.tsx の注記を参照。
+   * `<Sequence>` なので、cut をまたいで残るものはなく、退場の 7 frame と次の入場の 8 frame は
+   * 重ならずに並ぶ。つまり境界の 0.5 秒は画面がほぼ空になる（実測で ink 4% → 0.09%）。
+   * 続く式変形でこれが起きないよう、連続する formula は `FormulaRun` が 1 つの舞台にまとめ、
+   * この入退場を run の両端だけに置く。formula 自体を morph せず積み重ねる理由は
+   * math/Formula.tsx の注記を参照。
    */
   const arrival = clamped(frame, [0, ENTER], [0, 1], theme.easing);
   const departure = clamped(
@@ -392,7 +400,7 @@ export const SceneShell: React.FC<{
       ) : null}
 
       {/* question が opening 全体である。その下での言い直しは、読み手が読みたい本体と競合する。 */}
-      {problem || (!label && !heading) ? null : (
+      {problem || (!label && !headingList.length) ? null : (
       <div
         style={{
           display: "flex",
@@ -425,11 +433,24 @@ export const SceneShell: React.FC<{
       </div>
       ) : null}
 
-      {heading ? (
+      {headingList.length ? (
       // wrap された heading も1つの title なので、短い最終行でなく block 全体に underline を引く。
       // fit-content は1行に沿い、wrap block は利用可能幅で止める。scale 依存の DOM 測定や rule と text の
       // feedback loop を要しない。
-      <div style={{ width: "fit-content", maxWidth: "100%" }}>
+      //
+      // run では見出しがシーンごとに替わる。全部を同じ grid cell に重ねて置き、見えるのを 1 つに
+      // する。器の高さは常に最も高い見出しのぶんになるので、見出しが替わっても下の stage の高さは
+      // 動かず、useFitToStage が測り直して数式の scale が跳ぶことがない。見出しが 1 つの従来の
+      // scene では、cell が 1 つの grid は以前の block と同じ大きさに組まれる。
+      <div style={{ display: "grid", width: "fit-content", maxWidth: "100%" }}>
+      {headingList.map(({ text, from }, index) => {
+        const local = frame - from;
+        const next = headingList[index + 1]?.from;
+        // 次の見出しが立ち上がる 0.15 秒のうちに退き切る。同じ場所に二つの文が重なって透けると
+        // 読めないので、重ねずに順に入れ替える。
+        const leaving = next === undefined ? 1 : clamped(frame - next, [0, 0.15 * fps], [1, 0]);
+        return (
+      <div key={index} style={{ gridArea: "1 / 1", minWidth: 0 }}>
       <div
         style={{
           marginTop: label ? (isHook ? 88 : 56) : 0,
@@ -441,19 +462,19 @@ export const SceneShell: React.FC<{
           color: theme.ink,
           textShadow: shadowOf(theme),
           opacity: clamped(
-            frame,
+            local,
             [0.15 * fps, 0.6 * fps],
             [0, 1],
             theme.easing,
-          ),
+          ) * leaving,
           translate: clamped(
-            frame,
+            local,
             [0.15 * fps, 0.7 * fps],
             ["0px 44px", "0px 0px"], theme.easing),
         }}
       >
         {/* headline には question と同じ `a_n`/`x^2` 表記があるため、同じように組版する。 */}
-        <MathText text={heading} />
+        <MathText text={text} />
       </div>
 
       {/* headline 下に wipe in する accent rule。 */}
@@ -465,9 +486,12 @@ export const SceneShell: React.FC<{
           backgroundColor: accent,
           width: "100%",
           transformOrigin: "left center",
-          scale: `${clamped(frame, [0.4 * fps, 1.1 * fps], [0, 1], theme.easing)} 1`,
+          scale: `${clamped(local, [0.4 * fps, 1.1 * fps], [0, 1], theme.easing) * leaving} 1`,
         }}
       />
+      </div>
+        );
+      })}
       </div>
       ) : null}
 
