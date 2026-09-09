@@ -7,7 +7,7 @@
 | コマンド | |
 |---|---|
 | `npm run dev` | サーバ + Web を同時起動（`dev.mjs`） |
-| `npm run generate -- "<topic>"` | CLI で1本生成 → `out/<slug>.mp4` |
+| `npm run generate -- "<topic>"` | CLI で1本生成 → `public/projects/<slug>/`（Web アプリで再生） |
 | `npm run studio` | Remotion Studio |
 | `npm run typecheck` | **唯一の検証手段**（テストスイートは無い）。変更後は必ず通す |
 | `npm run web:build` | Web を触ったら合わせて通す |
@@ -33,7 +33,7 @@
 | コンポーネントの書き方、アニメーション、DOM 計測、複数シーン、テキスト装飾 | `remotion-markup/SKILL.md`（配下の `measuring-dom-nodes.md` `multi-scene-video.md` `text-highlights.md` `timing.md` などが個別トピック） |
 | `<Player>`、Web アプリ側、Vercel でのレンダリング | `remotion-saas/SKILL.md` |
 | 字幕（`@remotion/captions`）まわり | `remotion-captions/SKILL.md` |
-| `npx remotion render` / `still` の詰まったところ | `remotion-render/SKILL.md` |
+| `npx remotion still`（検証用スクリーンショット）の詰まったところ | `remotion-render/SKILL.md` |
 | API の仕様を確かめたい | `remotion-docs/SKILL.md` |
 
 `remotion-create` / `remotion-upgrade` は既存プロジェクトには使わない。
@@ -58,4 +58,5 @@
 
 - **`public/projects/` の既存ディレクトリを消さない。** 生成済みの動画が入っていて、
   git 管理外なので復元できない。削除まわりの動作確認は、自分で使い捨てを作ってから消すこと。
-- `out/` は生成物。
+- `out/` は検証用の生成物置き場。MP4 書き出し機能は削除済みで、動画は
+  `public/projects/` の manifest を Web アプリが `@remotion/player` で直接再生する。

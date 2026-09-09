@@ -7,7 +7,6 @@ import { generateAudio } from "./pipeline/generateAudio.js";
 import { generateCaptions } from "./pipeline/generateCaptions.js";
 import { buildManifest, manifestSrc } from "./pipeline/buildManifest.js";
 import { checkFigures } from "./pipeline/checkFigures.js";
-import { renderVideo } from "./render.js";
 import { scriptSchema, type Script } from "./types.js";
 import { COURSE_IDS, COURSES, isCourseId, type CourseId } from "./courses.js";
 
@@ -17,23 +16,19 @@ Options:
   --course <id>   科目を指定して専用のプロンプトを使う
                   ${COURSE_IDS.join(" | ")}（既定は math）
   --script <path> 手書きの台本JSONを読み込む（台本生成だけ飛ばす）
-  --skip-render   MP4 を書き出さず manifest まで作る（Studio で確認したいとき）
   --slug <name>   出力先フォルダ名を固定する（既定は日付＋ハッシュ）
 
 Environment: see .env.example`;
 
 const parseArgs = (argv: string[]) => {
   const positional: string[] = [];
-  let skipRender = false;
   let slug: string | null = null;
   let scriptPath: string | null = null;
   let course: CourseId = "math";
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
-    if (arg === "--skip-render") {
-      skipRender = true;
-    } else if (arg === "--slug") {
+    if (arg === "--slug") {
       slug = argv[++i] ?? null;
     } else if (arg === "--script") {
       scriptPath = argv[++i] ?? null;
@@ -55,7 +50,6 @@ const parseArgs = (argv: string[]) => {
   return {
     topic: positional.join(" ").trim(),
     course,
-    skipRender,
     slug,
     scriptPath,
   };
@@ -76,7 +70,7 @@ const step = (n: number, total: number, label: string) => {
 };
 
 const main = async () => {
-  const { topic, course, skipRender, slug: slugArg, scriptPath } =
+  const { topic, course, slug: slugArg, scriptPath } =
     parseArgs(process.argv.slice(2));
 
   if (!topic && !scriptPath) {
@@ -85,7 +79,7 @@ const main = async () => {
   }
 
   const slug = slugArg ?? makeSlug(topic || scriptPath!);
-  const totalSteps = skipRender ? 4 : 5;
+  const totalSteps = 4;
   console.log(`🎬 "${topic || "(script file)"}"  →  public/projects/${slug}/`);
 
   const stepOneLabel = scriptPath
@@ -117,20 +111,13 @@ const main = async () => {
   const frames = manifest.scenes.reduce((sum, s) => sum + s.durationInFrames, 0);
   console.log(`   ${frames} frames (${(frames / manifest.fps).toFixed(1)}s)`);
 
-  if (skipRender) {
-    const propsPath = path.join(paths.projectDir(slug), "props.json");
-    fs.writeFileSync(propsPath, JSON.stringify({ manifestSrc: manifestSrc(slug) }));
-    console.log(
-      `\n✅ manifest: public/${manifestSrc(slug)}` +
-        `\n   Studio で確認: npm run studio -- --props=${propsPath}` +
-        `\n   あとから書き出し: npm run render -- ${slug}`,
-    );
-    return;
-  }
-
-  step(5, totalSteps, "レンダリング");
-  const outPath = renderVideo({ slug });
-  console.log(`\n✅ ${outPath}`);
+  const propsPath = path.join(paths.projectDir(slug), "props.json");
+  fs.writeFileSync(propsPath, JSON.stringify({ manifestSrc: manifestSrc(slug) }));
+  console.log(
+    `\n✅ manifest: public/${manifestSrc(slug)}` +
+      `\n   Web アプリで再生できます` +
+      `\n   Studio で確認: npm run studio -- --props=${propsPath}`,
+  );
 };
 
 main().catch((error) => {

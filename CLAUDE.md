@@ -7,7 +7,7 @@
 | コマンド | |
 |---|---|
 | `npm run dev` | サーバ + Web を同時起動（`dev.mjs`） |
-| `npm run generate -- "<topic>"` | CLI で1本生成 → `out/<slug>.mp4` |
+| `npm run generate -- "<topic>"` | CLI で1本生成 → `public/projects/<slug>/`（Web アプリで再生） |
 | `npm run studio` | Remotion Studio |
 | `npm run typecheck` | **唯一の検証手段**（テストスイートは無い）。変更後は必ず通す |
 

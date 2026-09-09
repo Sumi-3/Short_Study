@@ -1,59 +1,22 @@
 import { createContext, useContext } from "react";
 import { Easing } from "remotion";
-import { fontFamily as zenMaru, loadFont as loadRounded } from "@remotion/google-fonts/ZenMaruGothic";
+
+/** Device faces only: nothing here is downloaded. */
+const stack = (...system: string[]) =>
+  [...system.map((s) => `"${s}"`), "sans-serif"].join(", ");
 
 /**
- * Only the renderer downloads webfonts.
+ * Device faces, chosen for their weights rather than their shape.
  *
- * `loadFont()` eagerly fetches every unicode range of the japanese subset —
- * around 120 files per weight, each behind its own `delayRender()` — because
- * the renderer must have every glyph in memory before it captures a frame. A
- * phone browser does not: it already ships Japanese faces, and the stack below
- * falls through to them.
- *
- * `__STUDY_WEB__` is defined by web/vite.config.ts and undefined in the
- * Remotion bundle, so this is decided at build time rather than by sniffing
- * globals whose timing relative to module evaluation is not guaranteed.
+ * Hiragino Maru Gothic ProN is the rounded face an iPhone has, and it used to
+ * lead this list. It ships exactly one master: every weight resolves to
+ * `HiraMaruProN-W4`, so the 700 and 900 asked for below were drawn as
+ * *synthetic* bold — an outline the engine fattens, not a designed face — and
+ * captions came out smeared. Hiragino Sans answers each request with a real
+ * master (W2/W3/W4/W5/W6/W8 measured), so the weight hierarchy survives.
+ * Rounded costs the weights: no rounded face on iOS has more than one.
  */
-const isWebPlayerBuild = typeof __STUDY_WEB__ !== "undefined" && __STUDY_WEB__;
-
-if (!isWebPlayerBuild) {
-  loadRounded("normal", {
-    /*
-     * 500 is the explanatory prose under a formula, 700 the problem card, 900
-     * the captions. All three are downloaded because CSS weight matching is
-     * silent: with only 700 and 900 loaded, `font-weight: 500` renders as 700
-     * and the two stills come out byte-identical. Dropping a weight here does
-     * not make that text lighter, it makes it wrong somewhere else.
-     */
-    weights: ["500", "700", "900"],
-    subsets: ["japanese", "latin"],
-    ignoreTooManyRequestsWarning: true,
-  });
-}
-
-/** Device faces first in the browser; the webfont is what the renderer uses. */
-const stack = (webfont: string, ...system: string[]) =>
-  [`"${webfont}"`, ...system.map((s) => `"${s}"`), "sans-serif"].join(", ");
-
-/**
- * Rounded gothic stays legible at card sizes; system fallbacks matter because
- * the browser never downloads the webfont (see above).
- *
- * Hiragino Maru Gothic ProN used to lead the fallbacks, and it is the reason
- * captions looked smeared on an iPhone: the family ships exactly one face, so
- * every weight resolves to `HiraMaruProN-W4` and the 700 and 900 requests here
- * were drawn as *synthetic* bold — an outline the engine fattens, not a
- * designed face. Hiragino Sans answers each of those requests with a real one
- * (W2/W3/W4/W5/W6/W8 measured), so the weight hierarchy survives the fallback
- * instead of turning into fake bold. The trade is that the browser is no
- * longer rounded; keeping it rounded costs the weights, because no rounded
- * face on iOS has more than one weight.
- *
- * The renderer never reaches these: `loadFont()` above gives it the real
- * Zen Maru Gothic, so this reordering changes the browser only.
- */
-const ROUNDED = stack(zenMaru, "Hiragino Sans", "Noto Sans CJK JP");
+const ROUNDED = stack("Hiragino Sans", "Noto Sans CJK JP");
 
 export type Theme = {
   bg: string;
