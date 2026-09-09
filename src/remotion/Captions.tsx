@@ -99,7 +99,16 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
         alignItems: "center",
       }}
     >
+      {/*
+        KaTeX は `.katex` に `font: normal …` の一括指定を持ち、親から継いだ太さを打ち消す。字幕は
+        900 で組むので、そのままでは数式だけが 400 になり、同じ 1 行で太さが変わって見える。
+        KaTeX_Main と KaTeX_Math には実物の 700 フェイスがあるため、太さを指定すれば合成ボールドに
+        ならずに本物の太字が選ばれる。分数の横線は CSS の罫線なので、字面に合わせて別に太くする。
+      */}
+      <style>{`.study-caption .katex { font-weight: 700 }
+        .study-caption .katex .frac-line { border-bottom-width: 0.08em }`}</style>
       <div
+        className="study-caption"
         style={{
           fontFamily: theme.fontFamily,
           fontWeight: 900,

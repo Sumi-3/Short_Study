@@ -92,17 +92,28 @@ const ALWAYS: Record<string, string> = {
 };
 
 /**
- * 読み上げ用に展開した算術記号。ナレーションではこれらのカナ形を演算子用に予約し、普通の動詞は
- * 漢字で書く（"対角線を引く"）ので別 token になる。したがって出現箇所すべてで変換できる。
+ * 読み上げ用に展開した算術記号のうち、同じ読みの動詞を持つもの。「6わる2」は演算子だが
+ * 「4でわると」は動詞の割るである。token の先頭を根拠にはできない。TTS は動詞も
+ * 「4|で|わる|と」と単独 token にするため、先頭という位置は演算子の証拠にならない。
+ * 前が数や記法のときだけ演算子とみなし、判断は全文の文脈で行う。
  */
-const OPERATORS: Record<string, string> = {
+const VERB_OPERATORS: Record<string, string> = {
   たす: "+",
   ひく: "−",
   かける: "×",
   わる: "÷",
+};
+
+/**
+ * カナで書いた記号。ナレーションではこの形を演算子用に予約しており、同じ読みの動詞がないので
+ * 出現箇所すべてで変換できる。
+ */
+const KANA_OPERATORS: Record<string, string> = {
   マイナス: "−",
   プラス: "+",
 };
+
+const OPERATORS: Record<string, string> = { ...VERB_OPERATORS, ...KANA_OPERATORS };
 
 /**
  * 上の表では名前を付けられない指数。
@@ -117,9 +128,12 @@ const POWER_TAIL: Record<string, string> = {
   じょう: "乗",
 };
 
-/** 前に記法があるときだけ本来の意味になるすべての語。 */
+/**
+ * 前に記法があるときだけ本来の意味になり、かつ token 内の位置だけで判断できる語。
+ * 動詞と同じ読みの演算子はここに入れない（token 先頭の抜け道で動詞を壊すため）。
+ */
 const AFTER_NOTATION_ONLY: Record<string, string> = {
-  ...OPERATORS,
+  ...KANA_OPERATORS,
   ...POWER_TAIL,
 };
 
@@ -279,6 +293,18 @@ const applyGuarded = (text: string) => {
   return out;
 };
 
+/**
+ * 動詞と同じ読みの演算子。前の文字が数か記法のときだけ記号にする。token 境界をまたいで
+ * 判断するので、書き換え後の全文を文脈として受け取る。
+ */
+const VERB_OPERATOR = new RegExp(Object.keys(VERB_OPERATORS).join("|"), "g");
+
+const applyVerbOperators = (text: string, context: string, offset: number) =>
+  text.replace(VERB_OPERATOR, (spoken, at: number) => {
+    const before = context[offset + at - 1];
+    return before && AFTER_NOTATION.test(before) ? VERB_OPERATORS[spoken]! : spoken;
+  });
+
 const applyGreek = (text: string) => {
   let out = text;
 
@@ -298,6 +324,110 @@ const applyGreek = (text: string) => {
   }
 
   return out;
+};
+
+/**
+ * 数式の隣に置ける文字。KaTeX がそのまま組める記号だけを並べる（`²` は指数へ直し、`√` は
+ * 範囲を決められないので取り込まない）。ここに無い文字（日本語・空白・読点）で式は終わる。
+ */
+const MATH_NEIGHBOUR = /[0-9A-Za-zΑ-Ωα-ω=+\-−×÷±<>≤≥≠∞→∫∑().,²³⁴]/;
+
+const SUPERSCRIPT_TEX: Record<string, string> = { "²": "^{2}", "³": "^{3}", "⁴": "^{4}" };
+
+/** 小数点と桁区切りは両側が数字のときだけ式の一部。文末の「.」を式に飲み込ませない。 */
+const absorbable = (text: string, at: number) => {
+  const char = text[at]!;
+  if (!MATH_NEIGHBOUR.test(char)) {
+    return false;
+  }
+  return char === "." || char === ","
+    ? /[0-9]/.test(text[at - 1] ?? "") && /[0-9]/.test(text[at + 1] ?? "")
+    : true;
+};
+
+/**
+ * 式の範囲。`$…$` から数式文字だけを左右へ取り込む。演算子を挟んで並ぶ `$a$+$b$` は 1 つの式
+ * なので、重なった範囲はつなぐ。token ごとに数えると切れ目で結果が変わるため、常に全文で決める。
+ */
+const mathRegions = (text: string): [number, number][] => {
+  const regions: [number, number][] = [];
+  for (const span of text.matchAll(/\$[^$]+\$/g)) {
+    let start = span.index;
+    let end = span.index + span[0].length;
+    while (start > 0 && absorbable(text, start - 1)) start--;
+    while (end < text.length && absorbable(text, end)) end++;
+    const last = regions.at(-1);
+    if (last && start <= last[1]) last[1] = Math.max(last[1], end);
+    else regions.push([start, end]);
+  }
+  return regions;
+};
+
+/** 取り込んだ素の文字を TeX にする。関数名は立体で組ませ、上付きは KaTeX の指数に直す。 */
+const toTex = (span: string) =>
+  span
+    .replace(/\$/g, "")
+    .replace(/[²³⁴]/g, (char) => SUPERSCRIPT_TEX[char]!)
+    .replace(/(?<![\\A-Za-z])(sin|cos|tan|log|lim)(?![A-Za-z])/g, "\\$1");
+
+/**
+ * 式の断片ではなく式全体を KaTeX に組ませる。
+ *
+ * 綴り直しは分数・根号・項のような「戻せる部分」だけを `$…$` にするので、`x=1/2=1` は分数だけが
+ * KaTeX、両端は本文フォントという継ぎ接ぎになる。同じ 1 つの式の中で書体・太さ・イタリックが
+ * 変わって読みにくい。そこで式の範囲を 1 つの `$…$` にまとめる。地の文はここでも KaTeX に渡さない。
+ */
+const fuseMathText = (text: string): string => {
+  let out = "";
+  let cursor = 0;
+  for (const [start, end] of mathRegions(text)) {
+    out += text.slice(cursor, start) + `$${toTex(text.slice(start, end))}$`;
+    cursor = end;
+  }
+  return out + text.slice(cursor);
+};
+
+/**
+ * 式が token に割れていても 1 つの KaTeX にする。`sin`|`θ=`|`$\frac{1}{2}$` は 3 token だが
+ * 画面では 1 つの式である。`$…$` は 1 つの token に収まっていなければならない。Captions は
+ * token ごとに KaTeX へ渡すためである。
+ */
+const fuseMathTokens = (captions: Caption[]): Caption[] => {
+  const regions = mathRegions(captions.map((caption) => caption.text).join(""));
+  if (regions.length === 0) {
+    return captions;
+  }
+
+  const merged: Caption[] = [];
+  let index = 0;
+  let offset = 0;
+  while (index < captions.length) {
+    const start = offset;
+    let end = start + captions[index].text.length;
+    let span = 1;
+    // この token に掛かる式が次の token へ伸びている限り、まとめる範囲を広げる。
+    while (index + span < captions.length) {
+      const reach = Math.max(end, ...regions
+        .filter(([from, to]) => from < end && to > start)
+        .map(([, to]) => to));
+      if (reach <= end) {
+        break;
+      }
+      end += captions[index + span].text.length;
+      span++;
+    }
+
+    const window = captions.slice(index, index + span);
+    merged.push(span === 1 ? captions[index] : {
+      ...window[0],
+      text: window.map((caption) => caption.text).join(""),
+      endMs: window[span - 1].endMs,
+      pageBreakAfter: window[span - 1].pageBreakAfter,
+    });
+    index += span;
+    offset = end;
+  }
+  return merged;
 };
 
 export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
@@ -355,11 +485,17 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
       return text === caption.text ? caption : { ...caption, text };
     });
   };
-  return pass(pass(pass(normalised, applyPowers), applyRoots), (text, context, offset) =>
-    text.replace(/以下|以上|小なり|大なり/g, (spoken, at: number) => {
-      const before = context[offset + at - 1];
-      return before && AFTER_NOTATION.test(before) ? SPOKEN_SYMBOLS[spoken] : spoken;
-    }));
+  const spelled = pass(pass(pass(pass(normalised, applyVerbOperators), applyPowers), applyRoots),
+    (text, context, offset) =>
+      text.replace(/以下|以上|小なり|大なり/g, (spoken, at: number) => {
+        const before = context[offset + at - 1];
+        return before && AFTER_NOTATION.test(before) ? SPOKEN_SYMBOLS[spoken] : spoken;
+      }));
+  // 綴り直しがすべて済んでから式をまとめる。先にまとめると、後段が見る文脈が TeX になる。
+  return fuseMathTokens(spelled).map((caption) => {
+    const text = fuseMathText(caption.text);
+    return text === caption.text ? caption : { ...caption, text };
+  });
 };
 
 /** 教科によらず生 TeX は修復する。数学用のカナ置換まで他教科に広げる必要はない。 */

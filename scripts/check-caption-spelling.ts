@@ -23,7 +23,7 @@ for (const parts of [
   assert.equal(result[0].pageBreakAfter, true);
 }
 for (const [spoken, written] of [
-  ["xイコールプラスマイナスルート7", String.raw`x=±$\sqrt{7}$`],
+  ["xイコールプラスマイナスルート7", String.raw`$x=±\sqrt{7}$`],
   ["プラスマイナス2プラス3マイナス4", "±2+3−4"],
   ["プラス3", "+3"], ["マイナス4", "−4"],
   ["条件を満たす", "条件を満たす"],
@@ -88,13 +88,13 @@ for (const [spoken, written] of [
   ["xイコール2乗", "x=2乗"],
   ["2のnたす1じょう", "2のn+1乗"],
   ["エーエヌプラスイチ", "$a_{n+1}$"], ["エーエヌマイナスイチ", "$a_{n-1}$"],
-  ["エーエヌプラスイチたすエーエヌ", "$a_{n+1}$+$a_{n}$"],
+  ["エーエヌプラスイチたすエーエヌ", "$a_{n+1}+a_{n}$"],
   ["パイプとアルファベット", "パイプとアルファベット"],
   ["シータとパイとガンマとデルタとラムダとオメガとシグマ", "θとπとγとδとλとωとΣ"],
   ["エヌがむげんだいのときのリミット", "エヌがむげんだいのときのlim"],
   ["対角線を引く", "対角線を引く"],
   // 分数にならなかった根号も、範囲が数か 1 文字なら KaTeX に組ませる。
-  ["ルート7", "$\\sqrt{7}$"], ["3ルート19", "3$\\sqrt{19}$"], ["ルートx", "$\\sqrt{x}$"],
+  ["ルート7", "$\\sqrt{7}$"], ["3ルート19", "$3\\sqrt{19}$"], ["ルートx", "$\\sqrt{x}$"],
   ["ルート19.5", "√19.5"], ["√xy", "√xy"],
 ]) {
   assert.equal(shown([spoken]), written, spoken);
@@ -132,7 +132,7 @@ for (const [spoken, written] of [
 for (const [spoken, written] of [
   ["1.2分の1", "1.2分の1"], ["2分の1.5", "2分の1.5"],
   ["1.2分のπ", "1.2分のπ"], ["4分の3ルート19.5", "4分の3√19.5"],
-  ["4分の1.3ルート19", "4分の1.3$\\sqrt{19}$"],
+  ["4分の1.3ルート19", "4分の$1.3\\sqrt{19}$"],
   ["2分の1分の3", "2分の1分の3"], ["2ぶんの1ぶんの3", "2ぶんの1ぶんの3"],
   ["2分のπぶんの3", "2分のπぶんの3"], ["x分のy分のz", "x分のy分のz"],
   ["2分の1と1.2分の1", `${frac("1", "2")}と1.2分の1`],
@@ -177,4 +177,45 @@ assert.equal(shown(["2分の1", ".5"]), "2分の1.5");
 assert.equal(shown(["2のnたす1", "じょう"]), "2のn+1乗");
 assert.equal(shown(["条件を満", "た", "す"]), "条件を満たす");
 
-console.log("PASS: fractions, roots and terms as $…$ LaTeX, contextual superscripts, notation rules, split tokens and timing preservation");
+// 動詞と同じ読みの演算子は、前が数か記法のときだけ記号にする。TTS は動詞も単独 token に
+// するので、token の先頭であることは演算子の根拠にならない（「4|で|わる|と」）。
+for (const [parts, written] of [
+  [["6", "わる", "2"], "6÷2"],
+  [["両辺", "を", "4", "で", "わる", "と"], "両辺を4でわると"],
+  [["6", "を", "2", "で", "わる"], "6を2でわる"],
+  [["3", "かける", "4"], "3×4"],
+  [["両辺", "に", "2", "を", "かける"], "両辺に2をかける"],
+  [["10", "ひく", "4"], "10−4"],
+  [["線", "を", "ひく"], "線をひく"],
+  [["5", "たす", "3"], "5+3"],
+] as [string[], string][]) {
+  assert.equal(shown(parts), written, JSON.stringify(parts));
+}
+
+// 断片ではなく式全体を 1 つの KaTeX にする。同じ式の中で書体が変わらないようにするため。
+assert.equal(shown(["x", "イコール", "2分の1", "イコール", "1"]), "$x=\\frac{1}{2}=1$");
+assert.equal(shown(["sin", "θ=", "2分の1"]), "$\\sinθ=\\frac{1}{2}$");
+assert.equal(shown(["x", "の", "にじょう", "たす", "2", "x", "イコール", "2分の1"]), "$x^{2}+2x=\\frac{1}{2}$");
+// 地の文は巻き込まない。数式が無ければ英数字だけの並びも触らない。
+assert.equal(shown(["答え", "は", "2分の1", "です"]), "答えは$\\frac{1}{2}$です");
+assert.equal(shown(["三角形", "ABC", "の", "面積"]), "三角形ABCの面積");
+assert.equal(shown(["2分の1", "。"]), "$\\frac{1}{2}$。");
+// 式をまとめた token は、最初の開始と最後の終了を保つ。
+{
+  const fused = applyDisplaySpelling(captions(["x", "イコール", "2分の1"]));
+  assert.equal(fused.length, 1);
+  assert.equal(fused[0].startMs, 0);
+  assert.equal(fused[0].endMs, 300);
+  assert.match(fused[0].text, /^\$[^$]+\$$/);
+}
+// token の切れ目で結果が変わってはならない。式の範囲は全文で決める。
+{
+  const spoken = "4分の1.3ルート19";
+  const outputs = new Set([shown([spoken]), shown([...spoken])]);
+  for (let at = 1; at < spoken.length; at++) {
+    outputs.add(shown([spoken.slice(0, at), spoken.slice(at)]));
+  }
+  assert.deepEqual([...outputs], ["4分の$1.3\\sqrt{19}$"]);
+}
+
+console.log("PASS: fractions, roots and terms as $…$ LaTeX, contextual superscripts, verb-vs-operator readings, notation rules, fused expressions, split tokens and timing preservation");

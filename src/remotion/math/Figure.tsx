@@ -161,6 +161,52 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
    */
   const reach = (text: string) => (text.includes("$") ? 1.5 : 1);
 
+  /**
+   * 円のラベルを置く向き。円周はどこも等価なので、点のラベルと重なるときだけ空いた向きへ逃がす。
+   *
+   * 外接円のように円周上に頂点がある図では、従来の「図の外向き」がその頂点の真上を指し、
+   * 円の "R=2" と頂点の "C" が重なって読めなかった。空いていれば従来の向きをそのまま使うので、
+   * 衝突していない既存の図の置き場所は変わらない。
+   */
+  const CLEARANCE = 60;
+  const clearDirection = (center: Screen, distance: number, preferred: Screen) => {
+    // 点そのものと、そこから押し出した label の両方を避ける。
+    const taken = data.points.flatMap((point) => {
+      const position = at(point.label);
+      if (!position) {
+        return [];
+      }
+      const push = outward(position);
+      return [position, { x: position.x + push.x * 38, y: position.y + push.y * 38 }];
+    });
+    const clearance = (direction: Screen) => {
+      const spot = {
+        x: center.x + direction.x * distance,
+        y: center.y + direction.y * distance,
+      };
+      return Math.min(
+        ...taken.map((other) => Math.hypot(spot.x - other.x, spot.y - other.y)),
+      );
+    };
+    if (taken.length === 0 || clearance(preferred) >= CLEARANCE) {
+      return preferred;
+    }
+
+    const base = Math.atan2(preferred.y, preferred.x);
+    let best = preferred;
+    let bestClearance = clearance(preferred);
+    for (let step = 1; step < 24; step++) {
+      const angle = base + (step * Math.PI * 2) / 24;
+      const direction = { x: Math.cos(angle), y: Math.sin(angle) };
+      const room = clearance(direction);
+      if (room > bestClearance) {
+        bestClearance = room;
+        best = direction;
+      }
+    }
+    return best;
+  };
+
   const label = (text: string, position: Screen, color: string, size: number, opacity: number) => (
     <SvgLabel
       text={text}
@@ -328,10 +374,14 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
             {circle.label
               ? label(
                   circle.label,
-                  {
-                    x: center.x + outwards.x * (radius + 34 * reach(circle.label)),
-                    y: center.y + outwards.y * (radius + 34 * reach(circle.label)),
-                  },
+                  (() => {
+                    const distance = radius + 34 * reach(circle.label);
+                    const direction = clearDirection(center, distance, outwards);
+                    return {
+                      x: center.x + direction.x * distance,
+                      y: center.y + direction.y * distance,
+                    };
+                  })(),
                   theme.ink,
                   36,
                   fade(start + 0.5),
