@@ -187,7 +187,12 @@ const ProblemCard: React.FC<{
   const outlined = conditions.length + questions.length > 0;
   const lines = outlined
     ? [...conditions.map((text) => ({ text, numbered: false })),
-      ...questions.map((question) => ({ text: question.text, numbered: question.number !== null }))]
+      // Matches what is actually drawn below, so the poster estimate does not
+      // reserve a gutter for a lone question that shows no number.
+      ...questions.map((question) => ({
+        text: question.text,
+        numbered: question.number !== null && questions.length > 1,
+      }))]
     : [{ text, numbered: false }];
   const measured = lines.map((line) => line.text).join("\n");
   // The opening can spend its vertical space on complete sentences. Start
@@ -276,8 +281,15 @@ const ProblemCard: React.FC<{
                     <div key={index} style={{ display: "flex", alignItems: "baseline", gap: "0.25em", marginTop: index ? "0.25em" : 0 }}>
                       {/* Only numbered rows need a gutter. Omitting the span
                           also removes the flex gap for unnumbered rows, so
-                          either kind can wrap naturally even in a mixed list. */}
-                      {question.number !== null ? (
+                          either kind can wrap naturally even in a mixed list.
+
+                          A lone question is shown without its number. The
+                          number still has to exist in the data — the parser
+                          uses it to tell a question from a condition, and
+                          without one it falls back to "the last line is the
+                          question" and drops every earlier one — but "(1)"
+                          numbers a list of one, which is nothing to number. */}
+                      {question.number !== null && questions.length > 1 ? (
                         <span style={{ color: accent, fontWeight: 900, flexShrink: 0, minWidth: `${QUESTION_GUTTER - 0.25}em` }}>
                           {`(${question.number})`}
                         </span>

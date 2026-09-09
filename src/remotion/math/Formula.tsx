@@ -53,7 +53,9 @@ const Line: React.FC<{
         color,
         fontSize,
         fontFamily: text ? theme.fontFamily : undefined,
-        fontWeight: text ? 700 : undefined,
+        // 500, not the 700 the headings use: this is the reading line under a
+        // formula, and at 700 it competed with the formula it explains.
+        fontWeight: text ? 500 : undefined,
         lineHeight: text ? 1.45 : undefined,
         whiteSpace: text ? "nowrap" : undefined,
         textAlign: text ? "left" : "center",
@@ -259,7 +261,10 @@ export const Formula: React.FC<{
     : shown.length >= 5 ? 60 : shown.length === 4 ? 64 : dense ? 70 : 76;
   const gap = compact ? 24
     : shown.length >= 5 ? 12 : shown.length === 4 ? 18 : dense ? 26 : 36;
-  const arrowSize = shown.length >= 4 ? 36 : dense ? 48 : 56;
+  // The arrow carries the derivation: it says the next line follows from the
+  // one above. At the old 36/48/56 it read as punctuation beside 58-76px
+  // formulas, so each tier is raised to sit nearer its own line.
+  const arrowSize = shown.length >= 4 ? 52 : dense ? 64 : 76;
   const { viewportRef, contentRef, scale, height, width } = useFitToStage(compact);
   // Compact companions are explanatory labels beside a diagram, not captions:
   // sharing the stage edge makes those short lines scan naturally with normal

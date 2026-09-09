@@ -4,6 +4,9 @@ import katex from "katex";
 import "katex/dist/katex.min.css";
 import { Fraction } from "./Fraction";
 
+/** Leading, so an author who writes `\textstyle` themselves still overrides it. */
+const DISPLAY_STYLE = "\\displaystyle ";
+
 /**
  * Only the author can locate a formula in prose without changing its meaning.
  * Doubled/escaped dollars are literal, and ambiguous or unfinished delimiters
@@ -26,7 +29,13 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
 
     parts.push(text.slice(cursor, open.index));
     try {
-      const html = katex.renderToString(tex, {
+      const html = katex.renderToString(DISPLAY_STYLE + tex, {
+        // Inline, so the formula sits in the sentence rather than breaking it
+        // into its own centred block. `displayMode` also picks the *style*
+        // though, and text style is what puts a limit's condition beside `lim`
+        // instead of under it, and sets fractions small. `\displaystyle` asks
+        // for the style without the block, which is how the worked solution
+        // beside it is already set.
         displayMode: false,
         throwOnError: false,
         output: "html",

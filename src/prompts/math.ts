@@ -126,22 +126,22 @@ ${narrationRules(budget)}
 ${VISUAL_CONTENT}
 
 ${visualSection(
-  [
+    [
+      "formula",
+      "figure",
+      "plot",
+      "table",
+      "tree",
+      "venn",
+      "histogram",
+      "box",
+      "scatter",
+      "dot",
+      "flow",
+      "bullets",
+    ],
     "formula",
-    "figure",
-    "plot",
-    "table",
-    "tree",
-    "venn",
-    "histogram",
-    "box",
-    "scatter",
-    "dot",
-    "flow",
-    "bullets",
-  ],
-  "formula",
-)}
+  )}
 - **formula は数式と理由を混在させて原則3〜4行、最大6行。式を進める順に [text] の文章行を挟む。**
   大きな文字を保つため、5〜6行は短い式だけの場合に限る。分数・長い式・複数の理由は次のシーンへ分ける。
   単問でも必要ならシーン数・合計文字数・秒数の目安を超えてよい。文字の大きさと途中式の保持を優先する。

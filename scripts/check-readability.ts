@@ -33,7 +33,9 @@ const render = (component: React.ComponentType<any>, inputProps: any) => {
 };
 const mathText = (text: string) => renderToStaticMarkup(React.createElement(MathText, { text }));
 const literalText = (text: string) => renderToStaticMarkup(React.createElement(React.Fragment, null, text));
-const inlineMath = (tex: string) => `<span>${katex.renderToString(tex, {
+// `\displaystyle` inline, not display mode: limits belong under `lim`, but the
+// formula still has to sit inside the sentence rather than break out of it.
+const inlineMath = (tex: string) => `<span>${katex.renderToString(`\\displaystyle ${tex}`, {
   displayMode: false, throwOnError: false, output: "html",
 })}</span>`;
 
@@ -48,6 +50,10 @@ for (const tex of [
   assert.match(html, /class="katex"/);
   assert.doesNotMatch(html, /katex-display|cjk_fallback/);
 }
+// `op-limits` is the class KaTeX uses only when a limit's condition goes under
+// the operator; text style would put it beside, which is the whole reason for
+// the `\displaystyle` above.
+assert.match(mathText(String.raw`$\lim_{n \to \infty} a_n$`), /mop op-limits/);
 assert.equal(mathText("$x^2$ と $a_n$"), `${inlineMath("x^2")} と ${inlineMath("a_n")}`);
 assert.equal(mathText("日本語だけ。単位km/h、9/8に公開。"), "日本語だけ。単位km/h、9/8に公開。");
 for (const source of [
@@ -109,7 +115,10 @@ for (const { text, points } of fixtures) {
     for (const condition of parsed.conditions) assert.ok(html.includes(mathText(condition)));
     for (const question of parsed.questions) {
       assert.ok(html.includes(mathText(question.text)));
-      if (question.number) assert.ok(html.includes(`>(${question.number})</span>`));
+      // Numbers appear only when there is more than one question to tell
+      // apart; a lone one keeps its number in the data but not on screen.
+      const shownNumber = html.includes(`>(${question.number})</span>`);
+      assert.equal(shownNumber, question.number !== null && parsed.questions.length > 1);
     }
     assert.doesNotMatch(html, />問<\/span>/);
     // The opening card announces itself; a 問題 chip above it only repeats
@@ -187,6 +196,22 @@ const legacyDerivation = render(Formula, {
 assert.match(legacyDerivation, /class="formula-derivation"/);
 assert.equal((legacyDerivation.match(/↓/g) ?? []).length, 1);
 assert.equal(mathText("x=±2"), "x=±2");
+
+// A [text] line is prose routed through MathText, so inline math inside the
+// explanation must typeset the same way the problem card does.
+const proseLine = render(Formula, {
+  lines: [String.raw`[text] 判別式 $D = b^2-4ac$ の符号を調べる`, "[plain] x=2"],
+  caption: "", accent: "#ffcc00", durationInFrames: 300,
+});
+assert.match(proseLine, /class="katex"/);
+assert.ok(proseLine.includes("の符号を調べる"));
+assert.doesNotMatch(proseLine, /\$D = b/);
+// The reading line under a formula must not be set at heading weight.
+assert.match(proseLine, /font-weight:500/);
+// The arrow marks each step of the derivation; punctuation-sized was too small.
+assert.match(render(Formula, {
+  lines: ["x+2=5", "x=3"], caption: "", accent: "#ffcc00", durationInFrames: 300,
+}), /font-size:76px;line-height:1[^;]*;color:#ffcc00/);
 
 // Only explicit bounds make a slash safe to typeset: prose can contain dates
 // and adjacent radicals whose fraction boundary cannot be inferred.
