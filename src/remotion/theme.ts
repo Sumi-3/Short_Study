@@ -19,7 +19,14 @@ const isWebPlayerBuild = typeof __STUDY_WEB__ !== "undefined" && __STUDY_WEB__;
 
 if (!isWebPlayerBuild) {
   loadRounded("normal", {
-    weights: ["700", "900"],
+    /*
+     * 500 is the explanatory prose under a formula, 700 the problem card, 900
+     * the captions. All three are downloaded because CSS weight matching is
+     * silent: with only 700 and 900 loaded, `font-weight: 500` renders as 700
+     * and the two stills come out byte-identical. Dropping a weight here does
+     * not make that text lighter, it makes it wrong somewhere else.
+     */
+    weights: ["500", "700", "900"],
     subsets: ["japanese", "latin"],
     ignoreTooManyRequestsWarning: true,
   });
