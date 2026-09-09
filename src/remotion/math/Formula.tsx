@@ -550,7 +550,8 @@ export const Formula: React.FC<{
               opacity: clamped(captionFrame, [ending.lastDelay + 20, ending.lastDelay + 40], [0, 1]),
             }}
           >
-            {caption}
+            {/* caption も $…$ を含み得る本文。生のままだと $ が画面に出る。 */}
+            <MathText text={caption} />
           </div>
         ) : null}
       </div>

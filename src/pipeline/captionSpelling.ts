@@ -45,7 +45,8 @@ const POWER_PHRASES = Object.fromEntries(
  *
  * synthesiser は `a_n` をアンダースコアまで含めて「a アンダーライン n」と読み、`an` に
  * 詰めると「案」と聞こえる。どちらも実測済みである。そのためナレーションでは項をカナで綴り、
- * 字幕で Unicode の下付き文字へ戻す。これは字幕で可能な限り組版に近い形である。
+ * 字幕で `$a_{n}$` の LaTeX へ戻して KaTeX に組ませる。以前は Unicode の下付き文字だったが、
+ * 字体が本文と揃わず `n+1` のような添字も作れなかった。
  */
 const TERM_LETTERS: Record<string, string> = {
   エー: "a",
@@ -58,24 +59,24 @@ const TERM_LETTERS: Record<string, string> = {
 };
 
 const TERM_INDICES: Record<string, string> = {
-  エヌ: "\u2099",
-  ケー: "\u2096",
-  エム: "\u2098",
-  イチ: "\u2081",
-  ニ: "\u2082",
-  サン: "\u2083",
-  ヨン: "\u2084",
+  エヌ: "n",
+  ケー: "k",
+  エム: "m",
+  イチ: "1",
+  ニ: "2",
+  サン: "3",
+  ヨン: "4",
   // 漸化式の半分を成す a_{n+1} では添字を丸ごと取る必要がある。手前の `エーエヌ` を先に
-  // 変換すると、「プラスイチ」が下付き文字の外に取り残される。
-  エヌプラスイチ: "\u2099\u208a\u2081",
-  エヌマイナスイチ: "\u2099\u208b\u2081",
+  // 変換すると、「プラスイチ」が添字の外に取り残される。
+  エヌプラスイチ: "n+1",
+  エヌマイナスイチ: "n-1",
 };
 
 const TERMS: Record<string, string> = Object.fromEntries(
   Object.entries(TERM_LETTERS).flatMap(([letterKana, letter]) =>
     Object.entries(TERM_INDICES).map(([indexKana, index]) => [
       letterKana + indexKana,
-      letter + index,
+      `$${letter}_{${index}}$`,
     ]),
   ),
 );
@@ -187,27 +188,37 @@ const AFTER_NOTATION_ONLY: Record<string, string> = {
  * たすを含む 1 token「満たす」を壊してしまう。左に記法を要求すれば区別でき、`2乗たす` は変換し、
  * `満たす` は変換しない。
  */
+// `$` と `}` は `$a_{n}$` のような LaTeX の項の末尾。その直後の「たす」は演算子である。
 const AFTER_NOTATION =
-  /[0-9A-Za-z乗√πθαβγδλωΣ°=+−×÷()/.₁₂₃₄ₖₘₙ²³⁴]/;
+  /[0-9A-Za-z乗√πθαβγδλωΣ°=+−×÷()/.²³⁴$}]/;
 
 // 演算子と開き括弧は演算子の前に置けるが、累乗の底にはなれない。
-const POWER_BASE = /[0-9A-Za-zπθαβγδλωΣ)）\]₁₂₃₄ₖₘₙ]/;
+const POWER_BASE = /[0-9A-Za-zπθαβγδλωΣ)）\]]/;
+/**
+ * 底が 1 文字や括弧の累乗は Unicode の上付きにする。`(x+1)2乗` の底が括弧全体だと分かっても、
+ * `$…$` で囲む始点（どこから式か）は本文から決められないので、KaTeX に渡さず文字で足す。
+ * 底が `$a_{n}$` のような LaTeX の項なら範囲は明らかで、閉じる `$` の内側に `^{2}` を入れる。
+ */
 const SUPERSCRIPTS: Record<string, string> = { "2": "²", "3": "³", "4": "⁴" };
 
+// 「xの2乗する」は不自然でも動詞である。TTS が次 token に置く場合も含め、
+// して・しない・すれば・されるなどの活用を対象にする。
+const VERBAL = /^\s*(?:す[るれ]|し|さ[れせ]|せ[ずぬよ])/;
+
 const applyPowers = (text: string, context: string, offset: number) =>
-  text.replace(/(の)?([234])乗/g, (spoken, particle: string | undefined, power: string, at: number) => {
-    const before = context[offset + at - 1];
-    const after = context.slice(offset + at + spoken.length);
-    // 「xの2乗する」は不自然でも動詞である。TTS が次 token に置く場合も含め、
-    // して・しない・すれば・されるなどの活用を対象にする。
-    const verbal = /^\s*(?:す[るれ]|し|さ[れせ]|せ[ずぬよ])/.test(after);
-    // 裸の「12乗」は 1² でなく 12 乗である。数字の底には「の」が必要で、ナレーションも
-    // 既にこれを要求している。一方 x2乗 と (x+1)2乗 は曖昧でない。
-    const ambiguousDigits = !particle && before !== undefined && /[0-9]/.test(before);
-    return before && POWER_BASE.test(before) && !verbal && !ambiguousDigits
-      ? SUPERSCRIPTS[power]
-      : spoken;
-  });
+  text
+    .replace(/\$([^$]+)\$(の)?([234])乗/g, (spoken, inner: string, _particle, power: string, at: number) =>
+      VERBAL.test(context.slice(offset + at + spoken.length)) ? spoken : `$${inner}^{${power}}$`)
+    .replace(/(の)?([234])乗/g, (spoken, particle: string | undefined, power: string, at: number) => {
+      const before = context[offset + at - 1];
+      const after = context.slice(offset + at + spoken.length);
+      // 裸の「12乗」は 1² でなく 12 乗である。数字の底には「の」が必要で、ナレーションも
+      // 既にこれを要求している。一方 x2乗 と (x+1)2乗 は曖昧でない。
+      const ambiguousDigits = !particle && before !== undefined && /[0-9]/.test(before);
+      return before && POWER_BASE.test(before) && !VERBAL.test(after) && !ambiguousDigits
+        ? SUPERSCRIPTS[power]
+        : spoken;
+    });
 
 /**
  * boundary が分割した 1 語を結合する。
@@ -268,6 +279,39 @@ const mergeSplitWords = (captions: Caption[], words: string[]): Caption[] => {
   return merged;
 };
 
+/**
+ * 分数の分子・分母を LaTeX にする。`3ルート19` は `3\sqrt{19}`。ギリシャ文字のカナはこの後の
+ * applyGreek が `$…$` の中でも文字にし、KaTeX は Unicode の π や θ をそのまま組める。
+ */
+const latexAtom = (atom: string) =>
+  atom.replace(/^(\d*)(?:ルート|√)(.+)$/, (_, coefficient: string, radicand: string) =>
+    `${coefficient}\\sqrt{${radicand}}`);
+
+/**
+ * 分数の外に残った根号を `$\sqrt{7}$` にする。`√7` の文字だけでは上線がなく、根号の中がどこまでか
+ * 読み手に分からない。範囲は数か 1 文字に限る。`√2分の1` のように分数にならなかった読みや
+ * `√xy` は、どこまでが根号の中か本文から決められないので触らない。既に `$…$` の中にあるものは
+ * 分数が済ませているので飛ばす。
+ */
+const applyRoots = (text: string, context: string, offset: number) =>
+  text.replace(/\$[^$]*\$|√(\d+|[A-Za-zΑ-ω])/g, (spoken, radicand: string | undefined, at: number) => {
+    if (radicand === undefined) return spoken;
+    // 根号の中が次の token に続いていないかは、token でなく全体の文脈で見る。synthesiser は
+    // `ルート1` | `9.5` のように数の途中でも切る。
+    const next = context[offset + at + spoken.length];
+    return next !== undefined && /[0-9A-Za-zΑ-ω.]/.test(next) ? spoken : `$\\sqrt{${radicand}}$`;
+  });
+
+/**
+ * `ルート` と直後の数や文字を 1 token に結合する語。`$\sqrt{7}$` は token をまたげないので、
+ * synthesiser が `ルート` | `7` と切っても 1 つに戻す。数は 3 桁まで、文字は 1 つ。
+ * 同じ始点なら mergeSplitWords が最長を選ぶので、`ルート1` が `ルート19` を止めることはない。
+ */
+const ROOT_WORDS = [
+  ...Array.from({ length: 999 }, (_, index) => String(index + 1)),
+  ..."abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+].map((radicand) => `ルート${radicand}`);
+
 /** `のにじょう` の中の `にじょう` より先に選ぶため、長い順にする。 */
 const byLengthDesc = (entries: [string, string][]) =>
   [...entries].sort(([a], [b]) => b.length - a.length);
@@ -322,6 +366,7 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
   const merged = mergeSplitWords(fractionMerged, [
     ...Object.keys(ALWAYS),
     ...Object.keys(GREEK),
+    ...ROOT_WORDS,
   ]);
   const always = byLengthDesc(Object.entries(ALWAYS));
 
@@ -329,7 +374,9 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
   const normalised = merged.map((caption) => {
     // 小数の接頭辞が別 token にあっても、全体文脈の guard を維持する。
     let text = caption.text.replace(FRACTION, (spoken, denominator, numerator, at) =>
-      fractionStarts.has(sourceOffset + at) ? `${numerator}/${denominator}` : spoken);
+      fractionStarts.has(sourceOffset + at)
+        ? `$\\frac{${latexAtom(numerator)}}{${latexAtom(denominator)}}$`
+        : spoken);
     sourceOffset += caption.text.length;
     for (const [spoken, written] of always) {
       text = text.split(spoken).join(written);
@@ -338,11 +385,19 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
     text = applyGuarded(text);
     return text === caption.text ? caption : { ...caption, text };
   });
-  const context = normalised.map((caption) => caption.text).join("");
-  let offset = 0;
-  return normalised.map((caption) => {
-    const text = applyPowers(caption.text, context, offset);
-    offset += caption.text.length;
-    return text === caption.text ? caption : { ...caption, text };
-  });
+  // 累乗と根号は隣の token を見て決めるので、書き換え後の全文を文脈にして 1 段ずつ通す。
+  // 前の段が文字数を変えると位置がずれるため、段ごとに文脈を取り直す。
+  const pass = (
+    captions: Caption[],
+    apply: (text: string, context: string, offset: number) => string,
+  ) => {
+    const context = captions.map((caption) => caption.text).join("");
+    let offset = 0;
+    return captions.map((caption) => {
+      const text = apply(caption.text, context, offset);
+      offset += caption.text.length;
+      return text === caption.text ? caption : { ...caption, text };
+    });
+  };
+  return pass(pass(normalised, applyPowers), applyRoots);
 };

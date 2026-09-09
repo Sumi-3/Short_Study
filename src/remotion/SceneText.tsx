@@ -2,6 +2,7 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "./clamped";
 import { shadowOf, useTheme } from "./theme";
 import { SceneShell } from "./SceneShell";
+import { MathText } from "./MathText";
 import type { Scene } from "../types";
 
 const Bullet: React.FC<{
@@ -53,7 +54,9 @@ const Bullet: React.FC<{
           textShadow: shadowOf(theme),
         }}
       >
-        {text}
+        {/* 箇条書きも問題文や見出しと同じ本文で、$…$ の数式や x^2 の指数が混じる。生の文字列のままだと
+            $ が画面に出るので、同じ組版を通す。 */}
+        <MathText text={text} />
       </div>
     </div>
   );

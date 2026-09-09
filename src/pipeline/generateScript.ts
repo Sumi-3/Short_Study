@@ -176,7 +176,9 @@ export const generateScript = async (
     subject: course.subject ?? parsed.subject,
     scenes: parsed.scenes.map((scene, index) => ({
       scene_id: index + 1,
-      narration: scene.narration,
+      // 画面用の $ が narration に紛れると TTS が読み上げ、字幕にも出る。規則で禁じたうえで、
+      // 混じったものは黙って外す。$y$ → y と読めば意味は変わらない。
+      narration: scene.narration.replace(/\$/g, ""),
       visual_type: scene.visual_type,
       visual_content: scene.visual_content,
       visual: normalizeVisual(scene),

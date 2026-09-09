@@ -2,6 +2,7 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "./clamped";
 import { layout, shadowOf, useTheme, withAlpha } from "./theme";
 import { useFitToWidth } from "./useFitToWidth";
+import { MathText } from "./MathText";
 import type { SceneVisual } from "../types";
 
 type Data = Extract<SceneVisual, { kind: "table" }>;
@@ -102,7 +103,7 @@ export const Table: React.FC<{ data: Data; accent: string }> = ({
                             : `2px solid ${withAlpha(accent, 0.18)}`,
                       }}
                     >
-                      {text}
+                      <MathText text={text} />
                     </td>
                   );
                 })}
@@ -126,7 +127,7 @@ export const Table: React.FC<{ data: Data; accent: string }> = ({
               [0, 1]),
           }}
         >
-          {data.caption}
+          <MathText text={data.caption} />
         </div>
       ) : null}
     </div>

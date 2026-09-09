@@ -1,6 +1,7 @@
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "./clamped";
 import { useTheme, withAlpha } from "./theme";
+import { SvgLabel } from "./math/SvgLabel";
 import type { SceneVisual } from "../types";
 
 type Data = Extract<SceneVisual, { kind: "venn" }>;
@@ -169,21 +170,18 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
           const dy = centre.y - CY;
           const length = Math.hypot(dx, dy) || 1;
           return (
-            <text
+            <SvgLabel
               key={`name${index}`}
+              text={name}
               x={centre.x + (dx / length) * (radius + 40)}
               y={centre.y + (dy / length) * (radius + 40) + 14}
-              fill={accent}
-              fontSize={46}
-              fontWeight={900}
-              textAnchor="middle"
+              color={accent}
+              size={46}
+              weight={900}
+              anchor="middle"
               opacity={grow}
-              stroke={theme.bgDeep}
-              strokeWidth={8}
-              paintOrder="stroke"
-            >
-              {name}
-            </text>
+              outline={{ color: theme.bgDeep, width: 8 }}
+            />
           );
         })}
 
@@ -215,17 +213,16 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
         })}
 
         {data.caption ? (
-          <text
+          <SvgLabel
+            text={data.caption}
             x={CX}
             y={HEIGHT - 8}
-            fill={accent}
-            fontSize={36}
-            fontWeight={700}
-            textAnchor="middle"
+            color={accent}
+            size={36}
+            weight={700}
+            anchor="middle"
             opacity={clamped(frame, [2.2 * fps, 2.7 * fps], [0, 1])}
-          >
-            {data.caption}
-          </text>
+          />
         ) : null}
       </svg>
     </div>

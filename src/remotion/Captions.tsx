@@ -11,7 +11,7 @@ import {
   type Caption,
   type TikTokPage,
 } from "@remotion/captions";
-import { Fraction, WHOLE_FRACTION } from "./Fraction";
+import { MathText } from "./MathText";
 import { layout, plateOf, shadowOf, useTheme } from "./theme";
 
 /**
@@ -33,6 +33,16 @@ const SWITCH_CAPTIONS_EVERY_MS = 6000;
  */
 const MAX_CHARS_PER_PAGE = 22;
 
+/**
+ * 字幕 1 page に載る文字数の見積もり。`$\frac{1}{2}$` は 13 文字だが画面では 1〜2 文字幅なので、
+ * 数式は命令と括弧を除いた文字数を 0.6 倍して数える。生の長さで数えると分数を 1 つ含む page が
+ * 半分で切れ、続きが 1 行だけ残る。
+ */
+const displayLength = (text: string) =>
+  text.trim().replace(/\$([^$]+)\$/g, (_, tex: string) =>
+    "＊".repeat(Math.max(1, Math.round(tex.replace(/\\[a-zA-Z]+|[{}^_]/g, "").length * 0.6))),
+  ).length;
+
 /** この長さの pause は句の境界として読める。 */
 const PHRASE_GAP_MS = 420;
 
@@ -46,10 +56,10 @@ const withPageBreaks = (captions: Caption[]): Caption[] => {
 
   for (const [index, caption] of captions.entries()) {
     const next = captions[index + 1];
-    charsOnPage += caption.text.trim().length;
+    charsOnPage += displayLength(caption.text);
 
     const pageIsFull =
-      next && charsOnPage + next.text.trim().length > MAX_CHARS_PER_PAGE;
+      next && charsOnPage + displayLength(next.text) > MAX_CHARS_PER_PAGE;
     const phraseEnded = next && next.startMs - caption.endMs > PHRASE_GAP_MS;
 
     // pipeline が付けた break は narration 自体の文境界であり、ここで時間から推測するより確かである。
@@ -129,16 +139,10 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
                   : shadowOf(theme),
               }}
             >
-              {/* fraction は必ず token 全体になる。pipeline は書き換える前に分割された kana を結合するため、
-                  token 全体に一致させれば numerator の始点を推測する必要がない。 */}
-              {(() => {
-                const frac = WHOLE_FRACTION.exec(token.text);
-                return frac ? (
-                  <Fraction numerator={frac[1]} denominator={frac[2]} />
-                ) : (
-                  token.text
-                );
-              })()}
+              {/* 分数・根号・数列の項は captionSpelling が `$…$` の LaTeX にしてある。pipeline は
+                  書き換える前に分割された kana を結合するので、`$…$` が token をまたぐことはない。
+                  text style で組み、2 行の帯を分数で押し広げない。 */}
+              <MathText text={token.text} display={false} />
             </span>
           );
         })}

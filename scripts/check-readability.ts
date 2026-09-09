@@ -218,45 +218,25 @@ assert.match(render(Formula, {
   lines: ["x+2=5", "x=3"], caption: "", accent, durationInFrames: 300,
 }), new RegExp(`font-size:76px;line-height:1[^;]*;color:${accent}`));
 
-// 明示的な境界がある場合だけ slash を安全に組版できる。prose には日付や隣接する根号が
-// 含まれ、そこから分数の境界を推測できないためである。
-const compositeFraction = mathText("\\frac{3√19}{4}");
-assert.match(compositeFraction, /3√19/);
-assert.match(compositeFraction, /border-top/);
-assert.doesNotMatch(compositeFraction, /\\frac/);
-const scriptedFraction = mathText("\\frac{x^2}{2}");
-assert.match(scriptedFraction, /<sup[^>]*>2<\/sup>/);
-assert.match(scriptedFraction, /border-top/);
-assert.equal(mathText("\\frac{3√19}{4"), "\\frac{3√19}{4");
-assert.equal(mathText("3√19/4"), "3√19/4");
-assert.equal(mathText("9/8に公開"), "9/8に公開");
-
-// integral は 1.5em、inline box を 1.02em に保つ line-height で描くため、card の行間を
-// 押し広げない。16px/24px の library card で増加は 0px と計測済みである。境界は依然
-// literal ではなく script でなければならない。
-const integral = mathText("∫_0^π x dx");
-assert.match(integral, /font-size:1\.5em/);
-assert.match(integral, /<sub[^>]*>0<\/sub>/);
-assert.match(integral, /<sup[^>]*>π<\/sup>/);
-assert.match(mathText("∑_{k=1}^{n} k"), /font-size:1\.5em/);
-assert.match(mathText("Σ_{k=1}^{n} k"), /font-size:1\.5em/);
-// 下側に flow の中で置く。absolute positioning した条件は lim glyph に 7.3px 重なった。
-// 行の中に保つことで行がそれを収めるまで伸びるので、column を再び flow の外に置いては
-// ならない。
-const limit = mathText("lim_{n→∞} a_n");
-assert.match(limit, /flex-direction:column/);
-assert.doesNotMatch(limit, /position:absolute/);
-assert.ok(limit.includes("n→∞"));
-const latexLimit = mathText("\\lim_{n \\to ∞} a_n");
-assert.ok(latexLimit.includes("lim"));
-assert.ok(latexLimit.includes("n → ∞"));
-assert.doesNotMatch(latexLimit, /\\/);
-assert.doesNotMatch(mathText("Π_{k=1}^{n} k"), /font-size:1\.5em/);
-// prose が求めてもいない display-size glyph を受け取ってはならない。
-assert.doesNotMatch(mathText("面積を求める"), /font-size:1\.5em/);
-for (const html of [compositeFraction, scriptedFraction, integral, limit, mathText("∑_{k=1}^{n} k^2")]) {
-  assert.doesNotMatch(html, /class="katex"/);
+// `$` のない文字列は推測せず文字どおりに出す。以前は `x^2` や `\frac{}{}` や `3√19/4` を手置きの
+// regex で上付きや分数にしていたが、`9/8に公開` の日付や隣接する根号から境界は決められない。
+// 境界は作者が `$…$` で書き、renderer は探すだけである。
+for (const plain of [
+  "\\frac{3√19}{4}", "\\frac{x^2}{2}", "3√19/4", "9/8に公開", "∫_0^π x dx",
+  "∑_{k=1}^{n} k", "lim_{n→∞} a_n", "x^2", "a_n", "面積を求める",
+]) {
+  const html = mathText(plain);
+  assert.equal(html, plain, plain);
+  assert.doesNotMatch(html, /class="katex"|<sup|<sub|border-top/);
 }
+// 字幕は text style。displaystyle の分数は 2 行の帯を押し広げるので、`display={false}` で
+// 分数を小さく組み、極限の条件は `lim` の横に置く。
+const inlineFraction = renderToStaticMarkup(
+  React.createElement(MathText, { text: String.raw`答えは $\frac{1}{2}$ です`, display: false }),
+);
+assert.match(inlineFraction, /class="katex"/);
+assert.doesNotMatch(inlineFraction, /displaystyle|katex-display/);
+assert.ok(inlineFraction.startsWith("答えは "));
 
 const { LibraryCard } = await import("../web/src/LibraryCard.js");
 for (const outline of [[], ["(1) $x^2$ の値を求めよ。"]]) {

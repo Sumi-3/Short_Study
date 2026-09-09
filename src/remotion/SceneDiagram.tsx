@@ -6,6 +6,7 @@ import {
 import { clamped } from "./clamped";
 import { shadowOf, useTheme, withAlpha } from "./theme";
 import { SceneShell } from "./SceneShell";
+import { MathText } from "./MathText";
 import { Formula } from "./math/Formula";
 import { Plot } from "./math/Plot";
 import { Figure } from "./math/Figure";
@@ -88,7 +89,7 @@ const Flow: React.FC<{ steps: string[]; accent: string }> = ({
                 boxShadow: `0 16px 48px ${withAlpha(theme.ink, 0.14)}`,
               }}
             >
-              {step}
+              <MathText text={step} />
             </div>
           </div>
         );
@@ -141,7 +142,7 @@ const Bars: React.FC<{
                 textShadow: shadowOf(theme),
               }}
             >
-              <span>{datum.label}</span>
+              <span><MathText text={datum.label} /></span>
               <span style={{ color: accent, fontWeight: 900 }}>
                 {Math.round(datum.value * grow).toLocaleString("ja-JP")}
                 {unit ? (

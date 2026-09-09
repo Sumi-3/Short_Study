@@ -1,6 +1,7 @@
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "../clamped";
 import { useTheme } from "../theme";
+import { SvgLabel } from "../math/SvgLabel";
 import {
   HEIGHT,
   PAD,
@@ -198,17 +199,16 @@ export const ChartCaption: React.FC<{ text: string; accent: string; delay: numbe
   }
 
   return (
-    <text
+    <SvgLabel
+      text={text}
       x={WIDTH / 2}
       y={PAD.top - 16}
-      fill={accent}
-      fontSize={36}
-      fontWeight={700}
-      textAnchor="middle"
+      color={accent}
+      size={36}
+      weight={700}
+      anchor="middle"
       fontFamily={theme.fontFamily}
       opacity={clamped(frame, [delay * fps, (delay + 0.4) * fps], [0, 1])}
-    >
-      {text}
-    </text>
+    />
   );
 };

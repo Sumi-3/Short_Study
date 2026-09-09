@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "./clamped";
 import { useTheme, withAlpha } from "./theme";
+import { SvgLabel } from "./math/SvgLabel";
 import type { SceneVisual } from "../types";
 
 type Data = Extract<SceneVisual, { kind: "tree" }>;
@@ -157,21 +158,18 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
           const isLeaf = node.children.length === 0;
 
           return (
-            <text
+            <SvgLabel
               key={`node${node.depth}-${node.row}-${node.label}`}
+              text={node.label}
               x={x(node)}
               y={y(node) + fontSize * 0.36}
-              fill={isLeaf ? accent : theme.ink}
-              fontSize={fontSize}
-              fontWeight={isLeaf ? 900 : 700}
-              textAnchor="middle"
+              color={isLeaf ? accent : theme.ink}
+              size={fontSize}
+              weight={isLeaf ? 900 : 700}
+              anchor="middle"
               opacity={appear}
-              stroke={theme.bgDeep}
-              strokeWidth={7}
-              paintOrder="stroke"
-            >
-              {node.label}
-            </text>
+              outline={{ color: theme.bgDeep, width: 7 }}
+            />
           );
         })}
 
@@ -192,19 +190,18 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
         </text>
 
         {data.caption ? (
-          <text
+          <SvgLabel
+            text={data.caption}
             x={PAD.left}
             y={HEIGHT - 18}
-            fill={theme.inkDim}
-            fontSize={34}
-            fontWeight={700}
+            color={theme.inkDim}
+            size={34}
+            weight={700}
             opacity={clamped(
               frame,
               [columnStart(depth) * fps + 0.6 * fps, columnStart(depth) * fps + 1.1 * fps],
               [0, 1])}
-          >
-            {data.caption}
-          </text>
+          />
         ) : null}
       </svg>
     </div>
