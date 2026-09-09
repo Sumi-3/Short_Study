@@ -133,6 +133,29 @@ for (const invalid of [
   [previous, { ...continued, visual_items: [...continued.visual_items, ...Array(5).fill("x=3")] }],
   [previous, { ...continued, visual_kind: "plot", visual_items: [...continued.visual_items, "x=3"] }],
 ]) assert.throws(() => assertFormulaCarry(invalid), /\[carry\]/);
+
+// The message is the only thing an author gets — the generation is already
+// lost when this throws, and there is no retry — so it must name the rule that
+// failed, and every rule that failed, not just the first.
+const carried = (items: string[], extra = {}) => ({
+  visual_kind: "formula", visual_type: "point", visual_content: "", visual_items: items, ...extra,
+});
+const carryMessage = (scenes: any[]) => {
+  try { assertFormulaCarry(scenes); return ""; } catch (error) { return (error as Error).message; }
+};
+const openChain = carried(["[plain] x+2=5", "[plain] x=3"]);
+assert.match(carryMessage([openChain, carried(["[carry] x=4", "y=x+1"])]), /直前: x=3／写し: x=4/);
+assert.match(carryMessage([carried(["x+2=5", "x=3"]), carried(["[carry] x=3", "y=1"])]), /自動で囲まれた答え/);
+assert.match(carryMessage([openChain, carried(["[carry] x=3", "y=1"], { visual_content: "続き" })]),
+  /visual_contentは空文字/);
+// Several rules hold at once here: nothing follows the carry, and a
+// continuation scene must not carry a heading of its own.
+const many = carryMessage([openChain,
+  carried(["[carry] x=3", "[text] おわり"], { visual_content: "続き" })]);
+assert.match(many, /続きとなる数式行/);
+assert.match(many, /visual_contentは空文字/);
+assert.match(many, /／/);
+assert.doesNotThrow(() => assertFormulaCarry([openChain, carried(["[carry] x=3", "y=x+1"])] as any));
 assert.doesNotThrow(() => assertFormulaCarry([
   previous, { ...continued, visual_items: ["y=7"] },
 ]));

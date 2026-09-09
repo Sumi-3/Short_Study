@@ -90,13 +90,36 @@ export const assertFormulaCarry = (scenes: readonly {
     const lastEquation = previousLines.filter((line) => !line.text).at(-1);
     const first = lines[0];
     const limit = scene.visual_kind === "formula" ? FORMULA_MAX_LINES : COMPANION_MAX_LINES;
-    if (carries.length !== 1 || first.annotation !== "carry" || first.text ||
-        lines.length > limit || !lines.slice(1).some((line) => !line.text) ||
-        scene.visual_type !== "point" || previous?.visual_type !== "point" ||
-        scene.visual_content.trim() || !lastEquation || autoBoxed ||
-        ["box", "strike", "carry"].includes(lastEquation.annotation ?? "") ||
-        first.latex.trim() !== lastEquation.latex.trim()) {
-      throw new Error(`シーン${index + 1}の[carry]は、前のpointの未確定の最終数式を継続シーンの先頭に写してください。`);
+    /*
+     * Eleven separate mistakes used to raise one sentence, which named none of
+     * them. The generation is already lost by the time this throws — there is
+     * no retry — so the message is the only thing the author gets to act on.
+     * Checks are lazy because the later ones read `lastEquation`.
+     */
+    const failure = ([
+      [() => carries.length !== 1, "[carry]は1シーンに1行だけ書けます"],
+      [() => first.annotation !== "carry", "[carry]はそのシーンの先頭行に置いてください"],
+      [() => first.text, "[carry]に[text]は重ねられません"],
+      [() => lines.length > limit, `このシーンの行数が上限${limit}行を超えています`],
+      [() => !lines.slice(1).some((line) => !line.text),
+        "[carry]の後に、続きとなる数式行を必ず置いてください"],
+      [() => scene.visual_type !== "point", "[carry]が使えるのはpointのシーンだけです"],
+      [() => previous?.visual_type !== "point", "直前のシーンがpointではありません"],
+      [() => Boolean(scene.visual_content.trim()),
+        "続きのシーンなのでvisual_contentは空文字にしてください"],
+      [() => !lastEquation, "直前のシーンに写せる数式がありません"],
+      [() => autoBoxed, "直前のシーンの最終式は自動で囲まれた答えなので、式変形は続いていません"],
+      // Guarded rather than `!`-asserted: every predicate runs, so these two
+      // cannot lean on the `!lastEquation` check above having stopped first.
+      [() => Boolean(lastEquation) && ["box", "strike", "carry"].includes(lastEquation!.annotation ?? ""),
+        "直前の最終式は[box]/[strike]/[carry]で確定済みなので、式変形は続いていません"],
+      [() => Boolean(lastEquation) && first.latex.trim() !== lastEquation!.latex.trim(),
+        `[carry]の式が直前の最終式と一致しません（直前: ${lastEquation?.latex.trim()}／写し: ${first.latex.trim()}）`],
+    ] as const).filter(([failed]) => failed()).map(([, reason]) => reason);
+    if (failure.length) {
+      // Every reason, not just the first: several usually hold at once, and
+      // fixing one only to be told about the next wastes another generation.
+      throw new Error(`シーン${index + 1}の[carry]: ${failure.join("／")}。前のpointの未確定の最終数式を、継続シーンの先頭にそのまま写してください。`);
     }
   }
 };
