@@ -36,9 +36,24 @@ if (!isWebPlayerBuild) {
 const stack = (webfont: string, ...system: string[]) =>
   [`"${webfont}"`, ...system.map((s) => `"${s}"`), "sans-serif"].join(", ");
 
-/** Rounded gothic stays legible at card sizes; system fallbacks matter because
- * the browser never downloads the webfont (see above). */
-const ROUNDED = stack(zenMaru, "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans CJK JP");
+/**
+ * Rounded gothic stays legible at card sizes; system fallbacks matter because
+ * the browser never downloads the webfont (see above).
+ *
+ * Hiragino Maru Gothic ProN used to lead the fallbacks, and it is the reason
+ * captions looked smeared on an iPhone: the family ships exactly one face, so
+ * every weight resolves to `HiraMaruProN-W4` and the 700 and 900 requests here
+ * were drawn as *synthetic* bold — an outline the engine fattens, not a
+ * designed face. Hiragino Sans answers each of those requests with a real one
+ * (W2/W3/W4/W5/W6/W8 measured), so the weight hierarchy survives the fallback
+ * instead of turning into fake bold. The trade is that the browser is no
+ * longer rounded; keeping it rounded costs the weights, because no rounded
+ * face on iOS has more than one weight.
+ *
+ * The renderer never reaches these: `loadFont()` above gives it the real
+ * Zen Maru Gothic, so this reordering changes the browser only.
+ */
+const ROUNDED = stack(zenMaru, "Hiragino Sans", "Noto Sans CJK JP");
 
 export type Theme = {
   bg: string;
