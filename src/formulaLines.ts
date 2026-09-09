@@ -4,7 +4,7 @@
  * 型と強調を接頭辞に収めれば 20 個目の API シーンフィールドを避けられる。このプロジェクトでは
  * それが構造化出力の grammar 上限を超えていた。
  */
-import { normalizeMathText, splitMathText } from "./mathText";
+import { normalizeMathText, splitMathText } from "./mathText.js";
 
 export const FORMULA_MAX_LINES = 6;
 export const COMPANION_MAX_LINES = 2;

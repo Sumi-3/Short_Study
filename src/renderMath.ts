@@ -1,5 +1,5 @@
 import katex from "katex";
-import { splitMathText, texAtoms } from "./mathText";
+import { splitMathText, texAtoms } from "./mathText.js";
 
 export type RenderedMathPart = { text: string; html?: string; block?: boolean };
 
