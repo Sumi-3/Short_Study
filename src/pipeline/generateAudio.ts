@@ -6,7 +6,7 @@ import { nodeReader } from "@remotion/media-parser/node";
 import { config, paths } from "../config.js";
 import type { Scene } from "../types.js";
 
-/** A word (or, in Japanese, a short token) with timings relative to the clip. */
+/** clip 先頭基準のタイミングを持つ単語（日本語では短い token）。 */
 export type WordBoundary = {
   text: string;
   fromMs: number;
@@ -16,17 +16,17 @@ export type WordBoundary = {
 export type SceneAudio = {
   sceneId: number;
   filePath: string;
-  /** Path relative to `public/`, for `staticFile()`. */
+  /** `staticFile()` 用の `public/` からの相対パス。 */
   audioSrc: string;
   durationInSeconds: number;
   /**
-   * Only EdgeTTS reports these. They are exact (the synthesiser knows where it
-   * put each word), which is why CAPTION_SOURCE=tts can skip Whisper entirely.
+   * これを報告するのは EdgeTTS だけ。synthesiser は各単語を置いた位置を知っているので正確であり、
+   * CAPTION_SOURCE=tts が Whisper を完全に省ける理由でもある。
    */
   wordBoundaries: WordBoundary[] | null;
 };
 
-/** EdgeTTS reports time in 100-nanosecond ticks. */
+/** EdgeTTS は時間を 100 nanosecond tick で返す。 */
 const TICKS_PER_MS = 10_000;
 
 const sceneFileName = (sceneId: number) =>
@@ -41,9 +41,9 @@ const streamToBuffer = async (stream: NodeJS.ReadableStream) => {
 };
 
 /**
- * The metadata stream emits one `{"Metadata":[...]}` JSON object per WebSocket
- * message, but Node may coalesce them into a single chunk, so the concatenated
- * text is split by brace depth rather than parsed per chunk.
+ * metadata stream は WebSocket message ごとに `{"Metadata":[...]}` JSON object を 1 つ出すが、
+ * Node は複数を 1 chunk にまとめることがある。そのため連結した text は chunk ごとに parse せず、
+ * brace depth で分割する。
  */
 const splitJsonObjects = (text: string): string[] => {
   const objects: string[] = [];
@@ -126,7 +126,7 @@ const synthesizeWithEdge = async (
 
   try {
     const results: { audio: Buffer; boundaries: WordBoundary[] }[] = [];
-    // Sequentially: one WebSocket connection, one synthesis at a time.
+    // 直列にする。WebSocket connection 1 本で、1 度に synthesis も 1 件だけ行う。
     for (const text of texts) {
       const { audioStream, metadataStream } = tts.toStream(text, {
         rate: config.edgeRate,
@@ -190,7 +190,7 @@ export const generateAudio = async ({
 }: {
   scenes: Scene[];
   slug: string;
-  /** Chosen per video on the create screen; falls back to EDGE_VOICE. */
+  /** 作成画面で動画ごとに選ぶ。なければ EDGE_VOICE へフォールバックする。 */
   voice?: string;
 }): Promise<SceneAudio[]> => {
   const dir = paths.projectDir(slug);

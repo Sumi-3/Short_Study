@@ -1,16 +1,15 @@
 import { Fragment } from "react";
 import katex from "katex";
-// LibraryCard can load MathText without Formula, so the fonts belong here too.
+// LibraryCard は Formula なしで MathText を読み込めるため、font もここで読み込む。
 import "katex/dist/katex.min.css";
 import { Fraction } from "./Fraction";
 
-/** Leading, so an author who writes `\textstyle` themselves still overrides it. */
+/** 先頭に付けるので、作者が自分で `\textstyle` と書けばそちらが上書きできる。 */
 const DISPLAY_STYLE = "\\displaystyle ";
 
 /**
- * Only the author can locate a formula in prose without changing its meaning.
- * Doubled/escaped dollars are literal, and ambiguous or unfinished delimiters
- * stay visible rather than swallowing part of the question.
+ * 意味を変えず本文中の数式位置を決められるのは作者だけである。重ねた/escape した dollar は
+ * 文字どおりに扱い、曖昧または閉じていない delimiter は問題文の一部を飲み込ませず表示に残す。
  */
 export const MathText: React.FC<{ text: string }> = ({ text }) => {
   if (!text.includes("$")) return <LegacyMathText text={text} />;
@@ -30,19 +29,16 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
     parts.push(text.slice(cursor, open.index));
     try {
       const html = katex.renderToString(DISPLAY_STYLE + tex, {
-        // Inline, so the formula sits in the sentence rather than breaking it
-        // into its own centred block. `displayMode` also picks the *style*
-        // though, and text style is what puts a limit's condition beside `lim`
-        // instead of under it, and sets fractions small. `\displaystyle` asks
-        // for the style without the block, which is how the worked solution
-        // beside it is already set.
+        // inline にして、数式を独立した中央揃え block にせず文中へ置く。`displayMode` は
+        // *style* も選び、text style では極限の条件が `lim` の下でなく横に来て分数も小さくなる。
+        // `\displaystyle` なら block を作らずにその style を要求でき、横の解答と同じ組版になる。
         displayMode: false,
         throwOnError: false,
         output: "html",
       });
       parts.push(<span key={open.index} dangerouslySetInnerHTML={{ __html: html }} />);
     } catch {
-      // Unexpected renderer failures must retain the source as escaped prose.
+      // 想定外の renderer 失敗時も、source は escape した本文として残さなければならない。
       parts.push(text.slice(open.index, close.index + 1));
     }
     cursor = close.index + 1;
@@ -51,77 +47,69 @@ export const MathText: React.FC<{ text: string }> = ({ text }) => {
   return <>{parts.map((part, index) => <Fragment key={index}>{part}</Fragment>)}</>;
 };
 
-// The hand-positioned branches below are a fallback for existing data without
-// $ delimiters. Keeping their metrics preserves already-generated videos.
+// 以下の手配置 branch は $ delimiter のない既存データ用の fallback。metrics を維持すれば、
+// すでに生成済みの動画の見た目を保てる。
 
 /**
- * `^` or `_` followed by a braced group, a signed number, or a single letter.
+ * `^` または `_` の後に、braced group、符号付き数値、または1文字が続く形。
  *
- * The unbraced forms follow what people actually type: `x^2` and `a_n` both
- * mean what they look like, while `x^2y` stops at the 2 — the same reading
- * LaTeX gives it. A subscript needs the braces as often as not, because a
- * sequence's index is usually an expression: `a_{n+1}`, `S_{2n}`.
+ * brace なしの形は実際の入力に合わせる。`x^2` と `a_n` は見たままの意味で、`x^2y` は
+ * 2 で止まる。これは LaTeX と同じ読み方である。数列の index は `a_{n+1}`、`S_{2n}` の
+ * ように式であることが多いため、下付きでは brace も頻繁に必要になる。
  *
- * "Letter" has to include Greek and ∞, because the bounds of an integral are
- * where this is most needed: `∫_0^π` was setting its lower bound and leaving
- * `^π` sitting in the line as two literal characters.
+ * "Letter" には Greek と ∞ も含める必要がある。最も必要になる積分の範囲で、`∫_0^π` が
+ * 下限だけを設定し、`^π` を2つの文字どおりの文字として行内に残してしまっていたためである。
  */
 const SCRIPT_VALUE = "\\{[^}]{1,12}\\}|[-+]?\\d+|[A-Za-zΑ-ω∞]";
 const SCRIPT = new RegExp(`([_^])(${SCRIPT_VALUE})`, "g");
 
-/** `lim` and the condition that belongs under it, taken as one unit. */
+/** `lim` とその下に置く条件を、1単位として扱う。 */
 const LIMIT = new RegExp(`lim_(${SCRIPT_VALUE})`, "g");
 
 /**
- * An intentionally small fraction syntax. Plain text cannot reveal whether
- * `3√19/4` means `(3√19)/4` or `3√(19/4)`, and it may not be maths at all
- * (`9/8に公開`). The generator therefore marks the two bounds explicitly.
+ * 意図的に小さくした分数構文。プレーンテキストだけでは `3√19/4` が `(3√19)/4` なのか
+ * `3√(19/4)` なのか分からず、そもそも数式でないかもしれない（`9/8に公開`）。そのため
+ * generator は2つの境界を明示する。
  *
- * Braces inside either half, including nested fractions, stay literal. That is
- * the same shallow trade-off as `SCRIPT`, and keeps this prose renderer from
- * becoming a partial LaTeX parser.
+ * 入れ子の分数を含め、各半分の内側にある brace は文字どおり残す。`SCRIPT` と同じ浅い
+ * 割り切りであり、この本文 renderer が不完全な LaTeX parser になるのを防ぐ。
  */
 const FRACTION = /\\frac\{([^{}]*)\}\{([^{}]*)\}/g;
 
 /**
- * The operators a typesetter draws taller than the text around them. At a
- * body-text 1em an `∫` is a thin stroke barely above x-height, which is not
- * what the same symbol looks like in the worked solution beside it — KaTeX
- * gives it its own display-size glyph.
+ * 組版器が周囲の文字より高く描く演算子。本文の1emでは `∫` は x-height をわずかに超える
+ * 細い線となり、横の解答にある同じ記号の見た目ではない。KaTeX はそれ専用の display-size
+ * glyph を使う。
  */
 const OPERATORS = "∫∬∭∮∑Σ∏";
 const LARGE_OPERATOR = new RegExp(`[${OPERATORS}]`, "g");
 
 /**
- * 1.5em is as large as the glyph can be drawn without paying for it in layout.
+ * 1.5em は layout に代償を払わずに描ける glyph の最大サイズである。
  *
- * An inline box contributes `font-size × line-height` to the line, so the 0.68
- * here keeps this span's contribution at 1.02em — inside the line-height the
- * problem card and the library card already run at, which is why enlarging the
- * operator does not push the lines apart the way a stacked fraction does. The
- * offset then drops the taller glyph back onto the text's own baseline.
+ * inline box は `font-size × line-height` を行へ寄与するので、ここでの0.68ならこの span の
+ * 寄与は1.02emに収まる。これは problem card と library card がすでに使う line-height 内であり、
+ * 演算子を大きくしても積み上げ分数のように行を押し広げない理由である。offset で背の高い
+ * glyph を本文本来の baseline へ戻す。
  */
 const OPERATOR_STYLE: React.CSSProperties = {
   fontSize: "1.5em",
   lineHeight: 0.68,
   verticalAlign: "-0.16em",
-  // The glyph's own side bearing is enlarged along with it, which opens a gap
-  // wide enough to read as a space before the bounds — `∫ ₀^π` rather than the
-  // bounds sitting against the operator. Taking back a tenth of the enlarged em
-  // closes it without letting the two collide.
+  // glyph 自身の side bearing も一緒に拡大され、範囲の前に空白と読めるだけの gap ができる。
+  // つまり `∫ ₀^π` となり、範囲が演算子に接しない。拡大後の em の10分の1を戻すと、衝突させず
+  // に gap を詰められる。
   marginRight: "-0.1em",
 };
 
 /**
- * `lim` with its condition underneath, the way it is typeset.
+ * 組版どおり、条件を下に置いた `lim`。
  *
- * This was first tried as an absolutely positioned subscript, so the line could
- * not grow: the condition landed 7.3px inside the `lim` glyphs and there was
- * nowhere to move it — at line-height 1.55 an 18px line leaves 3.6px of leading
- * under the glyph box while the 0.55em condition needs 9.9px. Painting outside
- * the line is what made it illegible, so it lays out in the flow instead and
- * the line grows to hold it. The card's fitter absorbs that, and formulas are
- * worth the room.
+ * 最初は絶対配置の subscript にしたが、行が伸びなかった。条件は `lim` の glyph 内側7.3pxに
+ * 入り、逃がす場所がなかった。line-height 1.55 の18px行では glyph box 下の leading は3.6pxだが、
+ * 0.55em の条件には9.9pxが必要である。行外への描画が読めなくする原因だったので、代わりに
+ * flow で layout して行を必要なだけ伸ばす。card の fitter がそれを吸収でき、数式にはその余地を
+ * 与える価値がある。
  */
 const LIMIT_STYLE: React.CSSProperties = {
   display: "inline-flex",
@@ -132,7 +120,7 @@ const LIMIT_STYLE: React.CSSProperties = {
   margin: "0 0.14em",
 };
 
-/** Wide conditions like `n→∞` set the unit's width; `lim` centres over them. */
+/** `n→∞` のように広い条件が単位の幅を決め、`lim` はその上で中央に置く。 */
 const LIMIT_CONDITION_STYLE: React.CSSProperties = {
   fontSize: "0.55em",
   lineHeight: 1.04,
@@ -140,11 +128,10 @@ const LIMIT_CONDITION_STYLE: React.CSSProperties = {
 };
 
 /**
- * Legacy question text accepted `\\frac`, making occasional LaTeX spillover
- * inevitable. Keep the few commands whose plain symbols fit
- * this renderer; for anything else remove only the slash, because deleting an
- * unknown command would silently discard part of the question while showing
- * the slash is worse than leaving its readable name as prose.
+ * 旧 question text は `\\frac` を受け入れており、ときどき LaTeX が漏れ出すのは避けられない。
+ * この renderer に収まるプレーンな記号の command だけを残す。それ以外は slash だけを除く。
+ * 未知の command を消せば問題文の一部を黙って捨ててしまい、slash を見せるよりは読める名前を
+ * 本文として残すほうがよいからである。
  */
 const normaliseCommands = (text: string) =>
   text
@@ -179,7 +166,7 @@ const LegacyMathText: React.FC<{ text: string }> = ({ text }) => {
 
   for (const match of marks) {
     const at = match.index ?? 0;
-    // Two patterns over one string can overlap; the earlier one wins.
+    // 1つの文字列に対する2つの pattern は重なり得るため、先に現れた方を採用する。
     if (at < cursor) {
       continue;
     }

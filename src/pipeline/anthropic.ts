@@ -2,10 +2,9 @@ import Anthropic from "@anthropic-ai/sdk";
 import { config } from "../config.js";
 
 /**
- * The API client, built the one way.
+ * 一通りの方法で構築する API client。
  *
- * The workspace goes in as a header because the SDK has no option for it, and
- * only when set, since an empty value is rejected.
+ * SDK には workspace 用の option がないため header に入れる。空値は拒否されるので、設定時だけ渡す。
  */
 export const anthropic = () =>
   new Anthropic({

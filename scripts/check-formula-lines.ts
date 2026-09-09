@@ -4,8 +4,8 @@ import { z } from "zod/v4";
 import { assertFormulaCarry, parseFormulaLine } from "../src/formulaLines.js";
 import { apiScriptSchema, normalizeVisual, sceneVisualSchema, type ApiScript } from "../src/types.js";
 
-// Prefixes share an existing string channel. Guard both marker orders and
-// the ordinary bracketed LaTeX which a greedy prefix parser would consume.
+// prefix は既存の string channel を共有する。両方の marker 順序と、貪欲な prefix parser
+// なら消費してしまう通常の角括弧付き LaTeX を守る。
 for (const annotation of ["box", "underline", "circle", "highlight", "strike", "bracket", "plain"] as const) {
   assert.deepEqual(parseFormulaLine(`[${annotation}] x=2`), { latex: "x=2", annotation, text: false });
   for (const prefix of [`[text][${annotation}]`, `[${annotation}] [text]`]) {
@@ -21,8 +21,8 @@ for (const line of ["x^2-5x+6=0", "[0,1]", "[unknown] x", "[text]   ", "[box] ",
 assert.equal(parseFormulaLine("[text][text] 本文").latex, "[text] 本文");
 assert.equal(parseFormulaLine("[box][underline] x").latex, "[underline] x");
 
-// Substitution is an incoming edge, independent of the target's decoration.
-// Preserve old parse shapes and bracketed maths, including malformed prefixes.
+// substitution は対象の装飾とは独立した incoming edge である。不正な prefix を含め、
+// 以前の parse 形状と角括弧付きの数式を保つ。
 assert.deepEqual(parseFormulaLine("[substitute: x=2 を代入] y=2^2+1"), {
   latex: "y=2^2+1", annotation: null, text: false, substitution: "x=2 を代入",
 });
@@ -39,8 +39,8 @@ for (const line of [
 ]) assert.deepEqual(parseFormulaLine(line), { latex: line, annotation: null, text: false });
 assert.equal(parseFormulaLine("[substitute: x=2][substitute: y=3] z=5").latex, "[substitute: y=3] z=5");
 
-// Check the actual schema exported for structured outputs, including required
-// keys. The local manifest limit must not grow the compiled API grammar.
+// required key を含め、structured output 用に export される実際の schema を検査する。
+// local manifest の上限が compiled API grammar を大きくしてはならない。
 const schema = z.toJSONSchema(apiScriptSchema) as any;
 const apiScene = schema.properties.scenes.items;
 assert.equal(Object.keys(apiScene.properties).length, 19);
@@ -64,8 +64,8 @@ assert.ok(sceneVisualSchema.safeParse(normalizeVisual(base)).success);
 assert.ok(!sceneVisualSchema.safeParse({ kind: "formula", lines: [...mixed, "x=2"], caption: "" }).success);
 assert.equal(normalizeVisual({ ...base, visual_items: [" ", ""] }), undefined);
 
-// The channel also carries labels for charts. Exercise every kind so [text]
-// interpretation cannot accidentally leak into names, table cells or exprs.
+// channel は chart の label も運ぶ。全 kind を試し、`[text]` の解釈が name、table cell、
+// expr に誤って漏れないようにする。
 const fixtures: Partial<ApiScript["scenes"][number]>[] = [
   { visual_kind: "bullets", visual_items: ["[text] 名前"] },
   { visual_kind: "flow", visual_items: ["準備", "結果"] },
@@ -103,7 +103,7 @@ for (const fixture of fixtures) {
   if (visual?.kind === "scatter") assert.equal(visual.xLabel, "[text] x軸");
 }
 
-// Only an explicit, verified copy connects scenes; blank headings alone do not.
+// scene をつなぐのは明示的に検証済みの copy だけで、空の heading だけではつながない。
 assert.deepEqual(parseFormulaLine("[carry] x+2=5"), {
   latex: "x+2=5", annotation: "carry", text: false,
 });
@@ -134,9 +134,8 @@ for (const invalid of [
   [previous, { ...continued, visual_kind: "plot", visual_items: [...continued.visual_items, "x=3"] }],
 ]) assert.throws(() => assertFormulaCarry(invalid), /\[carry\]/);
 
-// The message is the only thing an author gets — the generation is already
-// lost when this throws, and there is no retry — so it must name the rule that
-// failed, and every rule that failed, not just the first.
+// author が得られるのは message だけである。これが throw する時点で生成は失われ、
+// retry もないため、最初の一つだけでなく失敗した rule をすべて明示しなければならない。
 const carried = (items: string[], extra = {}) => ({
   visual_kind: "formula", visual_type: "point", visual_content: "", visual_items: items, ...extra,
 });
@@ -148,8 +147,8 @@ assert.match(carryMessage([openChain, carried(["[carry] x=4", "y=x+1"])]), /直�
 assert.match(carryMessage([carried(["x+2=5", "x=3"]), carried(["[carry] x=3", "y=1"])]), /自動で囲まれた答え/);
 assert.match(carryMessage([openChain, carried(["[carry] x=3", "y=1"], { visual_content: "続き" })]),
   /visual_contentは空文字/);
-// Several rules hold at once here: nothing follows the carry, and a
-// continuation scene must not carry a heading of its own.
+// ここでは複数の rule が同時に成り立つ。carry の後に何もなく、continuation scene は
+// 自身の heading を持ってはならない。
 const many = carryMessage([openChain,
   carried(["[carry] x=3", "[text] おわり"], { visual_content: "続き" })]);
 assert.match(many, /続きとなる数式行/);
@@ -159,8 +158,8 @@ assert.doesNotThrow(() => assertFormulaCarry([openChain, carried(["[carry] x=3",
 assert.doesNotThrow(() => assertFormulaCarry([
   previous, { ...continued, visual_items: ["y=7"] },
 ]));
-// A substitution-only marker disables automatic answer boxing too, so its
-// unfinished result remains eligible for a verified carry into the next scene.
+// substitution だけの marker は自動の答え boxing も無効にする。その未完了の結果が次の
+// scene への検証済み carry の対象であり続けるためである。
 assert.doesNotThrow(() => assertFormulaCarry([
   { ...base, visual_items: ["y=x+3", "[substitute: x=2 を代入] y=2+3"] },
   { ...base, visual_items: ["[carry] y=2+3", "[box] y=5"] },
@@ -171,9 +170,9 @@ for (const file of await readdir(new URL("../public/projects/", import.meta.url)
   if (!file.endsWith("/manifest.json")) continue;
   const manifest = JSON.parse(await readFile(new URL(`../public/projects/${file}`, import.meta.url), "utf8"));
   for (const scene of manifest.scenes) {
-    // Historical figures predate required ticks/axes fields and play directly
-    // from JSON. Validate the working changed here, without requiring those
-    // unrelated older payloads to migrate to today's entire figure schema.
+    // 過去の figure は必須の ticks/axes field より前のもので、JSON から直接再生される。
+    // 関係のない古い payload に現在の figure schema 全体への migration を求めず、ここで
+    // 変更した動作を検証する。
     const visual = scene.visual;
     if (visual?.kind === "formula") {
       assert.ok(sceneVisualSchema.safeParse(visual).success, `${file}: ${scene.scene_id}`);

@@ -5,14 +5,13 @@ import type { JobEvent } from "./api";
 import { playSample } from "./voiceSamples";
 
 /**
- * Roughly how long each step runs, in seconds. Only the shape of the creep
- * depends on these, never where it ends up — the next event is what settles a
- * step — so being wrong here costs a bar that fills a little fast or a little
- * slow, not one that lies about the milestone.
+ * 各 step のおおよその所要秒数。これに依存するのは creep の形だけで、到達地点は
+ * 次の event が step を確定するため変わらない。値が外れても bar の進みが少し速い・
+ * 遅いだけで、milestone を偽ることはない。
  */
 const APPROACH_SECONDS: Partial<Record<JobEvent["status"], number>> = {
   queued: 3,
-  // The Claude call. Far and away the longest wait in a run.
+  // Claude 呼び出し。実行中で群を抜いて長い待ち時間になる。
   script: 16,
   audio: 5,
   captions: 5,
@@ -20,23 +19,21 @@ const APPROACH_SECONDS: Partial<Record<JobEvent["status"], number>> = {
 };
 
 /**
- * Creeps toward the step's weight instead of jumping to it.
+ * step の重みへ飛ばずに、徐々に近づける。
  *
- * `runPipeline` reports a step as it *starts*, and the weights are how much of
- * the wall clock is done once that step *ends*. So 「台本を書いています」at
- * 0.70 means "this will be 70% when it finishes", not "we are at 70%" — but
- * the bar read it literally and sat at 70% for the whole Claude call, which is
- * the one step long enough for anyone to watch.
+ * `runPipeline` が報告するのは step の*開始時*で、重みはその step が*終わった時点*の
+ * 実時間に対する完了量である。したがって「台本を書いています」の 0.70 は「終われば
+ * 70%」であって「今70%」ではない。しかし bar は文字どおり読んで Claude 呼び出しの
+ * 全時間を 70% で止まっていた。これは誰の目にも留まるほど長い唯一の step である。
  *
- * The approach is exponential, so it never quite arrives: only the next event
- * completes a step, and a bar that reached the target early would stall just
- * as visibly as one that jumped there.
+ * 近づき方は exponential なので、完全には届かない。step を完了させるのは次の event
+ * だけであり、早く目標に着いた bar も、飛んで着いた bar と同じくらい目立って止まる。
  */
 const useCreepingProgress = (job: JobEvent) => {
   const settled = job.status === "done" || job.status === "error";
   const [shown, setShown] = useState(0);
-  /* The rendered value, kept in a ref so a new step can pick up exactly where
-     the last one left off without making `shown` an effect dependency. */
+  /* `shown` を effect dependency にせず、次の step が前の終了位置を正確に引き継げる
+     よう、描画値は ref に保つ。 */
   const latest = useRef(0);
 
   useEffect(() => {
@@ -50,8 +47,8 @@ const useCreepingProgress = (job: JobEvent) => {
     const startedAt = performance.now();
     const tau = (APPROACH_SECONDS[job.status] ?? 8) * 1000;
 
-    // Coarser than a frame on purpose: the fill already carries a 0.4s CSS
-    // transition, so this only has to keep the target moving.
+    // 意図して frame より粗くする。fill にはすでに 0.4s の CSS transition があり、
+    // ここでは目標を動かし続ければ足りる。
     const timer = setInterval(() => {
       const elapsed = performance.now() - startedAt;
       const next = job.progress - (job.progress - from) * Math.exp(-elapsed / tau);
@@ -124,10 +121,9 @@ export const Create: React.FC<{
 
         <div className="field">
           <span className="field__label">声</span>
-          {/* A select rather than chips: fourteen of them would be three rows
-              of scrolling, and this is a set-and-forget choice. Picking one
-              plays it, because the label narrows the field down but only the
-              sample settles it. */}
+          {/* chip ではなく select にする。14個の chip なら三行にわたって scroll し、
+              これは一度選べば済む設定だからである。選択時に再生するのは、label は候補を
+              絞れても、決め手になるのは sample だけだからである。 */}
           <div className="voice">
             <select
               value={voice}

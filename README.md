@@ -125,7 +125,7 @@ Vercel は TypeScript を**ファイル単位でトランスパイルするだ�
 
 ```ts
 import { runPipeline } from "../src/pipeline/run.js";   // ← 実体は run.ts
-import { coursePrompts } from "./prompts/index.js";     // ← ESM にディレクトリ解決は無い
+import { coursePrompts } from "./prompts/math.js";      // ← ESM にディレクトリ解決は無い
 ```
 
 ローカルで拡張子なしでも動くのは tsx と Vite が補完するからで、素の Node だけが厳格です。
@@ -288,7 +288,7 @@ ElevenLabs と併用するときは `CAPTION_SOURCE=whisper` が必要です。
 | `xにじょう` | `x \| に \| じょう` | ✗ 「の」を省くと割れる |
 | `xのにじょう` | `x \| の \| にじょう` | ○ ひらがなは読みが一意 |
 
-そのため [shared.ts](src/prompts/shared.ts) は `x^2` を **「xのにじょう」**と書かせ、
+そのため [scriptFormat.ts](src/prompts/scriptFormat.ts) は `x^2` を **「xのにじょう」**と書かせ、
 [captionSpelling.ts](src/pipeline/captionSpelling.ts) が字幕側で `x²` に戻します。
 `のにじょう` は `の` `に` `じょう` の3トークンに割れることがあるので、
 語が揃うまで結合してから変換します。

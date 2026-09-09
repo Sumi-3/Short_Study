@@ -6,10 +6,10 @@ import { compileExpression } from "./expression";
 
 export type PlotCurve = {
   expr: string;
-  /** y(t) when the curve is parametric; `expr` is then x(t). */
+  /** curve が parametric のときの y(t)。その場合 `expr` は x(t)。 */
   exprY: string | null;
   label: string;
-  /** Which side of the curve belongs to the shaded region. */
+  /** shade する region が curve のどちら側か。 */
   region: "above" | "below" | null;
 };
 
@@ -18,7 +18,7 @@ export type PlotData = {
   yRange: [number, number];
   curves: PlotCurve[];
   tRange: [number, number] | null;
-  /** Area under the first curve, for integrals. Empty tuple means none. */
+  /** 積分用の、最初の curve 下の area。空 tuple はなしを表す。 */
   shade: [number, number] | null;
   points: { x: number; y: number; label: string }[];
 };
@@ -28,7 +28,7 @@ const HEIGHT = 800;
 const PAD = 46;
 const SAMPLES = 240;
 
-/** Nice-ish tick step so a range like [-3, 3] gets 1s, not 0.6s. */
+/** [-3, 3] のような range で0.6ではなく1刻みになる、ほどよい tick step。 */
 const tickStep = (span: number) => {
   const raw = span / 6;
   const magnitude = 10 ** Math.floor(Math.log10(raw));
@@ -47,12 +47,11 @@ const ticks = (min: number, max: number) => {
 };
 
 /**
- * A coordinate plane with one or more function curves, drawn as SVG.
+ * 1本以上の function curve を持つ coordinate plane を SVG で描く。
  *
- * The curve reveals left-to-right by trimming the sampled path rather than by
- * animating `stroke-dashoffset`: dash animation depends on the browser's own
- * path measurement, and trimming keeps the frame a pure function of the frame
- * number, which is what Remotion needs.
+ * curve は `stroke-dashoffset` の animation でなく、sample 済み path を切って左から右へ出す。dash animation は
+ * browser 自身の path 測定に依存するが、切り出しなら frame を frame number の純粋な関数にでき、これは
+ * Remotion に必要な性質である。
  */
 export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
   data,
@@ -61,23 +60,21 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
-  // Skip the scene's own accent so the curves stay distinguishable from it.
+  // curve を scene 自身の accent と区別できるよう、その色は飛ばす。
   const curveColors = theme.accents.filter((c) => c !== accent);
 
   const plotWidth = WIDTH - PAD * 2;
   const plotHeight = HEIGHT - PAD * 2;
 
   /**
-   * The window actually drawn.
+   * 実際に描く window。
    *
-   * A function plot stretches each axis independently to fill the frame, which
-   * is right: nothing about `y = x²` depends on the two axes sharing a scale.
-   * A circle is the opposite — drawn on stretched axes it is an ellipse, and
-   * the picture then contradicts the equation next to it.
+   * function plot は各 axis を独立に伸ばして frame を満たす。それで正しい。`y = x²` には両 axis が同じ
+   * scale を共有すべき理由がない。一方 circle は逆で、伸ばした axis では ellipse になり、絵が横の式に
+   * 矛盾する。
    *
-   * So the scale is made uniform whenever roundness is at stake: a parametric
-   * curve is always a shape rather than a graph, and equal x and y spans are
-   * how someone asks for a square window.
+   * そこで丸さが問題になる場合は scale を uniform にする。parametric curve は常に graph でなく shape であり、
+   * x と y の span が等しいことは square window を求める表現でもある。
    */
   const [xMin, xMax, yMin, yMax] = useMemo(() => {
     const [x0, x1] = data.xRange;
@@ -109,7 +106,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
             ? {
                 ...curve,
                 fn: null,
-                // Parametric: both coordinates are functions of t.
+                // parametric では、両 coordinate が t の function になる。
                 x: compileExpression(curve.expr, "t"),
                 y: compileExpression(curve.exprY, "t"),
               }
@@ -127,14 +124,11 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
   const [tMin, tMax] = data.tRange ?? [0, Math.PI * 2];
 
   /**
-   * The region satisfying every inequality, as one polygon per run of columns
-   * where it is non-empty.
+   * すべての inequality を満たす region。空でない column の連続区間ごとに1 polygon とする。
    *
-   * Solved column by column rather than by scanning the plane: each constraint
-   * is `y > f(x)` or `y < f(x)`, so at a given x the region is a single
-   * interval and intersecting them is just tightening a bound. The runs are
-   * what handle a region that is in two pieces, as a pair of inequalities on a
-   * parabola can be.
+   * plane を走査せず column ごとに解く。各 constraint は `y > f(x)` または `y < f(x)` なので、ある x では
+   * region は1 interval になり、その intersection は境界を絞るだけでよい。run に分けることで、parabola 上の
+   * inequality の組のように region が2片に分かれる場合を扱える。
    */
   const regionPolygons = useMemo(() => {
     const constraints = compiled.filter((curve) => curve.region && curve.fn);
@@ -202,13 +196,12 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
     >
     <svg
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-      // `meet` scales the plot to whatever the stage actually leaves it: full
-      // width when the headline is short, smaller when it wraps. A fixed
-      // `height: auto` would overflow the moment the box got shorter.
+      // `meet` は stage が実際に残した大きさへ plot を scale する。headline が短ければ全幅、wrap すれば
+      // 小さくなる。固定の `height: auto` では box が短くなった瞬間に overflow する。
       preserveAspectRatio="xMidYMid meet"
       style={{ width: "100%", height: "100%", overflow: "visible" }}
     >
-      {/* Grid */}
+      {/* grid */}
       <g stroke={withAlpha(theme.ink, 0.12)} strokeWidth={1}>
         {ticks(xMin, xMax).map((x) => (
           <line key={`gx${x}`} x1={toX(x)} y1={PAD} x2={toX(x)} y2={HEIGHT - PAD} />
@@ -218,7 +211,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
         ))}
       </g>
 
-      {/* Axes, wiping outward from the origin */}
+      {/* origin から外へ wipe する axis。 */}
       <g stroke={withAlpha(theme.ink, 0.85)} strokeWidth={3} strokeLinecap="round">
         {zeroY !== null ? (
           <line
@@ -238,7 +231,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
         ) : null}
       </g>
 
-      {/* Tick labels */}
+      {/* tick label。 */}
       {zeroY !== null
         ? ticks(xMin, xMax)
             .filter((x) => x !== 0)
@@ -277,9 +270,8 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
             ))
         : null}
 
-      {/* Shaded area — the visual for an integral. When the scene describes a
-          region instead, `shade` is its x-bound and the polygons above own the
-          fill, so this stands down. */}
+      {/* shade area。積分を表す visual。scene が代わりに region を説明する場合、`shade` は x-bound となり、
+          上の polygon が fill を担うため、こちらは描かない。 */}
       {data.shade && compiled[0]?.fn && regionPolygons.length === 0
         ? (() => {
             const [from, to] = data.shade;
@@ -311,7 +303,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
           })()
         : null}
 
-      {/* The region an inequality describes, under the curves that bound it. */}
+      {/* inequality が表す region。境界となる curve の下に置く。 */}
       {regionPolygons.map((polygon, index) => (
         <polygon
           key={`region${index}`}
@@ -321,7 +313,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
         />
       ))}
 
-      {/* Curves */}
+      {/* curve。 */}
       {compiled.map((curve, index) => {
         const color = curveColors[index % curveColors.length];
         const start = (0.8 + index * 0.5) * fps;
@@ -332,14 +324,13 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
           theme.easing,
         );
 
-        // Break the path wherever the curve leaves the plotted window, so a
-        // pole like 1/x does not get joined across the asymptote.
+        // curve が描画 window を出る箇所で path を切り、1/x のような pole を asymptote 越しにつながない。
         const segments: string[][] = [[]];
         const visible = Math.round(SAMPLES * drawn);
         const slack = yMax - yMin;
         for (let i = 0; i <= visible; i++) {
           const at = i / SAMPLES;
-          // A parametric curve is traced in t; a function is swept in x.
+          // parametric curve は t でたどり、function は x で走査する。
           const px = curve.fn
             ? xMin + (xMax - xMin) * at
             : curve.x!(tMin + (tMax - tMin) * at);
@@ -380,8 +371,8 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
         );
       })}
 
-      {/* Marked points — drawn last so nothing covers the answer. */}
-      {/* Older manifests predate this field. */}
+      {/* mark 済み point。answer を何も覆わないよう最後に描く。 */}
+      {/* 旧 manifest はこの field 導入前のもの。 */}
       {(data.points ?? []).map((point, index) => {
         const start = (1.9 + index * 0.35) * fps;
         const pop = clamped(
@@ -398,7 +389,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
 
         return (
           <g key={`${point.x},${point.y}`}>
-            {/* A ring that shrinks onto the point, so the eye lands on it. */}
+            {/* point へ縮む ring。目線をその point に着地させる。 */}
             <circle
               cx={cx}
               cy={cy}
@@ -411,8 +402,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
             <circle cx={cx} cy={cy} r={11} fill={accent} opacity={pop} />
             {point.label ? (
               <text
-                // Below-right: above-right collides with the x-axis and its
-                // tick labels whenever the point sits close to y = 0.
+                // 右下に置く。point が y = 0 に近いと右上では x-axis とその tick label に衝突するため。
                 x={cx + 22}
                 y={cy + 44}
                 fill={accent}
@@ -420,7 +410,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
                 fontWeight={700}
                 fontFamily={theme.fontFamily}
                 opacity={pop}
-                // A dark outline keeps it readable wherever it lands.
+                // 着地位置を問わず読めるよう、暗い outline を置く。
                 stroke={theme.bgDeep}
                 strokeWidth={6}
                 paintOrder="stroke"
@@ -432,7 +422,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
         );
       })}
 
-      {/* Legend */}
+      {/* legend。 */}
       {compiled.map((curve, index) => {
         if (!curve.label) {
           return null;

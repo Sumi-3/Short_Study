@@ -1,22 +1,22 @@
 import { courseOf, type CourseId } from "./courses.js";
 import type { Manifest, Subject } from "./types.js";
 
-/** One card in the feed. */
+/** feed 内の 1 枚の card。 */
 export type ShortSummary = {
   slug: string;
   topic: string;
   /**
-   * The question as bullet points — what the library card shows. Empty on
-   * shorts made before it was recorded, and the card falls back to `topic`.
+   * ライブラリ card に出す、箇条書きの問題文。記録導入前に作った short では空で、card は
+   * `topic` へフォールバックする。
    */
   outline: string[];
-  /** The hook scene's on-screen line — what the thumbnail leads with. */
+  /** thumbnail の先頭に出す hook scene の画面文言。 */
   headline: string;
   course: CourseId;
   subject: Subject;
-  /** Curriculum unit, e.g. "数II 微分・積分の考え". Empty if it could not be filed. */
+  /** カリキュラムの単元。例: "数II 微分・積分の考え"。分類できなければ空。 */
   unit: string;
-  /** Small category under that unit. Empty on shorts made before it was recorded. */
+  /** その単元の小分類。記録導入前に作った short では空。 */
   subunit: string;
   createdAt: string;
   manifestSrc: string;
@@ -37,9 +37,8 @@ export const summarize = (
     slug,
     topic: manifest.topic,
     outline: manifest.outline ?? [],
-    // The hook's on-screen line is written to be readable at a glance, which is
-    // exactly what a thumbnail needs — the raw topic is the user's whole prompt
-    // sentence.
+    // hook の画面文言は一目で読めるよう書かれており、thumbnail が必要とするものに一致する。
+    // 生の topic はユーザーの prompt 全文である。
     headline: hook?.visual_content ?? manifest.topic,
     course: courseOf(manifest),
     subject: manifest.subject ?? "general",

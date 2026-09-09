@@ -11,8 +11,8 @@ const { themeOf, ThemeProvider } = await import("../src/remotion/theme.js");
 const { figureRoleColor } = await import("../src/remotion/math/figureRoleColor.js");
 const { Figure } = await import("../src/remotion/math/Figure.js");
 
-// Inspect the SDK's actual outbound JSON schema, not the larger local union
-// that accepts booleans. A compatibility branch must never enter API grammar.
+// boolean も受け入れる大きな local union ではなく、SDK が実際に送出する JSON schema を
+// 調べる。互換用 branch が API grammar に入ってはならない。
 const wire = zodOutputFormat(apiScriptSchema).schema as any;
 const scene = wire.properties.scenes.items;
 assert.equal(Object.keys(scene.properties).length, 19);
@@ -48,9 +48,8 @@ const blend = (over: number[], under: number[], alpha: number) => over.map((v, i
 
 const theme = themeOf();
 let minimum = Infinity;
-// Include every combination of maximum background washes plus the veil
-// and highlighted faces, not just a bare solid swatch. Maxima overlap more
-// than the real moving blobs do, making this a conservative stroke check.
+// 単なる無地の swatch でなく、最大の background wash の全組合せに veil と強調面を
+// 重ねて含める。最大値同士は実際に動く blob より重なり、保守的な stroke 検査になる。
 const grounds = [theme.bg, theme.bgDeep].flatMap((ground) => Array.from({ length: 8 }, (_, mask) => {
   let color = rgb(ground);
   for (const [i, accent] of [2, 1, 4].entries()) {
@@ -67,8 +66,8 @@ for (const emphasis of [0, 1, 2, 3, 4, 5, false, true] as const) {
   assert.ok(data?.kind === "figure");
   data.segments[0].emphasis = emphasis;
   assert.ok(sceneVisualSchema.safeParse(data).success);
-  // Deliberately use a different scene accent: true must retain the old
-  // accent while a role must keep the same color when the scene changes.
+  // 意図して別の scene accent を使う。true は従来どおりの accent を保ち、role は
+  // scene が変わっても同じ色を保たなければならない。
   const accent = theme.accents[4];
   const color = emphasis === true ? accent : emphasis ? figureRoleColor(theme, emphasis) : theme.inkDim;
   const Component = () => React.createElement(ThemeProvider, { value: theme }, React.createElement(Figure, { data, accent }));
@@ -99,8 +98,8 @@ for (const file of await readdir(new URL("../public/projects/", import.meta.url)
   const manifest = JSON.parse(await readFile(new URL(`../public/projects/${file}`, import.meta.url), "utf8"));
   for (const scene of manifest.scenes) {
     if (scene.visual?.kind !== "figure") continue;
-    // These files also predate ticks/circles/axes. Validate emphasis itself
-    // and render their unchanged payload rather than requiring migration.
+    // これらの file も ticks/circles/axes 導入前のものである。migration を要求せず、
+    // emphasis 自体を検証して未変更の payload を render する。
     const figureSchema = sceneVisualSchema.options.find((option) => option.shape.kind.value === "figure")! as any;
     for (const segment of scene.visual.segments) {
       assert.ok(figureSchema.shape.segments.element.shape.emphasis.safeParse(segment.emphasis).success, file);

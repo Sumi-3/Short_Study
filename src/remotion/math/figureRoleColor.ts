@@ -9,14 +9,11 @@ const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a
 const blend = (over: number[], under: number[], alpha: number) => over.map((value, index) => value * alpha + under[index] * (1 - alpha));
 
 /**
- * Roles use the marker palette, independent of the scene's rotating accent.
- * Whiteboard's green is fine as a large wash but too light for a small edge
- * label on its grey ground. Move only diagram role colors toward the theme's
- * ink until both gradient endpoints give text contrast. The background's
- * three washes and highlighted face can also sit under an edge, so reserve
- * stroke contrast even at their combined peak; labels have a bgDeep outline.
- * Changing the shared palette would also change problem cards and existing
- * boolean manifests.
+ * role は scene ごとに循環する accent とは独立して marker palette を使う。whiteboard の green は大きな
+ * wash にはよいが、grey ground 上の小さな edge label には明るすぎる。diagram role colour だけを theme の
+ * ink 側へ動かし、gradient 両端で text contrast を得る。background の3つの wash と highlight 済み face も
+ * edge 下に重なり得るため、その合成ピークでも stroke contrast を確保する。label には bgDeep outline がある。
+ * shared palette を変えると problem card と既存の boolean manifest まで変わってしまう。
  */
 export const figureRoleColor = (theme: Theme, role: number): string => {
   const source = theme.accents[role - 1] ?? theme.ink;

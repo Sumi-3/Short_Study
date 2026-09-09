@@ -10,26 +10,25 @@ export type JobStatus =
   | "error";
 
 /**
- * One line of the generation stream.
+ * 生成 stream の 1 行。
  *
- * The pipeline reports progress by yielding these rather than by updating a
- * record somewhere: a deployed build has no process that outlives the request,
- * so there is nowhere for a job table to live. The browser reads them straight
- * off the response body.
+ * pipeline はどこかの record を更新せずこれを yield して進捗を伝える。deployed build には
+ * request 後も生きる process がなく、job table を置く場所がないためである。browser は response
+ * body から直接読む。
  *
- * A leaf module on purpose — the web client imports this type, and anything it
- * pulled in transitively would have to survive a browser bundle.
+ * 意図して leaf module にする。web client がこの型を import するため、推移的に引くものはすべて
+ * browser bundle に耐えなければならない。
  */
 export type JobEvent = {
   status: JobStatus;
-  /** Japanese label for the current step, shown as-is in the UI. */
+  /** UI にそのまま出す、現在の工程の日本語ラベル。 */
   message: string;
-  /** 0–1, for a determinate progress bar. */
+  /** 確定進捗 bar 用の 0–1。 */
   progress: number;
-  /** Which system prompt this was generated with, chosen by the user. */
+  /** 生成 event の形を manifest とそろえるため保持する。 */
   course: CourseId;
   slug: string | null;
-  /** Relative to `public/` locally, an absolute URL when blob-backed. */
+  /** ローカルでは `public/` からの相対パス、blob 利用時は絶対 URL。 */
   manifestSrc: string | null;
   error: string | null;
 };

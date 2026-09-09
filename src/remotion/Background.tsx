@@ -2,16 +2,15 @@ import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 import { useTheme, withAlpha } from "./theme";
 
 /**
- * A soft colour wash.
+ * やわらかな色のにじみ。
  *
- * This used to be a solid circle behind `filter: blur(160px)`. That looked the
- * same but cost 74% of total render time — a full-frame blur pass, recomputed
- * every frame, three times over. A radial gradient paints the identical
- * falloff in one step, taking the 65s video from 168s to ~44s.
+ * 以前は `filter: blur(160px)` をかけた単色の円だった。見た目は同じでも、全画面の
+ * blur を毎フレーム3回計算するため、レンダー時間の74%を占めていた。radial gradient
+ * なら同じ減衰を一度で描けるため、65s の動画は168sから約44sになった。
  */
 const Blob: React.FC<{
   color: string;
-  /** Diameter of the visible wash, i.e. the old circle plus its blur spread. */
+  /** 見えているにじみの直径。以前の円と blur の広がりを合わせた値。 */
   size: number;
   from: [number, number];
   to: [number, number];
@@ -20,7 +19,7 @@ const Blob: React.FC<{
 }> = ({ color, size, from, to, period, phase }) => {
   const frame = useCurrentFrame();
   const { wash } = useTheme();
-  // Ping-pong so the loop never jumps, and stays cheap to render.
+  // 折り返し運動にしてループの継ぎ目をなくし、描画コストも抑える。
   const t = Math.abs((((frame + phase) % (period * 2)) / period) - 1);
 
   return (
@@ -44,7 +43,7 @@ const Blob: React.FC<{
 };
 
 /**
- * Lives outside the scene sequences so its motion is continuous across cuts.
+ * シーンの切れ目をまたいでも動きを連続させるため、各 Sequence の外に置く。
  */
 export const Background: React.FC = () => {
   const theme = useTheme();
@@ -81,7 +80,7 @@ export const Background: React.FC = () => {
         period={180}
         phase={150}
       />
-      {/* The veil softens the washes so text stays legible. */}
+      {/* にじみを和らげ、文字の可読性を保つための veil。 */}
       <AbsoluteFill style={{ backgroundColor: theme.veil }} />
     </AbsoluteFill>
   );

@@ -4,18 +4,16 @@ import { themeOf } from "../../src/remotion/theme";
 import type { ShortSummary } from "./api";
 
 /**
- * One row of the library.
+ * library の一行。
  *
- * The card used to be the video's own opening frame, held still. That reads
- * beautifully at full width and not at all at half of one — a 1080px stage
- * scaled onto a two-up card puts the question at 9px. So the library stopped
- * being a wall of posters: one card per row, as tall as it needs to be, and
- * the question broken into the points it is made of.
+ * card は以前、動画自身の開始フレームを静止させたものだった。全幅なら美しく読めるが、
+ * 半分の幅ではまったく読めない。1080px の stage を二列 card に縮めると問題文は 9px に
+ * なる。そこで library は poster の壁をやめ、一行一 card として必要な高さを確保し、
+ * 問題を構成する points に分けた。
  *
- * The bullets come from the model (see OUTLINE_RULE), not from splitting the
- * question here. A card in a list is scanned rather than read, and knowing
- * which clause is a condition and which is the question asked is comprehension,
- * not punctuation.
+ * bullet はここで問題文を分割するのでなく model から得る（`OUTLINE_RULE` 参照）。
+ * 一覧中の card は熟読でなく走査される。どの節が条件でどれが問われていることかを
+ * 知るのは、句読点の問題ではなく理解に関わるからである。
  */
 export const LibraryCard: React.FC<{
   short: ShortSummary;
@@ -28,8 +26,8 @@ export const LibraryCard: React.FC<{
   const seconds = Math.round(short.durationInFrames / short.fps);
   const [menuOpen, setMenuOpen] = useState(false);
   const menu = useRef<HTMLDivElement>(null);
-  // The summary comes off a JSON API that may be an older deploy than this
-  // bundle, and a card is not worth taking the whole screen down for.
+  // summary を返す JSON API はこの bundle より古い deploy かもしれず、そのために
+  // card 一枚で画面全体を落とす価値はない。
   const points = short.outline ?? [];
   const menuItems = [
     {
@@ -61,8 +59,8 @@ export const LibraryCard: React.FC<{
 
     document.addEventListener("pointerdown", closeIfOutside);
     document.addEventListener("keydown", closeOnEscape);
-    // A menu anchored to a card should not float away from that card while a
-    // reader is moving through the library.
+    // card に紐づく menu が、reader が library を移動する間に card から離れて浮かない
+    // ようにする。
     window.addEventListener("scroll", closeOnScroll, true);
     return () => {
       document.removeEventListener("pointerdown", closeIfOutside);
@@ -108,8 +106,8 @@ export const LibraryCard: React.FC<{
             ))}
           </ul>
         ) : (
-          // Shorts made before the outline existed have only the question, and
-          // the question is a paragraph rather than a list.
+          // outline 導入前に作られた short には問題文しかなく、それは list ではなく
+          // paragraph として扱う。
           <p className="card__topic">
             <MathText text={short.topic} />
           </p>
@@ -143,9 +141,9 @@ export const LibraryCard: React.FC<{
                 role="menuitem"
                 onClick={(event) => {
                   event.stopPropagation();
-                  // Closed before the item runs: `onSelect` opens a native
-                  // confirmation, and a menu still standing behind a dialog the
-                  // reader has just dismissed is one more thing to put away.
+                  // item の実行前に閉じる。`onSelect` は native confirmation を開き、
+                  // reader が閉じた dialog の背後に menu まで残ると、片付けるものが一つ
+                  // 増えるためである。
                   setMenuOpen(false);
                   item.onSelect();
                 }}

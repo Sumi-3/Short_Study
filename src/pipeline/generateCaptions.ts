@@ -14,8 +14,7 @@ const captionsFromWordBoundaries = (boundaries: WordBoundary[]): Caption[] =>
   }));
 
 /**
- * Returns one caption array per scene, with timestamps relative to the start of
- * that scene's audio clip.
+ * 各 scene の caption 配列を返す。timestamp はその scene の audio clip 開始からの相対値。
  */
 export const generateCaptions = async ({
   sceneAudios,
@@ -37,14 +36,14 @@ export const generateCaptions = async ({
         captionsFromWordBoundaries(sceneAudio.wordBoundaries),
       );
     } else {
-      // Loaded on demand: whisper.cpp and its ffmpeg binary are far too large
-      // for a serverless bundle, and nothing on that path runs under `tts`.
+      // 必要時だけ読み込む。whisper.cpp と ffmpeg binary は serverless bundle には大きすぎ、
+      // `tts` ではこの経路を何も実行しないためである。
       const { captionsFromWhisper } = await import("./whisperCaptions.js");
       captionsPerScene.push(await captionsFromWhisper(sceneAudio.filePath));
     }
   }
 
-  // Kept next to the audio so the intermediate output is inspectable.
+  // 中間出力を確認できるよう audio の隣に保管する。
   fs.writeFileSync(
     path.join(paths.projectDir(slug), "captions.json"),
     JSON.stringify(captionsPerScene, null, 2),

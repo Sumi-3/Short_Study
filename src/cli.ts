@@ -55,7 +55,7 @@ const parseArgs = (argv: string[]) => {
   };
 };
 
-/** Topics are Japanese, so derive a filesystem-safe name rather than slugifying. */
+/** topic は日本語なので、slugify せず filesystem-safe な名前を導く。 */
 const makeSlug = (topic: string) => {
   const stamp = new Date()
     .toISOString()

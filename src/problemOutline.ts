@@ -1,9 +1,8 @@
 export type OutlineQuestion = { number: string | null; text: string };
 
 /**
- * New outlines identify questions explicitly, because position alone loses
- * every question except the last. Old manifests still use that last-line
- * convention; keeping it here lets them play without regenerating content.
+ * 新しい outline は問いを明示的に識別する。位置だけでは最後以外の問いをすべて失うためである。
+ * 旧 manifest はまだ最終行規約を使うので、ここに残せば内容を再生成せず再生できる。
  */
 export const parseProblemOutline = (points: string[]) => {
   const lines = points.flatMap((point) => point.split("\n"))
@@ -22,8 +21,8 @@ export const parseProblemOutline = (points: string[]) => {
     if (match) {
       questions.push({ number: match[1].normalize("NFKC"), text: match[2] });
     } else {
-      // A wrapped question may contain its own condition or displayed formula.
-      // Keep it with that question instead of promoting it to a shared condition.
+      // 折り返された問いには独自の条件や表示数式を含み得る。共通条件へ昇格させず、その問いに
+      // 付けたままにする。
       questions.at(-1)!.text += `\n${line}`;
     }
   }

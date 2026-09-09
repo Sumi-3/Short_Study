@@ -1,10 +1,10 @@
 /**
- * A stacked fraction, sized to sit inside a line of running text.
+ * 文章の1行に収まる大きさの、上下に重ねた分数。
  *
- * Caption text is 66px at line-height 1.3, so each of its two line boxes is
- * 85.8px and the 212px band has no spare vertical room. Two 0.58em halves at
- * 1.08 line-height make a 1.253em (82.7px) stack; increasing that size lets a
- * two-line caption expand upward into the explanation.
+ * 字幕は 66px・line-height 1.3 なので、2行それぞれの行ボックスは85.8pxとなり、
+ * 212px の帯には縦方向の余裕がない。0.58em の上下2段を line-height 1.08 にすると
+ * 1.253em（82.7px）の積み重ねになる。これ以上大きくすると2行字幕が説明領域へ上に
+ * 広がってしまう。
  */
 export const Fraction: React.FC<{
   numerator: React.ReactNode;
@@ -18,23 +18,20 @@ export const Fraction: React.FC<{
       display: "inline-flex",
       flexDirection: "column",
       alignItems: "center",
-      // The bar, rather than the baseline of either half, is what should line
-      // up with the surrounding text.
+      // 周囲の文字とそろえるべきなのは上下どちらかのベースラインではなく、分数線。
       verticalAlign: "middle",
-      // Cards use 16px body text. A 0.58em fraction is only 9.28px there,
-      // while the 11px floor leaves the 66px video captions unchanged.
+      // カード本文は16pxで、0.58emの分数はそこで9.28pxにしかならない。11pxの下限なら
+      // 66pxの動画字幕は変えずに済む。
       fontSize: "max(0.68em, 11px)",
       lineHeight: 1.08,
-      // Against the 1em text on either side the stack reads as one glyph, so
-      // it needs the sidebearing a glyph would have.
+      // 両側の1em文字に対して1字のように読ませるため、通常の字形と同じ sidebearing が要る。
       margin: "0 0.12em",
     }}
   >
     <span>{numerator}</span>
     <span
       style={{
-        // A border rather than a character: it has to span whichever half is
-        // wider, which no glyph can do.
+        // 文字ではなく border にする。上下で広い方に渡る必要があり、それはどの字形にもできない。
         borderTop: "0.09em solid currentColor",
         width: "100%",
       }}
@@ -44,5 +41,5 @@ export const Fraction: React.FC<{
   </span>
 );
 
-/** Match the whole token merged from 「分の」; never infer bounds inside prose. */
+/** 「分の」から結合されたトークン全体だけに一致させ、本文中から境界を推測しない。 */
 export const WHOLE_FRACTION = /^((?:(?:0|[1-9][0-9]*|[A-Za-zΑ-ΡΣ-ω])?√)?(?:0|[1-9][0-9]*|[A-Za-zΑ-ΡΣ-ω]))\/([1-9][0-9]*|[A-Za-zΑ-ΡΣ-ω])$/;

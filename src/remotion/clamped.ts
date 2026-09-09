@@ -1,13 +1,11 @@
 import { interpolate, type EasingFunction } from "remotion";
 
 /**
- * `interpolate` with both ends clamped, and the theme's easing when one is
- * given.
+ * 両端を clamp し、指定されたときは theme の easing も使う `interpolate`。
  *
- * Every animation in this video is an entrance or an exit that has to hold its
- * end values, so 51 of the 54 interpolations spelled out the same two
- * `extrapolate` options. Naming them leaves the exceptions — the two
- * `perceptual-scale` scales — looking like the exceptions they are.
+ * この動画のアニメーションはすべて、終端値を保持すべき入場または退場である。そのため54個の
+ * interpolation のうち51個が同じ2つの `extrapolate` option を明記していた。これに名前を
+ * 付けると、例外である2つの `perceptual-scale` の scale が本当に例外として見える。
  */
 export function clamped(
   frame: number,

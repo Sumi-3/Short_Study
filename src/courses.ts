@@ -1,25 +1,23 @@
 import type { Subject } from "./types.js";
 
 /**
- * A course is what the user picks before typing: it selects the system prompt
- * Claude is given, and it groups the finished shorts in the feed.
- *
- * Several courses can share a subject (世界史 and 日本史 would both be
- * "history") while being taught completely differently.
+ * 現在のコースは数学だけでも、course metadata は API と manifest の境界に残す。名前付きの
+ * 1 値 union により新データが任意文字列を受け入れるのを防ぎ、`courseOf` は既存 manifest の
+ * 廃止済み値を math に畳み込む。
  */
 export const COURSE_IDS = ["math"] as const;
 export type CourseId = (typeof COURSE_IDS)[number];
 
 export type CourseMeta = {
   id: CourseId;
-  /** Shown on the picker chip and the thumbnail. */
+  /** picker chip と thumbnail に表示する。 */
   label: string;
   /**
-   * Used for narration and caption spelling. `null` leaves the subject to
-   * Claude when the course cannot determine it in advance.
+   * narration と字幕表記に使う。コースが教科を事前に決められない場合は `null` とし、
+   * Claude に委ねる。
    */
   subject: Subject | null;
-  /** Example input, shown in the composer while that course is selected. */
+  /** そのコース選択中に composer へ表示する入力例。 */
   placeholder: string;
 };
 
@@ -39,9 +37,8 @@ export const isCourseId = (value: unknown): value is CourseId =>
   typeof value === "string" && (COURSE_IDS as readonly string[]).includes(value);
 
 /**
- * Everything is maths now. Shorts generated while other courses existed still
- * carry their own `course`, so this exists to fold them in rather than leave
- * the feed with entries it cannot file.
+ * 現在はすべて数学である。他コースが存在した時期に生成した short には独自の `course` が残るため、
+ * feed に分類できない entry を残さず畳み込むためにこれを置く。
  */
 export const courseOf = (_value: { course?: string; subject?: string }): CourseId =>
   "math";

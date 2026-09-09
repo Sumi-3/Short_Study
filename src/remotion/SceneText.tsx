@@ -12,7 +12,7 @@ const Bullet: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
-  // Staggered so the list builds in time with the narration.
+  // narration に合わせて list が組み上がるよう、時間をずらす。
   const start = (0.9 + index * 0.45) * fps;
 
   return (
@@ -60,8 +60,8 @@ const Bullet: React.FC<{
 };
 
 /**
- * Hook, summary and bullet-list scenes — anything whose visual is words.
- * Scenes with no `visual` payload land here too, showing only the headline.
+ * hook、summary、bullet-list scene。visual が文字であるものを扱う。`visual` payload のない scene も
+ * ここへ来て、headline だけを表示する。
  */
 export const SceneText: React.FC<{
   scene: Scene;

@@ -9,12 +9,10 @@ import type { SceneVisual } from "../../types";
 type Data = Extract<SceneVisual, { kind: "scatter" }>;
 
 /**
- * 散布図. Points land one after another so the cloud builds up rather than
- * appearing whole — the shape of the scatter is the thing being read, and a
- * cloud that assembles gives the eye time to see it forming.
+ * 散布図。point を順に着地させ、cloud を一度に出さず組み立てる。読むべきなのは scatter の形であり、
+ * 形成される cloud なら目がその形を捉える時間を得られる。
  *
- * The trend line is optional and comes last, drawn through the same safe
- * expression evaluator the function plots use.
+ * trend line は任意で、function plot と同じ安全な expression evaluator を通して最後に描く。
  */
 export const Scatter: React.FC<{ data: Data; accent: string }> = ({
   data,
@@ -82,7 +80,7 @@ export const Scatter: React.FC<{ data: Data; accent: string }> = ({
         );
       })}
 
-      {/* Correlation, once the cloud is complete. */}
+      {/* cloud が完成してから correlation を示す。 */}
       {data.trend
         ? (() => {
             const draw = clamped(

@@ -8,19 +8,16 @@ import { parseProblemOutline } from "../problemOutline";
 import { useFitToStage } from "./useFitToStage";
 
 /**
- * The question, shown from the very first frame of the hook.
+ * hook の最初の frame から見せる問題。
  *
- * These shorts are meant to be rewatched, so the opening has to say what is
- * being solved before the narration gets there — otherwise the first ten
- * seconds are a voice over an empty screen, and a viewer scrubbing back has
- * nothing to land on.
+ * この short は見返される前提なので、opening は narration より先に何を解くかを示す必要がある。
+ * そうしないと最初の10秒は空画面に声だけが流れ、見返す人が戻ってきても目印がない。
  */
 /**
- * The curriculum unit, across the top of the frame.
+ * frame 上端に渡す curriculum unit。
  *
- * On a feed this is the line that decides whether the viewer stops: "数I 図形と
- * 計量" tells them what they are about to practise before they have read a word
- * of the question, so it gets the top of the screen and a size to match.
+ * feed 上で閲覧を止めるか決めるのはこの行である。「数I 図形と計量」なら問題文を読む前に何を練習するか
+ * 分かるため、画面最上部に置き、それに見合うサイズにする。
  */
 const UnitBanner: React.FC<{
   unit: string;
@@ -71,56 +68,50 @@ const UnitBanner: React.FC<{
   );
 };
 
-/** The question box's own frame, shared by the video and the poster. */
+/** video と poster で共有する、question box 自身の枠。 */
 const CARD_PADDING_Y = 26;
 const CARD_PADDING_X = 30;
 const CARD_BORDER = 3;
 const CARD_LINE_HEIGHT = 1.55;
 
-/** 62px reads as 10px on a two-up card; the unit is what the library is
- *  browsed by, so on a poster it is set larger. */
+/** 62px は2列 card では10pxに見える。library は unit で探すため、poster ではより大きくする。 */
 const UNIT_SIZE = 62;
 const POSTER_UNIT_SIZE = 84;
 
 /**
- * A poster runs to the edges of the frame.
+ * poster は frame の端まで使う。
  *
- * The video's margins exist so nothing important lands where a phone's UI or a
- * platform's own furniture sits over the picture. A still card has none of
- * that on top of it, and every pixel it gives back to the margin is a pixel
- * the question is not using, so the box is pulled out to `POSTER_SAFE_X` and
- * the banner is pulled up with it.
+ * video の margin は phone UI や platform の部品が重なる場所に重要なものを置かないためにある。still card
+ * にはそれが重ならず、margin に返す1 pixel ごとに question が使える幅を失う。そこで box は
+ * `POSTER_SAFE_X` まで広げ、banner もそれに合わせて上げる。
  */
 const POSTER_SAFE_X = 32;
 const POSTER_SAFE_TOP = 56;
-/** Clear of the unit banner: 84px of type over a rule, hung at the top inset. */
+/** 上端 inset に置く、rule 上の84px type の unit banner を避ける位置。 */
 const POSTER_TOP = 200;
-/** Room for the subunit-and-running-time strip the home screen draws on top. */
+/** home screen が重ねる subunit と running-time の strip 用領域。 */
 const POSTER_FOOT = 180;
 /**
- * The question box on a poster is not sized by its text — it spans everything
- * between the banner and that strip, so a one-line question is as full a card
- * as a six-line one.
+ * poster の question box は text の高さで決めず、banner と strip の間すべてに広げる。1行問題でも
+ * 6行問題と同じく、満ちた card になる。
  */
 const POSTER_BOX_OUTER = layout.height - POSTER_TOP - POSTER_FOOT;
-/** Inside its padding and border. */
+/** padding と border の内側。 */
 const POSTER_BOX_HEIGHT = POSTER_BOX_OUTER - CARD_PADDING_Y * 2 - CARD_BORDER * 2;
-/** Inside the box: the frame less the safe margins, the padding and the border. */
+/** box 内部。frame から safe margin、padding、border を除いた幅。 */
 const POSTER_BOX_WIDTH =
   layout.width - POSTER_SAFE_X * 2 - CARD_PADDING_X * 2 - CARD_BORDER * 2;
-/** How much of a row real text actually reaches before it has to break. */
+/** 実際の text が折り返すまでに row のどこまで到達するか。 */
 const PACKING = 0.92;
-/** Numbered questions need a hanging indent; conditions use the full width. */
+/** 番号付き question には hanging indent が要り、condition は全幅を使う。 */
 const QUESTION_GUTTER = 1.8;
 
 /**
- * Roughly how wide a string sets, in ems.
+ * string の組み幅を em で概算する。
  *
- * Japanese is square — one character, one em — and the latin and digits mixed
- * through a maths question are a little over half that. The cut is at latin-1
- * rather than at the CJK block, because 「、」「：」「△」 all set full width in a
- * Japanese face however low their code points are. Close enough to count lines
- * with, which is all it is for.
+ * 日本語は1文字1emの正方形で、数学問題に混じる latin と数字はその少し半分超である。境界を CJK block
+ * でなく latin-1 にするのは、「、】【：」「△」はいずれも code point が低くても日本語 font では全幅に
+ * 組まれるためである。line 数を数えるには十分であり、それ以上の用途はない。
  */
 const emsOf = (text: string) => {
   let ems = 0;
@@ -131,30 +122,24 @@ const emsOf = (text: string) => {
 };
 
 /**
- * The largest size at which the whole question still fits the poster's box.
+ * 問題全体が poster の box にまだ収まる最大サイズ。
  *
- * Not a formula over the character count, because the question keeps its own
- * line breaks: a break ends a line wherever it falls, so 「…求めよ。」 followed
- * by three short lines costs four rows however few characters it holds. The
- * only honest way to count the rows is to lay each segment out, so this walks
- * the sizes down until they fit.
+ * 文字数に対する式にはしない。question は固有の改行を保ち、改行は位置を問わず1行を終える。つまり
+ * 「…求めよ。」の後に短い3行があれば、文字数にかかわらず4 rowを使う。row 数を正しく数えるには
+ * segment ごとに layout するしかないため、収まるまで size を下げていく。
  *
- * There is no readability floor: losing a condition changes the problem, so
- * unusually long questions must get smaller rather than lose their ending.
- * DOM fitting covers the dividers, question gaps and actual font metrics that
- * this estimate cannot count, including overflow at the last positive size.
- * The ceiling is what a short question gets: 「∫_0^π …を求めよ。」 is 28 characters, and left to fill
- * the box it came out in letters a fifth of the frame tall — a slogan rather
- * than a question. Past 130 the box is better left with air in it.
+ * 可読性の下限は設けない。condition を落とすと問題が変わるため、特に長い question は末尾を失うより
+ * 小さくする。DOM fitting は、この見積もりでは数えられない divider、question gap、実際の font metrics、
+ * 最後の正の size での overflow も扱う。上限は短い question 用である。「∫_0^π …を求めよ。」は28文字で、
+ * box 全体を満たさせると文字が frame 高の5分の1になり、問題でなく slogan に見えた。130を超えたら
+ * box には余白を残す方がよい。
  */
 const posterFontSize = (segments: { text: string; numbered: boolean }[]) => {
   for (let size = 130; size > 2; size -= 2) {
-    // Whole characters, and not quite the full width: a row breaks at a word
-    // or a kinsoku boundary, never mid-character and rarely at the last em
-    // that would have fitted. Rounding down matters most at the large sizes,
-    // where a row is only four or five characters wide to begin with.
-    // Only numbered rows spend width on a hanging indent. Charging every
-    // condition or unnumbered question for it would shrink the poster early.
+    // 文字は分断せず、幅も完全には使わない。row は word または kinsoku の境界で折れ、文字の途中や、
+    // 収まる最後の em で折れることはまれである。切り捨ては、そもそも1 row が4〜5文字しかない大きな
+    // size で特に重要になる。hanging indent の幅を使うのは番号付き row だけで、すべての condition や
+    // 番号なし question に課すと poster が早く縮む。
     const rows = segments.reduce((total, segment) => {
       const emsPerRow = Math.max(1, Math.floor(
         (POSTER_BOX_WIDTH / size) * PACKING - (segment.numbered ? QUESTION_GUTTER : 0),
@@ -173,10 +158,10 @@ const posterFontSize = (segments: { text: string; numbered: boolean }[]) => {
 
 const ProblemCard: React.FC<{
   text: string;
-  /** The question as its parts. Falls back to `text` when a short has none. */
+  /** 分割した question。short にそれがなければ `text` へ fallback する。 */
   points: string[];
   accent: string;
-  /** A still card: no captions are coming, so the question takes the frame. */
+  /** still card。caption は来ないため question が frame を使う。 */
   poster?: boolean;
 }> = ({ text, points, accent, poster }) => {
   const frame = useCurrentFrame();
@@ -187,19 +172,17 @@ const ProblemCard: React.FC<{
   const outlined = conditions.length + questions.length > 0;
   const lines = outlined
     ? [...conditions.map((text) => ({ text, numbered: false })),
-      // Matches what is actually drawn below, so the poster estimate does not
-      // reserve a gutter for a lone question that shows no number.
+      // 実際に下で描く内容と合わせ、番号を表示しない単独 question のために poster 見積もりが gutter を
+      // 予約しないようにする。
       ...questions.map((question) => ({
         text: question.text,
         numbered: question.number !== null && questions.length > 1,
       }))]
     : [{ text, numbered: false }];
   const measured = lines.map((line) => line.text).join("\n");
-  // The opening can spend its vertical space on complete sentences. Start
-  // larger even for long questions, then fit the actual wrapped block instead
-  // of silently dropping the thirteenth line (often the second question).
-  // Posters estimate up to 130px, with no readability floor: the library has
-  // no caption band, but even its longer questions must keep every condition.
+  // opening は縦の空間を完全な文に使える。長い question でもまず大きくし、13行目（多くは2問目）を
+  // 黙って落とさず、実際に wrap された block を fit する。poster は130pxまで見積もり、可読性下限を
+  // 置かない。library には caption band がないが、長い question でもすべての condition を保つ必要がある。
   const fontSize = poster
     ? posterFontSize(lines)
     : measured.length > 200 ? 44 : measured.length > 130 ? 48
@@ -217,18 +200,14 @@ const ProblemCard: React.FC<{
         translate: clamped(frame, [0, 0.5 * fps], ["0px -24px", "0px 0px"], theme.easing),
       }}
     >
-      {/* No 問題 chip. The card is the first thing the video shows, under the
-          unit banner and around the question itself — nothing else it could be
-          announcing — and the poster has gone without one all along. */}
+      {/* 問題 chip は置かない。card は video が最初に見せるもので、unit banner の下、question 自身の周囲に
+          あるため、他に告知できるものがない。poster も一貫して chip なしである。 */}
       <div
         style={{
           /*
-           * The box that knows how much room there is, not the box that gets
-           * painted. Those were one element, which meant the plate always
-           * stood as tall as the stage: a four-line question sat in the
-           * middle of twelve lines of empty border. The fitter still needs a
-           * definite height to measure against, so this keeps `flex: 1` and
-           * the visible plate below hugs the text instead.
+           * 描画する box ではなく、使える余地を知る box。以前は両者が1 element で、plate は常に stage と
+           * 同じ高さになり、4行 question が12行分の空 border の中央にあった。fitter には測定対象として
+           * definite な高さがなお必要なので、ここは `flex: 1` を保ち、下の見える plate だけが text に沿う。
            */
           flex: 1,
           minHeight: 0,
@@ -240,14 +219,11 @@ const ProblemCard: React.FC<{
           textShadow: shadowOf(theme),
         }}
       >
-        {/* A bounded viewport lets the shared fitter count labels, dividers,
-            wrapped questions and webfont metrics together. Full text takes
-            priority over the nominal size only when that measured block spills. */}
-        {/* On a poster the available space is known. A percentage inside the
-            flex-sized parent can be indefinite and grow with its content;
-            measuring that as the budget would approve the very overflow we
-            need to shrink. Use composition pixels, unaffected by Thumbnail's
-            display scale, and leave the video's measurement path unchanged. */}
+        {/* 上限のある viewport なら shared fitter が label、divider、wrap 済み question、webfont metrics を
+            まとめて数えられる。測定済み block があふれたときだけ、完全な text を nominal size より優先する。 */}
+        {/* poster では利用可能な空間が分かっている。flex-sized parent 内の percentage は indefinite となって
+            content とともに伸び得る。それを budget として測ると、縮めるべき overflow 自体を許してしまう。
+            Thumbnail の display scale に影響されない composition pixel を使い、video の測定 path は変えない。 */}
         <div ref={viewportRef} style={{ height: poster ? POSTER_BOX_OUTER : "100%", minHeight: 0, display: "flex", alignItems: "center" }}>
           <div
             ref={contentRef}
@@ -267,8 +243,8 @@ const ProblemCard: React.FC<{
             {outlined ? (
               <>
                 {conditions.length > 0 && !poster ? (
-                  // A fixed label size avoids the old 0.48em heading shrinking
-                  // to 15px precisely when a long question needs orientation.
+                  // 固定 label size にして、長い question が道案内を必要とするまさにその時に、以前の0.48em
+                  // heading が15pxまで縮むのを防ぐ。
                   <div style={{ color: theme.inkDim, fontWeight: 900, fontSize: 36, letterSpacing: "0.14em", lineHeight: 1.2, marginBottom: 16 }}>
                     条件
                   </div>
@@ -279,16 +255,13 @@ const ProblemCard: React.FC<{
                 <div style={conditions.length ? { marginTop: "0.35em", paddingTop: "0.35em", borderTop: `2px solid ${withAlpha(accent, 0.5)}` } : undefined}>
                   {questions.map((question, index) => (
                     <div key={index} style={{ display: "flex", alignItems: "baseline", gap: "0.25em", marginTop: index ? "0.25em" : 0 }}>
-                      {/* Only numbered rows need a gutter. Omitting the span
-                          also removes the flex gap for unnumbered rows, so
-                          either kind can wrap naturally even in a mixed list.
+                      {/* gutter が要るのは番号付き row だけ。span を省くと番号なし row の flex gap も消え、
+                          混在 list でもどちらも自然に wrap できる。
 
-                          A lone question is shown without its number. The
-                          number still has to exist in the data — the parser
-                          uses it to tell a question from a condition, and
-                          without one it falls back to "the last line is the
-                          question" and drops every earlier one — but "(1)"
-                          numbers a list of one, which is nothing to number. */}
+                          単独 question は番号なしで見せる。ただし data には番号が必要で、parser はそれで
+                          question と condition を区別する。なければ「最後の行が question」へ fallback して
+                          それ以前の行をすべて落とす。しかし "(1)" は要素1つの list に番号を振ることになり、
+                          番号を振る対象がない。 */}
                       {question.number !== null && questions.length > 1 ? (
                         <span style={{ color: accent, fontWeight: 900, flexShrink: 0, minWidth: `${QUESTION_GUTTER - 0.25}em` }}>
                           {`(${question.number})`}
@@ -308,12 +281,11 @@ const ProblemCard: React.FC<{
 };
 
 /*
- * Only the two scenes that are genuinely a section of their own get a chip.
+ * 本当に独立した section である2 scene だけが chip を得る。
  *
- * Every step used to be stamped "POINT 1", "POINT 2" — which asserted that each
- * one raises a new point. Often it does not: a step carries on the working the
- * one before it started, and numbering that as a fresh point tells the viewer
- * to look for something new when there is nothing new to look for.
+ * 以前はすべての step に "POINT 1"、"POINT 2" と打っており、各々が新しい point を起こすと主張していた。
+ * 多くの場合そうではない。step は前の step が始めた計算を続けるもので、新たな point と番号を付けると、
+ * 新しいものがないのに読み手へ新しいものを探させてしまう。
  */
 const labelFor = (scene: Scene) => {
   if (scene.visual_type === "hook") {
@@ -326,24 +298,23 @@ const labelFor = (scene: Scene) => {
 };
 
 /**
- * The chrome every scene shares: the section chip and the on-screen headline
- * (`visual_content`). Children render into the stage area below it.
+ * 各 scene 共通の chrome、すなわち section chip と画面上の headline（`visual_content`）。child はその下の
+ * stage 領域へ render する。
  */
-/** Frames the stage takes to arrive, and to leave again. */
+/** stage の入場と退場に使う frame 数。 */
 const ENTER = 8;
 const LEAVE = 7;
 
 export const SceneShell: React.FC<{
   scene: Scene;
-  /** This scene's own length. `useVideoConfig()` reports the whole video's. */
+  /** この scene 自身の長さ。`useVideoConfig()` は video 全体の長さを返す。 */
   durationInFrames: number;
   accent: string;
-  /** The question this video answers. Only the hook is given one. */
+  /** この video が答える question。渡すのは hook だけ。 */
   problem?: { text: string; points: string[]; unit: string };
   /**
-   * Drawn as a still card rather than played. No captions arrive, so the stage
-   * runs from the banner to the foot of the frame and the question is set to
-   * fill it — on a two-up home screen the video's own 44px is under 8px.
+   * 再生せず still card として描く。caption は来ないため、stage は banner から frame 下端までを使い、
+   * question はそこを満たす。2列の home screen では video の44pxは8px未満になる。
    */
   poster?: boolean;
   children?: React.ReactNode;
@@ -353,20 +324,16 @@ export const SceneShell: React.FC<{
   const theme = useTheme();
   const isHook = scene.visual_type === "hook";
   /*
-   * The question is set to the same width whether it is a card or the opening
-   * of the video, so tapping the one and getting the other is the same frame
-   * carrying on rather than a reflow. The margin the other scenes keep is
-   * there for the phone's own furniture; nothing but the question is under it
-   * here, and the question would rather have the width.
+   * question は card でも video の opening でも同じ幅に組む。card を tap して video を開いたとき、
+   * reflow でなく同じ frame の続きに見せるためである。他 scene の margin は phone の部品用だが、ここで
+   * その下にあるのは question だけなので、question には幅を優先する。
    */
   const inset = poster || problem ? POSTER_SAFE_X : layout.safeX;
   const label = labelFor(scene);
-  // A step that continues the one before it says so by leaving its heading
-  // empty; then the stage is only the working, and nothing announces a new
-  // section over the top of it.
+  // 前 step の続きを示す step は heading を空にする。その場合 stage には計算だけがあり、上で新しい
+  // section を告知するものはない。
   const heading = problem ? "" : scene.visual_content;
-  // With no diagram to sit under it, the headline owns the whole stage —
-  // unless the problem card is already using it.
+  // 下に置く diagram がないなら headline が stage 全体を使う。ただし problem card がすでに使っている場合を除く。
   const centered = !scene.visual && !problem;
   const companion =
     scene.visual?.kind === "figure" || scene.visual?.kind === "plot"
@@ -375,12 +342,10 @@ export const SceneShell: React.FC<{
   const hasCompanion = Boolean(companion?.lines?.length || companion?.caption);
 
   /*
-   * The stage arrives and leaves; the background, unit banner and captions do
-   * not. Scenes are separate `<Sequence>`s with no overlap, so nothing can
-   * literally survive a cut — but fading each stage out as the next fades in
-   * turns the hard cut into a hand-over, which is the part of a PowerPoint
-   * morph that carries across a hard boundary. See the note in
-   * math/Formula.tsx for why the formulas themselves stack rather than morph.
+   * 入退場するのは stage で、background・unit banner・caption は残る。scene は重なりのない別々の
+   * `<Sequence>` なので、実際に cut をまたいで残るものはない。しかし各 stage を fade out しながら次を
+   * fade in すると、hard cut は hand-over になる。これは hard boundary を越えて伝わる PowerPoint morph
+   * の部分である。formula 自体を morph せず積み重ねる理由は math/Formula.tsx の注記を参照。
    */
   const arrival = clamped(frame, [0, ENTER], [0, 1], theme.easing);
   const departure = clamped(
@@ -392,22 +357,18 @@ export const SceneShell: React.FC<{
     <AbsoluteFill
       style={{
         opacity: arrival * departure,
-        // Scale rather than a slide: a slide would fight the entrance each
-        // headline and formula line already runs.
+        // slide ではなく scale にする。slide は各 headline と formula line がすでに持つ entrance と競合する。
         scale: `${clamped(frame, [0, ENTER], [0.985, 1], theme.easing)}`,
         paddingLeft: inset,
         paddingRight: inset,
-        // The poster's question box is tall enough to reach the unit banner,
-        // which is positioned absolutely and would be painted over.
-        // The complete problem now uses the available height, so explicitly
-        // reserve the banner (74.4 + 18 + 5px) and 32px below its rule.
+        // poster の question box は、absolute 配置で上書きされる unit banner まで届く高さがある。完全な
+        // problem は利用可能高を使うため、banner（74.4 + 18 + 5px）とその rule 下32pxを明示して予約する。
         paddingTop: poster ? POSTER_TOP : problem?.unit
           ? layout.safeTop + UNIT_SIZE * 1.2 + 18 + 5 + 32 : layout.safeTop,
-        // Stop the stage before the caption band so the two never collide. The
-        // poster has no captions — only the library's own strip along the foot.
+        // stage は caption band の前で止め、両者が重ならないようにする。poster に caption はなく、下端には
+        // library 自身の strip だけがある。
         paddingBottom: poster ? POSTER_FOOT : layout.height - stageBottom,
-        // The question and the line that answers it belong together, so they
-        // are centred as one group rather than pushed to opposite ends.
+        // question とそれに答える行は一体なので、両端へ押し分けず1 group として中央に置く。
         justifyContent: problem ? "center" : "flex-start",
       }}
     >
@@ -430,8 +391,7 @@ export const SceneShell: React.FC<{
         />
       ) : null}
 
-      {/* The question is the whole opening. A restatement under it competes
-          with the thing the viewer came to read. */}
+      {/* question が opening 全体である。その下での言い直しは、読み手が読みたい本体と競合する。 */}
       {problem || (!label && !heading) ? null : (
       <div
         style={{
@@ -466,10 +426,9 @@ export const SceneShell: React.FC<{
       ) : null}
 
       {heading ? (
-      // A wrapped heading is one title: underline its whole block rather
-      // than a short last line. fit-content hugs a single line and caps a
-      // wrapped block at the available width, without scale-sensitive DOM
-      // measurements or a feedback loop between the rule and the text.
+      // wrap された heading も1つの title なので、短い最終行でなく block 全体に underline を引く。
+      // fit-content は1行に沿い、wrap block は利用可能幅で止める。scale 依存の DOM 測定や rule と text の
+      // feedback loop を要しない。
       <div style={{ width: "fit-content", maxWidth: "100%" }}>
       <div
         style={{
@@ -493,12 +452,11 @@ export const SceneShell: React.FC<{
             ["0px 44px", "0px 0px"], theme.easing),
         }}
       >
-        {/* The headline carries the same `a_n`/`x^2` notation the question
-            does, so it is typeset the same way. */}
+        {/* headline には question と同じ `a_n`/`x^2` 表記があるため、同じように組版する。 */}
         <MathText text={heading} />
       </div>
 
-      {/* Accent rule that wipes in under the headline. */}
+      {/* headline 下に wipe in する accent rule。 */}
       <div
         style={{
           marginTop: 28,
@@ -518,17 +476,14 @@ export const SceneShell: React.FC<{
 
       <div
         style={{
-          // Only a real diagram claims the leftover space. An empty stage that
-          // grows would push the headline back to the top of the frame.
+          // 余った空間を使うのは実在する diagram だけ。空の stage まで伸ばすと headline が frame 上端へ戻る。
           flexGrow: !problem && scene.visual ? 1 : 0,
           marginTop: !problem && scene.visual ? 56 : 0,
           minHeight: 0,
           overflow: "hidden",
-          // Only combined scenes need a grid. Giving the existing SVG its own
-          // shrinking row preserves its aspect ratio; side-by-side columns
-          // would halve the width of both the labels and the working on 9:16.
-          // No companion fields means the old rendering path, including old
-          // manifests whose JSON never went through the new Zod schema.
+          // grid が必要なのは combined scene だけ。既存 SVG に独立した縮小 row を与えると aspect ratio を保てる。
+          // 横並び column では9:16で label と計算の幅がどちらも半減する。companion field がなければ、JSON が
+          // 新しい Zod schema を通っていない旧 manifest も含め、従来の rendering path を使う。
           ...(hasCompanion ? {
             display: "grid",
             gridTemplateRows: "minmax(0, 1fr) auto",

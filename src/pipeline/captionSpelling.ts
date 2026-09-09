@@ -1,29 +1,24 @@
 import type { Caption } from "@remotion/captions";
 
 /**
- * Rewrites caption tokens into the notation a reader expects.
+ * 字幕トークンを読む人が期待する記法へ戻す。
  *
- * The narration has to be spelled the way the synthesiser reads it: measured
- * against ja-JP-NanamiNeural, `=` is silent and `cos` comes out spelled as
- * シーオーエス. So the script says イコール and コサイン, and the captions —
- * the same words read rather than heard — are put back into mathematical
- * notation here. Timings are untouched.
+ * ナレーションは synthesiser が読める綴りにする必要がある。ja-JP-NanamiNeural で測ると
+ * `=` は無音になり、`cos` はシーオーエスと読まれる。そのため台本ではイコールとコサインを使い、
+ * 聞くのではなく読む同じ言葉である字幕だけを、ここで数学記法に戻す。タイミングは変えない。
  */
 
 /**
- * Normalise powers before deciding whether they belong to an expression.
+ * 式に属するか判定する前に累乗表記を正規化する。
  *
- * These used to become ², and it was wrong in a way only real captions showed:
- * 「両辺を2乗するのが鍵です」 came out as 「両辺を²するのが鍵です」. 「2乗する」 is a
- * verb — the exponent is a thing you do to both sides, not a superscript on
- * anything. That forced the old unconditional replacement to use 「2乗」 in
- * both positions. We can now restore superscripts because applyPowers checks
- * the base AND the following verb across token boundaries, after normalising
- * all spellings. A token starting with 「2乗」 alone is not evidence of a base.
+ * 以前はこれを ² にしており、実際の字幕でのみ分かる誤りがあった。
+ * 「両辺を2乗するのが鍵です」が「両辺を²するのが鍵です」になった。「2乗する」は動詞であり、
+ * 累乗は何かの肩文字ではなく両辺に行う操作である。そのため旧来の無条件置換は両方で「2乗」を
+ * 使わざるを得なかった。現在は全表記を正規化したあと applyPowers が token 境界をまたいで
+ * 底と後続の動詞を確認するため、肩文字を復元できる。「2乗」で始まる token 単独は底の証拠ではない。
  *
- * What is left to do here is normalise the spelling: the narration says
- * 「にじょう」 because that is what the synthesiser reads correctly, whisper
- * writes it either way, and the digit form is what the rest of the script uses.
+ * ここで残る仕事は綴りの正規化である。ナレーションが「にじょう」と言うのは synthesiser が
+ * 正しく読むためで、whisper は両方の形で書き、台本の他の部分では数字表記を使う。
  */
 const POWERS: Record<string, string> = {
   にじょう: "2乗",
@@ -38,21 +33,19 @@ const POWERS: Record<string, string> = {
 };
 
 /**
- * Keep 「の」 with the exponent so removing it does not leave an empty timed
- * token. Like プラスマイナス and かっこ1, these are literal merge keys.
+ * 「の」を累乗と一緒に保ち、除去後にタイミング付きの空 token を残さない。プラスマイナスや
+ * かっこ1 と同様、これらはリテラルの結合キーである。
  */
 const POWER_PHRASES = Object.fromEntries(
   Object.entries(POWERS).map(([spoken, written]) => [`の${spoken}`, `の${written}`]),
 );
 
 /**
- * Sequence terms, spelled the way the narration has to say them.
+ * ナレーションで読める綴りにした数列の項。
  *
- * `a_n` comes back from the synthesiser as 「a アンダーライン n」 — it reads the
- * underscore out loud — and closing it up to `an` is heard as 「案」. Both
- * measured. So the narration spells the term in kana and the subscript is put
- * back here, in the Unicode subscripts, which is as close to typeset as a
- * caption gets.
+ * synthesiser は `a_n` をアンダースコアまで含めて「a アンダーライン n」と読み、`an` に
+ * 詰めると「案」と聞こえる。どちらも実測済みである。そのためナレーションでは項をカナで綴り、
+ * 字幕で Unicode の下付き文字へ戻す。これは字幕で可能な限り組版に近い形である。
  */
 const TERM_LETTERS: Record<string, string> = {
   エー: "a",
@@ -72,9 +65,8 @@ const TERM_INDICES: Record<string, string> = {
   ニ: "\u2082",
   サン: "\u2083",
   ヨン: "\u2084",
-  // The shifted term a_{n+1} is half of what a recurrence says, and the index
-  // has to be taken whole: converting the `エーエヌ` in front of it first would
-  // leave the 「プラスイチ」 stranded outside the subscript.
+  // 漸化式の半分を成す a_{n+1} では添字を丸ごと取る必要がある。手前の `エーエヌ` を先に
+  // 変換すると、「プラスイチ」が下付き文字の外に取り残される。
   エヌプラスイチ: "\u2099\u208a\u2081",
   エヌマイナスイチ: "\u2099\u208b\u2081",
 };
@@ -89,12 +81,11 @@ const TERMS: Record<string, string> = Object.fromEntries(
 );
 
 /**
- * Greek letters, which the narration spells in kana so they are read at all.
+ * ナレーションが読めるようカナで綴るギリシャ文字。
  *
- * Unlike the operators, these are not safe as bare substrings: 「アルファベット」
- * and 「パイプ」 open with letters. The guard is what follows — a Greek name
- * running straight into more katakana is part of a longer word, while one
- * followed by kana, kanji, a symbol or nothing is the letter itself.
+ * 演算子と違って、これらを裸の部分文字列として置換するのは安全ではない。「アルファベット」と
+ * 「パイプ」は文字名で始まるからである。判別には後続文字を使う。ギリシャ文字名の直後にさらに
+ * カタカナが続けば長い単語の一部であり、ひらがな、漢字、記号、または末尾なら文字そのものである。
  */
 const GREEK: Record<string, string> = {
   シータ: "θ",
@@ -105,22 +96,20 @@ const GREEK: Record<string, string> = {
   デルタ: "δ",
   ラムダ: "λ",
   オメガ: "ω",
-  // Keep Σ: spoken 「シグマ」 also names statistical σ, and captions have no
-  // reliable semantic context to turn only summations into ∑. MathText makes
-  // both capital-sigma code points display-size operators, so this is visible
-  // consistently without introducing that statistical false positive.
+  // Σ を保つ。「シグマ」は統計の σ も指し、字幕には和だけを ∑ にする信頼できる文脈がない。
+  // MathText はどちらの大文字 sigma code point も表示サイズの演算子にするため、統計の
+  // 誤判定を増やさず一貫して見える。
   シグマ: "Σ",
 };
 
-/** Katakana and the prolonged sound mark: what a Greek name must not run into. */
+/** ギリシャ文字名の直後に続いてはならないカタカナと長音記号。 */
 const KATAKANA = /[\u30a0-\u30ff]/;
 
 /**
- * 「分の」 fixes the order and scope, including 「4分の3ルート19」. A slash
- * alone cannot supply those bounds. Actual matches remain literal merge keys
- * so even a radical or a Greek name split into characters stays one fraction.
- * Exclude partial decimals and chained fractions; keep digits as strings to
- * avoid rounding large integers. Numeric denominators must be nonzero.
+ * 「分の」は「4分の3ルート19」を含め、順序と範囲を確定する。スラッシュだけではこの境界を
+ * 与えられない。実際の一致をリテラル結合キーのままにするので、根号やギリシャ文字が 1 文字ずつ
+ * 分割されても 1 つの分数で保てる。小数の一部や連鎖分数は除き、大きな整数を丸めないよう数字は
+ * 文字列のままにする。数値の分母は 0 であってはならない。
  */
 const FRACTION_LETTER = `(?:[A-Za-zΑ-ΡΣ-ω]|(?:${Object.keys(GREEK).join("|")})(?![\\u30a0-\\u30ff]))`;
 const FRACTION_ATOM = `(?:0|[1-9][0-9]*|${FRACTION_LETTER})`;
@@ -132,7 +121,7 @@ const FRACTION = new RegExp(
   "g",
 );
 
-/** Unambiguous in kana: nothing else in a maths script spells these. */
+/** カナでは曖昧でない。数学台本の他の語はこの綴りにならない。 */
 const ALWAYS: Record<string, string> = {
   コサイン: "cos",
   サイン: "sin",
@@ -140,17 +129,15 @@ const ALWAYS: Record<string, string> = {
   リミット: "lim",
   イコール: "=",
   ルート: "√",
-  // Run before guarded プラス/マイナス, and merge split TTS tokens as one word.
+  // guard 付きのプラス/マイナスより先に処理し、分割された TTS token を 1 語として結合する。
   プラスマイナス: "±",
   /*
-   * Sub-question numbers. The narration says 「かっこ1」 because the synthesiser
-   * reads a bare 「(1)」 as a pause rather than a number, and the caption is the
-   * same words read rather than heard, so it wants the notation back.
+   * 小問番号。synthesiser は裸の「(1)」を数字でなく間として読むため、ナレーションは
+   * 「かっこ1」と言う。字幕は聞くのでなく読む同じ言葉なので、記法へ戻す必要がある。
    *
-   * Spelled out per digit rather than matched with a pattern: `mergeSplitWords`
-   * above reassembles a token the synthesiser split by looking for these exact
-   * keys, and a regular expression cannot take part in that. Nine is past any
-   * real exam question.
+   * パターン一致ではなく数字ごとに列挙する。上の `mergeSplitWords` は synthesiser が分割した
+   * token をこの完全一致キーでつなぐため、正規表現だけの規則はこの経路に参加できない。9 は
+   * 実際の試験問題で必要な範囲を超える。
    */
   ...Object.fromEntries(
     Array.from({ length: 9 }, (_, index) => [`かっこ${index + 1}`, `(${index + 1})`]),
@@ -161,9 +148,8 @@ const ALWAYS: Record<string, string> = {
 };
 
 /**
- * Arithmetic spelled out. The narration reserves these kana forms for
- * operators — an ordinary verb is written in kanji ("対角線を引く"), which is a
- * different token entirely — so they can be converted wherever they appear.
+ * 読み上げ用に展開した算術記号。ナレーションではこれらのカナ形を演算子用に予約し、普通の動詞は
+ * 漢字で書く（"対角線を引く"）ので別 token になる。したがって出現箇所すべてで変換できる。
  */
 const OPERATORS: Record<string, string> = {
   たす: "+",
@@ -175,38 +161,36 @@ const OPERATORS: Record<string, string> = {
 };
 
 /**
- * An exponent the table above cannot name.
+ * 上の表では名前を付けられない指数。
  *
- * 「にじょう」 and 「さんじょう」 are spelled out there, but an exponent that is
- * itself an expression — 「2のnたす1じょう」 — has no fixed spelling, and the kana
- * was being left in the caption as 「2のn+1じょう」.
+ * 「にじょう」と「さんじょう」は表に列挙するが、式そのものが指数になる
+ * 「2のnたす1じょう」には固定の綴りがなく、字幕では「2のn+1じょう」とカナが残っていた。
  *
- * Guarded like the operators, because じょう also opens ordinary words; after a
- * digit, a letter or another power it can only be an exponent.
+ * じょうは普通の単語の先頭にもなるので、演算子と同様に guard する。数字・文字・別の累乗の後なら
+ * 指数にしかなり得ない。
  */
 const POWER_TAIL: Record<string, string> = {
   じょう: "乗",
 };
 
-/** Everything that is only itself when notation comes before it. */
+/** 前に記法があるときだけ本来の意味になるすべての語。 */
 const AFTER_NOTATION_ONLY: Record<string, string> = {
   ...OPERATORS,
   ...POWER_TAIL,
 };
 
 /**
- * What an operator may follow inside a single token and still be an operator.
+ * 1 token の中でも演算子と判断できる、演算子の直前要素。
  *
- * Word boundaries glue an operator to whatever precedes it — `xのにじょうたす2x`
- * comes back with a `にじょうたす` token — so the head-of-token rule alone would
- * miss it. Replacing the kana anywhere would instead break 「満たす」, which is
- * one token whose たす is part of a verb. Requiring notation on the left tells
- * the two apart: `2乗たす` converts, `満たす` does not.
+ * word boundary は演算子を前の語に付ける。`xのにじょうたす2x` は `にじょうたす` token として
+ * 戻るため、token 先頭だけの規則では見落とす。カナを任意位置で置換すると、動詞の一部である
+ * たすを含む 1 token「満たす」を壊してしまう。左に記法を要求すれば区別でき、`2乗たす` は変換し、
+ * `満たす` は変換しない。
  */
 const AFTER_NOTATION =
   /[0-9A-Za-z乗√πθαβγδλωΣ°=+−×÷()/.₁₂₃₄ₖₘₙ²³⁴]/;
 
-// Operators and opening brackets can precede operators, but cannot be a base.
+// 演算子と開き括弧は演算子の前に置けるが、累乗の底にはなれない。
 const POWER_BASE = /[0-9A-Za-zπθαβγδλωΣ)）\]₁₂₃₄ₖₘₙ]/;
 const SUPERSCRIPTS: Record<string, string> = { "2": "²", "3": "³", "4": "⁴" };
 
@@ -214,11 +198,11 @@ const applyPowers = (text: string, context: string, offset: number) =>
   text.replace(/(の)?([234])乗/g, (spoken, particle: string | undefined, power: string, at: number) => {
     const before = context[offset + at - 1];
     const after = context.slice(offset + at + spoken.length);
-    // 「xの2乗する」 is awkward but still verbal. Include inflections such as
-    // して・しない・すれば・される, even when TTS puts them in the next token.
+    // 「xの2乗する」は不自然でも動詞である。TTS が次 token に置く場合も含め、
+    // して・しない・すれば・されるなどの活用を対象にする。
     const verbal = /^\s*(?:す[るれ]|し|さ[れせ]|せ[ずぬよ])/.test(after);
-    // Bare 「12乗」 is the twelfth power, not 1². Numeric bases need 「の」;
-    // narration already requires it, whereas x2乗 and (x+1)2乗 are unambiguous.
+    // 裸の「12乗」は 1² でなく 12 乗である。数字の底には「の」が必要で、ナレーションも
+    // 既にこれを要求している。一方 x2乗 と (x+1)2乗 は曖昧でない。
     const ambiguousDigits = !particle && before !== undefined && /[0-9]/.test(before);
     return before && POWER_BASE.test(before) && !verbal && !ambiguousDigits
       ? SUPERSCRIPTS[power]
@@ -226,17 +210,15 @@ const applyPowers = (text: string, context: string, offset: number) =>
   });
 
 /**
- * Rejoins a word the boundaries cut up.
+ * boundary が分割した 1 語を結合する。
  *
- * Boundaries do not land on word edges: a katakana word straight after a digit
- * comes back split as `98コ` + `サイン`, and 「のにじょう」 arrives as three
- * tokens, `の` + `に` + `じょう`. Nothing about the split is predictable, so the
- * window grows until it spells one of the words being looked for.
+ * boundary は語境界に置かれない。数字直後のカタカナ語は `98コ` + `サイン` に分かれて戻り、
+ * 「のにじょう」は `の` + `に` + `じょう` の 3 token になる。分割位置は予測不能なので、
+ * 探している語を綴るまで window を伸ばす。
  *
- * Prefer the longest word at the same start (エーエヌプラスイチ must not
- * stop at エーエヌ), then take only the tokens needed to complete it. This
- * preserves neighbouring words and their timings, including the 「は」 after
- * 「のにじょう」. A character per token bounds the window by key length.
+ * 同じ開始位置なら最長語を優先する（エーエヌプラスイチをエーエヌで止めない）。それを完成する
+ * token だけ取り込むので、「のにじょう」の後の「は」を含む隣接語とタイミングを保てる。
+ * 1 token が 1 文字の場合が最悪なので、key の長さで window を上限付ける。
  */
 const mergeSplitWords = (captions: Caption[], words: string[]): Caption[] => {
   const merged: Caption[] = [];
@@ -286,7 +268,7 @@ const mergeSplitWords = (captions: Caption[], words: string[]): Caption[] => {
   return merged;
 };
 
-/** Longest first, so `のにじょう` wins over the `にじょう` inside it. */
+/** `のにじょう` の中の `にじょう` より先に選ぶため、長い順にする。 */
 const byLengthDesc = (entries: [string, string][]) =>
   [...entries].sort(([a], [b]) => b.length - a.length);
 
@@ -333,9 +315,9 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
   const fractionMatches = Array.from(captions.map((caption) => caption.text).join("").matchAll(FRACTION));
   const fractions = [...new Set(fractionMatches.map((match) => match[0]))];
   const fractionStarts = new Set(fractionMatches.map((match) => match.index));
-  // Merge fractions first: a smaller word must not consume half of one. A
-  // character per token is the worst split, so key length bounds the window
-  // even for multi-digit fractions (the former four-token window could not).
+  // 分数を先に結合する。小さい語が分数の半分を消費してはならないためである。1 token が 1 文字の
+  // 場合が最悪の分割なので、key 長で window を制限すれば多桁分数にも対応できる（旧 4 token
+  // window ではできなかった）。
   const fractionMerged = mergeSplitWords(captions, fractions);
   const merged = mergeSplitWords(fractionMerged, [
     ...Object.keys(ALWAYS),
@@ -345,7 +327,7 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
 
   let sourceOffset = 0;
   const normalised = merged.map((caption) => {
-    // Keep the full-context guard even when a decimal's prefix is another token.
+    // 小数の接頭辞が別 token にあっても、全体文脈の guard を維持する。
     let text = caption.text.replace(FRACTION, (spoken, denominator, numerator, at) =>
       fractionStarts.has(sourceOffset + at) ? `${numerator}/${denominator}` : spoken);
     sourceOffset += caption.text.length;

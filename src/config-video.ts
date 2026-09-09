@@ -1,6 +1,6 @@
 /**
- * Dimensions live in their own module because `config.ts` touches `node:fs`,
- * which cannot be bundled into the Remotion browser build.
+ * 寸法は別 module に置く。`config.ts` は Remotion の browser build に bundle できない `node:fs`
+ * を触るためである。
  */
 export const VIDEO = {
   width: 1080,

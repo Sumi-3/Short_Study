@@ -1,67 +1,6 @@
-/**
- * The parts of the system prompt that do not depend on the course: how the
- * narration has to sound for the speech synthesiser, and how the visual payload
- * is encoded. Each course composes these around its own teaching instructions.
- */
+import type { ScriptBudget } from "../scriptBudget.js";
 
-/**
- * Characters of narration per second at EDGE_RATE=+8%, measured on finished
- * videos.
- *
- * Maths runs slower per character than prose: "AC" is two characters but four
- * morae, "98" is two characters but seven. Budgeting both at the same rate is
- * what made the maths shorts overshoot by a third.
- */
-const CHARS_PER_SECOND = { math: 4.6, prose: 5.2 } as const;
-
-/**
- * Budget for the 300s Vercel function: reserve 170s for script generation,
- * 20s for outline/captions/manifest/upload, and 30s for variance. The remaining
- * 80s allow ten sequential TTS requests at an assumed 8s each. This is a
- * conservative operating budget, not a latency guarantee: existing manifests
- * record playback (16 projects, 4–6 scenes, 25–70s), NOT synthesis wall time.
- * Revisit these assumptions with production timing, especially for Whisper.
- * 120s of estimated speech and 20s per scene also bound request size; neither
- * is a target to fill. Actual playback is determined by TTS plus scene padding.
- */
-export const MAX_SCRIPT_SCENES = 10;
-const MAX_NARRATION_SECONDS = 120;
-const MAX_SCENE_SECONDS = 20;
-
-export type Budget = {
-  seconds: number;
-  maxScenes: number;
-  /** Maximum point count with one hook and one summary, never a quota. */
-  points: number;
-  totalChars: number;
-  perScene: number;
-};
-
-export const budgetFor = (
-  pace: keyof typeof CHARS_PER_SECOND = "prose",
-): Budget => ({
-  seconds: MAX_NARRATION_SECONDS,
-  maxScenes: MAX_SCRIPT_SCENES,
-  points: MAX_SCRIPT_SCENES - 2,
-  totalChars: Math.floor(MAX_NARRATION_SECONDS * CHARS_PER_SECOND[pace]),
-  perScene: Math.floor(MAX_SCENE_SECONDS * CHARS_PER_SECOND[pace]),
-});
-
-/** Validate before TTS; silently slicing scenes could drop a requested answer. */
-export const assertScriptBudget = (
-  scenes: readonly { narration: string }[],
-  budget: Budget,
-) => {
-  if (scenes.length > budget.maxScenes ||
-      scenes.some((scene) => scene.narration.length > budget.perScene) ||
-      scenes.reduce((sum, scene) => sum + scene.narration.length, 0) > budget.totalChars) {
-    throw new Error(`解説が生成上限（${budget.maxScenes}シーン・合計${budget.totalChars}文字・1シーン${budget.perScene}文字）を超えました。問題を設問ごとに分けてください。`);
-  }
-};
-
-export const scriptMaxTokens = (budget: Budget) => 12_000 + budget.maxScenes * 1_500;
-
-export const narrationRules = (budget: Budget) => `# narration（音声読み上げ用）
+export const narrationRules = (budget: ScriptBudget) => `# narration（音声読み上げ用）
 narration はそのまま字幕にもなる。読み上げが正しく、かつ字幕として読みやすい表記にする。
 
 - 話し言葉。ですます調。1文は短く、40文字以内を目安に切る。
@@ -310,12 +249,11 @@ const VISUAL_DOCS = {
     visual_caption = 12文字以内の補足`,
 } as const;
 
-export type VisualKind = keyof typeof VISUAL_DOCS;
+type VisualKind = keyof typeof VISUAL_DOCS;
 
 /**
- * Only the kinds a course can actually use are documented. A history script has
- * no business reading the LaTeX and plotting rules — leaving them out is both
- * cheaper and a much stronger signal than telling the model not to use them.
+ * コースが実際に使える種別だけを記載する。歴史の台本が LaTeX や plot の規則を読む必要はなく、
+ * 書かない方が低コストで、「使うな」と指示するより強いシグナルになる。
  */
 export const visualSection = (
   kinds: readonly VisualKind[],
@@ -339,17 +277,15 @@ plot の expr は上に挙げた記号だけの素の式で、LaTeX や行頭マ
 };
 
 /**
- * How the question itself should be written back out.
+ * 問題文そのものをどう書き戻すか。
  *
- * `topic` is already in the schema and its value was being thrown away — the
- * user's raw input was kept instead. It is now the model's job, because the
- * model is the only thing here that can read `ｙ＝ｘ^2＋４ｘ－３` and know which
- * characters are the formula and which are the sentence. A pattern-matcher
- * cannot: it has to guess whether a `-` is a minus or a hyphen, whether a `,`
- * separates points or thousands, and it has no idea what the question means.
+ * `topic` は既にスキーマにあるのに値を捨て、ユーザーの生入力を残していた。これをモデルの仕事に
+ * する。`ｙ＝ｘ^2＋４ｘ－３` を読んでどの文字が数式でどれが文章か分かるのはモデルだけだからである。
+ * pattern matcher にはできない。`-` がマイナスかハイフンか、`,` が点の区切りか桁区切りかを推測
+ * する必要があり、問題の意味を全く知らない。
  *
- * The instruction is narrow on purpose. This is typesetting, not editing — the
- * question shown on the card has to be the question that was asked.
+ * 指示は意図して狭くする。これは編集ではなく組版であり、card に出す問題は尋ねられた問題そのもの
+ * でなければならない。
  */
 export const TOPIC_RULE = `# topic（画面に出す問題文）
 入力された文を、表記を整えて、topic に書く。
@@ -389,11 +325,9 @@ export const TOPIC_RULE = `# topic（画面に出す問題文）
 入力がすでに上記の $...$ を含む表記で整っているなら、1文字も変えずにそのまま写す。`;
 
 /**
- * The opening has room for the actual problem, and losing a qualification can
- * change its answer. Keep complete conditions and requests in the existing
- * string channel; explicit numbers distinguish every question without growing
- * the script's 19-field schema. Even a single request gets (1), so new data
- * never depends on the legacy last-line convention.
+ * 冒頭には実際の問題を置く余地があり、条件を落とすと答えが変わり得る。完全な条件と問いは既存の
+ * 文字列チャネルに保つ。明示的な番号なら、台本の 19-field schema を増やさず全設問を区別できる。
+ * 1 問だけでも (1) を付け、新しいデータが旧来の最終行規約に依存しないようにする。
  */
 export const OUTLINE_RULE = `# outline（冒頭と一覧に出す問題文）
 topic の設定・条件・すべての問いを、省略せず読みやすい順に整える。

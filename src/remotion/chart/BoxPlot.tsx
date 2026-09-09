@@ -8,13 +8,11 @@ import type { SceneVisual } from "../../types";
 type Data = Extract<SceneVisual, { kind: "box" }>;
 
 /**
- * 箱ひげ図, drawn horizontally against a shared number line — the orientation
- * Japanese textbooks use, and the one that lets two or three data sets be
- * compared by simply stacking them.
+ * 共通の数直線に横向きで描く箱ひげ図。日本の教科書で使う向きであり、2つまたは3つの data set を
+ * 重ねるだけで比較できる。
  *
- * The build order is the lesson: whiskers reach out to the extremes, then the
- * box closes over the middle half, then the median lands inside it. That is
- * the order the five numbers are read in.
+ * 描く順序そのものが説明になる。whisker が両端の極値へ伸び、box が中央半分を閉じ、最後に median が
+ * その内側へ現れる。これは5数要約を読む順序でもある。
  */
 export const BoxPlot: React.FC<{ data: Data; accent: string }> = ({
   data,
@@ -85,7 +83,7 @@ export const BoxPlot: React.FC<{ data: Data; accent: string }> = ({
               </text>
             ) : null}
 
-            {/* Whiskers, reaching out from the middle to both extremes. */}
+            {/* 中央から両端の極値へ伸びる whisker。 */}
             <line
               x1={centre - (centre - x(box.min)) * whisker}
               y1={middle}

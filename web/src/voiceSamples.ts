@@ -1,14 +1,13 @@
 /**
- * The preview clip for each voice, all of them saying `SAMPLE_TEXT`.
+ * 各 voice が `SAMPLE_TEXT` を話す preview clip。
  *
- * The files sit next to this module and go through the bundler as assets, so
- * they are hashed, cached and available on a static deploy. They are not
- * fetched from the API server: a preview that waits on a cold serverless
- * function would take longer than reading the label.
+ * file はこの module の隣に置き、asset として bundler を通す。そのため hash 化・
+ * cache 化され static deploy でも使える。API server から fetch はしない。cold な
+ * serverless function を待つ preview は label を読むより時間がかかるからである。
  *
- * Vite expands the template literal into a glob over `./samples/*.mp3` at build
- * time, which is why the directory has to hold exactly the ids in `VOICES` —
- * `scripts/voice-samples.ts` writes them under those names for that reason.
+ * Vite は build 時に template literal を `./samples/*.mp3` の glob へ展開する。
+ * そのため directory には `VOICES` の id と完全に一致する file だけを置く必要があり、
+ * `scripts/voice-samples.ts` もその名前で書き出している。
  */
 export const sampleUrl = (voiceId: string) =>
   new URL(`./samples/${voiceId}.mp3`, import.meta.url).href;
@@ -16,10 +15,10 @@ export const sampleUrl = (voiceId: string) =>
 let playing: HTMLAudioElement | null = null;
 
 /**
- * Plays one preview, stopping whatever was already playing.
+ * すでに再生中のものを止めて、ひとつの preview を再生する。
  *
- * Rejections are swallowed on purpose: a browser that refuses to play without
- * a gesture it recognises should leave the create screen working, not throw.
+ * rejection は意図して握りつぶす。認識できる gesture なしの再生を拒む browser でも、
+ * 例外にせず create 画面を動かし続けるべきだからである。
  */
 export const playSample = (voiceId: string) => {
   playing?.pause();

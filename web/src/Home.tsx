@@ -5,7 +5,7 @@ import type { ShortSummary } from "./api";
 
 const ALL = "すべて";
 
-/** One horizontal row of chips. `null` is the unfiltered choice. */
+/** chip を一行に並べる。`null` は絞り込まない選択肢である。 */
 const Bar: React.FC<{
   label: string;
   options: string[];
@@ -35,12 +35,11 @@ const Bar: React.FC<{
 );
 
 /**
- * The library: three cascading curriculum filters over a list of cards.
+ * library。card の一覧に対し、curriculum の三段階 filter を連動させる。
  *
- * Only categories that actually have a video are offered — an empty chip is a
- * dead end, and the curriculum has nine courses and ninety-one topics, almost
- * none of which will exist early on. They stay in curriculum order rather than
- * being sorted by count, so a chip does not move between visits.
+ * 実際に動画がある category だけを出す。空の chip は行き止まりであり、curriculum には
+ * 9 course・91 topic があるが、初期にはほとんど存在しないためである。件数順ではなく
+ * curriculum 順を保つので、訪問のたびに chip の位置が動かない。
  */
 export const Home: React.FC<{
   shorts: ShortSummary[];
@@ -104,8 +103,8 @@ export const Home: React.FC<{
     [filed, major, middle, small],
   );
 
-  // Narrowing the level above can strand a choice below it; drop it rather
-  // than leave a chip lit that no longer matches anything.
+  // 上位段階を絞ると下位の選択が取り残されることがある。もはや何にも合わない chip を
+  // 点灯させたままにするより、選択を外す。
   const pickMajor = (next: string | null) => {
     setMajor(next);
     setMiddle(null);
@@ -117,9 +116,9 @@ export const Home: React.FC<{
   };
 
   const remove = async (short: ShortSummary) => {
-    // A native confirmation deliberately interrupts the tap: deletion is an
-    // irreversible secondary action, so it should never ride on the card-open
-    // gesture or need a custom modal before a phone-sized library is usable.
+    // native confirmation で意図してタップを中断する。削除は元に戻せない副次操作なので、
+    // card を開く gesture に相乗りさせず、phone サイズの library を使えるようにする前に
+    // custom modal を要するべきでもない。
     if (!window.confirm(`「${short.topic}」を削除しますか？\nこの操作は元に戻せません。`)) {
       return;
     }

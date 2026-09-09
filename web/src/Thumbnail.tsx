@@ -9,17 +9,15 @@ import { themeOf, withAlpha } from "../../src/remotion/theme";
 import type { ShortSummary } from "./api";
 
 /**
- * What a short looks like when it is not the one playing: its own opening
- * frame, held still.
+ * 再生中でない short の見た目、すなわち自身の開始フレームを静止させたもの。
  *
- * The card used to be a separate design — a chip, the question, an accent rule,
- * the hook line — sized by a formula that guessed how much text would fit. Two
- * typesettings of one question is one too many, and the guess is what kept
- * going wrong. `<Thumbnail>` renders the real composition at a frame instead,
- * so the card is the video rather than a picture about it.
+ * card は以前、chip・問題文・accent rule・hook line を、入る文字量の推測式で組んだ
+ * 別デザインだった。ひとつの問題に組版が二通りあるのは一つ多く、その推測が
+ * 失敗し続けた理由でもある。代わりに `<Thumbnail>` が実際の composition を一フレーム
+ * 描画するので、card は動画についての絵ではなく動画そのものになる。
  *
- * The trade is size: the composition is laid out for a 1080px stage, so on a
- * card a fifth of that width its 44px question paints at about 8px.
+ * 代償はサイズである。composition は 1080px の stage 用に組まれているため、その
+ * 五分の一幅の card では 44px の問題文が約 8px で描画される。
  */
 export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
   const theme = themeOf();
@@ -41,9 +39,8 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
       style={{ width: "100%", height: "100%" }}
     />
 
-    {/* The two things the library needs that the video never shows: which
-        corner of the syllabus this is, and how long it runs. They sit in the
-        band the captions occupy during playback, which is empty at the hook. */}
+    {/* 動画には出ないが library には必要な二つ、syllabus 上の位置と再生時間を示す。
+        再生中は caption が占め、hook では空いている帯に置く。 */}
     <div
       className="thumb__meta"
       style={{

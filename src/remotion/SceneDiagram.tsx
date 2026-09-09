@@ -18,7 +18,7 @@ import { Scatter } from "./chart/Scatter";
 import { DotPlot } from "./chart/DotPlot";
 import type { Scene, SceneVisual } from "../types";
 
-/** Steps connected by arrows, revealed one at a time. */
+/** arrow で結んだ step を、1つずつ表示する。 */
 const Flow: React.FC<{ steps: string[]; accent: string }> = ({
   steps,
   accent,
@@ -26,7 +26,7 @@ const Flow: React.FC<{ steps: string[]; accent: string }> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
-  // Four steps plus three arrows only fit the stage at reduced sizing.
+  // 4 step と3 arrow は、サイズを下げて初めて stage に収まる。
   const compact = steps.length >= 4;
 
   return (
@@ -97,7 +97,7 @@ const Flow: React.FC<{ steps: string[]; accent: string }> = ({
   );
 };
 
-/** Horizontal bars — used only when a real quantity is being compared. */
+/** 横 bar。実際の quantity を比較するときだけ使う。 */
 const Bars: React.FC<{
   data: { label: string; value: number }[];
   unit: string;
@@ -153,8 +153,7 @@ const Bars: React.FC<{
               style={{
                 height: 34,
                 borderRadius: 17,
-                // The bar's unfilled groove: keyed to the ink so it stays
-                // visible on a light board, where white on white is nothing.
+                // bar の未充填 groove。明るい board では白地に白は見えないため、ink に合わせて見えるようにする。
                 backgroundColor: withAlpha(theme.ink, 0.14),
                 overflow: "hidden",
               }}
@@ -175,7 +174,7 @@ const Bars: React.FC<{
   );
 };
 
-/** Non-text visuals: flow charts, bar comparisons, formulas and plots. */
+/** text 以外の visual。flow chart、bar 比較、formula、plot。 */
 export const SceneDiagram: React.FC<{
   scene: Scene & {
     visual: Extract<

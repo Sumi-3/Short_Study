@@ -28,7 +28,7 @@ for (const [spoken, written] of [
   assert.equal(result, written);
   assert.ok(!result.includes("+−"));
 }
-// Sub-question numbers survive the same split-token path as the operators.
+// 小問番号も演算子と同じ split-token 経路を通って保たれなければならない。
 {
   const spoken = [
     { text: "まずは", startMs: 0, endMs: 300, timestampMs: 0, confidence: 1 },
@@ -89,8 +89,8 @@ for (const [spoken, written] of [
   assert.equal(shown([spoken]), written, spoken);
 }
 
-// Every possible two-token cut, plus the character-by-character worst case,
-// exercises literal keys independently of the synthesiser's chosen boundaries.
+// 可能な全二 token 分割に加え、一文字ずつという最悪ケースも試す。これにより
+// synthesiser が選んだ境界とは独立して、literal key を検証できる。
 for (const [spoken, written] of [
   ...extendedFractions,
   ["2ぶんの1", "1/2"], ["3分の2", "2/3"], ["137ぶんの29", "29/137"],
@@ -115,8 +115,8 @@ for (const [spoken, written] of [
   }
 }
 
-// Guards must see neighbours even when the synthesiser cuts exactly at a
-// decimal point or 「分の」. A valid occurrence elsewhere must not enable it.
+// synthesiser が小数点や「分の」のちょうどそこで切っても、guard は隣を見なければならない。
+// 別の場所の有効な出現が、それを有効化してはならない。
 for (const [spoken, written] of [
   ["1.2分の1", "1.2分の1"], ["2分の1.5", "2分の1.5"],
   ["1.2分のπ", "1.2分のπ"], ["4分の3ルート19.5", "4分の3√19.5"],
@@ -135,7 +135,7 @@ for (const [spoken, written] of [
   }
 }
 
-// Slash fragments carry no spoken bounds and must not be joined as fractions.
+// slash の断片には読み上げ上の境界がなく、分数として結合してはならない。
 for (const parts of [["π/", "4"], ["3", "√", "19/", "4"], ["1", "/", "2"]]) {
   assert.deepEqual(applyDisplaySpelling(captions(parts)), captions(parts));
 }

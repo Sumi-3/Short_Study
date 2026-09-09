@@ -16,10 +16,10 @@ const PORT = Number(process.env.PORT ?? 3001);
 const WEB_DIST = path.join(paths.root, "web", "dist");
 
 /**
- * Under `npm run dev`, Vite serves the app and this process is the API only.
+ * `npm run dev` では Vite が app を配信し、この process は API 専用になる。
  *
- * Otherwise a stale `web/dist` would make :3001 a second, fully working copy of
- * the app alongside Vite's :5173 — open both and you hear the narration twice.
+ * そうしないと古い `web/dist` が Vite の :5173 と並ぶ完全動作の app を :3001 に作り、両方を
+ * 開けばナレーションが二重に聞こえる。
  */
 const apiOnly = process.env.SHORT_STUDY_API_ONLY === "1";
 const serveWeb = !apiOnly && fs.existsSync(WEB_DIST);
@@ -64,15 +64,14 @@ const sendFile = (res: http.ServerResponse, filePath: string) => {
 };
 
 /**
- * One generation at a time. Both slow steps are network-bound on third-party
- * services, so running jobs in parallel mostly buys rate-limit errors.
+ * 生成は 1 度に 1 件にする。遅い 2 工程は third-party service の network 待ちなので、job を
+ * 並列にしても主に rate-limit error が増えるだけである。
  *
- * A promise chain rather than a queue of job records, because a request now
- * holds its own connection open for the whole run: waiting for the lock and
- * waiting for the pipeline look the same from the client's side.
+ * job record の queue ではなく promise chain にする。request は実行全体で自身の connection を
+ * 開いたままにし、client 側からは lock 待ちも pipeline 待ちも同じに見えるためである。
  *
- * This is the one guarantee a deployed build cannot make — separate requests
- * land in separate instances with nothing between them to take a lock on.
+ * これは deployed build には保証できない。別 request は別 instance に届き、間に lock を取る対象が
+ * ないためである。
  */
 let tail: Promise<unknown> = Promise.resolve();
 const serialize = <T,>(work: () => Promise<T>): Promise<T> => {
@@ -116,8 +115,8 @@ const server = http.createServer(async (req, res) => {
 
     if (route === "/api/shorts" && req.method === "DELETE") {
       const slug = url.searchParams.get("slug") ?? "";
-      // Keep malformed slugs out of storage entirely; deleteProject repeats the
-      // check because it is also callable without this router.
+      // 不正な slug を storage に到達させない。deleteProject は router を通さず呼べるため、
+      // 同じ検査を繰り返す。
       if (!isProjectSlug(slug)) {
         return sendJson(res, 400, { error: "invalid project slug" });
       }
@@ -132,7 +131,7 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Narration and manifests, served where staticFile() expects them.
+    // narration と manifest を staticFile() が期待する場所で配信する。
     if (route.startsWith("/projects/")) {
       const target = path.join(paths.dataRoot, "public", route.slice(1));
       if (!target.startsWith(path.join(paths.dataRoot, "public"))) {
@@ -143,7 +142,7 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // Built web app (production). In dev, Vite serves this instead.
+    // build 済み Web app（production）。dev では代わりに Vite が配信する。
     if (serveWeb) {
       const candidate = path.join(WEB_DIST, route === "/" ? "index.html" : route.slice(1));
       if (sendFile(res, candidate)) {

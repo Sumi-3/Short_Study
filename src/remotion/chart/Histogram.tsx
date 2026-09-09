@@ -8,10 +8,8 @@ import type { SceneVisual } from "../../types";
 type Data = Extract<SceneVisual, { kind: "histogram" }>;
 
 /**
- * A histogram, not a bar chart: the bars touch, and the horizontal axis is a
- * number line whose ticks are the class boundaries. That distinction is the
- * whole lesson in 中1 データの活用 — a gap between bars would say the classes
- * are separate categories.
+ * bar chart ではなく histogram。bar は接し、横軸は階級境界を tick に持つ数直線である。この違いが
+ * 中1 データの活用の学習内容そのもので、bar 間に gap があれば階級が別々の category だと示してしまう。
  */
 export const Histogram: React.FC<{ data: Data; accent: string }> = ({
   data,
@@ -30,7 +28,7 @@ export const Histogram: React.FC<{ data: Data; accent: string }> = ({
   const y = scaleY(0, tallest * 1.15);
   const baseline = HEIGHT - PAD.bottom;
 
-  // Every boundary, so the reader can see the class widths are equal.
+  // すべての boundary を出し、階級幅が等しいと読み手に分かるようにする。
   const edges = [...new Set(bins.flatMap((bin) => [bin.from, bin.to]))].sort(
     (a, b) => a - b,
   );
@@ -68,8 +66,7 @@ export const Histogram: React.FC<{ data: Data; accent: string }> = ({
               stroke={theme.bgDeep}
               strokeWidth={3}
             />
-            {/* The count is decoration; a labelled reference line through the
-                same bar is the point, so it yields. */}
+            {/* count は補助情報で、同じ bar を通る label 付き reference line の方が主役なので譲る。 */}
             {bin.count > 0 && grow > 0.7 && !marked(bin) ? (
               <text
                 x={(x(bin.from) + x(bin.to)) / 2}
@@ -87,7 +84,7 @@ export const Histogram: React.FC<{ data: Data; accent: string }> = ({
         );
       })}
 
-      {/* Mean, median, mode: the reason the histogram is on screen at all. */}
+      {/* mean、median、mode。histogram を画面に出す理由そのもの。 */}
       <MarkLines
         marks={data.marks}
         x={x}

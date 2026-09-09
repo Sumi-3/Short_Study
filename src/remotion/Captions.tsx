@@ -15,35 +15,30 @@ import { Fraction, WHOLE_FRACTION } from "./Fraction";
 import { layout, plateOf, shadowOf, useTheme } from "./theme";
 
 /**
- * Japanese tokens arrive back-to-back with only a few milliseconds between
- * them, so time alone never breaks a page — the character budget below is what
- * actually splits the narration. This stays high enough not to fight it: at
- * the measured 4.45 characters a second a full page is read in about five, and
- * a window shorter than that would cut a page in half and leave the remainder
- * on a line of its own.
+ * 日本語 token は数 milliseconds 間隔で連続して届くため、時間だけでは page が分かれない。実際に
+ * narration を分けるのは以下の文字数予算である。これと競合しないよう十分大きく保つ。実測で毎秒
+ * 4.45文字なら1 page を読むのに約5秒かかり、これより短い window では page が途中で切れ、残りが
+ * 1行だけに残ってしまう。
  */
 const SWITCH_CAPTIONS_EVERY_MS = 6000;
 
 /**
- * Inner width is 1080 − 2×88 (safe area) − 2×32 (plate padding) = 840px, and a
- * full-width Japanese glyph is about 1em, so 11 chars at 66px fill one line.
+ * 内幅は 1080 − 2×88（safe area）− 2×32（plate padding）= 840px。全角日本語 glyph は約1emなので、
+ * 66pxでは11文字で1行が埋まる。
  *
- * Two lines are allowed, which is what the band was always sized for: 2 × 66 ×
- * 1.3 plus the plate's 40px is the 212 of `captionBandHeight`. Holding it to
- * one line broke phrases that read as one — 「1回目に赤球が出たとき」 arrived as
- * three pages — and each page then held the screen for barely a second.
- * Lowering `captionBottom` only moves this same band: its width, 66px type
- * and 212px height did not change, so the 22-character budget must stay too.
+ * 2行を許す。band は元からそのためのサイズで、2 × 66 × 1.3 に plate の40pxを加えたものが
+ * `captionBandHeight` の212である。1行に縛ると、本来ひと続きに読む「1回目に赤球が出たとき」が
+ * 3 page に分かれ、各 page はほぼ1秒しか画面に残らなかった。`captionBottom` を下げても同じ
+ * band を移動するだけで、幅・66px type・212px高は変わらないため、22文字の予算も維持する必要がある。
  */
 const MAX_CHARS_PER_PAGE = 22;
 
-/** A pause this long reads as a phrase boundary. */
+/** この長さの pause は句の境界として読める。 */
 const PHRASE_GAP_MS = 420;
 
 /**
- * `createTikTokStyleCaptions()` groups purely by time, which for Japanese would
- * put a whole sentence on one page. Marking `pageBreakAfter` gives it the
- * phrase boundaries it cannot infer.
+ * `createTikTokStyleCaptions()` は時間だけで group 化するため、日本語では文全体を1 page に
+ * 入れてしまう。`pageBreakAfter` を付け、推測できない句の境界を渡す。
  */
 const withPageBreaks = (captions: Caption[]): Caption[] => {
   const result: Caption[] = [];
@@ -57,8 +52,7 @@ const withPageBreaks = (captions: Caption[]): Caption[] => {
       next && charsOnPage + next.text.trim().length > MAX_CHARS_PER_PAGE;
     const phraseEnded = next && next.startMs - caption.endMs > PHRASE_GAP_MS;
 
-    // A break the pipeline marked is a sentence boundary in the narration
-    // itself, which beats anything inferable from timing here.
+    // pipeline が付けた break は narration 自体の文境界であり、ここで時間から推測するより確かである。
     const pageBreakAfter = Boolean(
       caption.pageBreakAfter || pageIsFull || phraseEnded,
     );
@@ -90,8 +84,7 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
         height: layout.captionBandHeight,
         paddingLeft: layout.safeX,
         paddingRight: layout.safeX,
-        // Packed to the end, so a rare third line grows up into the gap above
-        // instead of pushing the text off the bottom of the frame.
+        // 下端寄せにして、まれな3行目は text をフレーム下へ押し出さず上の gap へ伸ばす。
         justifyContent: "flex-end",
         alignItems: "center",
       }}
@@ -105,11 +98,11 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
           textAlign: "center",
           color: theme.ink,
           textShadow: shadowOf(theme),
-          // One plate behind the whole block: per-token plates leave seams.
+          // block 全体の背後に1枚の plate を置く。token ごとの plate では継ぎ目が残る。
           backgroundColor: plateOf(theme),
           borderRadius: 24,
           padding: "20px 32px",
-          // Japanese has no inter-word spaces, so tokens are joined directly.
+          // 日本語には語間 space がないため、token は直接つなぐ。
           whiteSpace: "pre-wrap",
           scale: interpolate(frame, [0, 4], [0.94, 1], {
             extrapolateLeft: "clamp",
@@ -119,9 +112,8 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
         }}
       >
         {page.tokens.map((token, tokenIndex) => {
-          // The last token that has started, rather than one strictly inside
-          // its own window — otherwise the highlight blinks off in the gaps
-          // between tokens.
+          // 自身の window 内に厳密にある token でなく、開始済みの最後の token を選ぶ。そうしないと
+          // token 間の gap で highlight が消滅して点滅する。
           const isActive =
             token.fromMs <= absoluteTimeMs &&
             (nextStartMs(page, tokenIndex) ?? Infinity) > absoluteTimeMs;
@@ -131,17 +123,14 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
               key={`${token.fromMs}-${tokenIndex}`}
               style={{
                 color: isActive ? accent : theme.ink,
-                // Scaling the active token would reflow the line, so the
-                // highlight is colour plus a glow only.
+                // active token を scale すると行が reflow するため、highlight は colour と glow だけにする。
                 textShadow: isActive
                   ? `0 0 28px ${accent}, ${shadowOf(theme)}`
                   : shadowOf(theme),
               }}
             >
-              {/* A fraction is guaranteed to be a whole token: the pipeline
-                  merges the kana it was split across before rewriting it, so
-                  matching the token entire needs no guess about where the
-                  numerator starts. */}
+              {/* fraction は必ず token 全体になる。pipeline は書き換える前に分割された kana を結合するため、
+                  token 全体に一致させれば numerator の始点を推測する必要がない。 */}
               {(() => {
                 const frac = WHOLE_FRACTION.exec(token.text);
                 return frac ? (

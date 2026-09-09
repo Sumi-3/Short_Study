@@ -1,17 +1,16 @@
 /**
- * The Japanese mathematics curriculum, as the unit label shown above a problem.
+ * 問題の上に単元ラベルとして出す、日本の数学カリキュラム。
  *
- * The label is always `課程 中分類` — the middle category, never the small one.
- * That keeps every banner the same shape and short enough for one line, while
- * the small categories below give the model enough detail to pick correctly.
+ * ラベルは常に小分類ではなく中分類の `課程 中分類` にする。これにより全バナーの形をそろえ、
+ * 1 行に収められる一方、下の小分類はモデルが正しく選ぶために十分な詳細を与える。
  *
- * The list is also the schema: `generateScript` turns it into an enum, so the
- * model cannot invent a unit name or spell an existing one differently.
+ * この一覧はスキーマでもある。`generateScript` が enum にするため、モデルは単元名を捏造したり
+ * 既存名を別表記にしたりできない。
  */
 export type Unit = {
-  /** What appears on screen. */
+  /** 画面に出す名称。 */
   name: string;
-  /** Small categories, for choosing between units — never displayed. */
+  /** 単元の選択に使う小分類。表示はしない。 */
   topics: readonly string[];
 };
 
@@ -169,13 +168,13 @@ export const MATH_UNITS: readonly Unit[] = [
 
 export const MATH_UNIT_NAMES = MATH_UNITS.map((unit) => unit.name);
 
-/** The list as the prompt shows it: one unit per line, its topics after it. */
+/** prompt に見せる一覧。1 行に 1 単元とその小分類を並べる。 */
 export const unitCatalogue = (units: readonly Unit[]) =>
   units.map((unit) => `- ${unit.name}: ${unit.topics.join(" / ")}`).join("\n");
 
 /**
- * The unit name carries two levels: `課程 中分類`, e.g. "数II 微分・積分の考え".
- * The home screen filters on them separately, so it needs them apart.
+ * 単元名は `課程 中分類` の 2 階層を持つ。例: "数II 微分・積分の考え"。ホーム画面では別々に
+ * 絞り込むため、分けて取得する必要がある。
  */
 export const splitUnit = (unit: string) => {
   const space = unit.indexOf(" ");
@@ -184,13 +183,13 @@ export const splitUnit = (unit: string) => {
     : { major: unit.slice(0, space), middle: unit.slice(space + 1) };
 };
 
-/** 学年 → 分野 → 単元, in curriculum order. */
+/** カリキュラム順の、学年 → 分野 → 単元。 */
 export const MATH_TAXONOMY = MATH_UNITS.map((unit) => ({
   ...splitUnit(unit.name),
   name: unit.name,
   topics: unit.topics,
 }));
 
-/** The small categories under one unit name, or null if it is not a known unit. */
+/** ある単元名の下の小分類。既知の単元でなければ null。 */
 export const topicsOf = (unitName: string): readonly string[] | null =>
   MATH_UNITS.find((unit) => unit.name === unitName)?.topics ?? null;

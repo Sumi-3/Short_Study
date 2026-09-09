@@ -19,7 +19,7 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: "create", label: "生成", icon: "＋" },
 ];
 
-/** Fisher–Yates. The shorts tab is a shuffle, not a sort. */
+/** Fisher–Yates。shorts tab は sort ではなく shuffle である。 */
 const shuffled = <T,>(items: T[]) => {
   const out = [...items];
   for (let i = out.length - 1; i > 0; i--) {
@@ -33,23 +33,22 @@ export const App: React.FC = () => {
   const [tab, setTab] = useState<Tab>("home");
   const [shorts, setShorts] = useState<ShortSummary[]>([]);
   const [job, setJob] = useState<JobEvent | null>(null);
-  /** The filtered list a card was opened from, played over the whole app. */
+  /** card を開いた元の絞り込み list を、app 全体の上で再生する。 */
   const [viewing, setViewing] = useState<{
     list: ShortSummary[];
     index: number;
   } | null>(null);
   /**
-   * Session-wide audio state, shared by every player. The first short of a
-   * session waits to be tapped because only a play() made inside that click
-   * unlocks the Player's audio tags on a phone; after that, the gesture that
-   * brought a short on screen is enough.
+   * すべての player が共有する、セッション全体の音声状態。最初の short はタップを待つ。
+   * phone 上で Player の audio tag を unlock できるのは、その click の中の play() だけ
+   * だからである。その後は short を画面に出した gesture だけで足りる。
    *
-   * Ref, not state: setting this during a tap must not re-render the mounted
-   * ShortPlayer, or the same tap both auto-starts and click-starts it.
+   * state ではなく ref にする。タップ中のセットで mounted ShortPlayer を再レンダー
+   * してしまうと、同じタップで auto-start と click-start の両方が起こる。
    */
   const gate = useRef(newAudioGate());
 
-  /** Reshuffled whenever the tab is entered, so it is a different run each time. */
+  /** tab に入るたび shuffle し直し、毎回異なる並びにする。 */
   const [shuffleKey, setShuffleKey] = useState(0);
 
   const refreshShorts = useCallback(async () => {
@@ -69,9 +68,9 @@ export const App: React.FC = () => {
       if (!current?.list.some((short) => short.slug === slug)) {
         return current;
       }
-      // The parked Player must never be repointed at a manifest just removed
-      // from storage. Closing this feed ends that player cleanly; the next
-      // open creates its one stable player as usual.
+      // 固定した Player を、storage から消した直後の manifest に向け直してはならない。
+      // この feed を閉じてその player をきれいに終了し、次に開くときは通常どおり
+      // 安定した一つの player を作る。
       return null;
     });
   };
@@ -103,8 +102,7 @@ export const App: React.FC = () => {
         setJob(next);
         if (next.status === "done" && next.slug) {
           const list = await refreshShorts();
-          // Straight into the video that was just asked for, rather than
-          // leaving the viewer to find it in the library.
+          // 視聴者に library から探させず、今要求した動画へ直接入る。
           const index = list.findIndex((short) => short.slug === next.slug);
           if (index >= 0) {
             setViewing({ list, index });
@@ -132,7 +130,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    // Any real tap counts as the gesture that unlocks programmatic playback.
+    // 実際のタップならどれでも programmatic playback を unlock する gesture として使える。
     <div
       className="app"
       onPointerDown={(event) => {

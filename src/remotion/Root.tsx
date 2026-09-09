@@ -7,7 +7,7 @@ import {
 import { VIDEO } from "../config-video";
 
 const defaultProps: StudyShortProps = {
-  // Overridden per render via `--props`. `mock` is the checked-in sample.
+  // render ごとに `--props` で上書きする。`mock` は repository に入っている sample。
   manifestSrc: "projects/mock/manifest.json",
   manifest: null,
 };

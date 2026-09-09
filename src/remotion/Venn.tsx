@@ -11,9 +11,8 @@ const CX = WIDTH / 2;
 const CY = HEIGHT / 2 - 10;
 
 /**
- * Region ids, in the order the counts arrive. Fixed rather than derived from
- * the set names so the model has one thing to remember and the highlight ids
- * mean the same thing whatever the sets are called.
+ * count が届く順の region id。set 名から導かず固定することで、model が覚えるものを1つにし、set の
+ * 呼び名にかかわらず highlight id が同じ意味を持つようにする。
  */
 const TWO = ["A", "AB", "B", "none"] as const;
 const THREE = ["A", "B", "C", "AB", "BC", "AC", "ABC", "none"] as const;
@@ -21,11 +20,9 @@ const THREE = ["A", "B", "C", "AB", "BC", "AC", "ABC", "none"] as const;
 /**
  * ベン図 for two or three sets.
  *
- * Each region is cut out with nested SVG masks — inside these circles, outside
- * those — rather than by drawing lens shapes by hand. Arc geometry for the
- * three-set case is genuinely fiddly and gets subtly wrong at the cusps, while
- * "inside A, inside B, outside C" is exactly what the region means and is
- * impossible to get wrong.
+ * 各 region は lens shape を手で描かず、nested SVG mask で切り出す。すなわちこの circle の内側、
+ * あの circle の外側という形である。3 set の arc geometry は本当に扱いづらく cusp で微妙に誤りやすいが、
+ * "inside A, inside B, outside C" は region の意味そのもので間違えようがない。
  */
 export const Venn: React.FC<{ data: Data; accent: string }> = ({
   data,
@@ -39,8 +36,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
   const radius = pair ? 210 : 190;
   const offset = pair ? 118 : 108;
 
-  // Two side by side; three on the points of a triangle, the arrangement that
-  // gives all seven regions a visible area.
+  // 2つなら横並び、3つなら triangle の頂点に置く。7 region すべてに見える面積を与える配置である。
   const centres = pair
     ? [
         { x: CX - offset, y: CY },
@@ -54,11 +50,11 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
 
   const ids = pair ? TWO : THREE;
 
-  /** Which circles a region is inside, by index. */
+  /** region が内側にある circle を index で示す。 */
   const membership = (id: string) =>
     id === "none" ? [] : id.split("").map((letter) => letter.charCodeAt(0) - 65);
 
-  /** Where a region's number sits. */
+  /** region の number を置く位置。 */
   const anchor = (id: string) => {
     if (id === "none") {
       return { x: WIDTH - 70, y: HEIGHT - 46 };
@@ -71,7 +67,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
     if (inside.length === data.sets.length) {
       return { x: CX, y: pair ? CY : CY + offset * 0.12 };
     }
-    // Push a partial region away from the middle so it lands in its own lobe.
+    // 部分 region を中央から離し、専用の lobe に収める。
     const dx = mean.x - CX;
     const dy = mean.y - CY;
     const length = Math.hypot(dx, dy) || 1;
@@ -111,7 +107,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
           ))}
         </defs>
 
-        {/* The answer region, tinted. Nested groups intersect the masks. */}
+        {/* 色を付けた answer region。nested group が mask の intersection を作る。 */}
         {data.highlight
           .filter((id) => (ids as readonly string[]).includes(id))
           .map((id) => {
@@ -131,8 +127,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
             return <g key={`hl${id}`}>{element}</g>;
           })}
 
-        {/* The universal set. Without it the "neither" count floats in space
-            with nothing to belong to. */}
+        {/* universal set。これがないと "neither" の count が、所属先のないまま空中に浮いてしまう。 */}
         <rect
           x={8}
           y={8}
@@ -167,7 +162,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
           />
         ))}
 
-        {/* Set names, outside their own circle. */}
+        {/* set 名は自身の circle の外に置く。 */}
         {data.sets.map((name, index) => {
           const centre = centres[index];
           const dx = centre.x - CX;

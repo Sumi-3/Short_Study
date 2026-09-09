@@ -13,8 +13,7 @@ const prepareCaptions = (
   subject: Script["subject"],
 ) => {
   const paged = markPhraseBreaks(narration, captions);
-  // Maths is the only subject whose narration is deliberately spelled for the
-  // synthesiser rather than for the reader.
+  // 数学だけは読む人でなく synthesiser 用の綴りで narration を意図的に書く教科である。
   return subject === "math" ? applyDisplaySpelling(paged) : paged;
 };
 

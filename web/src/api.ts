@@ -5,7 +5,7 @@ import type { Manifest } from "../../src/types";
 
 export type { JobEvent, ShortSummary };
 
-/** Blob-backed manifests are absolute; local ones are relative to `public/`. */
+/** Blob-backed manifest は絶対パス、local のものは `public/` からの相対パスである。 */
 const absolute = (src: string) =>
   /^https?:\/\//.test(src) ? src : `/${src}`;
 
@@ -19,11 +19,11 @@ const json = async <T,>(input: string, init?: RequestInit): Promise<T> => {
 };
 
 /**
- * Streams one generation, yielding a progress event per stage.
+ * 1件の生成を stream し、stage ごとに progress event を yield する。
  *
- * The server holds the connection for the whole run rather than writing to a
- * job table the client polls, because a deployed build has no process that
- * outlives a request to keep such a table in.
+ * server は client が poll する job table に書く代わりに、実行全体で connection を
+ * 保持する。deploy 済み build には、その table を持つために request より長生きする
+ * process がないからである。
  */
 export async function* generate(
   topic: string,
@@ -36,7 +36,7 @@ export async function* generate(
     body: JSON.stringify({ topic, course, voice }),
   });
 
-  // A rejected request answers with JSON, not with the stream.
+  // 拒否された request は stream ではなく JSON で応答する。
   if (!response.ok) {
     const body = await response.json().catch(() => null);
     throw new Error(body?.error ?? `${response.status}`);
@@ -51,7 +51,7 @@ export async function* generate(
   const parse = function* (chunk: string) {
     buffered += chunk;
     const lines = buffered.split("\n");
-    // A chunk boundary lands anywhere, so the last piece may be half a line.
+    // chunk 境界はどこにでも来るので、最後の断片は行の途中かもしれない。
     buffered = lines.pop() ?? "";
     for (const line of lines) {
       if (line.trim()) {
@@ -80,12 +80,11 @@ export const deleteShort = (slug: string) =>
   });
 
 /**
- * A manifest is fetched at most once a session.
+ * manifest の fetch はセッションごとに最大一回にする。
  *
- * They are immutable — the pipeline writes one per slug and never rewrites it —
- * so there is nothing to invalidate. The feed depends on this: swiping used to
- * mean a round-trip to blob storage before the video could appear, and the
- * card underneath showed through for as long as that took.
+ * pipeline は slug ごとに一つを書いて決して書き換えない immutable なものなので、
+ * invalidation は不要である。feed にとっても必要で、以前は swipe のたび動画が出る前に
+ * blob storage への往復があり、その間ずっと下の card が見えていた。
  */
 const manifests = new Map<string, Promise<Manifest>>();
 
@@ -95,7 +94,7 @@ export const fetchManifest = (manifestSrc: string) => {
     return cached;
   }
   const pending = json<Manifest>(absolute(manifestSrc)).catch((error) => {
-    // A failure must not be remembered, or one bad moment is permanent.
+    // 失敗を記憶すると一度だけの不調が恒久化するので、cache には残さない。
     manifests.delete(manifestSrc);
     throw error;
   });
@@ -103,7 +102,7 @@ export const fetchManifest = (manifestSrc: string) => {
   return pending;
 };
 
-/** Warms one into the cache; failures are the next real fetch's problem. */
+/** 一つを cache に warm する。失敗は次の実際の fetch で扱えばよい。 */
 export const prefetchManifest = (manifestSrc: string) => {
   void fetchManifest(manifestSrc).catch(() => {});
 };

@@ -1,15 +1,14 @@
 /**
- * Re-synthesises the preview clip every voice is auditioned by.
+ * 試聴する各 voice の preview clip を再合成する。
  *
- * The clips are committed under `web/src/samples/` and imported by the build,
- * rather than fetched at runtime: they are a few hundred kilobytes in total,
- * and a preview that has to wait on the API server would defeat the point of
- * tapping ▶ before committing to a sixty-second render.
+ * clip は runtime に fetch せず `web/src/samples/` に commit し、build が import する。
+ * 合計は数百 kilobyte にすぎず、60秒の render を始める前に ▶ をタップする狙いが、
+ * API server を待つ preview では失われるためである。
  *
  *   npx tsx scripts/voice-samples.ts
  *
- * Run it when VOICES changes, or when the rate/pitch defaults do — a preview
- * that does not match what the pipeline produces is worse than none.
+ * `VOICES` や rate/pitch の default が変わったら実行する。pipeline の出力と合わない
+ * preview は、ないほうがましだからである。
  */
 import fs from "node:fs";
 import path from "node:path";

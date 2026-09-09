@@ -1,20 +1,19 @@
 import { createContext, useContext } from "react";
 import { Easing } from "remotion";
 
-/** Device faces only: nothing here is downloaded. */
+/** 端末搭載フォントだけを使う。ここでダウンロードするものはない。 */
 const stack = (...system: string[]) =>
   [...system.map((s) => `"${s}"`), "sans-serif"].join(", ");
 
 /**
- * Device faces, chosen for their weights rather than their shape.
+ * 字形よりウェイトを優先して選んだ端末搭載フォント。
  *
- * Hiragino Maru Gothic ProN is the rounded face an iPhone has, and it used to
- * lead this list. It ships exactly one master: every weight resolves to
- * `HiraMaruProN-W4`, so the 700 and 900 asked for below were drawn as
- * *synthetic* bold — an outline the engine fattens, not a designed face — and
- * captions came out smeared. Hiragino Sans answers each request with a real
- * master (W2/W3/W4/W5/W6/W8 measured), so the weight hierarchy survives.
- * Rounded costs the weights: no rounded face on iOS has more than one.
+ * iPhone の丸ゴである Hiragino Maru Gothic ProN は以前この先頭だった。しかし収録される
+ * master は1つだけで、どのウェイトも `HiraMaruProN-W4` に解決される。そのため下で要求する
+ * 700 と900は、設計された書体ではなくエンジンが輪郭を太らせる *synthetic* bold で描かれ、
+ * 字幕がにじんだ。Hiragino Sans は各要求に実在する master を返す（W2/W3/W4/W5/W6/W8 を
+ * 実測）ので、ウェイトの階層を保てる。iOSでは複数ウェイトを持つ丸ゴがないため、丸みは
+ * ウェイトとの引き換えになる。
  */
 const ROUNDED = stack("Hiragino Sans", "Noto Sans CJK JP");
 
@@ -23,24 +22,24 @@ export type Theme = {
   bgDeep: string;
   ink: string;
   inkDim: string;
-  /** Cycled per scene so consecutive scenes never share an accent. */
+  /** 隣接シーンで同じ accent にならないよう、シーンごとに循環させる。 */
   accents: readonly string[];
   fontFamily: string;
-  /** How much the background wash shows through. */
+  /** 背景のにじみをどの程度透かして見せるか。 */
   veil: string;
-  /** Chip and card rounding — sharper reads as more formal. */
+  /** chip と card の角丸。小さいほど硬く、フォーマルに読まれる。 */
   radius: number;
-  /** The motion character: slower and softer, or crisp and direct. */
+  /** 動きの性格。ゆっくり柔らかくするか、きびきび直接的にするか。 */
   easing: (input: number) => number;
-  /** A light plate keeps dark caption ink separate from the washes. */
+  /** 明るい plate で、濃い字幕の ink を背景のにじみから分ける。 */
   plate: string;
-  /** A faint shadow avoids muddying dark text on the board. */
+  /** 薄い shadow にして、ボード上の濃い文字を濁らせない。 */
   textShadow: string;
-  /** Restrains marker colours so background washes do not drown the board. */
+  /** 背景のにじみがボードを支配しないよう、marker colour を抑える。 */
   wash: number;
 };
 
-/** Marker colours must remain legible as text on a light board. */
+/** marker colour は明るいボード上でも文字として読めなければならない。 */
 const whiteboard: Theme = {
   bg: "#FBFBF9",
   bgDeep: "#E7E9EC",
@@ -63,48 +62,44 @@ export const useTheme = () => useContext(ThemeContext);
 export const accentFor = (theme: Theme, index: number) =>
   theme.accents[index % theme.accents.length];
 
-/** `#rrggbb` → `rgba(...)`. Gradients need explicit alpha stops: interpolating
- * a hex straight to `transparent` fades through transparent *black* in some
- * engines and leaves a dark ring. */
+/** `#rrggbb` → `rgba(...)`。gradient には明示的な alpha stop が要る。hex から
+ * `transparent` へ直補間すると、一部エンジンでは透明な *black* を経由して暗い輪が残る。 */
 export const withAlpha = (hex: string, alpha: number) => {
   const int = parseInt(hex.slice(1), 16);
   return `rgba(${(int >> 16) & 255}, ${(int >> 8) & 255}, ${int & 255}, ${alpha})`;
 };
 
-/** 1080x1920. Key content stays inside these margins. */
+/** 1080x1920。重要な内容はこの余白内に置く。 */
 export const layout = {
   width: 1080,
   height: 1920,
   safeX: 88,
   safeTop: 120,
   /**
-   * The caption is anchored to the *bottom* of the frame rather than hung from
-   * a fixed top, because its height varies with the line count. Measuring from
-   * the bottom keeps it at a constant distance from the edge and lets it grow
-   * upward into space the stage has already reserved.
+   * 字幕は固定の上端からではなく、フレームの *bottom* を基準にする。行数で高さが変わるため、
+   * 下端から測れば端との距離を一定に保ち、stage があらかじめ空けた領域へ上方向に伸ばせる。
    *
-   * Moving the old 190px inset to 100px returns 90px to the diagram/working
-   * stage. At a 390px-wide full-frame phone preview this is about 36 CSS px
-   * (100 * 390 / 1080), allowing roughly a 34px home-indicator inset. This is
-   * a full-frame viewing allowance, not a guarantee for every social app's
-   * overlay; keeping 100px rather than going flush leaves an edge buffer.
-   * The band and gap stay unchanged, so captions still have two full lines.
+   * 以前の190px insetを100pxにすると、diagram/working の stage に90pxを返せる。幅390pxの
+   * 全画面スマホプレビューでは約36 CSS px（100 * 390 / 1080）となり、およそ34pxの
+   * home-indicator inset を許容する。これは全画面視聴のための余白であり、各SNSアプリの
+   * overlay を保証するものではない。端まで詰めず100pxを残すことで edge buffer を確保する。
+   * band と gap は変えないため、字幕は引き続き完全な2行を使える。
    */
   captionBottom: 100,
-  /** Two lines at 66px/1.3 plus the plate's 20px padding, rounded up. */
+  /** 66px/1.3 の2行に plate の20px padding を足し、切り上げた値。 */
   captionBandHeight: 212,
-  /** Breathing room between the stage and the tallest caption. */
+  /** stage と最大高の字幕の間に残す余白。 */
   captionGap: 44,
 } as const;
 
-/** Top of a full two-line caption: where the scene stage has to stop. */
+/** 完全な2行字幕の上端。scene の stage はここで止める。 */
 export const stageBottom =
   layout.height -
   layout.captionBottom -
   layout.captionBandHeight -
   layout.captionGap;
 
-/** Legacy manifests share the current look without rewriting stored data. */
+/** 保存済みデータを書き換えず、旧 manifest にも現在の見た目を共有させる。 */
 export const themeOf = (): Theme => whiteboard;
 
 export const shadowOf = (theme: Theme) => theme.textShadow;

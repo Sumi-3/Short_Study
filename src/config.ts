@@ -1,7 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 
-/** Minimal .env loader so the CLI works without adding a dotenv dependency. */
+/** dotenv 依存を増やさず CLI が動くようにする最小限の .env ローダー。 */
 const loadDotEnv = () => {
   const file = path.join(process.cwd(), ".env");
   if (!fs.existsSync(file)) {
@@ -27,12 +27,12 @@ const loadDotEnv = () => {
 loadDotEnv();
 
 /**
- * Reads an environment variable, treating an empty one as absent.
+ * 環境変数を読み、空文字は未設定として扱う。
  *
- * A dashboard stores "I added the key but left the box blank" as an empty
- * string, and `??` only falls back on `undefined` — so the blank sails through
- * as a real value. That is how an empty `ANTHROPIC_MODEL` reached the API as
- * `model: ""` and came back as a 400 that named the model, not the setting.
+ * ダッシュボードでは「キーは追加したが欄は空」の状態が空文字で保存される。`??` は
+ * `undefined` にしかフォールバックしないため、空文字が実値として通ってしまう。空の
+ * `ANTHROPIC_MODEL` が API に `model: ""` として届き、設定ではなくモデル名を指す 400 が
+ * 返ったのはこのためである。
  */
 const env = (name: string) => {
   const value = process.env[name]?.trim();
@@ -41,7 +41,7 @@ const env = (name: string) => {
 
 const num = (value: string | undefined, fallback: number) => {
   const parsed = Number(value);
-  // Number("") is 0, which is finite — so a blank has to be ruled out first.
+  // Number("") は有限な 0 になるため、先に空文字を除外する必要がある。
   return value !== undefined && Number.isFinite(parsed) ? parsed : fallback;
 };
 
@@ -51,52 +51,50 @@ export const config = {
   anthropicApiKey: env("ANTHROPIC_API_KEY") ?? "",
   anthropicModel: env("ANTHROPIC_MODEL") ?? "claude-opus-5",
   /**
-   * Required only for identity-linked API keys, which do not themselves say
-   * which workspace a request bills to. Workspace-scoped keys leave this empty.
+   * 要求の課金先 workspace をキー自身が示さない identity-linked API key にだけ必要。
+   * workspace-scoped key では空のままにする。
    */
   anthropicWorkspaceId: env("ANTHROPIC_WORKSPACE_ID") ?? "",
 
-  /** "edge" (free, default) | "elevenlabs" */
+  /** "edge"（無料・既定値）| "elevenlabs" */
   ttsProvider: (env("TTS_PROVIDER") ?? "edge") as "edge" | "elevenlabs",
-  /** EdgeTTS only ships two Japanese voices: NanamiNeural (F), KeitaNeural (M). */
+  /** EdgeTTS が提供する日本語音声は NanamiNeural（女性）と KeitaNeural（男性）の 2 つだけ。 */
   edgeVoice: env("EDGE_VOICE") ?? "ja-JP-NanamiNeural",
-  /** e.g. "+10%" to speed the narration up. */
+  /** 例: ナレーションを速くする "+10%"。 */
   edgeRate: env("EDGE_RATE") ?? "+8%",
-  /** Relative: "+10%", "-2st", "+20Hz". With only two voices, this is the main knob. */
+  /** 相対値: "+10%"、"-2st"、"+20Hz"。音声が 2 種だけなので主な調整手段になる。 */
   edgePitch: env("EDGE_PITCH") ?? "+0%",
-  /** Relative: "+0%" is the synthesiser's own level. */
+  /** 相対値。"+0%" は synthesiser 本来の音量。 */
   edgeVolume: env("EDGE_VOLUME") ?? "+0%",
   elevenLabsApiKey: env("ELEVENLABS_API_KEY") ?? "",
   elevenLabsVoiceId: env("ELEVENLABS_VOICE_ID") ?? "21m00Tcm4TlvDq8ikWAM",
   elevenLabsModel: env("ELEVENLABS_MODEL") ?? "eleven_multilingual_v2",
 
   /**
-   * "tts" reuses EdgeTTS word boundaries: exact script text, exact timings, no
-   * download. "whisper" runs @remotion/install-whisper-cpp instead — required
-   * when TTS_PROVIDER=elevenlabs, but note that whisper.cpp's token-level JSON
-   * splits Japanese characters across tokens (see generateCaptions.ts).
+   * "tts" は EdgeTTS の word boundary を再利用するため、台本の文字もタイミングも正確で
+   * ダウンロードが不要。"whisper" は代わりに @remotion/install-whisper-cpp を動かす。
+   * TTS_PROVIDER=elevenlabs では必要だが、whisper.cpp の token-level JSON は日本語文字を
+   * token をまたいで分割する点に注意（generateCaptions.ts 参照）。
    */
   captionSource: (env("CAPTION_SOURCE") ?? "tts") as "whisper" | "tts",
   whisperModel: env("WHISPER_MODEL") ?? "medium",
   whisperVersion: env("WHISPER_VERSION") ?? "1.5.5",
   language: "ja" as const,
 
-  // TARGET_SECONDS was removed: explanation complexity sets length; the shared
-  // script budget is a deployment safety ceiling, not a user-selected duration.
-  /** Silence appended after each scene's narration, in seconds. */
+  // TARGET_SECONDS は廃止した。長さは解説の複雑さで決まり、共通の台本予算はユーザーが選ぶ
+  // 時間ではなくデプロイ時の安全上限である。
+  /** 各シーンのナレーション後へ加える無音（秒）。 */
   scenePaddingSeconds: num(env("SCENE_PADDING_SECONDS"), 0.35),
 } as const;
 
 /**
- * Where generated projects are written. Normally that is the repo itself, but a
- * deployed build sits on a read-only filesystem with only `/tmp` writable, so
- * the data root has to come apart from the source root there.
+ * 生成したプロジェクトの書き込み先。通常はリポジトリ本体だが、デプロイ済みビルドは
+ * `/tmp` だけ書き込み可能な読み取り専用ファイルシステム上にあるため、そこで data root を
+ * source root から分ける必要がある。
  *
- * `/tmp` is picked automatically on Vercel rather than left to a setting: it is
- * the only writable path, so there is nothing for anyone to decide, and
- * forgetting it would mean an `EROFS` failure on the first narration file.
- * Whatever is written is uploaded from there (see src/storage.ts) and the
- * directory is free to vanish afterwards.
+ * Vercel では `/tmp` を設定に委ねず自動選択する。書き込み可能な唯一のパスで選ぶ余地がなく、
+ * 忘れれば最初のナレーションファイルで `EROFS` になるためである。書いたものはそこから
+ * upload され（src/storage.ts 参照）、その後ディレクトリが消えてもよい。
  */
 const dataRoot =
   env("SHORT_STUDY_DATA_DIR") ??
@@ -109,6 +107,6 @@ export const paths = {
   whisper: path.join(dataRoot, "whisper.cpp"),
   out: path.join(dataRoot, "out"),
   projectDir: (slug: string) => path.join(dataRoot, "public", "projects", slug),
-  /** Same location, but expressed relative to `public/` for `staticFile()`. */
+  /** 同じ場所を `staticFile()` 用に `public/` からの相対パスで表す。 */
   staticProject: (slug: string) => `projects/${slug}`,
 };

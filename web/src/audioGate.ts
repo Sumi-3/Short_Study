@@ -1,17 +1,16 @@
 /**
- * What the player needs before it may make sound on a phone.
+ * phone で player が音を出せるようになる前に必要な状態。
  *
- * The Player keeps a pool of silent `<audio>` tags and unlocks them all when
- * `play()` is handed an event. Handing it one from a *past* gesture is enough
- * to keep later shorts playing, but the first unlock of a session has to
- * happen inside a real gesture — a `play()` called straight out of the click
- * handler. Until that has happened once, a short waits to be tapped rather
- * than starting silently.
+ * Player は無音の `<audio>` tag pool を持ち、`play()` に event を渡すとすべてを
+ * unlock する。*過去*の gesture の event でも後続 short の再生には足りるが、
+ * セッション最初の unlock は実際の gesture、すなわち click handler から直に呼ぶ
+ * `play()` の中で起こさなければならない。それまでは、無音で開始する代わりに
+ * short をタップ待ちにする。
  */
 export type AudioGate = {
-  /** The last real user gesture, forwarded to shorts that start on their own. */
+  /** 自動開始する short に渡す、最後の実際の user gesture。 */
   gesture: React.SyntheticEvent | null;
-  /** Set once a play() has run inside a click handler this session. */
+  /** このセッションで click handler 内の play() が一度走ったらセットする。 */
   unlocked: boolean;
 };
 

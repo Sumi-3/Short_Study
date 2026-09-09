@@ -11,15 +11,15 @@ import {
 } from "./scale";
 
 /**
- * The frame every data chart sits in: two axes that sweep out, gridlines, and
- * the tick labels. Charts draw their marks on top once this has arrived.
+ * 全 data chart が入る枠。外へ伸びる2本の axis、gridline、tick label からなる。これが出てから chart は
+ * mark をその上に描く。
  */
 export const Axes: React.FC<{
   x: Scale;
   y: Scale;
   xTicks: number[] | null;
   yDomain: [number, number] | null;
-  /** Suppresses the vertical axis for charts laid out along a number line. */
+  /** 数直線に沿って置く chart では vertical axis を抑制する。 */
   valueAxis?: boolean;
   unit?: string;
 }> = ({ x, y, xTicks, yDomain, valueAxis = true, unit = "" }) => {
@@ -123,19 +123,16 @@ export const Axes: React.FC<{
 };
 
 /**
- * Mean / median / mode lines.
+ * mean / median / mode の line。
  *
- * Each label sits at the top of its own line and the lines are cut to
- * different heights, because the interesting case is exactly the one where two
- * of these coincide — a symmetric distribution puts the mean and the median at
- * the same value, and labels drawn at the same height would then overlap into
- * an unreadable smear.
+ * 各 label は自身の line 上端に置き、line は異なる高さで止める。興味深いのはまさに2つが一致する場合で、
+ * 対称分布では mean と median が同じ値になる。同じ高さに label を描くと読めない重なりになるためである。
  */
 export const MarkLines: React.FC<{
   marks: readonly { value: number; label: string }[];
   x: Scale;
   baseline: number;
-  /** Height of the first line; later ones stop progressively lower. */
+  /** 最初の line の高さ。後の line は段階的に低い位置で止める。 */
   top: number;
   delay: number;
 }> = ({ marks, x, baseline, top, delay }) => {
@@ -186,7 +183,7 @@ export const MarkLines: React.FC<{
   );
 };
 
-/** The line under every chart that names what it shows. */
+/** 各 chart の下で、何を示すかを名付ける line。 */
 export const ChartCaption: React.FC<{ text: string; accent: string; delay: number }> = ({
   text,
   accent,

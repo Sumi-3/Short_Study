@@ -9,7 +9,7 @@ const PLAYER_STYLE = { width: "100%", height: "100%" } as const;
 const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5] as const;
 const PAUSE_OVERLAY_HOLD_MS = 800;
 const PAUSE_OVERLAY_FADE_MS = 320;
-// Share the fade duration with CSS so the timer never removes it mid-motion.
+// タイマーが動作途中で消さないよう、フェード時間は CSS と共有する。
 const PAUSE_OVERLAY_STYLE = {
   "--pause-overlay-fade": `${PAUSE_OVERLAY_FADE_MS}ms`,
 } as React.CSSProperties;
@@ -21,11 +21,11 @@ const clock = (seconds: number) => {
 };
 
 /**
- * The seek bar. Also owns the frame counter so the player's parent does not
- * re-render 30 times a second — that mattered a lot: every re-render rebuilt
- * `inputProps`, Remotion treated it as new input, and re-scheduled the audio
- * chunk queue, so the same 24ms chunk landed twice at the same timestamp and
- * you heard the first syllable of a word twice ("一発" → "い一発").
+ * シークバー。player の親を毎秒30回再レンダーさせないため、フレームカウンターも
+ * ここで持つ。これは大きな差だった。再レンダーのたびに `inputProps` が作り直され、
+ * Remotion が新しい入力として扱って音声チャンクのキューを再スケジュールした結果、
+ * 同じ24msのチャンクが同じ時刻に二度届き、単語の最初の音節が重複して聞こえた
+ * （"一発" → "い一発"）。
  */
 const Scrubber: React.FC<{
   player: React.RefObject<PlayerRef | null>;
@@ -54,7 +54,7 @@ const Scrubber: React.FC<{
       }
       const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
       const next = Math.min(durationInFrames - 1, Math.round(ratio * durationInFrames));
-      // Optimistic, so the fill tracks the finger even between frame events.
+      // フレームイベントの間も塗りが指に追従するよう、先に表示を更新する。
       setFrame(next);
       player.current?.seekTo(next);
     },
@@ -66,8 +66,8 @@ const Scrubber: React.FC<{
   return (
     <div
       className={`scrubber${scrubbing ? " is-scrubbing" : ""}`}
-      // Every handler stops propagation: the whole player surface is a
-      // play/pause target, and dragging the bar must not also toggle it.
+      // player 全面が再生・停止の対象なので、バーのドラッグまで切り替えないよう
+      // すべてのハンドラで伝播を止める。
       onPointerDown={(event) => {
         event.stopPropagation();
         event.currentTarget.setPointerCapture(event.pointerId);
@@ -82,7 +82,7 @@ const Scrubber: React.FC<{
       }}
       onPointerUp={(event) => {
         event.stopPropagation();
-        // Releasing a capture that was never taken throws.
+        // 取得していない capture を解放すると例外になる。
         if (event.currentTarget.hasPointerCapture(event.pointerId)) {
           event.currentTarget.releasePointerCapture(event.pointerId);
         }
@@ -111,15 +111,15 @@ const SpeedControl: React.FC<{
   return (
     <label
       className={`speed-control${playbackRate !== 1 ? " is-adjusted" : ""}`}
-      // The parent uses capture phase for its whole-surface play/pause target.
-      // Keep this as well as its closest() check so a speed change is never a
-      // play/pause tap when the control's markup changes later.
+      // 親は全面の再生・停止対象に capture phase を使う。後でコントロールの
+      // markup が変わっても速度変更が再生・停止タップにならないよう、closest() の
+      // 判定に加えてここも残す。
       onPointerDown={(event) => event.stopPropagation()}
       onClick={(event) => event.stopPropagation()}
     >
       <span className="speed-control__value" aria-hidden>{rateLabel(playbackRate)}</span>
-      {/* Keep the native picker for touch and keyboard access. Its transparent
-          hit area is larger than the text, without painting over the lesson. */}
+      {/* タッチとキーボードで操作できるよう native picker を残す。透明な hit area は
+          テキストより広いが、教材の上には描画されない。 */}
       <select
         className="speed-control__select"
         value={playbackRate}
@@ -137,34 +137,32 @@ const SpeedControl: React.FC<{
 };
 
 /**
- * Plays a generated short in the browser with no MP4 involved: `<Player>` runs
- * the same React composition the renderer uses, so a finished manifest is
- * watchable the moment the pipeline writes it.
+ * MP4 を介さず、生成済みの short をブラウザで再生する。`<Player>` が renderer と
+ * 同じ React composition を動かすため、pipeline が manifest を書いた瞬間に視聴できる。
  *
- * Playback starts on a tap, never automatically — iOS Safari and Android
- * Chrome both refuse to start audio without a user gesture, so an `autoPlay`
- * short would sit silently on the first frame.
+ * 再生開始は自動ではなくタップに限る。iOS Safari と Android Chrome はどちらも
+ * user gesture なしの音声開始を拒むため、`autoPlay` の short は最初のフレームで
+ * 無音のまま止まる。
  */
 export const ShortPlayer: React.FC<{
   manifestSrc: string;
   /**
-   * Session-wide audio state. The first short waits for a tap because only a
-   * play() made inside that click unlocks the Player's audio tags; every later
-   * one starts on its own and is handed the swipe that brought it on screen.
+   * セッション全体の音声状態。最初の short はタップを待つ。Player の audio tag を
+   * unlock できるのはその click の中で実行した play() だけで、以降の short は自動で
+   * 開始し、画面に現れたときの swipe を渡される。
    *
-   * A ref rather than a prop value on purpose: as state it re-rendered this
-   * component during the very tap that set it, so the auto-start effect and the
-   * click handler both fired for the same gesture.
+   * 意図して prop value ではなく ref にする。state にするとセットした当のタップ中に
+   * この component が再レンダーされ、同じ gesture に対して auto-start effect と
+   * click handler の両方が発火した。
    */
   gate: React.RefObject<AudioGate>;
 }> = ({ manifestSrc, gate }) => {
   const player = useRef<PlayerRef>(null);
   /**
-   * The manifest and the address it came from, together.
+   * manifest とその取得元アドレスを一緒に持つ。
    *
-   * They are one piece of state rather than two because they are handed to the
-   * composition as a pair, and a render where the new `manifestSrc` sits beside
-   * the previous `manifest` would be a lie about what is on screen.
+   * composition には組で渡すので、state も二つではなく一つにする。新しい
+   * `manifestSrc` と前の `manifest` が並ぶ render は、画面に何があるかを偽る。
    */
   const [loaded, setLoaded] = useState<{ src: string; manifest: Manifest } | null>(
     null,
@@ -172,16 +170,16 @@ export const ShortPlayer: React.FC<{
   const [error, setError] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
-  // `gate` is deliberately a ref for the audio path. This small mirror is
-  // only for rendering the first-tap prompt after that ref changes.
+  // 音声経路の `gate` は意図して ref にしている。この小さな mirror は、その ref が
+  // 変わった後に最初のタップを促す表示を出すためだけにある。
   const [audioUnlocked, setAudioUnlocked] = useState(() => gate.current.unlocked);
   const [pauseOverlay, setPauseOverlay] = useState<"hidden" | "shown" | "fading" | "settled">(
     "hidden",
   );
-  /** A ref so the click handler can never read a stale value and re-start. */
+  /** click handler が古い値を読んで再開しないよう ref にする。 */
   const started = useRef(false);
   const pauseOverlayTimers = useRef<number[]>([]);
-  /** Set while the app pauses on its own, so `onPause` can tell the two apart. */
+  /** アプリ自身が停止する間にセットし、`onPause` が二者を区別できるようにする。 */
   const programmaticPause = useRef(false);
 
   const clearPauseOverlayTimers = useCallback(() => {
@@ -197,7 +195,7 @@ export const ShortPlayer: React.FC<{
         setPauseOverlay("fading");
       }, PAUSE_OVERLAY_HOLD_MS),
       window.setTimeout(() => {
-        // Keep a small corner reminder once the explanation is fully visible.
+        // 解説が完全に見えた後も、隅に小さな案内を残す。
         setPauseOverlay("settled");
         pauseOverlayTimers.current = [];
       }, PAUSE_OVERLAY_HOLD_MS + PAUSE_OVERLAY_FADE_MS),
@@ -210,31 +208,28 @@ export const ShortPlayer: React.FC<{
     let cancelled = false;
     setError(null);
     started.current = false;
-    // The corner reminder belongs to the viewer's pause on this short. Cancel
-    // its timers too, or an outgoing pause can reappear over the next short.
+    // 隅の案内はこの short で視聴者が停止したものに属する。タイマーも消さないと、
+    // 切り替わる short の上に前の停止表示が再び現れる。
     clearPauseOverlayTimers();
     setPauseOverlay("hidden");
-    // Silence the outgoing short at once — the viewer has already swiped away
-    // from it, and the next manifest is a fetch away.
+    // 視聴者はすでに swipe で離れ、次の manifest はまだ fetch 中なので、前の short は
+    // ただちに無音にする。
     //
-    // This pause is the app's, not the viewer's. Without the flag it reaches
-    // the same handler a tap does, so every swipe dropped the scrim and the
-    // play mark over the incoming short until it started — the one place the
-    // overlay has nothing to say, since nobody asked for a pause.
-    // Only when there is something to pause: on the first mount there is no
-    // player yet, no `pause` event follows, and a flag set here would still be
-    // standing when the viewer makes their first real pause.
+    // これは視聴者でなくアプリによる停止。flag がないとタップと同じ handler に届き、
+    // swipe のたびに開始までの新しい short に scrim と再生マークが乗った。誰も停止を
+    // 求めていないこの場面では overlay に伝えることがない。停止対象があるときだけ
+    // セットする。初回 mount には player も `pause` event もなく、ここで立てた flag は
+    // 視聴者が最初に実際に停止するまで残るからである。
     if (player.current) {
       programmaticPause.current = true;
       player.current.pause();
     }
 
     /*
-     * The previous manifest deliberately stays in state while the next one
-     * loads. Clearing it would swap `<Player>` out for the placeholder, and a
-     * `<Player>` that unmounts takes its pool of `<audio>` tags with it — the
-     * ones this session unlocked inside a real tap. The replacements would be
-     * new elements that a phone has never allowed to make sound.
+     * 次の manifest を読み込む間も、前の manifest は意図して state に残す。消すと
+     * `<Player>` が placeholder に置き替わり、unmount された `<Player>` はこの
+     * セッションで実際のタップ中に unlock した `<audio>` tag の pool ごと失う。
+     * 置き換わる element は、phone がまだ発音を許可していない新しいものになる。
      */
     fetchManifest(manifestSrc)
       .then((manifest) => !cancelled && setLoaded({ src: manifestSrc, manifest }))
@@ -254,8 +249,8 @@ export const ShortPlayer: React.FC<{
     const onPlay = () => {
       clearPauseOverlayTimers();
       setPauseOverlay("hidden");
-      // Belt and braces: a pause() on an already-paused player emits nothing,
-      // so the flag would outlive the swipe it was set for.
+      // 念のため。すでに停止中の player への pause() は何も emit せず、flag が
+      // それをセットした swipe より長く残るため。
       programmaticPause.current = false;
       setPlaying(true);
     };
@@ -278,23 +273,23 @@ export const ShortPlayer: React.FC<{
     };
   }, [clearPauseOverlayTimers, gate, loaded, showPauseOverlay]);
 
-  // Runs once per short that loads. Swiping to a new one after the first tap
-  // starts it without another tap; the first one finds no gesture yet and waits.
+  // short の読み込みごとに一度実行する。最初のタップ以降は新しい short へ swipe する
+  // だけで始まり、最初の short はまだ gesture がないので待機する。
   useEffect(() => {
     const instance = player.current;
     if (!loaded || !instance || started.current) {
       return;
     }
     if (!gate.current.unlocked) {
-      // Nothing may play yet, so park on a frame that looks like the short
-      // rather than the blank one every scene fades in from.
+      // まだ何も再生できないので、各 scene が fade-in を始める空白フレームではなく、
+      // short らしく見えるフレームに置く。
       instance.seekTo(Math.round(loaded.manifest.fps * 1.2));
       return;
     }
     started.current = true;
     instance.seekTo(0);
-    // Forwarded so the Player calls playAllAudios() — the tags it plays are the
-    // ones unlocked by the session's first tap, which is why they still sound.
+    // Player が playAllAudios() を呼べるよう event を渡す。再生する tag は
+    // セッション最初のタップで unlock 済みなので、引き続き音が出る。
     instance.play(gate.current.gesture ?? undefined);
   }, [loaded, gate]);
 
@@ -303,22 +298,19 @@ export const ShortPlayer: React.FC<{
     if (!instance) {
       return;
     }
-    // Capture phase runs before the scrubber's own handlers, so its
-    // stopPropagation cannot keep a drag from also toggling playback. Ask
-    // where the click came from instead.
+    // capture phase は scrubber 自身の handler より先に走るので、そこでの
+    // stopPropagation ではドラッグによる再生切替を防げない。click の出所を判定する。
     if ((event.target as HTMLElement).closest(".scrubber, .speed-control")) {
       return;
     }
-    // The event is passed on rather than dropped: the Player warms a pool of
-    // silent audio tags during a real user gesture, and only tags warmed that
-    // way are allowed to make sound on mobile. Calling play() without it
-    // leaves the narration silent on a phone while the video runs.
+    // event を捨てずに渡す。Player は実際の user gesture の間に無音の audio tag pool を
+    // warm し、mobile で発音を許されるのはそのように warm された tag だけである。
+    // これなしに play() を呼ぶと、phone では動画だけ動き narration は無音になる。
     if (!started.current) {
-      // The poster sits a beat into the hook so the thumbnail is not the blank
-      // frame every scene fades in from. Rewind on the first real play.
+      // thumbnail が各 scene の fade-in 元となる空白フレームにならないよう、poster は
+      // hook の少し先に置く。最初の実再生時に先頭へ戻す。
       started.current = true;
-      // Inside the click, which is the only place the first unlock of the
-      // session can happen. Everything after this may start on its own.
+      // セッション最初の unlock は click 内でしかできない。これ以降は自動開始してよい。
       gate.current.unlocked = true;
       setAudioUnlocked(true);
       instance.seekTo(0);
@@ -329,8 +321,8 @@ export const ShortPlayer: React.FC<{
     instance.toggle(event);
   }, [gate]);
 
-  // Stable identity: a fresh object here is read as a prop change and costs an
-  // audio re-schedule on every render.
+  // identity を安定させる。ここで新しい object を渡すと prop 変更と見なされ、
+  // render ごとに audio が再スケジュールされる。
   const inputProps = useMemo(
     () => (loaded ? { manifestSrc: loaded.src, manifest: loaded.manifest } : null),
     [loaded],
@@ -351,8 +343,8 @@ export const ShortPlayer: React.FC<{
     return <div className="player-placeholder">読み込めませんでした: {error}</div>;
   }
 
-  // Only before the very first manifest arrives. After that the outgoing short
-  // holds the frame, because unmounting the Player would cost the audio unlock.
+  // placeholder は最初の manifest が届く前だけにする。その後は前の short がフレームを
+  // 保持する。Player の unmount が audio の unlock を失わせるためである。
   if (!loaded || !inputProps) {
     return <div className="player-placeholder">読み込み中…</div>;
   }

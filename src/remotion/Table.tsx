@@ -6,19 +6,15 @@ import type { SceneVisual } from "../types";
 
 type Data = Extract<SceneVisual, { kind: "table" }>;
 
-/** Cells that are a direction rather than a value are set larger. */
+/** 値ではなく方向を表す cell は大きく組む。 */
 const ARROWS = new Set(["↗", "↘", "→", "↑", "↓", "⤴", "⤵"]);
 
 /**
- * A table. The one that matters is the 増減表 — the sign of f′ over each
- * interval and what f does there — which is the backbone of 数III 微分法 and
- * has no other faithful representation: it is a grid, not a list and not a
- * graph.
+ * table。重要なのは増減表で、各区間における f′ の符号とそこでの f の振る舞いを示す。これは
+ * 数III 微分法の骨格であり、忠実な表現は grid だけで、list でも graph でもない。
  *
- * It builds row by row, because that is the order it is filled in: first the
- * critical points, then the signs of the derivative, then the behaviour they
- * imply. Reading it afterwards happens column by column, and a table that
- * arrived row by row still reads that way.
+ * 記入順に row ごとに組み立てる。まず critical point、次に derivative の符号、最後にそこから
+ * 分かる振る舞いとなる。読み返すときは column ごとであり、row ごとに現れた table もその順で読める。
  */
 export const Table: React.FC<{ data: Data; accent: string }> = ({
   data,
@@ -31,10 +27,8 @@ export const Table: React.FC<{ data: Data; accent: string }> = ({
   const columns = Math.max(...data.rows.map((row) => row.length));
   const rows = data.rows.length;
 
-  // A table should fill the frame, so this is allowed to grow as well as
-  // shrink. How far it may grow is bounded by the row count rather than by
-  // measurement: rows stack downward, and a tall table that doubled in width
-  // would run off the bottom of the stage.
+  // table は frame を満たすべきなので、縮小だけでなく拡大も許す。拡大上限は測定ではなく row 数で
+  // 決める。row は下へ積まれ、背の高い table の幅を2倍にすると stage 下端からはみ出すためである。
   const headroom = rows <= 3 ? 1.9 : rows === 4 ? 1.6 : 1.3;
   const { register, fit } = useFitToWidth(
     layout.width - layout.safeX * 2,
@@ -76,8 +70,7 @@ export const Table: React.FC<{ data: Data; accent: string }> = ({
               <tr key={rowIndex}>
                 {Array.from({ length: columns }, (_, columnIndex) => {
                   const text = row[columnIndex] ?? "";
-                  // Cells within a row still arrive left to right, so a long
-                  // row reads as being written rather than stamped.
+                  // row 内では引き続き左から右へ現れ、長い row も押印ではなく書き込まれたように読める。
                   const cell = start + columnIndex * 0.06 * fps;
                   const appear = clamped(
                     frame,

@@ -5,29 +5,25 @@ import { ThemeProvider, accentFor, layout, themeOf } from "./theme";
 import type { Scene } from "../types";
 
 /**
- * The video's opening frame, standing still.
+ * 静止した video の opening frame。
  *
- * The home screen used to draw its own card — a chip, the question, a rule, the
- * hook — and it drifted from the video it stood for: the same question was
- * typeset one way on the card and another way once you tapped it. This renders
- * the real opening instead, out of the same `SceneShell` the composition uses,
- * so a card cannot disagree with its video.
+ * home screen は以前、chip・question・rule・hook を持つ独自 card を描いており、対応する video と
+ * ずれていた。同じ question が card では一方の組版、tap 後には別の組版になった。代わりに composition と
+ * 同じ `SceneShell` で本物の opening を描くため、card が video と食い違わない。
  *
- * It takes the summary rather than the manifest on purpose. The opening needs
- * the question and the unit, which are already on the summary the home
- * screen has — fetching a manifest per card would make
- * scrolling the library wait on the network.
+ * 意図して manifest ではなく summary を受け取る。opening に必要な question と unit は home screen が持つ
+ * summary にすでにあり、card ごとに manifest を fetch すると library の scroll が network 待ちになる。
  */
 export type PosterProps = {
   topic: string;
-  /** The question as bullet points; empty falls back to the question itself. */
+  /** bullet point としての question。空なら question 自体へ fallback する。 */
   outline: string[];
   unit: string;
 };
 
 /**
- * A scene with no headline and no visual: the question is the whole scene.
- * `SceneShell` drops the headline of its own accord once it is given a problem.
+ * headline も visual もない scene。question が scene 全体になる。`SceneShell` は problem を渡されると
+ * 自動的に headline を外す。
  */
 const HOOK: Scene = {
   scene_id: 1,
@@ -37,15 +33,13 @@ const HOOK: Scene = {
 };
 
 /**
- * Long enough that the frame shown is nowhere near `SceneShell`'s exit fade,
- * which starts seven frames before the end.
+ * 表示する frame が `SceneShell` の exit fade から十分遠くなる長さ。exit fade は終了7 frame前に始まる。
  */
 export const POSTER_DURATION = 300;
 
 /**
- * The moment the opening has finished arriving: the question fades in over
- * 0.35s and slides for 0.5s, the unit banner takes 0.4s, and the stage itself
- * 8 frames. Everything has settled by 0.8s, and nothing has moved on yet.
+ * opening の入場が完了する時点。question は0.35sで fade in し0.5sで slide、unit banner は0.4s、stage
+ * 自体は8 frameを使う。0.8sまでにすべて静止し、まだ何も先へ移っていない。
  */
 export const posterFrame = (fps: number) => Math.round(fps * 0.8);
 
@@ -60,9 +54,8 @@ export const Poster: React.FC<PosterProps> = ({
     <ThemeProvider value={theme}>
       <AbsoluteFill style={{ backgroundColor: theme.bgDeep }}>
         <Background />
-        {/* `SceneShell` directly rather than through `SceneText`: the hook
-            never has bullets, and this is the shell the video draws too, so a
-            card cannot drift from the frame it stands for. */}
+        {/* `SceneText` 経由ではなく `SceneShell` を直接使う。hook に bullet はなく、video も同じ shell で
+            描くため、card が対応する frame とずれることはない。 */}
         <SceneShell
           scene={HOOK}
           durationInFrames={POSTER_DURATION}

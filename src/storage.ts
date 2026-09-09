@@ -6,29 +6,24 @@ import { newestFirst, summarize, type ShortSummary } from "./shorts.js";
 import type { Manifest } from "./types.js";
 
 /**
- * Where finished shorts live.
+ * 完成した short の保存先。
  *
- * Locally that is `public/projects/`, served by the dev server — the manifest
- * keeps paths relative to `public/` and `staticFile()` resolves them. A
- * deployed build has no disk it can keep, so the same files are pushed to blob
- * storage and the manifest is rewritten to absolute URLs on the way out.
+ * ローカルでは dev server が配信する `public/projects/` に置く。manifest は `public/` からの
+ * 相対パスを保ち、`staticFile()` が解決する。デプロイ済みビルドには保持できるディスクがないため、
+ * 同じファイルを blob storage へ送り、出力時に manifest を絶対 URL へ書き換える。
  *
- * The presence of the token is what picks the branch, so a local checkout needs
- * no configuration and a deployment needs no code change.
+ * token の有無で分岐するため、ローカル checkout には設定不要で、デプロイにもコード変更が要らない。
  */
 const usingBlob = () => {
-  // Two ways a store can be attached. Connecting one to the project sets up
-  // OIDC (`BLOB_STORE_ID` plus a short-lived token the SDK refreshes itself),
-  // which is what a deployment normally uses; `BLOB_READ_WRITE_TOKEN` is the
-  // long-lived static token, for code running outside Vercel. Either is enough
-  // for the SDK to authenticate, so checking only the token would refuse to
-  // start on a perfectly well-configured deployment.
+  // store の接続方法は 2 つある。プロジェクトへ接続すると OIDC（`BLOB_STORE_ID` と SDK が
+  // 自身で更新する短期 token）が設定され、通常のデプロイはこちらを使う。`BLOB_READ_WRITE_TOKEN`
+  // は Vercel 外のコード用の長期固定 token である。どちらでも SDK は認証できるので、token だけを
+  // 見ると完全に設定済みのデプロイまで起動拒否してしまう。
   if (process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID) {
     return true;
   }
-  // Without a store, a deployment would write the short into a `/tmp` that is
-  // gone by the next request and hand the player a path nothing serves — a 404
-  // arriving only after the whole pipeline has run. Say so up front instead.
+  // store がなければデプロイは short を次の要求で消える `/tmp` に書き、何も配信しないパスを
+  // player へ渡す。パイプライン完走後に初めて 404 になるので、先に失敗を伝える。
   if (process.env.VERCEL) {
     throw new Error(
       "No Blob store is attached (neither BLOB_STORE_ID nor BLOB_READ_WRITE_TOKEN is set). Create a public Blob store in the Vercel dashboard and connect it to this project; a deployment has nowhere else to keep a finished short.",
@@ -37,9 +32,8 @@ const usingBlob = () => {
   return false;
 };
 
-// Project slugs become both disk path components and Blob path prefixes. Keeping
-// this deliberately narrower than a filename means a request can never escape
-// the project it names when deletion is involved.
+// project slug は disk path component と Blob path prefix の両方になる。filename より意図して
+// 狭くすることで、削除時に要求が指したプロジェクトの外へ決して出られない。
 const PROJECT_SLUG = /^[a-zA-Z0-9-]+$/;
 
 export const isProjectSlug = (slug: string) => PROJECT_SLUG.test(slug);
@@ -58,21 +52,21 @@ const assertDeletableSlug = (slug: string) => {
     throw new ProjectDeleteError("invalid project slug", 400);
   }
   if (slug === "mock") {
-    // `mock` is the checked-in sample that makes a fresh clone usable; treating
-    // it as ordinary generated output would let one library tap damage the repo.
+    // `mock` は fresh clone をすぐ使えるようにする同梱サンプルである。通常の生成物扱いなら、
+    // ライブラリの 1 回の操作でリポジトリを壊せてしまう。
     throw new ProjectDeleteError("the mock project cannot be deleted", 403);
   }
 };
 
-/** `projects/<slug>/manifest.json` → `<slug>`. */
+/** `projects/<slug>/manifest.json` から `<slug>` を得る。 */
 const slugOf = (pathname: string) => pathname.split("/")[1] ?? pathname;
 
 const publishToBlob = async (slug: string, manifest: Manifest) => {
   const { put } = await import("@vercel/blob");
   const dir = paths.projectDir(slug);
 
-  // Sequential rather than Promise.all: a long script is a dozen uploads, and
-  // the file-descriptor budget is shared across every concurrent invocation.
+  // Promise.all ではなく直列にする。長い台本では upload が十数件になり、file descriptor の
+  // 予算は同時実行中のすべての invocation で共有されるためである。
   for (const scene of manifest.scenes) {
     const name = path.basename(scene.audioSrc);
     const { url } = await put(
@@ -83,16 +77,15 @@ const publishToBlob = async (slug: string, manifest: Manifest) => {
         contentType: "audio/mpeg",
         addRandomSuffix: false,
         allowOverwrite: true,
-        // Without this the narration carries no cache-control, so a phone
-        // re-fetches every clip on every swipe and playback starts as a race
-        // against the download. The path already names an immutable file.
+        // これがないとナレーションに cache-control が付かず、端末は swipe ごとに各 clip を
+        // 再取得し、再生は download との競争になる。パスはすでに不変のファイルを指している。
         cacheControlMaxAge: 31536000,
       },
     );
     scene.audioSrc = url;
   }
 
-  // Uploaded last, and only once the audio it points at is already readable.
+  // 指す音声がすべて読めるようになってから、最後に upload する。
   const { url } = await put(
     `projects/${slug}/manifest.json`,
     JSON.stringify(manifest),
@@ -109,8 +102,7 @@ const publishToBlob = async (slug: string, manifest: Manifest) => {
 };
 
 /**
- * Makes a freshly built project readable by the player, and returns the address
- * the feed should hand out for it.
+ * 新規作成したプロジェクトを player が読める状態にし、feed が渡すべきアドレスを返す。
  */
 export const publishProject = async (
   slug: string,
@@ -142,9 +134,8 @@ const listFromBlob = async (): Promise<ShortSummary[]> => {
     blob.pathname.endsWith("/manifest.json"),
   );
 
-  // One fetch per short. Fine at this scale, and it keeps the feed derived from
-  // the manifests themselves rather than from an index that can drift out of
-  // step with them. Swap in a single index blob if the list ever gets long.
+  // short ごとに 1 fetch。この規模なら十分で、ずれる可能性のある index ではなく manifest 自体から
+  // feed を導ける。リストが長くなったら単一の index blob に替える。
   const summaries = await Promise.all(
     manifests.map(async (blob) => {
       const response = await fetch(blob.url);
@@ -159,16 +150,16 @@ const listFromBlob = async (): Promise<ShortSummary[]> => {
   return newestFirst(summaries.filter((item): item is ShortSummary => item !== null));
 };
 
-/** Every finished short, newest first — the feed the web app scrolls through. */
+/** 完成した short を新しい順に返す。Web app が scroll する feed。 */
 export const listShorts = async (): Promise<ShortSummary[]> =>
   usingBlob() ? listFromBlob() : listFromDisk();
 
 const deleteFromDisk = async (slug: string) => {
-  // Validation above is intentionally before this path is constructed.
+  // path を構築する前に、意図して上の検証を済ませる。
   const dir = paths.projectDir(slug);
   if (!fs.existsSync(dir)) {
-    // A missing project is a client error: reporting success would make a typo
-    // indistinguishable from an irreversible deletion that actually happened.
+    // 存在しないプロジェクトは client error。成功と返すと、タイプミスと実際に行われた不可逆な
+    // 削除を区別できなくなる。
     throw new ProjectDeleteError("project not found", 404);
   }
   await fs.promises.rm(dir, { recursive: true });
@@ -176,8 +167,8 @@ const deleteFromDisk = async (slug: string) => {
 
 const deleteFromBlob = async (slug: string) => {
   const { del, list } = await import("@vercel/blob");
-  // The trailing slash prevents a valid slug such as `lesson` from matching
-  // another project's `lesson-two` files.
+  // 末尾スラッシュにより、`lesson` のような有効 slug が別プロジェクトの `lesson-two` の
+  // ファイルまで一致させることを防ぐ。
   const prefix = `projects/${slug}/`;
   const blobs = [] as Awaited<ReturnType<typeof list>>["blobs"];
   let cursor: string | undefined;
@@ -192,17 +183,17 @@ const deleteFromBlob = async (slug: string) => {
   } while (cursor);
 
   if (blobs.length === 0) {
-    // Match disk semantics so a stale card or mistyped slug is visible to the
-    // caller instead of being reported as a deletion that never occurred.
+    // disk 側の意味と合わせる。古い card や誤入力 slug を、起きなかった削除として成功報告せず
+    // 呼び出し元が見つけられるようにする。
     throw new ProjectDeleteError("project not found", 404);
   }
 
-  // Listing the whole project prefix, rather than only manifest.json, removes
-  // every scene narration too (and any future per-project companion files).
+  // manifest.json だけでなくプロジェクト prefix 全体を列挙し、全シーンのナレーションと
+  // 将来のプロジェクト専用補助ファイルも削除する。
   await del(blobs.map((blob) => blob.url));
 };
 
-/** Removes one generated short and all of the files belonging to it. */
+/** 生成した short 1 本と所属するすべてのファイルを削除する。 */
 export const deleteProject = async (slug: string): Promise<void> => {
   assertDeletableSlug(slug);
   return usingBlob() ? deleteFromBlob(slug) : deleteFromDisk(slug);

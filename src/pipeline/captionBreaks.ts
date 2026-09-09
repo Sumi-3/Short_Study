@@ -1,21 +1,19 @@
 import type { Caption } from "@remotion/captions";
 
-/** Where a Japanese sentence actually asks the reader to stop. */
+/** 日本語の文で実際に読む人へ停止を促す位置。 */
 const HARD = /[。！？]/;
 const SOFT = /[、，]/;
 
-/** Punctuation is a pause, not something a caption should show. */
+/** 句読点は間であり、字幕に表示すべきものではない。 */
 const DROPPED = /[\s。、，！？・]/g;
 
 /**
- * Lines the caption tokens back up with the narration they came from.
+ * 字幕 token を元になった narration と再び対応付ける。
  *
- * The synthesiser's word boundaries drop everything that is not a word: `です`
- * is followed straight by the first word of the next sentence, and `3√19/4`
- * comes back as `3` `√` `19` `4` with the slash gone. The narration still has
- * all of it, and the tokens are its words in order, so walking the two together
- * recovers both — the sentence ends become page breaks, and any symbol that
- * fell out is put back on the token it followed.
+ * synthesiser の word boundary は単語でないものをすべて落とす。`です` の直後に次文の最初の語が
+ * 続き、`3√19/4` はスラッシュを失った `3` `√` `19` `4` として戻る。narration には全て残り、
+ * token はその単語を順に並べたものなので、両者を一緒にたどれば復元できる。文末は page break にし、
+ * 落ちた記号は後続 token に戻す。
  */
 export const markPhraseBreaks = (
   narration: string,
@@ -26,7 +24,7 @@ export const markPhraseBreaks = (
   return captions.map((caption, index) => {
     const at = narration.indexOf(caption.text, cursor);
     if (at < 0) {
-      // Out of step with the text — leave the paging to the character budget.
+      // 本文と同期していない。paging は文字数予算に委ねる。
       return caption;
     }
     cursor = at + caption.text.length;
@@ -39,7 +37,7 @@ export const markPhraseBreaks = (
     const nextAt = narration.indexOf(next.text, cursor);
     const between = nextAt < 0 ? "" : narration.slice(cursor, nextAt);
 
-    // Whatever is left after the punctuation is a symbol the tokeniser ate.
+    // 句読点を除いて残るものは tokeniser が食べた記号である。
     const carried = between.replace(DROPPED, "");
     const breaks = HARD.test(between) || SOFT.test(between);
 

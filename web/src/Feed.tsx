@@ -6,34 +6,33 @@ import { prefetchManifest, type ShortSummary } from "./api";
 import type { AudioGate } from "./audioGate";
 
 /**
- * The vertical swipe feed.
+ * 縦 swipe の feed。
  *
- * Both entry points share it: the home screen opens it over a filtered list at
- * the card that was tapped, and the shorts tab hands it everything in shuffled
- * order. Only the short on screen gets a mounted Player — running several
- * compositions at once is the whole cost of this playback model.
+ * 二つの入口で共有する。home screen は絞り込んだ list のタップした card 位置でこれを
+ * 重ねて開き、shorts tab は全件を shuffle 順で渡す。mounted Player を持つのは画面上の
+ * short だけである。複数の composition を同時に動かすことこそ、この再生モデルの
+ * コストだからである。
  *
- * That one Player is parked *over* the active item rather than rendered inside
- * it. Inside, every swipe moved it to a different parent, which React can only
- * do by unmounting and remounting — and a Player that remounts builds a fresh
- * pool of `<audio>` tags. On a phone those replacements have never been
- * unlocked by a tap, so the sound died after a few swipes. Kept in one place it
- * is the same instance, and the same tags, for the life of the feed.
+ * その一つの Player は active item の*中*で render せず、その*上*に固定する。中に置くと
+ * swipe ごとに別の親へ移り、React は unmount と remount でしか移動できない。remount した
+ * Player は新しい `<audio>` tag pool を作るが、phone では置換 tag をタップで unlock
+ * していないため、数回 swipe すると音が消えた。一箇所に保てば feed の生存中、同じ
+ * instance と同じ tag を使える。
  */
 export const Feed: React.FC<{
   shorts: ShortSummary[];
   initialIndex: number;
   gate: React.RefObject<AudioGate>;
-  /** Present when the feed is covering the app rather than filling a tab. */
+  /** feed が tab を満たすのでなく app の上を覆う場合に渡される。 */
   onClose?: () => void;
 }> = ({ shorts, initialIndex, gate, onClose }) => {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const scroller = useRef<HTMLDivElement>(null);
-  /* One item fills the scroller, so this is both the row height and the pitch
-     the parked player is offset by. */
+  /* 一つの item が scroller を満たすため、これは行の高さであると同時に、固定した
+     player をずらす pitch でもある。 */
   const [itemHeight, setItemHeight] = useState(0);
 
-  // Before paint, so opening on the third card never shows the first one.
+  // third card から開いても first card を一瞬表示しないよう、paint 前に行う。
   useLayoutEffect(() => {
     const container = scroller.current;
     if (container) {
@@ -48,21 +47,19 @@ export const Feed: React.FC<{
     }
     const measure = () => setItemHeight(container.clientHeight);
     measure();
-    // The URL bar collapsing on a phone changes this without a resize event on
-    // window, so the box is watched rather than the viewport.
+    // phone では URL bar が縮んでも window の resize event が起きないため、viewport
+    // ではなく box を監視する。
     const observer = new ResizeObserver(measure);
     observer.observe(container);
     return () => observer.disconnect();
   }, []);
 
   /*
-   * Which short the player sits on, from the scroll offset.
+   * scroll offset から、player を置く short を決める。
    *
-   * This was an IntersectionObserver at a threshold of 0.6, which meant the
-   * incoming short had to be 60% of the way on screen before the player moved
-   * to it — until then the card underneath was what you looked at. Rounding the
-   * offset hands over at the halfway point instead, and it tracks a flick
-   * continuously rather than waiting for a threshold to be crossed.
+   * 以前は threshold 0.6 の IntersectionObserver で、入ってくる short が画面の 60% を
+   * 占めるまで player が移らず、それまでは下の card を見せていた。offset を丸めれば
+   * 半分の時点で切り替わり、threshold をまたぐのを待たず flick に連続して追従する。
    */
   useEffect(() => {
     const container = scroller.current;
@@ -81,8 +78,8 @@ export const Feed: React.FC<{
     return () => container.removeEventListener("scroll", onScroll);
   }, [itemHeight, shorts.length]);
 
-  // The swipe can go either way, so both neighbours are warmed. By the time one
-  // of them becomes the active short its manifest is already in hand.
+  // swipe は両方向に進めるため、両隣を warm する。どちらかが active short になる頃には
+  // manifest を取得済みにするためである。
   useEffect(() => {
     for (const index of [activeIndex + 1, activeIndex - 1]) {
       const neighbour = shorts[index];
@@ -108,10 +105,9 @@ export const Feed: React.FC<{
             className="feed-item"
             key={short.slug}
             data-index={index}
-            /* The video is 9:16 and the screen is taller, so bands are left
-               above and below whatever the padding is. Painting them the
-               video's own deepest colour makes the frame read as reaching the
-               edges instead of sitting in a letterbox. */
+            /* video は 9:16 で screen のほうが高いため、padding にかかわらず上下に帯が
+               残る。その帯を動画自身の最も濃い色で塗り、letterbox に置かれたのでなく
+               frame が端まで届いているように見せる。 */
             style={{ background: themeOf().bgDeep }}
           >
             <div className="phone">
@@ -120,8 +116,8 @@ export const Feed: React.FC<{
           </section>
         ))}
 
-        {/* Same markup as an item, so the player lands exactly where that
-            item's thumbnail is and nothing shifts as it takes over. */}
+        {/* item と同じ markup にし、player がその item の thumbnail とまったく同じ位置に
+            着地して、引き継いでも何もずれないようにする。 */}
         {active && itemHeight > 0 ? (
           <section
             className="feed-item feed-item--player"

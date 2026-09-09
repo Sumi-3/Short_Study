@@ -1,13 +1,10 @@
 /**
- * A tiny expression evaluator for the function strings in a plot scene.
+ * plot scene の function string 用の小さな expression evaluator。
  *
- * These strings come from the model, so `eval` and `new Function` are out —
- * this parses a fixed grammar and evaluates it, returning null on anything it
- * does not recognise so a bad expression degrades to "no curve" rather than
- * running arbitrary code.
+ * string は model から来るため `eval` と `new Function` は使えない。固定 grammar を parse して評価し、
+ * 未認識のものは null を返す。不正 expression は任意 code を実行せず「curve なし」に劣化させる。
  *
- * Supports: numbers, one free variable, + - * / ^, unary minus, parentheses,
- * the constants pi and e, and the functions below.
+ * 対応範囲: 数値、1つの free variable、+ - * / ^、unary minus、parentheses、定数 pi と e、および下の function。
  */
 
 const FUNCTIONS: Record<string, (value: number) => number> = {
@@ -40,7 +37,7 @@ const PRECEDENCE: Record<string, number> = {
   "-": 1,
   "*": 2,
   "/": 2,
-  // Looser than "^" so that -x^2 is -(x^2), as in ordinary maths notation.
+  // 通常の数学表記どおり -x^2 を -(x^2) とするため、"^" より弱くする。
   u: 3,
   "^": 4,
 };
@@ -97,7 +94,7 @@ const tokenize = (input: string, variable: string): Token[] | null => {
   return tokens;
 };
 
-/** Shunting-yard: infix tokens to reverse Polish notation. */
+/** Shunting-yard。infix token を逆ポーランド記法へ変換する。 */
 const toRpn = (tokens: Token[]): Token[] | null => {
   const output: Token[] = [];
   const stack: Token[] = [];
@@ -109,7 +106,7 @@ const toRpn = (tokens: Token[]): Token[] | null => {
     } else if (token.type === "function") {
       stack.push(token);
     } else if (token.type === "operator") {
-      // A minus is unary when nothing value-like precedes it.
+      // 前に値らしいものがなければ minus は unary である。
       const isUnary =
         token.value === "-" &&
         (previous === null ||
@@ -118,7 +115,7 @@ const toRpn = (tokens: Token[]): Token[] | null => {
       const key = isUnary ? "u" : token.value;
       const op: Token = { type: "operator", value: key };
 
-      // A prefix operator never pops: nothing to its left is its operand.
+      // prefix operator は pop しない。左側に operand がないためである。
       if (isUnary) {
         stack.push(op);
         previous = token;
@@ -177,13 +174,12 @@ const toRpn = (tokens: Token[]): Token[] | null => {
 };
 
 /**
- * Compiles `expression` into `f(x)`, or returns null if it cannot be parsed.
- * The returned function yields NaN outside the function's domain (e.g.
- * `sqrt(x)` for negative x), which the plot treats as a break in the curve.
+ * `expression` を `f(x)` に compile し、parse できなければ null を返す。返す function は定義域外
+ * （例: 負の x に対する `sqrt(x)`）で NaN になり、plot はそれを curve の切れ目として扱う。
  */
 export const compileExpression = (
   expression: string,
-  /** The free variable. Parametric curves are written in `t`. */
+  /** free variable。parametric curve では `t` を使う。 */
   variable = "x",
 ): ((x: number) => number) | null => {
   const tokens = tokenize(expression, variable);
@@ -195,7 +191,7 @@ export const compileExpression = (
     return null;
   }
 
-  // Evaluate once to reject malformed input (wrong arity, empty stack).
+  // 1度評価し、不正 input（arity 不正、空 stack）を除外する。
   const evaluate = (x: number): number => {
     const stack: number[] = [];
     for (const token of rpn) {

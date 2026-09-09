@@ -9,8 +9,8 @@ import { generateOutline } from "./generateOutline.js";
 import { generateScript } from "./generateScript.js";
 
 /**
- * Weighted so the bar tracks wall-clock rather than step count: the Claude call
- * is most of the wait, TTS is a couple of seconds, the rest is disk I/O.
+ * bar が工程数ではなく実時間を追うよう重み付けする。待ち時間の大半は Claude 呼び出しで、
+ * TTS は数秒、残りは disk I/O である。
  */
 const STEPS: { status: JobStatus; message: string; progress: number }[] = [
   { status: "script", message: "台本を書いています", progress: 0.70 },
@@ -30,13 +30,12 @@ const makeSlug = (topic: string) => {
 };
 
 /**
- * Runs one generation, reporting each stage as it starts.
+ * 1 回の生成を実行し、各工程の開始時に通知する。
  *
- * An async generator rather than a job record: the local server writes the
- * events into an in-process job, a deployed function writes them straight down
- * the response, and neither needs its own copy of the pipeline. Errors are
- * yielded rather than thrown so a caller that is already streaming can report
- * the failure on the same channel it has been reporting progress on.
+ * job record ではなく async generator にする。local server は event をプロセス内 job へ書き、
+ * deployed function は response へ直接書くため、どちらにも pipeline の複製が要らない。
+ * 既に stream 中の呼び出し元が進捗と同じ channel で失敗を伝えられるよう、エラーは throw せず
+ * yield する。
  */
 export async function* runPipeline({
   topic,
@@ -45,7 +44,7 @@ export async function* runPipeline({
 }: {
   topic: string;
   course: CourseId;
-  /** EdgeTTS ShortName chosen on the create screen. */
+  /** 作成画面で選ぶ EdgeTTS ShortName。 */
   voice?: string;
 }): AsyncGenerator<JobEvent> {
   const base = { course, slug: null, manifestSrc: null, error: null } as const;
@@ -58,11 +57,9 @@ export async function* runPipeline({
     const slug = makeSlug(topic);
 
     /*
-     * Started here and collected below, so it runs while the narration is
-     * being synthesised and timed. It is a second model call and would
-     * otherwise add its whole latency to a generation; overlapped, it costs
-     * nothing. A card without it falls back to showing the question, so a
-     * failure here must not lose the video — hence the swallowed rejection.
+     * ここで開始し下で回収するため、ナレーションの合成・計時中に走る。2 回目の model call なので、
+     * 重ねなければその全遅延を生成に足してしまうが、重ねれば実時間の負担はない。ない card は問題文を
+     * 表示してフォールバックできるため、この失敗で動画を失ってはならず、rejection を握りつぶす。
      */
     const outline = generateOutline(script.topic).catch(() => [] as string[]);
 

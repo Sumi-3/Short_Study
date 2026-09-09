@@ -1,23 +1,22 @@
-import { MATH_UNITS, unitCatalogue } from "../curriculum.js";
+import { COURSES } from "../courses.js";
+import { MATH_UNIT_NAMES, MATH_UNITS, unitCatalogue } from "../curriculum.js";
 import {
   COMMON_RULES,
   TOPIC_RULE,
   VISUAL_CONTENT,
-  budgetFor,
   narrationRules,
   visualSection,
-} from "./shared.js";
+} from "./scriptFormat.js";
+import { budgetFor } from "../scriptBudget.js";
 
 /**
- * 数学. Two quite different videos come in through the same box: "解け" wants a
- * worked solution, "とは" wants an explanation. The prompt branches on that up
- * front, because a worked solution built on the hook/point/summary shape of an
- * explainer skips exactly the steps a stuck learner needed to see.
- * Multiple questions and larger type need more scenes, not missing steps:
- * their completeness determines the length within the generation safety cap.
+ * 数学。同じ入力欄にはかなり異なる動画が来る。「解け」は途中を示す解答を、「とは」は説明を求める。
+ * 最初にこの分岐をする。説明動画の hook/point/summary 形で解答を組むと、つまずいた学習者が
+ * 見るべき手順をまさに飛ばしてしまうためである。複数設問と大きな文字に必要なのは手順の欠落ではなく
+ * scene の追加であり、生成安全上限内で完全性が長さを決める。
  */
 export const mathPrompt = () => {
-  const budget = budgetFor("math");
+  const budget = budgetFor();
 
   return `あなたは数学のショート動画（縦型9:16）の構成作家です。
 その問題について，事前知識が無くても分かるよう、途中を飛ばさない解説を書きます。
@@ -232,3 +231,11 @@ ${visualSection(
 # 厳守
 ${COMMON_RULES}`;
 };
+
+export const coursePrompts = {
+  math: {
+    ...COURSES.math,
+    buildSystemPrompt: mathPrompt,
+    units: MATH_UNIT_NAMES,
+  },
+} as const;

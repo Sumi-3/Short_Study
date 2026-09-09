@@ -9,14 +9,14 @@ type FigureData = Extract<SceneVisual, { kind: "figure" }>;
 
 const WIDTH = 904;
 const HEIGHT = 800;
-/** Room outside the figure for the labels that hang off its corners. */
+/** figure の角から外へ出る label 用の余白。 */
 const PAD = 78;
 
 const RIGHT_ANGLE_TOLERANCE = 0.035; // ~2°
 
 type Screen = { x: number; y: number };
 
-/** Shortest signed turn from `from` to `to`, in (-π, π]. */
+/** `from` から `to` への最短の符号付き回転量。範囲は (-π, π]。 */
 const shortestTurn = (from: number, to: number) => {
   let delta = to - from;
   while (delta > Math.PI) delta -= Math.PI * 2;
@@ -25,16 +25,13 @@ const shortestTurn = (from: number, to: number) => {
 };
 
 /**
- * A plane-geometry diagram: labelled points, the segments and circles built
- * on them, and angle marks.
+ * 平面 geometry の diagram。label 付き point、それらから作る segment と circle、angle mark を描く。
  *
- * The model supplies coordinates in whatever units suit the problem — this
- * fits them to the stage itself. The scale is deliberately **uniform** on both
- * axes, unlike `Plot`: a plot may stretch to use the space, but an equilateral
- * triangle that renders as a scalene one is simply wrong.
+ * model は問題に適した単位で coordinate を渡し、ここで stage に fit する。`Plot` と違い、両 axis の
+ * scale は意図して **uniform** にする。plot は空間を使うため伸びてもよいが、正三角形が不等辺三角形に
+ * 描かれるのは単純に誤りだからである。
  *
- * Solids are drawn the way a textbook draws them: a flat projection with the
- * hidden edges dashed. That keeps the whole component 2-D.
+ * solid は教科書どおり、隠れ edge を dashed にした平面投影で描く。component 全体を2-Dに保てる。
  */
 export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
   data,
@@ -47,31 +44,27 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
   const { at, project, scale: unitScale, centroid } = useMemo(() => {
     const byLabel = new Map(data.points.map((p) => [p.label, p]));
 
-    // A circle reaches a radius past its centre in every direction, so the
-    // extent it needs is part of the box the figure has to be fitted into.
+    // circle は中心から全方向へ radius 分だけ伸びるため、その extent は figure を fit する box の一部になる。
     const spans = [
       ...data.points.map((p) => ({ x0: p.x, x1: p.x, y0: p.y, y1: p.y })),
-      // Axes are meaningless if the origin is off the page.
+      // origin が画面外なら axis に意味がない。
       ...(data.axes ? [{ x0: 0, x1: 0, y0: 0, y1: 0 }] : []),
-      // Early boolean manifests predate circles; an absent list must not
-      // prevent their existing edges from rendering.
+      // 初期の boolean manifest は circle 導入前のもの。list がなくても既存 edge の rendering を止めてはならない。
       ...(data.circles ?? []).flatMap((circle) => {
         const center = byLabel.get(circle.center);
         if (!center) {
           return [];
         }
 
-        // An arc only reaches as far as it actually sweeps. Taking the whole
-        // circle's extent would pad a quarter-circle sector out with three
-        // quadrants of empty space and shrink it to a corner of the frame.
+        // arc は実際に sweep する範囲までしか届かない。circle 全体の extent を取ると、1/4 circle の sector に
+        // 3象限分の空白を足し、frame の隅まで縮めてしまう。
         const sweep = ((circle.toAngle - circle.fromAngle) % 360 + 360) % 360;
         const partial = circle.fromAngle !== circle.toAngle;
         const angles = partial
           ? [
               circle.fromAngle,
               circle.toAngle,
-              // Whichever compass points the arc passes through are where it
-              // reaches its extremes.
+              // arc が通る compass point が、その到達範囲の極値になる。
               ...[0, 90, 180, 270].filter(
                 (cardinal) =>
                   ((cardinal - circle.fromAngle) % 360 + 360) % 360 <= sweep,
@@ -83,7 +76,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           x: center.x + Math.cos((degrees * Math.PI) / 180) * circle.radius,
           y: center.y + Math.sin((degrees * Math.PI) / 180) * circle.radius,
         }));
-        // A sector is closed back to its centre, so that counts too.
+        // sector は中心へ閉じるため、中心も含める。
         if (partial && circle.sector) {
           reach.push({ x: center.x, y: center.y });
         }
@@ -104,8 +97,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
     const spanX = maxX - minX;
     const spanY = maxY - minY;
 
-    // A figure with no extent in one axis (three collinear points) must still
-    // get a finite scale from the other one.
+    // 一方の axis に extent がない figure（3点が同一直線上など）でも、もう一方から有限の scale を得る必要がある。
     const scale = Math.min(
       spanX > 0 ? (WIDTH - PAD * 2) / spanX : Infinity,
       spanY > 0 ? (HEIGHT - PAD * 2) / spanY : Infinity,
@@ -113,7 +105,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
     const safeScale = Number.isFinite(scale) ? scale : 1;
 
     const offsetX = (WIDTH - spanX * safeScale) / 2 - minX * safeScale;
-    // Screen y grows downward; maths y grows up.
+    // screen の y は下向き、maths の y は上向きに増える。
     const offsetY = (HEIGHT - spanY * safeScale) / 2 + maxY * safeScale;
 
     const byId = new Map<string, Screen>();
@@ -132,7 +124,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
     return {
       at: (id: string) => byId.get(id) ?? null,
       project,
-      // Radii are in the model's units and have to be scaled the same way.
+      // radius も model の単位なので同じ方法で scale する必要がある。
       scale: safeScale,
       centroid: {
         x: placed.reduce((sum, p) => sum + p.x, 0) / (placed.length || 1),
@@ -141,8 +133,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
     };
   }, [data.points, data.circles, data.axes]);
 
-  /** Unit vector pointing away from the middle of the figure — where a label
-   * can sit without landing on top of the drawing. */
+  /** figure 中央から外向きの unit vector。label を drawing と重ねずに置ける方向。 */
   const outward = (from: Screen) => {
     const dx = from.x - centroid.x;
     const dy = from.y - centroid.y;
@@ -172,8 +163,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
       textAnchor="middle"
       dominantBaseline="middle"
       opacity={opacity}
-      // Dark outline under every label so it stays readable wherever the
-      // auto-placement puts it.
+      // auto-placement の位置を問わず読めるよう、各 label の下に暗い outline を置く。
       stroke={theme.bgDeep}
       strokeWidth={7}
       paintOrder="stroke"
@@ -189,8 +179,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
       style={{ width: "100%", height: "100%", overflow: "visible" }}
       fontFamily={theme.fontFamily}
     >
-      {/* Coordinate axes, when the figure lives on the plane rather than
-          floating free — a complex plane, a position vector, a graph. */}
+      {/* figure が自由に浮くのでなく plane 上にある場合の coordinate axis。complex plane、position vector、graph。 */}
       {data.axes
         ? (() => {
             const origin = project(0, 0);
@@ -230,7 +219,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           })()
         : null}
 
-      {/* The face or region the scene is actually about. */}
+      {/* scene が実際に扱う face または region。 */}
       {data.highlight.length >= 3
         ? (() => {
             const corners = data.highlight
@@ -249,8 +238,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           })()
         : null}
 
-      {/* Circles, drawn the way a compass draws them: starting at the top and
-          sweeping round. */}
+      {/* compass と同じく、上端から始めて一周するように描く circle。 */}
       {(data.circles ?? []).map((circle, index) => {
         const center = at(circle.center);
         if (!center) {
@@ -258,7 +246,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
         }
         const radius = circle.radius * unitScale;
         const circumference = 2 * Math.PI * radius;
-        // Maths angles run anticlockwise; screen y runs down, so they negate.
+        // maths の angle は反時計回りで、screen y は下向きなので符号を反転する。
         const whole = circle.fromAngle === circle.toAngle;
         const a0 = (-circle.fromAngle * Math.PI) / 180;
         const a1 = (-circle.toAngle * Math.PI) / 180;
@@ -323,8 +311,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
               fill="none"
               stroke={theme.ink}
               strokeWidth={5}
-              // A dashed circle already owns the dash pattern, so it fades in
-              // rather than being drawn.
+              // dashed circle はすでに dash pattern を持つため、描画アニメーションでなく fade in させる。
               {...(circle.dashed
                 ? { strokeDasharray: "14 12", opacity: sweep }
                 : {
@@ -349,8 +336,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
         );
       })}
 
-      {/* Segments, drawn growing from their first endpoint. Emphasised ones go
-          last so they sit on top of whatever they cross. */}
+      {/* 最初の endpoint から伸びるように描く segment。emphasis 付きは交差するものの上に来るよう最後に描く。 */}
       {[...data.segments]
         .map((segment, index) => ({ segment, index }))
         .sort((a, b) => Number(Boolean(a.segment.emphasis)) - Number(Boolean(b.segment.emphasis)))
@@ -371,9 +357,8 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
             y: from.y + (to.y - from.y) * grow,
           };
           const color = segment.emphasis
-            // Boolean manifests used the scene's rotating accent. Numeric
-            // roles stay fixed across scenes so corresponding edges retain
-            // their identity as the explanation moves to the next step.
+            // boolean manifest は scene ごとに循環する accent を使っていた。numeric role は scene をまたいで
+            // 固定し、説明が次 step へ進んでも対応する edge の同一性を保つ。
             ? segment.emphasis === true ? accent : figureRoleColor(theme, segment.emphasis)
             : segment.dashed
               ? theme.inkDim
@@ -391,14 +376,13 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
               <line
                 x1={from.x}
                 y1={from.y}
-                // An arrowhead is drawn as a filled triangle, so the line stops
-                // short of the point rather than poking through the tip.
+                // arrowhead は塗りつぶし triangle で描くため、line は先端を突き抜けず point の手前で止める。
                 x2={tip.x - along.x * head * grow}
                 y2={tip.y - along.y * head * grow}
                 stroke={color}
                 strokeWidth={segment.emphasis ? 9 : 5}
                 strokeLinecap="round"
-                // Dashed edges are the hidden ones in a solid's projection.
+                // dashed edge は solid の投影で隠れている edge を表す。
                 strokeDasharray={segment.dashed ? "14 12" : undefined}
               />
               {segment.arrow && grow > 0.9 ? (
@@ -416,9 +400,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
                 />
               ) : null}
 
-              {/* Equal-length marks. Two segments carrying the same number of
-                  strokes are the same length — the notation a congruence proof
-                  is actually written in. */}
+              {/* 等しい長さの mark。同数の stroke を持つ2 segment は等長であり、合同証明で実際に使う表記である。 */}
               {grow > 0.95
                 ? Array.from({ length: segment.ticks }, (_, tick) => {
                     const spread = (tick - (segment.ticks - 1) / 2) * 14;
@@ -451,7 +433,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           );
         })}
 
-      {/* Angle marks — a square for a right angle, an arc otherwise. */}
+      {/* angle mark。直角には square、それ以外には arc を使う。 */}
       {data.angles.map((angle, index) => {
         const vertex = at(angle.at);
         const a = at(angle.from);
@@ -495,9 +477,9 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
             })()
           : (
               <g>
-                {/* Concentric arcs, the notation for "these angles are equal". */}
-                {/* Before equal-angle ticks existed, every marked angle had
-                    one arc. Keep that notation when reading those manifests. */}
+                {/* 同心 arc。「これらの angle は等しい」を表す記法。 */}
+                {/* equal-angle tick 導入前は、mark された各 angle に arc が1本あった。その manifest を読む際は
+                    この表記を保つ。 */}
                 {Array.from({ length: Math.max(1, angle.ticks ?? 0) }, (_, tick) => {
                   const r = radius + tick * 14;
                   return (
@@ -527,7 +509,7 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
         );
       })}
 
-      {/* Vertices last: their dots and names must never be covered. */}
+      {/* vertex は最後。dot と名前が決して覆われないようにする。 */}
       {data.points.map((point, index) => {
         const position = at(point.label);
         if (!position) {

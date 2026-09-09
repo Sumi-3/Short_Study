@@ -7,8 +7,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { Player } from "@remotion/player";
 import { parseProblemOutline } from "../src/problemOutline.js";
 
-// SSR exercises the real scene components without requiring Chrome or remote
-// fonts. It checks content preservation, not browser layout or measured fit.
+// SSR なら Chrome や remote font を要さず実際の scene component を検証できる。確認するのは
+// content の保持であり、browser 上の layout や計測済みの fit ではない。
 registerHooks({
   load(url, context, nextLoad) {
     if (url.endsWith(".css")) return { format: "module", source: "", shortCircuit: true };
@@ -32,21 +32,21 @@ const render = (component: React.ComponentType<any>, inputProps: any) => {
     component, inputProps, compositionWidth: 1080, compositionHeight: 1920,
     fps: 30, durationInFrames: inputProps.durationInFrames, initialFrame: 40,
   }));
-  // Suspense can serialize an error as a fallback instead of throwing it.
-  // An HTML string alone therefore does not prove the scene rendered.
+  // Suspense は error を throw せず fallback として serialize することがある。ゆえに
+  // HTML string があるだけでは scene が render された証明にならない。
   assert.doesNotMatch(html, /<template[^>]*data-msg=/);
   return html;
 };
 const mathText = (text: string) => renderToStaticMarkup(React.createElement(MathText, { text }));
 const literalText = (text: string) => renderToStaticMarkup(React.createElement(React.Fragment, null, text));
-// `\displaystyle` inline, not display mode: limits belong under `lim`, but the
-// formula still has to sit inside the sentence rather than break out of it.
+// display mode ではなく inline の `\displaystyle` を使う。limit は `lim` の下に置くが、
+// 数式は文から飛び出さず文中に収まらなければならない。
 const inlineMath = (tex: string) => `<span>${katex.renderToString(`\\displaystyle ${tex}`, {
   displayMode: false, throwOnError: false, output: "html",
 })}</span>`;
 
-// Compare complete markup so prose, units and dates cannot accidentally join
-// math mode, nor can the legacy normalizer alter TeX before KaTeX sees it.
+// markup 全体を比較し、prose・unit・日付が誤って math mode に入ることも、legacy
+// normalizer が KaTeX に渡る前の TeX を変えてしまうことも防ぐ。
 for (const tex of [
   "x^2+4x-3", String.raw`\frac{3\sqrt{19}}{4}`,
   String.raw`\lim_{n \to \infty} a_n`, String.raw`\sum_{k=1}^{n} k^2`,
@@ -56,9 +56,8 @@ for (const tex of [
   assert.match(html, /class="katex"/);
   assert.doesNotMatch(html, /katex-display|cjk_fallback/);
 }
-// `op-limits` is the class KaTeX uses only when a limit's condition goes under
-// the operator; text style would put it beside, which is the whole reason for
-// the `\displaystyle` above.
+// `op-limits` は limit の条件が演算子の下に行くときだけ KaTeX が使う class である。
+// text style なら横に並ぶ。これが上の `\displaystyle` を使う理由そのものである。
 assert.match(mathText(String.raw`$\lim_{n \to \infty} a_n$`), /mop op-limits/);
 assert.equal(mathText("$x^2$ と $a_n$"), `${inlineMath("x^2")} と ${inlineMath("a_n")}`);
 assert.equal(mathText("日本語だけ。単位km/h、9/8に公開。"), "日本語だけ。単位km/h、9/8に公開。");
@@ -99,8 +98,8 @@ assert.deepEqual(parseProblemOutline(["条件", "(1) 第一問", "補足条件",
   ],
 });
 
-// Each compatibility branch is rendered, so a correct parser cannot mask a
-// dropped paragraph, a missing lone question, or a hidden earlier question.
+// 各 compatibility branch を render する。これにより正しい parser が paragraph の脱落、
+// 一つだけの問題の欠落、前の問題の非表示を覆い隠せない。
 const fixtures = [
   { text: "条件 $x^2+4x-3=0$ を満たす値を求めよ。", points: [] },
   { text: "", points: [String.raw`値は $\frac{3\sqrt{19}}{4}$ である。`, "(1) $a_n$ の値を求めよ。"] },
@@ -121,14 +120,14 @@ for (const { text, points } of fixtures) {
     for (const condition of parsed.conditions) assert.ok(html.includes(mathText(condition)));
     for (const question of parsed.questions) {
       assert.ok(html.includes(mathText(question.text)));
-      // Numbers appear only when there is more than one question to tell
-      // apart; a lone one keeps its number in the data but not on screen.
+      // 区別すべき問題が複数あるときだけ番号を出す。一問だけなら data には番号を残すが、
+      // 画面には出さない。
       const shownNumber = html.includes(`>(${question.number})</span>`);
       assert.equal(shownNumber, question.number !== null && parsed.questions.length > 1);
     }
     assert.doesNotMatch(html, />問<\/span>/);
-    // The opening card announces itself; a 問題 chip above it only repeats
-    // what the question underneath already is.
+    // 開始 card はそれ自体で何かを示す。上に置く「問題」chip は、下の問題文がすでに
+    // 示していることを繰り返すだけである。
     assert.doesNotMatch(html, />問題</);
     if (parsed.questions.length && parsed.questions.every((question) => question.number === null)) {
       assert.doesNotMatch(html, /min-width:1.55em/);
@@ -137,9 +136,9 @@ for (const { text, points } of fixtures) {
   }
 }
 
-// The former 56px estimate floor could approve a poster taller than its
-// frame. Check both raw text and numbered outlines well beyond that floor;
-// SSR can guard the estimate and fixed budget, but cannot exercise DOM fit.
+// 以前の 56px の推定下限では、frame より高い poster を通してしまい得た。その下限を
+// 大きく超える raw text と番号付き outline の両方を検査する。SSR は推定と固定 budget を
+// 守れるが、DOM fit までは試せない。
 for (const outlined of [false, true]) {
   const lines = [...Array.from({ length: 100 }, (_, i) => `条件${i + 1}として、すべての数値と範囲を省略せずに残す。`), "(1) 最後の問いを求めよ。"];
   const html = renderCard(outlined ? "" : lines.join("\n"), outlined ? lines : [], true);
@@ -149,8 +148,8 @@ for (const outlined of [false, true]) {
   assert.ok(size > 0 && size < 56, `long poster must shrink below 56px, got ${size}`);
 }
 
-// Exercise new marker markup as well as legacy manifests. SSR can check static
-// carry visibility and type sizes, while measured shrink still needs a browser.
+// legacy manifest に加え新しい marker markup も試す。SSR は静的な carry の可視性と文字の
+// size を確認できるが、計測に基づく縮小には依然 browser が必要である。
 const { Formula } = await import("../src/remotion/math/Formula.js");
 for (const [count, compact, expected] of [
   [2, false, 60], [3, false, 56], [4, false, 52], [6, false, 48], [2, true, 46],
@@ -169,9 +168,9 @@ assert.ok(carryHtml.includes("前の式"));
 assert.match(carryHtml, /opacity:0.68;translate:0px 0px/);
 assert.ok(!carryHtml.includes("[carry]"));
 
-// The incoming edge must survive statement/companion mode without turning
-// unrelated conditions or prose into implications. This checks markup only;
-// the label's wrapped height and fitted placement still require a browser.
+// incoming edge は、無関係な条件や prose を implication にせず statement/companion mode を
+// 通過しなければならない。ここでは markup だけを検査し、label の折返し後の高さと fit した
+// 配置には依然 browser が必要である。
 for (const compact of [false, true]) {
   const html = render(Formula, {
     lines: ["[highlight] y=x^2+1", "[substitute: x=2 を代入][box] y=5"],
@@ -203,8 +202,8 @@ assert.match(legacyDerivation, /class="formula-derivation"/);
 assert.equal((legacyDerivation.match(/↓/g) ?? []).length, 1);
 assert.equal(mathText("x=±2"), "x=±2");
 
-// A [text] line is prose routed through MathText, so inline math inside the
-// explanation must typeset the same way the problem card does.
+// `[text]` line は MathText を通る prose なので、解説内の inline math も問題 card と
+// 同じように組版されなければならない。
 const proseLine = render(Formula, {
   lines: [String.raw`[text] 判別式 $D = b^2-4ac$ の符号を調べる`, "[plain] x=2"],
   caption: "", accent, durationInFrames: 300,
@@ -212,15 +211,15 @@ const proseLine = render(Formula, {
 assert.match(proseLine, /class="katex"/);
 assert.ok(proseLine.includes("の符号を調べる"));
 assert.doesNotMatch(proseLine, /\$D = b/);
-// The reading line under a formula must not be set at heading weight.
+// 数式の下の読み上げ行を heading weight にしてはならない。
 assert.match(proseLine, /font-weight:500/);
-// The arrow marks each step of the derivation; punctuation-sized was too small.
+// arrow は導出の各 step を示す。句読点サイズでは小さすぎた。
 assert.match(render(Formula, {
   lines: ["x+2=5", "x=3"], caption: "", accent, durationInFrames: 300,
 }), new RegExp(`font-size:76px;line-height:1[^;]*;color:${accent}`));
 
-// Only explicit bounds make a slash safe to typeset: prose can contain dates
-// and adjacent radicals whose fraction boundary cannot be inferred.
+// 明示的な境界がある場合だけ slash を安全に組版できる。prose には日付や隣接する根号が
+// 含まれ、そこから分数の境界を推測できないためである。
 const compositeFraction = mathText("\\frac{3√19}{4}");
 assert.match(compositeFraction, /3√19/);
 assert.match(compositeFraction, /border-top/);
@@ -232,18 +231,18 @@ assert.equal(mathText("\\frac{3√19}{4"), "\\frac{3√19}{4");
 assert.equal(mathText("3√19/4"), "3√19/4");
 assert.equal(mathText("9/8に公開"), "9/8に公開");
 
-// The integral is drawn at 1.5em with a line-height that keeps its inline box
-// at 1.02em, so it cannot push the card's lines apart; measured at 0px growth
-// on a 16px/24px library card. Its bounds must still be scripts, not literals.
+// integral は 1.5em、inline box を 1.02em に保つ line-height で描くため、card の行間を
+// 押し広げない。16px/24px の library card で増加は 0px と計測済みである。境界は依然
+// literal ではなく script でなければならない。
 const integral = mathText("∫_0^π x dx");
 assert.match(integral, /font-size:1\.5em/);
 assert.match(integral, /<sub[^>]*>0<\/sub>/);
 assert.match(integral, /<sup[^>]*>π<\/sup>/);
 assert.match(mathText("∑_{k=1}^{n} k"), /font-size:1\.5em/);
 assert.match(mathText("Σ_{k=1}^{n} k"), /font-size:1\.5em/);
-// Underneath, in the flow. An absolutely positioned condition overlapped the
-// lim glyphs by 7.3px; keeping it in the line is what makes the line grow to
-// hold it, so the column must not be positioned out of the flow again.
+// 下側に flow の中で置く。absolute positioning した条件は lim glyph に 7.3px 重なった。
+// 行の中に保つことで行がそれを収めるまで伸びるので、column を再び flow の外に置いては
+// ならない。
 const limit = mathText("lim_{n→∞} a_n");
 assert.match(limit, /flex-direction:column/);
 assert.doesNotMatch(limit, /position:absolute/);
@@ -253,7 +252,7 @@ assert.ok(latexLimit.includes("lim"));
 assert.ok(latexLimit.includes("n → ∞"));
 assert.doesNotMatch(latexLimit, /\\/);
 assert.doesNotMatch(mathText("Π_{k=1}^{n} k"), /font-size:1\.5em/);
-// Prose must not pick up a display-size glyph it never asked for.
+// prose が求めてもいない display-size glyph を受け取ってはならない。
 assert.doesNotMatch(mathText("面積を求める"), /font-size:1\.5em/);
 for (const html of [compositeFraction, scriptedFraction, integral, limit, mathText("∑_{k=1}^{n} k^2")]) {
   assert.doesNotMatch(html, /class="katex"/);
@@ -278,7 +277,7 @@ let scenes = 0;
 for (const file of await readdir(new URL("../public/projects/", import.meta.url), { recursive: true })) {
   if (!file.endsWith("/manifest.json")) continue;
   const manifest = JSON.parse(await readFile(new URL(`../public/projects/${file}`, import.meta.url), "utf8"));
-  // Old design keys must neither reject a script nor select a different look.
+  // 旧 design key は script を拒否させても、異なる見た目を選ばせてもならない。
   const script = scriptSchema.omit({ scenes: true }).parse(manifest);
   assert.ok(!("design" in script));
   const summary = summarize(manifest, manifest.slug, file);

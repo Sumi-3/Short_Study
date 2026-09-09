@@ -18,36 +18,33 @@ import { ThemeProvider, accentFor, layout, themeOf } from "./theme";
 import type { Manifest, ManifestScene } from "../types";
 
 export type StudyShortProps = {
-  /** Path relative to `public/`, e.g. `projects/mock/manifest.json`. */
+  /** `public/` 相対の path。例: `projects/mock/manifest.json`。 */
   manifestSrc: string;
-  /** Filled in by `calculateMetadata`; never passed by hand. */
+  /** `calculateMetadata` が設定する値で、手渡しはしない。 */
   manifest: Manifest | null;
 };
 
 /**
- * Lets the narration through when it is served from blob storage.
+ * blob storage から配信した場合にも narration を通す。
  *
- * `<Audio>` falls back to an HTML5 element wherever its own decoder is
- * unavailable, which is what a phone tends to get, and Remotion routes that
- * element through Web Audio to apply volume. A cross-origin element without
- * `crossOrigin` taints the graph, and a tainted source node outputs silence —
- * the video plays and the narration simply is not there. Same-origin playback
- * does not need it and is unaffected.
+ * `<Audio>` は独自 decoder を使えない環境、主に phone で HTML5 element へ fallback し、Remotion は
+ * volume 適用のためその element を Web Audio に通す。`crossOrigin` のない cross-origin element は
+ * graph を taint し、taint された source node は無音を出力する。動画は再生されても narration がない。
+ * same-origin の再生には不要で、影響もない。
  *
- * Module-level so the object identity never changes: a fresh one each render is
- * read as new props, and re-scheduling the audio is what makes words stutter.
+ * object identity を変えないよう module-level に置く。render ごとに新しくすると新しい props と
+ * 解釈され、audio を schedule し直すため単語が途切れる。
  */
 const FALLBACK_AUDIO = {
   crossOrigin: "anonymous",
-  // Hold the playhead until the narration is ready. The default lets the
-  // timeline run on while the clip is still arriving, which over a network
-  // reads as a short that plays with no sound at all.
+  // narration の準備完了まで playhead を止める。default は clip 到着中も timeline を進めるため、
+  // network 越しでは完全に無音の short が再生されるように見える。
   pauseWhenBuffering: true,
 } as const;
 
-// Remotion's preservePitch prop covers the standard property; older Safari
-// needs the prefixed one too. Keep the ref stable so frames do not detach and
-// reattach it, and let Html5Audio reuse the Player's gesture-unlocked tag pool.
+// Remotion の preservePitch prop は標準 property を扱うが、古い Safari には prefix 付きも必要である。
+// frame が ref を detach/reattach しないよう安定させ、Html5Audio が Player の gesture-unlocked tag pool を
+// 再利用できるようにする。
 const preserveNarrationPitch = (element: HTMLAudioElement | null) => {
   if (!element) return;
   element.preservesPitch = true;
@@ -116,13 +113,13 @@ const SceneRenderer: React.FC<{
 };
 
 export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
-  // This hook is internal in Remotion 4.0.518, not a public API: recheck it on
-  // upgrades. Reading the Player context avoids changing inputProps identity,
-  // which would re-schedule narration and repeat syllables.
+  // この hook は Remotion 4.0.518 の内部実装で public API ではない。upgrade 時に再確認すること。
+  // Player context を読むと inputProps identity を変えずに済み、それが変わると narration を再 schedule
+  // して音節を繰り返してしまう。
   const { playbackRate } = Internals.usePlaybackRate();
   const environment = useRemotionEnvironment();
-  // Keep frame-accurate decoding at 1x. Only the Player trades it for the
-  // browser's pitch-preserving time stretch; exports always keep the old path.
+  // frame 正確な decoding は1xに保つ。browser の pitch-preserving time stretch と引き換えるのは Player
+  // だけで、export は常に従来の path を使う。
   const usePitchPreservingAudio =
     environment.isPlayer && !environment.isRendering && playbackRate !== 1;
   const theme = themeOf();
@@ -166,9 +163,8 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
             name={`Scene ${scene.scene_id} (${scene.visual_type})`}
           >
             {usePitchPreservingAudio ? (
-              // Html5Audio lacks Audio's timing props, so give it the same
-              // local timeline in a Sequence. Do not pass playbackRate again:
-              // Html5Audio already multiplies by the Player's context rate.
+              // Html5Audio には Audio の timing props がないため、Sequence で同じ local timeline を与える。
+              // playbackRate は重ねて渡さない。Html5Audio はすでに Player の context rate を掛けている。
               <Sequence
                 layout="absolute-fill"
                 durationInFrames={Math.ceil(
@@ -180,9 +176,8 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
                   src={assetSrc(scene.audioSrc)}
                   ref={preserveNarrationPitch}
                   preservePitch
-                  // Preserve CORS and buffering behavior when reusing the
-                  // shared tags. Buffering holds the frame during a route swap
-                  // instead of letting the explanation run ahead of the voice.
+                  // shared tag を再利用しても CORS と buffering の挙動を保つ。buffering では route swap 中の
+                  // frame を保持し、説明だけが voice より先へ進むのを防ぐ。
                   {...FALLBACK_AUDIO}
                 />
               </Sequence>
@@ -192,10 +187,9 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
                 durationInFrames={Math.ceil(
                   scene.audioDurationInSeconds * manifest.fps,
                 )}
-                // Every scene is its own mp3, so without this each one only
-                // starts downloading as its sequence begins — fine from disk,
-                // a race against the playhead over a network. Mounting two
-                // seconds early gives the fetch somewhere to happen.
+                // 各 scene は個別の mp3 なので、これがなければ Sequence 開始時に初めて download が始まる。
+                // disk なら問題ないが、network では playhead との競争になる。2秒早く mount して fetch の
+                // 時間を与える。
                 premountFor={Math.round(manifest.fps * 2)}
                 fallbackHtml5AudioProps={FALLBACK_AUDIO}
               />
@@ -207,8 +201,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
                 scene.visual_type === "hook"
                   ? {
                       text: manifest.topic,
-                      // Bullets when the short has them; the question itself
-                      // for one made before the outline existed.
+                      // short に bullet があればそれを使い、outline 導入前に作ったものでは question 自体を使う。
                       points: manifest.outline ?? [],
                       unit: manifest.unit ?? "",
                     }

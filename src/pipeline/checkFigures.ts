@@ -2,23 +2,20 @@ import type { Script, SceneVisual } from "../types.js";
 
 type Figure = Extract<SceneVisual, { kind: "figure" }>;
 
-/** "110°" / "110度" / "110" — anything else is not a claim about a size. */
+/** "110°" / "110度" / "110"。それ以外は大きさについての主張ではない。 */
 const DEGREES = /^(\d+(?:\.\d+)?)\s*(?:°|度)?$/;
 
 const TOLERANCE = 3;
 
 /**
- * Checks that the angles a figure labels are the angles it draws.
+ * figure が付けた角度ラベルと実際に描く角度の一致を検査する。
  *
- * The coordinates are computed by the model, and a figure whose marked angle
- * disagrees with its own geometry is worse than no figure: the viewer trusts
- * the picture, and a 70° angle labelled 110° teaches the wrong thing. Unlike a
- * side length — which is only meaningful up to the drawing's scale — a marked
- * angle is checkable outright, so it is.
+ * 座標はモデルが計算する。印を付けた角が図の幾何と食い違う figure は、図がないより悪い。見る人は
+ * 図を信じ、70° の角を 110° とラベル付けすれば誤ったことを教えるためである。描画の scale までしか
+ * 意味を持たない辺の長さと違い、印付きの角度は直接検査できるので検査する。
  *
- * This warns rather than repairs. Moving the points to satisfy the label is a
- * constraint solve, and guessing which of the two the model meant would be
- * worse than saying they disagree.
+ * 修正せず警告する。ラベルに合わせて点を動かすには constraint solve が必要で、モデルがどちらを
+ * 意図したか推測するのは、不一致を伝えるより悪いためである。
  */
 export const checkFigures = (script: Script): string[] => {
   const warnings: string[] = [];

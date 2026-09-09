@@ -14,18 +14,17 @@ type Node = {
   label: string;
   depth: number;
   children: Node[];
-  /** Row index, assigned to leaves and averaged up the tree. */
+  /** leaf に割り当て、tree を上がるにつれて平均する row index。 */
   row: number;
 };
 
 /**
- * Builds the tree from a list of outcomes by sharing their common prefixes.
+ * outcome list の共通 prefix を共有して tree を組み立てる。
  *
  * That merge is not a shortcut for describing the tree — it *is* what a 樹形図
  * means. "表表, 表裏, 裏表, 裏裏" and the drawing with two branches that each
- * split again are the same object, so the model lists the outcomes and the
- * branching falls out. It also makes the leaf count trustworthy: it is the
- * number of rows, not something that can be mislabelled.
+ * 再び split する共通部分は同じ object なので、model は outcome を列挙するだけで branching が決まる。
+ * さらに leaf count も信頼できる。誤 label され得る値ではなく row 数だからである。
  */
 const buildTree = (paths: string[][]) => {
   const root: Node = { label: "", depth: -1, children: [], row: 0 };
@@ -43,8 +42,7 @@ const buildTree = (paths: string[][]) => {
     }
   }
 
-  // Leaves take consecutive rows; a parent sits level with the middle of its
-  // children, which is what makes the branches read as a fan.
+  // leaf は連続 row を取り、parent は child の中央と同じ高さに置く。これにより branch が扇状に読める。
   const assign = (node: Node): number => {
     if (node.children.length === 0) {
       node.row = leaves++;
@@ -70,7 +68,7 @@ const flatten = (node: Node, out: Node[] = []) => {
 
 /**
  * 樹形図. Drawn left to right so the outcomes stack down the frame — the shape
- * a 9:16 screen actually has, and the order they are counted in.
+ * 9:16 screen が実際に持つ幅と、数える順序を表す。
  */
 export const Tree: React.FC<{ data: Data; accent: string }> = ({
   data,
@@ -89,7 +87,7 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
   const y = (node: Node) => PAD.top + rowHeight * (node.row + 0.5);
 
   const fontSize = Math.min(40, Math.max(22, rowHeight * 0.42));
-  /** One column per beat, so the tree grows the way it is drawn. */
+  /** beat ごとに1 column。tree が描かれる順に成長する。 */
   const columnStart = (column: number) => 0.7 + column * 0.55;
 
   return (
@@ -108,9 +106,8 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
         style={{ width: "100%", height: "100%", overflow: "visible" }}
         fontFamily={theme.fontFamily}
       >
-        {/* Branches, drawn as elbows: a straight run out of the parent, then a
-            vertical drop, then into the child. Diagonals from a shared parent
-            overlap into a blur once there are more than a couple. */}
+        {/* elbow として描く branch。parent からまっすぐ進み、vertical drop の後に child へ入る。shared parent
+            からの diagonal は数本を超えると重なって blur になる。 */}
         {nodes.map((node) => {
           const parent =
             nodes.find((candidate) => candidate.children.includes(node)) ?? root;
@@ -142,7 +139,7 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
           );
         })}
 
-        {/* The start of the diagram: everything branches from here. */}
+        {/* diagram の始点。すべてがここから branch する。 */}
         <circle
           cx={x(root) + 12}
           cy={y(root)}
@@ -178,9 +175,7 @@ export const Tree: React.FC<{ data: Data; accent: string }> = ({
           );
         })}
 
-        {/* The count is the whole point of drawing one of these, and it is
-            derived from the paths rather than asserted, so it cannot disagree
-            with the picture. */}
+        {/* count こそこれを描く目的であり、path から導くことで、絵と食い違うことがない。 */}
         <text
           x={WIDTH - PAD.right}
           y={HEIGHT - 18}

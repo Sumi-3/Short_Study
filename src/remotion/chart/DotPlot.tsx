@@ -8,12 +8,11 @@ import type { SceneVisual } from "../../types";
 type Data = Extract<SceneVisual, { kind: "dot" }>;
 
 /**
- * A dot plot on a number line: every value is one dot, and equal values stack.
+ * 数直線上の dot plot。各値を1つの dot で表し、同じ値は積み上げる。
  *
- * This is the picture the three averages are read off — the mode is the tallest
- * stack, the median is the middle dot, the mean is where the line would
- * balance. A histogram hides that by grouping; here every data point is still
- * an individual.
+ * 3つの平均を読み取るための図である。mode は最も高い stack、median は中央の dot、mean は
+ * 数直線が釣り合う位置になる。histogram は grouping してこれを隠すが、ここでは各 data point を
+ * 個別のまま保つ。
  */
 export const DotPlot: React.FC<{ data: Data; accent: string }> = ({
   data,
@@ -29,8 +28,7 @@ export const DotPlot: React.FC<{ data: Data; accent: string }> = ({
   const x = scaleX(lowest - pad, highest + pad);
   const baseline = HEIGHT - PAD.bottom;
 
-  // Sorted so the stacks build bottom-up in value order, and so each dot knows
-  // how many identical values already sit under it.
+  // 値順で下から stack を組み、各 dot が同値の dot がすでに何個下にあるか分かるよう sort する。
   const seen = new Map<number, number>();
   const stacked = [...data.values]
     .sort((a, b) => a - b)
@@ -40,8 +38,7 @@ export const DotPlot: React.FC<{ data: Data; accent: string }> = ({
       return { value, level };
     });
 
-  // Sized from the tallest stack, so a handful of values fills the chart
-  // instead of huddling along the axis.
+  // 最も高い stack を基準にサイズを決め、少数の値でも axis 沿いに縮こまらず chart を満たす。
   const tallest = Math.max(...seen.values());
   const step = Math.min(56, (plotHeight * 0.72) / tallest);
   const radius = step * 0.4;
@@ -77,7 +74,7 @@ export const DotPlot: React.FC<{ data: Data; accent: string }> = ({
           <circle
             key={index}
             cx={x(dot.value)}
-            // Falls the last 60px into place rather than fading in on the spot.
+            // その場で fade in させず、最後の60pxを落下して所定位置に収める。
             cy={resting - 60 * (1 - drop)}
             r={radius}
             fill={accent}

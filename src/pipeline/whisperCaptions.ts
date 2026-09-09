@@ -5,17 +5,15 @@ import type { WhisperModel } from "@remotion/install-whisper-cpp";
 import { config, paths } from "../config.js";
 
 /**
- * The whole `CAPTION_SOURCE=whisper` path, kept in its own module so nothing
- * imports it unless it is actually used.
+ * `CAPTION_SOURCE=whisper` の経路全体。実際に使うまで何も import しないよう別 module に置く。
  *
- * `ffmpeg-static` ships a ~78MB binary and whisper.cpp builds a native tree
- * under `paths.whisper`, neither of which a serverless bundle can carry — and a
- * deployment runs `tts` captions anyway. A top-level import here would drag
- * both into every build regardless, so generateCaptions.ts reaches this file
- * through `await import()` only when the whisper source is selected.
+ * `ffmpeg-static` は約 78MB の binary を同梱し、whisper.cpp は `paths.whisper` 配下に native tree
+ * をビルドする。どちらも serverless bundle には載せられず、deployment はそもそも `tts` 字幕を使う。
+ * ここで top-level import すると全 build に両方を引き込むため、whisper source 選択時だけ
+ * generateCaptions.ts が `await import()` でこのファイルへ到達する。
  */
 
-/** Whisper.cpp only accepts 16kHz mono WAV. */
+/** Whisper.cpp は 16kHz モノラル WAV しか受け付けない。 */
 const toWhisperWav = async (mp3Path: string) => {
   const { default: ffmpegPath } = await import("ffmpeg-static");
   if (!ffmpegPath) {
@@ -31,11 +29,10 @@ const toWhisperWav = async (mp3Path: string) => {
 };
 
 /**
- * whisper.cpp emits one BPE token per item under `--max-len 1`, and for
- * Japanese a single character spans several tokens — so its JSON contains
- * split multi-byte sequences that decode to U+FFFD. The bytes are gone by the
- * time `transcribe()` hands them back, so the best available repair is to fold
- * each broken run into the next readable token and keep its timing.
+ * whisper.cpp は `--max-len 1` で item ごとに BPE token を 1 つ出す。日本語では 1 文字が複数
+ * token にまたがるため、JSON に U+FFFD へ decode される分割済み multi-byte sequence が入る。
+ * `transcribe()` が返す時点で bytes は失われているため、壊れた連続部分を次の読める token に畳み、
+ * そのタイミングを保つのが可能な最善の修復になる。
  */
 const repairBrokenTokens = (captions: Caption[]): Caption[] => {
   const repaired: Caption[] = [];
@@ -54,7 +51,7 @@ const repairBrokenTokens = (captions: Caption[]): Caption[] => {
     pendingStartMs = null;
   }
 
-  // A run at the very end has nothing to fold into; extend the last token.
+  // 末尾の連続部分には畳み込む先がないため、最後の token を延長する。
   const last = repaired[repaired.length - 1];
   if (pendingStartMs !== null && last) {
     last.endMs = Math.max(last.endMs, pendingStartMs);

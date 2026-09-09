@@ -2,18 +2,15 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { useDelayRender } from "remotion";
 
 /**
- * Scale the whole block, including gaps, arrows, caption and annotation room.
- * Font size alone cannot bound nested fractions or aligned environments.
- * The same shrink also fits the measured width, since rough SVG annotations
- * can extend beyond the width budget used for the text itself.
- * offsetHeight ignores Player/entrance transforms and our own scale, so the
- * measurement never feeds a previously shrunk height back into the next fit.
+ * gap、arrow、caption と annotation の領域を含む block 全体を scale する。font size だけでは
+ * 入れ子の分数や aligned environment を収められない。rough SVG annotation は文字本体の幅予算を
+ * 越え得るので、同じ縮小で測定済み幅も収める。offsetHeight は Player/entrance の transform と
+ * 自身の scale を無視するため、縮小済みの高さを次の fit へ戻してしまわない。
  *
- * SceneShell ends at 1920 - 100 - 212 - 44 = 1564. Its remaining stage height
- * already excludes the actual heading and 56px gap. For content height H and
- * available height B, s = min(1, B/H) guarantees H*s <= B without dropping rows.
- * A companion gets at most 40% of (stage height - 20px grid gap), preserving
- * at least 60% for the diagram; short companions still use only their height.
+ * SceneShell の終端は 1920 - 100 - 212 - 44 = 1564。残る stage 高は実際の heading と56px gapを
+ * すでに除いている。content 高を H、利用可能高を B とすると、s = min(1, B/H) により行を落とさず
+ * H*s <= B を保証できる。companion は (stage height - 20px grid gap) の最大40%にとどめ、diagram に
+ * 最低60%を残す。短い companion は引き続き自分の高さだけを使う。
  */
 export const useFitToStage = (compact: boolean) => {
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -28,26 +25,23 @@ export const useFitToStage = (compact: boolean) => {
     const stage = viewport?.parentElement;
     if (!viewport || !content || !stage) return;
     const measure = () => {
-      // DOM integer sizes round to the nearest pixel. Round the content up
-      // and the budget down so that a fractional last pixel cannot cross B.
+      // DOM の整数サイズは最も近い pixel へ丸められる。content は切り上げ、budget は切り下げて、
+      // 小数の最後の1 pixel が B を越えないようにする。
       const height = content.offsetHeight + 1;
       /*
-       * `viewport` is `height: 100%` inside a parent whose own height comes
-       * from `flex-grow`. Whether that percentage resolves against a
-       * flex-resolved height is exactly where engines disagree: Blink treats
-       * it as definite, WebKit can leave it indefinite and report 0. Asking
-       * the stage directly gives the same number on both.
+       * `viewport` は自身の高さを `flex-grow` から得る parent 内で `height: 100%` になっている。
+       * この percentage を flex で解決した高さに対して解決するかが、engine 間で食い違う点である。
+       * Blink は definite と扱い、WebKit は indefinite のまま0を返すことがある。stage に直接
+       * 問えば両者で同じ値になる。
        */
       const budget = compact
         ? Math.max(0, stage.clientHeight - 21) * 0.4
         : Math.max(0, (viewport.clientHeight || stage.clientHeight) - 1);
       /*
-       * A budget of zero means the stage has not been laid out yet, not that
-       * the content has to vanish. Scaling to 0 here is unrecoverable: the
-       * observers watch boxes whose own size never changes again, so nothing
-       * ever triggers a second measurement and the whole block stays
-       * invisible for the life of the scene. `useFitToWidth` makes the same
-       * guard for width — skip the measurement and keep the last good fit.
+       * budget が0なのは stage がまだ layout されていないのであって、content を消すべきではない。
+       * ここで0へ scale すると復帰できない。observer が監視する box 自身のサイズは二度と変わらず、
+       * 再測定を起こすものがなく、scene の間じゅう block が見えないままになる。`useFitToWidth` も
+       * 幅に同じ guard を置く。測定を飛ばし、最後に得た正しい fit を保つ。
        */
       if (budget <= 0 || content.offsetHeight === 0) return;
       const computed = getComputedStyle(content);
@@ -64,9 +58,8 @@ export const useFitToStage = (compact: boolean) => {
       const scale = Math.min(
         1,
         budget / height,
-        // The placement box fills the stage so prose can use its left edge.
-        // Its own width would make this ratio one, so fit against the widest
-        // measured row instead; that retains the formula's intrinsic width.
+        // placement box は本文が左端を使えるよう stage を埋める。その幅ではこの ratio が1になるため、
+        // 代わりに最も幅広い測定済み row へ fit し、formula 本来の幅を保つ。
         Math.max(0, viewport.clientWidth - 1) / (naturalWidth + 1),
       );
       const width = viewport.clientWidth;
@@ -78,9 +71,8 @@ export const useFitToStage = (compact: boolean) => {
     };
     const observer = new ResizeObserver(measure);
     observer.observe(content);
-    // The full-width placement box does not resize when a rough mark expands
-    // only one row. Watch measured rows too, so that late SVG padding is
-    // included in the same intrinsic-width fit instead of escaping the stage.
+    // 全幅の placement box は rough mark が1 rowだけを広げても resize しない。測定済み row も
+    // 監視し、遅れて加わる SVG padding を stage 外へ逃がさず同じ intrinsic-width fit に含める。
     for (const child of Array.from(content.children)) {
       if (child instanceof HTMLElement && child.dataset.formulaMeasure !== undefined) {
         observer.observe(child);

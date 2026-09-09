@@ -1,13 +1,12 @@
 import { staticFile } from "remotion";
 
 /**
- * Resolves a manifest's asset path for whichever way the project was published.
+ * 配信形態を問わず manifest の asset path を解決する。
  *
- * `staticFile()` only prefixes a path with the static base, so handing it the
- * absolute URL a deployed build gets back from blob storage would produce
- * `/https:/…`. Locally the manifest still carries paths relative to `public/`,
- * which is exactly what `staticFile()` is for — so both spellings have to work,
- * and the same manifest stays playable wherever it is read from.
+ * `staticFile()` はパスに static base を足すだけなので、デプロイ済みビルドが blob storage
+ * から受け取る絶対 URL を渡すと `/https:/…` になってしまう。一方ローカルの manifest は
+ * `public/` 相対パスのままで、これはまさに `staticFile()` 用である。どちらの表記も
+ * 動かし、同じ manifest を読む場所にかかわらず再生可能にする必要がある。
  */
 export const assetSrc = (src: string) =>
   /^https?:\/\//.test(src) ? src : staticFile(src);

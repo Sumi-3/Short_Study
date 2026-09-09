@@ -1,31 +1,27 @@
 /**
- * The voices this pipeline can actually use.
+ * このパイプラインで実際に使える音声。
  *
- * Azure's catalogue lists many more Japanese voices — Aoi, Daichi, Mayu,
- * Naoki, Shiori, the DragonHD pair, the MAI-Voice ones — but every one of them
- * is refused by the free Edge endpoint msedge-tts talks to ("Stream closed
- * before the synthesis completed"). They need an Azure Speech key and a
- * different client. Only two Japanese voices come back from `getVoices()`.
+ * Azure のカタログには Aoi、Daichi、Mayu、Naoki、Shiori、DragonHD の 2 種、MAI-Voice
+ * など、さらに多くの日本語音声がある。しかし msedge-tts が使う無料 Edge endpoint はすべてを
+ * "Stream closed before the synthesis completed" として拒否する。Azure Speech key と別 client が
+ * 必要で、`getVoices()` が返す日本語音声は 2 種だけである。
  *
- * The multilingual voices are the way past that: they are billed to other
- * locales but speak Japanese, and — measured, not assumed — return the same
- * word boundaries, which is what `CAPTION_SOURCE=tts` builds captions from.
+ * multilingual 音声はこの制限を越える方法である。課金 locale は別でも日本語を話し、推測でなく
+ * 実測で、`CAPTION_SOURCE=tts` が字幕の元にする同じ word boundary を返す。
  */
 export type Voice = {
-  /** EdgeTTS `ShortName`, passed straight to `setMetadata`. */
+  /** `setMetadata` へそのまま渡す EdgeTTS `ShortName`。 */
   id: string;
   /**
-   * How the voice sounds, not what Microsoft named it.
+   * Microsoft が付けた名前ではなく、実際の聞こえ方。
    *
-   * "ナナミ" and "セラフィナ" tell a person nothing about which one to pick for
-   * their video, and the multilingual ones are named after the locale they are
-   * billed to rather than anything audible. These read off the samples in
-   * `web/src/samples/`: pitch, how far the intonation moves, and how long the
-   * same sentence takes. Regenerate those (`scripts/voice-samples.ts`) and the
-   * wording should be checked against them again.
+   * "ナナミ" と "セラフィナ" だけでは動画にどちらを選ぶべきか分からず、multilingual 音声の名前も
+   * 聞こえ方ではなく課金 locale に由来する。`web/src/samples/` のサンプルから、音程、抑揚の幅、
+   * 同じ文を読む長さを読み取っている。これを `scripts/voice-samples.ts` で再生成したら、文言も
+   * 改めて照合する必要がある。
    */
   label: string;
-  /** True for the two voices Microsoft actually built for Japanese. */
+  /** Microsoft が日本語向けに実装した 2 音声なら true。 */
   native: boolean;
 };
 
@@ -47,10 +43,10 @@ export const VOICES: readonly Voice[] = [
 ];
 
 /**
- * What every voice is auditioned saying on the create screen.
+ * 作成画面で全音声を試聴するときの発話内容。
  *
- * A greeting rather than a line of maths: the point is to judge the voice, and
- * a formula read aloud is judged as a formula.
+ * 数式の 1 行ではなく挨拶にする。目的は音声を判断することであり、数式を読ませると数式として
+ * 判断されてしまうためである。
  */
 export const SAMPLE_TEXT = "こんにちは、一緒に勉強しましょう！";
 
