@@ -1,7 +1,7 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "./clamped";
 import { layout, shadowOf, stageBottom, useTheme, withAlpha } from "./theme";
-import { MathText } from "./MathText";
+import { BOLD_MATH, BoldMathStyle, MathText } from "./MathText";
 import { Formula } from "./math/Formula";
 import type { Scene } from "../types";
 import { parseProblemOutline } from "../problemOutline";
@@ -202,7 +202,11 @@ const ProblemCard: React.FC<{
     >
       {/* 問題 chip は置かない。card は video が最初に見せるもので、unit banner の下、question 自身の周囲に
           あるため、他に告知できるものがない。poster も一貫して chip なしである。 */}
+      {/* 問題文は 700 で組むので、中の数式も同じ太さで組ませる（MathText.tsx の BOLD_MATH 参照）。
+          hook scene と、同じ card を描く library の thumbnail の両方に効く。 */}
+      <BoldMathStyle />
       <div
+        className={BOLD_MATH}
         style={{
           /*
            * 描画する box ではなく、使える余地を知る box。以前は両者が1 element で、plate は常に stage と

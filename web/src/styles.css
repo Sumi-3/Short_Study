@@ -828,6 +828,21 @@ body {
 
 /* The question, taken apart. Three to five lines a reader takes in at a
    glance rather than one sentence they have to parse. */
+/*
+ * card の文字は 700 で組むので、中の数式も同じ太さで組ませる。KaTeX は `.katex` の一括指定で
+ * 親の太さを打ち消すため、指定しないと数式だけが細く見える（src/remotion/MathText.tsx 参照）。
+ * thumbnail 側は composition の中で同じ規則を持つ。
+ */
+.card__points li .katex,
+.card__topic .katex {
+  font-weight: 700;
+}
+
+.card__points li .katex .frac-line,
+.card__topic .katex .frac-line {
+  border-bottom-width: 0.08em;
+}
+
 .card__points {
   margin: 0;
   padding: 0;
