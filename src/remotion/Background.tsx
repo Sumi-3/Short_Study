@@ -19,7 +19,7 @@ const Blob: React.FC<{
   phase: number;
 }> = ({ color, size, from, to, period, phase }) => {
   const frame = useCurrentFrame();
-  const { wash = 1 } = useTheme();
+  const { wash } = useTheme();
   // Ping-pong so the loop never jumps, and stays cheap to render.
   const t = Math.abs((((frame + phase) % (period * 2)) / period) - 1);
 
@@ -81,7 +81,7 @@ export const Background: React.FC = () => {
         period={180}
         phase={150}
       />
-      {/* Darkening veil: the blobs are for energy, the text still has to win. */}
+      {/* The veil softens the washes so text stays legible. */}
       <AbsoluteFill style={{ backgroundColor: theme.veil }} />
     </AbsoluteFill>
   );

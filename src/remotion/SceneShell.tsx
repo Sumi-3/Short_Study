@@ -259,7 +259,7 @@ const ProblemCard: React.FC<{
               scale: String(scale),
               backgroundColor: withAlpha(theme.bgDeep, 0.72),
               border: `${CARD_BORDER}px solid ${withAlpha(accent, 0.55)}`,
-              borderRadius: theme.radius === 999 ? 24 : theme.radius,
+              borderRadius: theme.radius,
               padding: `${CARD_PADDING_Y}px ${CARD_PADDING_X}px`,
               boxSizing: "border-box",
             }}

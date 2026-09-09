@@ -112,7 +112,7 @@ export const Feed: React.FC<{
                above and below whatever the padding is. Painting them the
                video's own deepest colour makes the frame read as reaching the
                edges instead of sitting in a letterbox. */
-            style={{ background: themeOf(short.design, short.subject).bgDeep }}
+            style={{ background: themeOf().bgDeep }}
           >
             <div className="phone">
               <Thumbnail short={short} />
@@ -128,7 +128,7 @@ export const Feed: React.FC<{
             style={{
               top: activeIndex * itemHeight,
               height: itemHeight,
-              background: themeOf(active.design, active.subject).bgDeep,
+              background: themeOf().bgDeep,
             }}
           >
             <div className="phone">

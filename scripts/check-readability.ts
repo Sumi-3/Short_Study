@@ -20,6 +20,12 @@ const { SceneShell } = await import("../src/remotion/SceneShell.js");
 const { SceneText } = await import("../src/remotion/SceneText.js");
 const { SceneDiagram } = await import("../src/remotion/SceneDiagram.js");
 const { MathText } = await import("../src/remotion/MathText.js");
+const { themeOf } = await import("../src/remotion/theme.js");
+const { Poster } = await import("../src/remotion/Poster.js");
+const { scriptSchema } = await import("../src/types.js");
+const { summarize } = await import("../src/shorts.js");
+const theme = themeOf();
+const accent = theme.accents[0];
 
 const render = (component: React.ComponentType<any>, inputProps: any) => {
   const html = renderToStaticMarkup(React.createElement(Player, {
@@ -75,7 +81,7 @@ assert.ok(malformed.includes(String.raw`\frac{1}{`));
 
 const scene = { scene_id: 1, visual_type: "hook", visual_content: "", narration: "説明" };
 const renderCard = (text: string, points: string[], poster = false) => render(SceneShell, {
-  scene, durationInFrames: 300, accent: "#ffcc00", poster,
+  scene, durationInFrames: 300, accent, poster,
   problem: { text, points, unit: "数学" },
 });
 
@@ -151,13 +157,13 @@ for (const [count, compact, expected] of [
 ] as const) {
   const html = render(Formula, {
     lines: ["[text][underline] 両辺を2で割る", ...Array(count - 1).fill("[plain] x=2")],
-    caption: "符号に注意", accent: "#ffcc00", compact, durationInFrames: 300,
+    caption: "符号に注意", accent, compact, durationInFrames: 300,
   });
   assert.ok(html.includes(`font-size:${expected}px;line-height:1.3`));
   assert.ok(html.includes("両辺を2で割る"));
 }
 const carryHtml = render(Formula, {
-  lines: ["[carry] x=2", "[box] x^2=4"], caption: "前の式を二乗", accent: "#ffcc00", durationInFrames: 300,
+  lines: ["[carry] x=2", "[box] x^2=4"], caption: "前の式を二乗", accent, durationInFrames: 300,
 });
 assert.ok(carryHtml.includes("前の式"));
 assert.match(carryHtml, /opacity:0.68;translate:0px 0px/);
@@ -169,7 +175,7 @@ assert.ok(!carryHtml.includes("[carry]"));
 for (const compact of [false, true]) {
   const html = render(Formula, {
     lines: ["[highlight] y=x^2+1", "[substitute: x=2 を代入][box] y=5"],
-    caption: "", accent: "#ffcc00", compact, durationInFrames: 300,
+    caption: "", accent, compact, durationInFrames: 300,
   });
   assert.match(html, /class="formula-statements"/);
   assert.equal((html.match(/↓/g) ?? []).length, 1);
@@ -181,17 +187,17 @@ for (const compact of [false, true]) {
 const label = "前に求めたx=2とy=3をそれぞれ対応する文字に代入する";
 const longLabelHtml = render(Formula, {
   lines: ["[carry] z=x+y", `[substitute: ${label}] z=2+3`, "[text] 和を求める", "[box] z=5"],
-  caption: "", accent: "#ffcc00", durationInFrames: 300,
+  caption: "", accent, durationInFrames: 300,
 });
 assert.ok(longLabelHtml.includes(label));
 assert.match(longLabelHtml, /overflow-wrap:anywhere;white-space:normal/);
 assert.equal((longLabelHtml.match(/↓/g) ?? []).length, 1);
 for (const lines of [["[substitute: x=2 を代入] y=5"], ["[text] 条件", "[substitute: x=2 を代入] y=5"]]) {
-  const html = render(Formula, { lines, caption: "", accent: "#ffcc00", durationInFrames: 300 });
+  const html = render(Formula, { lines, caption: "", accent, durationInFrames: 300 });
   assert.ok(!html.includes("↓"), "no arrow without an immediately preceding equation");
 }
 const legacyDerivation = render(Formula, {
-  lines: ["x+2=5", "x=3"], caption: "", accent: "#ffcc00", durationInFrames: 300,
+  lines: ["x+2=5", "x=3"], caption: "", accent, durationInFrames: 300,
 });
 assert.match(legacyDerivation, /class="formula-derivation"/);
 assert.equal((legacyDerivation.match(/↓/g) ?? []).length, 1);
@@ -201,7 +207,7 @@ assert.equal(mathText("x=±2"), "x=±2");
 // explanation must typeset the same way the problem card does.
 const proseLine = render(Formula, {
   lines: [String.raw`[text] 判別式 $D = b^2-4ac$ の符号を調べる`, "[plain] x=2"],
-  caption: "", accent: "#ffcc00", durationInFrames: 300,
+  caption: "", accent, durationInFrames: 300,
 });
 assert.match(proseLine, /class="katex"/);
 assert.ok(proseLine.includes("の符号を調べる"));
@@ -210,8 +216,8 @@ assert.doesNotMatch(proseLine, /\$D = b/);
 assert.match(proseLine, /font-weight:500/);
 // The arrow marks each step of the derivation; punctuation-sized was too small.
 assert.match(render(Formula, {
-  lines: ["x+2=5", "x=3"], caption: "", accent: "#ffcc00", durationInFrames: 300,
-}), /font-size:76px;line-height:1[^;]*;color:#ffcc00/);
+  lines: ["x+2=5", "x=3"], caption: "", accent, durationInFrames: 300,
+}), new RegExp(`font-size:76px;line-height:1[^;]*;color:${accent}`));
 
 // Only explicit bounds make a slash safe to typeset: prose can contain dates
 // and adjacent radicals whose fraction boundary cannot be inferred.
@@ -259,7 +265,7 @@ for (const outline of [[], ["(1) $x^2$ の値を求めよ。"]]) {
     short: {
       slug: "inline-math", topic: "$x^2$ の値を求めよ。", outline,
       headline: "", course: "math", subject: "math", unit: "数学", subunit: "",
-      design: "", createdAt: "", manifestSrc: "", durationInFrames: 300, fps: 30,
+      createdAt: "", manifestSrc: "", durationInFrames: 300, fps: 30,
     },
     onOpen() {}, onDelete() {}, deleting: false,
   }));
@@ -272,6 +278,18 @@ let scenes = 0;
 for (const file of await readdir(new URL("../public/projects/", import.meta.url), { recursive: true })) {
   if (!file.endsWith("/manifest.json")) continue;
   const manifest = JSON.parse(await readFile(new URL(`../public/projects/${file}`, import.meta.url), "utf8"));
+  // Old design keys must neither reject a script nor select a different look.
+  const script = scriptSchema.omit({ scenes: true }).parse(manifest);
+  assert.ok(!("design" in script));
+  const summary = summarize(manifest, manifest.slug, file);
+  assert.ok(!("design" in summary));
+  const posterHtml = render(Poster, { ...summary, durationInFrames: 300 });
+  const cardHtml = renderToStaticMarkup(React.createElement(LibraryCard, {
+    short: summary, onOpen() {}, onDelete() {}, deleting: false,
+  }));
+  for (const html of [posterHtml, cardHtml]) {
+    assert.ok(html.includes(theme.bgDeep) && html.includes(theme.ink), file);
+  }
   const points = manifest.outline ?? [];
   const parsed = parseProblemOutline(points);
   for (const poster of [false, true]) {
@@ -283,7 +301,7 @@ for (const file of await readdir(new URL("../public/projects/", import.meta.url)
   for (const existing of manifest.scenes) {
     const component = existing.visual && existing.visual.kind !== "bullets" ? SceneDiagram : SceneText;
     const html = render(component, {
-      scene: existing, durationInFrames: existing.durationInFrames, accent: "#ffcc00",
+      scene: existing, durationInFrames: existing.durationInFrames, accent,
     });
     assert.ok(html.length > 0, `${file}: ${existing.scene_id}`);
     if (existing.visual?.kind === "formula") {

@@ -1,5 +1,4 @@
 import { FORMULA_MAX_LINES, COMPANION_MAX_LINES } from "./formulaLines.js";
-import { DEFAULT_DESIGN } from "./designs.js";
 import { z } from "zod/v4";
 import type { Caption } from "@remotion/captions";
 import { COURSE_IDS, type CourseId } from "./courses.js";
@@ -225,6 +224,7 @@ export const SUBJECTS = [
 ] as const;
 export type Subject = (typeof SUBJECTS)[number];
 
+// Keep unknown-key stripping so legacy scripts with `design` still load.
 export const scriptSchema = z.object({
   topic: z.string(),
   /** The question as short bullet points, for the library card. */
@@ -238,10 +238,8 @@ export const scriptSchema = z.object({
   subunit: z.string().default(""),
   /** Which system prompt wrote this. Not asked of the model — the user picks it. */
   course: z.enum(COURSE_IDS).default("math"),
-  /** Picks the palette, typeface and motion style. */
+  /** Used for subject-specific narration and caption spelling. */
   subject: z.enum(SUBJECTS).default("general"),
-  /** The look chosen on the create screen. Not asked of the model. */
-  design: z.string().default(DEFAULT_DESIGN),
   scenes: z.array(sceneSchema).min(2),
 });
 
@@ -640,8 +638,6 @@ export type Manifest = {
   topic: string;
   /** The question as bullet points. Absent on shorts made before it existed. */
   outline?: string[];
-  /** The look this short was made with; absent on ones made before designs. */
-  design?: string;
   unit: string;
   subunit: string;
   course: CourseId;

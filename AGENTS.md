@@ -14,7 +14,7 @@
 
 主要な場所: パイプラインは `src/pipeline/`、Remotion コンポーネントは `src/remotion/`、
 プロンプトは `src/prompts/`、分類の正本は `src/curriculum.ts` の `MATH_UNITS`、
-デザイン定義は `src/designs.ts`、音声は `src/voices.ts`、Web アプリは `web/src/`。
+テーマ定義は `src/remotion/theme.ts`、音声は `src/voices.ts`、Web アプリは `web/src/`。
 
 ## Remotion のスキルを先に読む
 
@@ -42,7 +42,7 @@
 
 - **コメントは「なぜそうしたか」を書く。** 何をしているかの言い換えは書かない。既存コードの
   コメント密度に合わせること（`src/remotion/math/Formula.tsx` や `web/src/Thumbnail.tsx` が見本）。
-- 色をハードコードしない。動画ごとに配色が変わるので `themeOf(design, subject)` から
+- 色をハードコードしない。whiteboard に統一しているので `themeOf()` から
   `theme.ink` / `theme.inkDim` / `theme.bgDeep` / `theme.accents[0]` を取る。
   Web の共通トークンは `web/src/styles.css` の `:root`。
 - スタイルは `web/src/styles.css` に集約する。不要になった規則は消す。

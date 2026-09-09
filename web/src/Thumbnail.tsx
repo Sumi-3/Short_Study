@@ -22,7 +22,7 @@ import type { ShortSummary } from "./api";
  * card a fifth of that width its 44px question paints at about 8px.
  */
 export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
-  const theme = themeOf(short.design, short.subject);
+  const theme = themeOf();
 
   return (
   <div className="thumb">
@@ -32,8 +32,6 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
         topic: short.topic,
         outline: short.outline ?? [],
         unit: short.unit,
-        design: short.design,
-        subject: short.subject,
       }}
       compositionWidth={POSTER_SIZE.width}
       compositionHeight={POSTER_SIZE.height}
@@ -50,8 +48,6 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
       className="thumb__meta"
       style={{
         color: theme.ink,
-        // Built from the frame's own deepest colour, so it darkens a chalk
-        // board and lightens a whiteboard instead of painting black on white.
         background: `linear-gradient(to top, ${withAlpha(
           theme.bgDeep,
           0.82,

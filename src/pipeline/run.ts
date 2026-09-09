@@ -1,4 +1,3 @@
-import { DEFAULT_DESIGN, type DesignId } from "../designs.js";
 import crypto from "node:crypto";
 import type { CourseId } from "../courses.js";
 import type { JobEvent, JobStatus } from "../progress.js";
@@ -43,13 +42,11 @@ export async function* runPipeline({
   topic,
   course,
   voice,
-  design,
 }: {
   topic: string;
   course: CourseId;
   /** EdgeTTS ShortName chosen on the create screen. */
   voice?: string;
-  design?: DesignId;
 }): AsyncGenerator<JobEvent> {
   const base = { course, slug: null, manifestSrc: null, error: null } as const;
   const at = (index: number): JobEvent => ({ ...base, ...STEPS[index] });
@@ -84,7 +81,6 @@ export async function* runPipeline({
       script: {
         ...script,
         outline: await outline,
-        design: design ?? DEFAULT_DESIGN,
       },
       slug,
       sceneAudios,

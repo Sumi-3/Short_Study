@@ -23,7 +23,7 @@ export const LibraryCard: React.FC<{
   onDelete: () => void;
   deleting: boolean;
 }> = ({ short, onOpen, onDelete, deleting }) => {
-  const theme = themeOf(short.design, short.subject);
+  const theme = themeOf();
   const accent = theme.accents[0];
   const seconds = Math.round(short.durationInFrames / short.fps);
   const [menuOpen, setMenuOpen] = useState(false);

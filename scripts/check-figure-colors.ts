@@ -7,7 +7,7 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { apiScriptSchema, normalizeVisual, sceneVisualSchema, type ApiScript } from "../src/types.js";
 
 Object.assign(globalThis, { __STUDY_WEB__: true });
-const { designs, ThemeProvider } = await import("../src/remotion/theme.js");
+const { themeOf, ThemeProvider } = await import("../src/remotion/theme.js");
 const { figureRoleColor } = await import("../src/remotion/math/figureRoleColor.js");
 const { Figure } = await import("../src/remotion/math/Figure.js");
 
@@ -46,53 +46,52 @@ const ratio = (a: number[], b: number[]) => {
 };
 const blend = (over: number[], under: number[], alpha: number) => over.map((v, i) => v * alpha + under[i] * (1 - alpha));
 
-for (const [name, theme] of Object.entries(designs)) {
-  let minimum = Infinity;
-  // Include every combination of maximum background washes plus the veil
-  // and highlighted faces, not just a bare solid swatch. Maxima overlap more
-  // than the real moving blobs do, making this a conservative stroke check.
-  const grounds = [theme.bg, theme.bgDeep].flatMap((ground) => Array.from({ length: 8 }, (_, mask) => {
-    let color = rgb(ground);
-    for (const [i, accent] of [2, 1, 4].entries()) {
-      if (mask & (1 << i)) color = blend(rgb(theme.accents[accent]), color, 0.55 * (theme.wash ?? 1));
-    }
-    const veil = theme.veil.match(/[\d.]+/g)!.map(Number);
-    return blend(veil.slice(0, 3), color, veil[3]);
-  })).flatMap((ground) => [ground, ...theme.accents.map((accent) => blend(rgb(accent), ground, 0.18))]);
-
-  for (const emphasis of [0, 1, 2, 3, 4, 5, false, true] as const) {
-    const numeric = typeof emphasis === "number";
-    const input = { ...base, visual_segments: [{ ...base.visual_segments[0], emphasis: numeric ? emphasis : 0 }] };
-    const data = normalizeVisual(input);
-    assert.ok(data?.kind === "figure");
-    data.segments[0].emphasis = emphasis;
-    assert.ok(sceneVisualSchema.safeParse(data).success);
-    // Deliberately use a different scene accent: true must retain the old
-    // accent while a role must keep the same color when the scene changes.
-    const accent = theme.accents[4];
-    const color = emphasis === true ? accent : emphasis ? figureRoleColor(theme, emphasis) : theme.inkDim;
-    const Component = () => React.createElement(ThemeProvider, { value: theme }, React.createElement(Figure, { data, accent }));
-    const html = renderToStaticMarkup(React.createElement(Player, {
-      component: Component, compositionWidth: 1080, compositionHeight: 1920,
-      fps: 30, durationInFrames: 300, initialFrame: 240, acknowledgeRemotionLicense: true,
-    }));
-    assert.doesNotMatch(html, /<template[^>]*data-msg=/);
-    assert.ok(html.includes(`stroke="${color}" stroke-width="${emphasis ? 9 : 5}"`));
-    assert.ok(html.includes('stroke-dasharray="14 12"'));
-    assert.equal((html.match(/<line /g) ?? []).length, 3, "edge and both equality ticks survive");
-    assert.ok(html.includes(`fill="${color}"`), "arrow and label use the edge color");
-    assert.ok(html.includes('>?</text>'));
-    if (numeric && emphasis > 0) {
-      assert.equal(data.segments[0].emphasis, emphasis, "normalization preserves the role");
-      for (const ground of [theme.bg, theme.bgDeep]) assert.ok(ratio(rgb(color), rgb(ground)) >= 4.5);
-      const worst = Math.min(...grounds.map((ground) => ratio(rgb(color), ground)));
-      assert.ok(worst >= 3, `${name} role ${emphasis}: stroke contrast ${worst}`);
-      minimum = Math.min(minimum, worst);
-    }
+const theme = themeOf();
+let minimum = Infinity;
+// Include every combination of maximum background washes plus the veil
+// and highlighted faces, not just a bare solid swatch. Maxima overlap more
+// than the real moving blobs do, making this a conservative stroke check.
+const grounds = [theme.bg, theme.bgDeep].flatMap((ground) => Array.from({ length: 8 }, (_, mask) => {
+  let color = rgb(ground);
+  for (const [i, accent] of [2, 1, 4].entries()) {
+    if (mask & (1 << i)) color = blend(rgb(theme.accents[accent]), color, 0.55 * theme.wash);
   }
-  assert.equal(new Set([1, 2, 3, 4, 5].map((role) => figureRoleColor(theme, role))).size, 5);
-  console.log(`${name}: all 5 roles, legacy booleans, labels/ticks/dashes/arrows; worst stroke contrast ${minimum.toFixed(2)}:1`);
+  const veil = theme.veil.match(/[\d.]+/g)!.map(Number);
+  return blend(veil.slice(0, 3), color, veil[3]);
+})).flatMap((ground) => [ground, ...theme.accents.map((accent) => blend(rgb(accent), ground, 0.18))]);
+
+for (const emphasis of [0, 1, 2, 3, 4, 5, false, true] as const) {
+  const numeric = typeof emphasis === "number";
+  const input = { ...base, visual_segments: [{ ...base.visual_segments[0], emphasis: numeric ? emphasis : 0 }] };
+  const data = normalizeVisual(input);
+  assert.ok(data?.kind === "figure");
+  data.segments[0].emphasis = emphasis;
+  assert.ok(sceneVisualSchema.safeParse(data).success);
+  // Deliberately use a different scene accent: true must retain the old
+  // accent while a role must keep the same color when the scene changes.
+  const accent = theme.accents[4];
+  const color = emphasis === true ? accent : emphasis ? figureRoleColor(theme, emphasis) : theme.inkDim;
+  const Component = () => React.createElement(ThemeProvider, { value: theme }, React.createElement(Figure, { data, accent }));
+  const html = renderToStaticMarkup(React.createElement(Player, {
+    component: Component, compositionWidth: 1080, compositionHeight: 1920,
+    fps: 30, durationInFrames: 300, initialFrame: 240, acknowledgeRemotionLicense: true,
+  }));
+  assert.doesNotMatch(html, /<template[^>]*data-msg=/);
+  assert.ok(html.includes(`stroke="${color}" stroke-width="${emphasis ? 9 : 5}"`));
+  assert.ok(html.includes('stroke-dasharray="14 12"'));
+  assert.equal((html.match(/<line /g) ?? []).length, 3, "edge and both equality ticks survive");
+  assert.ok(html.includes(`fill="${color}"`), "arrow and label use the edge color");
+  assert.ok(html.includes('>?</text>'));
+  if (numeric && emphasis > 0) {
+    assert.equal(data.segments[0].emphasis, emphasis, "normalization preserves the role");
+    for (const ground of [theme.bg, theme.bgDeep]) assert.ok(ratio(rgb(color), rgb(ground)) >= 4.5);
+    const worst = Math.min(...grounds.map((ground) => ratio(rgb(color), ground)));
+    assert.ok(worst >= 3, `whiteboard role ${emphasis}: stroke contrast ${worst}`);
+    minimum = Math.min(minimum, worst);
+  }
 }
+assert.equal(new Set([1, 2, 3, 4, 5].map((role) => figureRoleColor(theme, role))).size, 5);
+console.log(`whiteboard: all 5 roles, legacy booleans, labels/ticks/dashes/arrows; worst stroke contrast ${minimum.toFixed(2)}:1`);
 
 let figures = 0;
 for (const file of await readdir(new URL("../public/projects/", import.meta.url), { recursive: true })) {
@@ -107,7 +106,7 @@ for (const file of await readdir(new URL("../public/projects/", import.meta.url)
       assert.ok(figureSchema.shape.segments.element.shape.emphasis.safeParse(segment.emphasis).success, file);
     }
     const html = renderToStaticMarkup(React.createElement(Player, {
-      component: Figure, inputProps: { data: scene.visual, accent: "#ffd84d" },
+      component: Figure, inputProps: { data: scene.visual, accent: theme.accents[0] },
       compositionWidth: 1080, compositionHeight: 1920, fps: 30,
       durationInFrames: 300, initialFrame: 240, acknowledgeRemotionLicense: true,
     }));

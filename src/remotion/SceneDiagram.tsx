@@ -84,8 +84,8 @@ const Flow: React.FC<{ steps: string[]; accent: string }> = ({
                 color: theme.bgDeep,
                 backgroundColor: accent,
                 padding: compact ? "18px 44px" : "24px 56px",
-                borderRadius: theme.radius === 999 ? 24 : theme.radius,
-                boxShadow: "0 16px 48px rgba(0,0,0,0.45)",
+                borderRadius: theme.radius,
+                boxShadow: `0 16px 48px ${withAlpha(theme.ink, 0.14)}`,
               }}
             >
               {step}

@@ -25,11 +25,9 @@
   --overlay-panel: rgba(255, 255, 255, 0.94);
   --overlay-panel-ink: #111827;
   --overlay-line: rgba(255, 255, 255, 0.24);
-  --overlay-text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
   --success: #16a34a;
   --error: #e11d48;
   --error-ink: #9f1239;
-  --black: #000;
   --white: #fff;
   color-scheme: light;
 }
@@ -124,9 +122,7 @@ body {
   width: auto;
   min-height: 0;
   overflow: hidden;
-  /* The letterbox is the video frame itself; it stays pure black so the
-     composition's edge reads like a screen rather than app chrome. */
-  background: var(--black);
+  background: inherit;
 }
 
 @media (max-aspect-ratio: 9 / 16) {
@@ -314,8 +310,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--overlay-ink-dim);
-  text-shadow: var(--overlay-text-shadow);
+  color: var(--ink-dim);
   font-size: 10px;
   font-weight: 600;
   opacity: 0;
@@ -375,7 +370,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--overlay-ink-dim);
+  color: var(--ink-dim);
   font-size: 11px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -385,13 +380,12 @@ body {
 .speed-control__value {
   white-space: nowrap;
   opacity: 0.7;
-  text-shadow: var(--overlay-text-shadow);
   transition: opacity 160ms ease;
 }
 
 .speed-control.is-adjusted .speed-control__value {
   opacity: 1;
-  color: var(--overlay-ink);
+  color: var(--ink);
   font-weight: 800;
   font-size: 12px;
   text-decoration: underline;
@@ -444,7 +438,7 @@ body {
   position: relative;
   height: 4px;
   border-radius: 2px;
-  background: var(--overlay-line);
+  background: var(--line);
   transition: height 0.12s ease;
 }
 
@@ -481,8 +475,7 @@ body {
   font-size: 13px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--overlay-ink);
-  text-shadow: var(--overlay-text-shadow);
+  color: var(--ink);
 }
 
 .player-placeholder {
@@ -494,7 +487,7 @@ body {
   text-align: center;
   font-size: 14px;
   line-height: 1.8;
-  color: var(--overlay-ink-dim);
+  color: var(--ink-dim);
 }
 
 .job {
@@ -599,9 +592,7 @@ body {
   outline-offset: 1px;
 }
 
-/* The submit button only — a descendant selector also caught the voice and
-   design chips nested in the form, painting every design swatch as if it were
-   the selected one. */
+/* Keep submit styling off the nested voice preview button. */
 .composer > button {
   padding: 16px;
   border: none;
@@ -933,12 +924,9 @@ body {
   cursor: pointer;
 }
 
-/* Irreversible, so it is coloured against the accent the rest of the card is
-   built from. `--error` rather than `--error-ink`: the popover sits on the
-   card's own deep colour, which the darker of the two rose tokens disappears
-   into. */
+/* The popover shares the light board, so use the darker error text token. */
 .card__menu-item--danger {
-  color: var(--error);
+  color: var(--error-ink);
 }
 
 .card__menu-item:hover,
@@ -950,7 +938,7 @@ body {
 .card__menu-item--danger:hover,
 .card__menu-item--danger:focus-visible {
   background: var(--error);
-  color: #fff;
+  color: var(--white);
 }
 
 .card__menu-item:disabled {
@@ -1003,7 +991,7 @@ body {
   padding: calc(18px + env(safe-area-inset-top)) 16px 24px;
 }
 
-/* ---------- create: voice and design ---------- */
+/* ---------- create: voice ---------- */
 
 .field {
   display: flex;
@@ -1056,37 +1044,4 @@ body {
   color: var(--ink);
   font: inherit;
   font-size: 15px;
-}
-
-.swatches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.swatch {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 14px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--control-bg);
-  color: var(--ink-dim);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.swatch.is-on {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  color: var(--ink);
-}
-
-.swatch__dot {
-  width: 13px;
-  height: 13px;
-  border-radius: 999px;
 }

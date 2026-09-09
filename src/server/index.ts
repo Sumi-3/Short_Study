@@ -10,7 +10,6 @@ import {
   ProjectDeleteError,
 } from "../storage.js";
 import { isCourseId } from "../courses.js";
-import { isDesignId } from "../designs.js";
 import { isVoiceId } from "../voices.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
@@ -104,7 +103,6 @@ const server = http.createServer(async (req, res) => {
           topic,
           course,
           voice: isVoiceId(body.voice) ? body.voice : undefined,
-          design: isDesignId(body.design) ? body.design : undefined,
         })) {
           res.write(`${JSON.stringify(event)}\n`);
         }

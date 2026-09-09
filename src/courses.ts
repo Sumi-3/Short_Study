@@ -4,9 +4,8 @@ import type { Subject } from "./types.js";
  * A course is what the user picks before typing: it selects the system prompt
  * Claude is given, and it groups the finished shorts in the feed.
  *
- * It is deliberately not the same axis as `Subject`, which only picks the
- * palette and typeface. Several courses can share a look (世界史 and 日本史
- * would both be "history") while being taught completely differently.
+ * Several courses can share a subject (世界史 and 日本史 would both be
+ * "history") while being taught completely differently.
  */
 export const COURSE_IDS = ["math"] as const;
 export type CourseId = (typeof COURSE_IDS)[number];
@@ -16,8 +15,8 @@ export type CourseMeta = {
   /** Shown on the picker chip and the thumbnail. */
   label: string;
   /**
-   * The theme the finished video wears. `null` means the course does not know
-   * in advance — Claude decides, and its answer is used.
+   * Used for narration and caption spelling. `null` leaves the subject to
+   * Claude when the course cannot determine it in advance.
    */
   subject: Subject | null;
   /** Example input, shown in the composer while that course is selected. */

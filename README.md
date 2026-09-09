@@ -238,33 +238,15 @@ EDGE_VOICE=ja-JP-KeitaNeural EDGE_PITCH=-8% npm run generate -- "トピック"
 
 生成画面で選んだ声はリクエストごとに渡され、`EDGE_VOICE` は既定値として残ります。
 
-### デザインを変える
+### 動画の見た目
 
-[designs.ts](src/designs.ts) に7種類。生成画面で選び、manifest に記録されるので、
-その動画はいつ再生しても同じ見た目になります。
+動画・サムネイル・Web のカードは、[theme.ts](src/remotion/theme.ts) の
+`themeOf()` が返す whiteboard に統一しています。デザイン選択はありません。
+既存 manifest の `design` や `subject` に関係なく同じテーマで描画し、
+保存済みデータの書き換え・再生成は不要です。
 
-| | |
-|---|---|
-| `indigo` | 藍・シアン（既定。従来の数学テーマそのまま） |
-| `midnight` | 青紫、角丸大きめ、動きゆっくり |
-| `chalk` | 黒板。明朝・角ばった枠 |
-| `plum` | 梅。丸ゴシック・跳ねる動き |
-| `forest` | 深緑。丸ゴシック |
-| `ember` | 熾火。暖色・速め |
-| `whiteboard` | ホワイトボード。**唯一の明るい配色**。マーカー色・丸ゴシック |
-
-実体は [theme.ts](src/remotion/theme.ts) の `designs` です。`whiteboard` のために
-`Theme` に任意の3項目が増えました。暗い配色は共通の影・字幕プレート・背景の濃さを
-そのまま使い、明るい配色だけが上書きします（暗い影は黒文字の下では滲みになり、
-ほぼ黒のプレートは字幕を飲み込み、濃い背景は白を潰すため）。
-
-| | |
-|---|---|
-| `plate` | 字幕の下敷き。既定は `DARK_PLATE` |
-| `textShadow` | 文字の影。既定は暗い配色向けの `textShadow` |
-| `wash` | 背景の色ムラの濃さの倍率。既定は 1 |
-
-`design` を持たない古い動画は、これまでどおり `subject` からテーマを引きます。
+字幕には明るい `plate` と薄い `textShadow`、背景には濃さを抑えた `wash` を使います。
+`subject` はナレーション・字幕の表記処理に引き続き使います。
 
 もっと自由に選びたい場合は ElevenLabs に切り替えます（`ELEVENLABS_VOICE_ID` は
 ElevenLabs の Voice Library から取得）:

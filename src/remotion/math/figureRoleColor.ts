@@ -9,7 +9,7 @@ const contrast = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a
 const blend = (over: number[], under: number[], alpha: number) => over.map((value, index) => value * alpha + under[index] * (1 - alpha));
 
 /**
- * Roles use the design palette, independent of the scene's rotating accent.
+ * Roles use the marker palette, independent of the scene's rotating accent.
  * Whiteboard's green is fine as a large wash but too light for a small edge
  * label on its grey ground. Move only diagram role colors toward the theme's
  * ink until both gradient endpoints give text contrast. The background's
@@ -26,7 +26,7 @@ export const figureRoleColor = (theme: Theme, role: number): string => {
   const veil = theme.veil.match(/[\d.]+/g)!.map(Number);
   const surfaces = [theme.bg, theme.bgDeep].flatMap((ground) => {
     let peak = rgb(ground);
-    for (const index of [2, 1, 4]) peak = blend(rgb(theme.accents[index]), peak, 0.55 * (theme.wash ?? 1));
+    for (const index of [2, 1, 4]) peak = blend(rgb(theme.accents[index]), peak, 0.55 * theme.wash);
     peak = blend(veil.slice(0, 3), peak, veil[3]);
     return [peak, ...theme.accents.map((color) => blend(rgb(color), peak, 0.18))].map(luminance);
   });

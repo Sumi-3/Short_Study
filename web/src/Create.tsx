@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { COURSES } from "../../src/courses";
-import { DEFAULT_DESIGN, DESIGNS, type DesignId } from "../../src/designs";
 import { VOICES } from "../../src/voices";
 import type { JobEvent } from "./api";
 import { playSample } from "./voiceSamples";
@@ -96,12 +95,11 @@ const JobCard: React.FC<{ job: JobEvent; onDismiss: () => void }> = ({
 export const Create: React.FC<{
   job: JobEvent | null;
   busy: boolean;
-  onSubmit: (topic: string, voice: string, design: DesignId) => void;
+  onSubmit: (topic: string, voice: string) => void;
   onDismiss: () => void;
 }> = ({ job, busy, onSubmit, onDismiss }) => {
   const [topic, setTopic] = useState("");
   const [voice, setVoice] = useState(VOICES[0].id);
-  const [design, setDesign] = useState<DesignId>(DEFAULT_DESIGN);
 
   return (
     <div className="create">
@@ -112,7 +110,7 @@ export const Create: React.FC<{
           if (!topic.trim() || busy) {
             return;
           }
-          onSubmit(topic.trim(), voice, design);
+          onSubmit(topic.trim(), voice);
           setTopic("");
         }}
       >
@@ -161,28 +159,6 @@ export const Create: React.FC<{
             >
               ▶
             </button>
-          </div>
-        </div>
-
-        <div className="field">
-          <span className="field__label">デザイン</span>
-          <div className="swatches">
-            {DESIGNS.map((entry) => (
-              <button
-                key={entry.id}
-                type="button"
-                aria-pressed={design === entry.id}
-                className={`swatch${design === entry.id ? " is-on" : ""}`}
-                onClick={() => setDesign(entry.id)}
-              >
-                <span
-                  className="swatch__dot"
-                  style={{ background: entry.swatch }}
-                  aria-hidden
-                />
-                {entry.label}
-              </button>
-            ))}
           </div>
         </div>
 

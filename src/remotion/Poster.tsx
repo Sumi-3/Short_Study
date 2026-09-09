@@ -2,7 +2,7 @@ import { AbsoluteFill } from "remotion";
 import { Background } from "./Background";
 import { SceneShell } from "./SceneShell";
 import { ThemeProvider, accentFor, layout, themeOf } from "./theme";
-import type { Scene, Subject } from "../types";
+import type { Scene } from "../types";
 
 /**
  * The video's opening frame, standing still.
@@ -14,8 +14,8 @@ import type { Scene, Subject } from "../types";
  * so a card cannot disagree with its video.
  *
  * It takes the summary rather than the manifest on purpose. The opening needs
- * the question, the unit and the palette, and all three are already on the
- * summary the home screen has — fetching a manifest per card would make
+ * the question and the unit, which are already on the summary the home
+ * screen has — fetching a manifest per card would make
  * scrolling the library wait on the network.
  */
 export type PosterProps = {
@@ -23,8 +23,6 @@ export type PosterProps = {
   /** The question as bullet points; empty falls back to the question itself. */
   outline: string[];
   unit: string;
-  design: string;
-  subject: Subject;
 };
 
 /**
@@ -55,10 +53,8 @@ export const Poster: React.FC<PosterProps> = ({
   topic,
   outline,
   unit,
-  design,
-  subject,
 }) => {
-  const theme = themeOf(design, subject);
+  const theme = themeOf();
 
   return (
     <ThemeProvider value={theme}>

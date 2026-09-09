@@ -125,9 +125,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
   // browser's pitch-preserving time stretch; exports always keep the old path.
   const usePitchPreservingAudio =
     environment.isPlayer && !environment.isRendering && playbackRate !== 1;
-  // Everything below reads its palette, typeface and easing from here, so the
-  // whole video changes character with the design it was made with.
-  const theme = themeOf(manifest?.design, manifest?.subject ?? "general");
+  const theme = themeOf();
 
   if (!manifest) {
     return (

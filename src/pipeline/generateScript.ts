@@ -1,4 +1,3 @@
-import { DEFAULT_DESIGN } from "../designs.js";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { anthropic } from "./anthropic.js";
 import { config } from "../config.js";
@@ -70,6 +69,12 @@ const classify = (written: string, allowed: readonly string[] | null) => {
   };
 };
 
+/** Half the 170s that prompts/shared.ts reserves for this step of the 300s cap. */
+const SCRIPT_RETRY_BUDGET_MS = 85_000;
+
+/** A script the model produced that broke a rule it is able to follow. */
+class ScriptRejection extends Error {}
+
 export const generateScript = async (
   topic: string,
   courseId: CourseId = "math",
@@ -108,26 +113,68 @@ export const generateScript = async (
    * `parsed_output`, so structured outputs survive the switch; nothing here
    * consumes the intermediate events.
    */
-  const response = await client.messages
-    .stream({
-      model: config.anthropicModel,
-      max_tokens: maxTokens,
-      thinking: { type: "adaptive" },
-      system: course.buildSystemPrompt(),
-      messages: [{ role: "user", content: topic }],
-      output_config: { format: zodOutputFormat(apiScriptSchema) },
-    })
-    .finalMessage();
+  const attempt = async (correction?: string) => {
+    const response = await client.messages
+      .stream({
+        model: config.anthropicModel,
+        max_tokens: maxTokens,
+        thinking: { type: "adaptive" },
+        system: course.buildSystemPrompt(),
+        messages: correction
+          ? [{ role: "user", content: `${topic}\n\n前回の出力は次の理由で却下されました。同じ問題を、この点だけ直して書き直してください。\n${correction}` }]
+          : [{ role: "user", content: topic }],
+        output_config: { format: zodOutputFormat(apiScriptSchema) },
+      })
+      .finalMessage();
 
-  const parsed = response.parsed_output;
-  if (!parsed) {
-    throw new Error(
-      `Claude returned no parseable script (stop_reason: ${response.stop_reason}).`,
-    );
+    const parsed = response.parsed_output;
+    if (!parsed) {
+      throw new Error(
+        `Claude returned no parseable script (stop_reason: ${response.stop_reason}).`,
+      );
+    }
+
+    try {
+      assertScriptBudget(parsed.scenes, budget);
+      assertFormulaCarry(parsed.scenes);
+    } catch (error) {
+      // Tagged so the retry can quote it back. An API or network failure is
+      // worth another sample too, but there is nothing to tell the model.
+      throw new ScriptRejection(error instanceof Error ? error.message : String(error));
+    }
+    return parsed;
+  };
+
+  /*
+   * One retry, because the rejections above are the model's own output failing
+   * a rule it can satisfy, and it samples differently each time. The whole run
+   * stops here otherwise: this is before the narration and the render, so a
+   * `[carry]` written the wrong way costs the entire generation.
+   *
+   * The second call quotes the rejection back rather than rerolling blindly —
+   * `assertFormulaCarry` names every rule that failed, which is exactly what a
+   * correction needs. One retry only: a rule the model cannot satisfy would
+   * otherwise loop, and the second failure is the honest answer.
+   */
+  let parsed;
+  const startedAt = Date.now();
+  try {
+    parsed = await attempt();
+  } catch (error) {
+    /*
+     * Only if a second call still fits. `vercel.json` caps the function at
+     * 300s and the budget in prompts/shared.ts reserves 170s of that for this
+     * step, so two attempts have to share it: a first call that already took
+     * longer than half would push the retry past the limit and lose the run to
+     * a timeout instead of to an error message that says what went wrong.
+     * Locally there is no such cap, but the same arithmetic is a fair guess at
+     * how long a second sample would take.
+     */
+    if (Date.now() - startedAt > SCRIPT_RETRY_BUDGET_MS) {
+      throw error;
+    }
+    parsed = await attempt(error instanceof ScriptRejection ? error.message : undefined);
   }
-
-  assertScriptBudget(parsed.scenes, budget);
-  assertFormulaCarry(parsed.scenes);
 
   return {
     // The same question, spelled consistently — see TOPIC_RULE. Falls back to
@@ -136,8 +183,6 @@ export const generateScript = async (
     // Filled in by `runPipeline` from its own call — see generateOutline.ts.
     outline: [],
     ...classify(parsed.unit, course.units),
-    // Chosen by the user, not the model; runPipeline overwrites it.
-    design: DEFAULT_DESIGN,
     course: course.id,
     // A course with a fixed subject has already told the model which one to
     // pick, so the two agree; `general` is the case where the answer matters.

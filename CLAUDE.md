@@ -14,7 +14,7 @@
 主要な場所: パイプラインは [src/pipeline/](src/pipeline/)、Remotion コンポーネントは
 [src/remotion/](src/remotion/)、プロンプトは [src/prompts/](src/prompts/)、
 分類の正本は [src/curriculum.ts](src/curriculum.ts) の `MATH_UNITS`、
-デザイン定義は [src/designs.ts](src/designs.ts)、音声は [src/voices.ts](src/voices.ts)。
+テーマ定義は [src/remotion/theme.ts](src/remotion/theme.ts)、音声は [src/voices.ts](src/voices.ts)。
 `.agents/skills/remotion-*/` に Remotion 公式スキルがあるので、Remotion の書き方で迷ったら先に読む。
 
 ## Codex への委譲

@@ -10,7 +10,6 @@ import {
   type JobEvent,
   type ShortSummary,
 } from "./api";
-import type { DesignId } from "../../src/designs";
 
 type Tab = "home" | "shorts" | "create";
 
@@ -88,7 +87,6 @@ export const App: React.FC = () => {
   const submit = async (
     topic: string,
     voice: string,
-    design: DesignId,
   ) => {
     setJob({
       status: "queued",
@@ -101,7 +99,7 @@ export const App: React.FC = () => {
     });
 
     try {
-      for await (const next of generate(topic, "math", voice, design)) {
+      for await (const next of generate(topic, "math", voice)) {
         setJob(next);
         if (next.status === "done" && next.slug) {
           const list = await refreshShorts();
