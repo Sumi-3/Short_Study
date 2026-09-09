@@ -3,6 +3,7 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "../clamped";
 import { useTheme, withAlpha } from "../theme";
 import { compileExpression } from "./expression";
+import { SvgLabel } from "./SvgLabel";
 
 export type PlotCurve = {
   expr: string;
@@ -401,22 +402,19 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
             />
             <circle cx={cx} cy={cy} r={11} fill={accent} opacity={pop} />
             {point.label ? (
-              <text
+              <SvgLabel
+                text={point.label}
                 // 右下に置く。point が y = 0 に近いと右上では x-axis とその tick label に衝突するため。
                 x={cx + 22}
                 y={cy + 44}
-                fill={accent}
-                fontSize={32}
-                fontWeight={700}
+                color={accent}
+                size={32}
+                weight={700}
                 fontFamily={theme.fontFamily}
                 opacity={pop}
                 // 着地位置を問わず読めるよう、暗い outline を置く。
-                stroke={theme.bgDeep}
-                strokeWidth={6}
-                paintOrder="stroke"
-              >
-                {point.label}
-              </text>
+                outline={{ color: theme.bgDeep, width: 6 }}
+              />
             ) : null}
           </g>
         );
@@ -441,16 +439,15 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
               rx={4}
               fill={curveColors[index % curveColors.length]}
             />
-            <text
+            <SvgLabel
+              text={curve.label}
               x={PAD + 40}
               y={PAD - 24 + index * 40}
-              fill={theme.ink}
-              fontSize={30}
-              fontWeight={700}
+              color={theme.ink}
+              size={30}
+              weight={700}
               fontFamily={theme.fontFamily}
-            >
-              {curve.label}
-            </text>
+            />
           </g>
         );
       })}

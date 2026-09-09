@@ -4,6 +4,7 @@ import { clamped } from "../clamped";
 import { useTheme, withAlpha } from "../theme";
 import type { SceneVisual } from "../../types";
 import { figureRoleColor } from "./figureRoleColor";
+import { SvgLabel } from "./SvgLabel";
 
 type FigureData = Extract<SceneVisual, { kind: "figure" }>;
 
@@ -153,23 +154,27 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
   const lastSegmentEnd =
     segmentStart(Math.max(0, data.segments.length - 1)) + 0.4;
 
+  /**
+   * ラベルを図から離す距離の倍率。自動配置は 1 行の文字を前提に 34〜40px 押し出しているが、
+   * `$\frac{3}{2}$` のような上下の分数は 1 行の 2 倍ほど高く、同じ距離では分数の横棒が線分に
+   * 重なった。$ を含むラベルだけ 1.5 倍にし、素の文字のラベルは以前と同じ位置に置く。
+   */
+  const reach = (text: string) => (text.includes("$") ? 1.5 : 1);
+
   const label = (text: string, position: Screen, color: string, size: number, opacity: number) => (
-    <text
+    <SvgLabel
+      text={text}
       x={position.x}
       y={position.y}
-      fill={color}
-      fontSize={size}
-      fontWeight={700}
-      textAnchor="middle"
-      dominantBaseline="middle"
+      color={color}
+      size={size}
+      weight={700}
+      anchor="middle"
+      baseline="middle"
       opacity={opacity}
       // auto-placement の位置を問わず読めるよう、各 label の下に暗い outline を置く。
-      stroke={theme.bgDeep}
-      strokeWidth={7}
-      paintOrder="stroke"
-    >
-      {text}
-    </text>
+      outline={{ color: theme.bgDeep, width: 7 }}
+    />
   );
 
   return (
@@ -290,8 +295,8 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
                 ? label(
                     circle.label,
                     {
-                      x: center.x + Math.cos((a0 + a1) / 2) * (radius + 40),
-                      y: center.y + Math.sin((a0 + a1) / 2) * (radius + 40),
+                      x: center.x + Math.cos((a0 + a1) / 2) * (radius + 40 * reach(circle.label)),
+                      y: center.y + Math.sin((a0 + a1) / 2) * (radius + 40 * reach(circle.label)),
                     },
                     accent,
                     36,
@@ -324,8 +329,8 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
               ? label(
                   circle.label,
                   {
-                    x: center.x + outwards.x * (radius + 34),
-                    y: center.y + outwards.y * (radius + 34),
+                    x: center.x + outwards.x * (radius + 34 * reach(circle.label)),
+                    y: center.y + outwards.y * (radius + 34 * reach(circle.label)),
                   },
                   theme.ink,
                   36,
@@ -369,7 +374,16 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           const across = { x: -along.y, y: along.x };
           const head = segment.arrow ? 26 : 0;
           const middle = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
-          const push = outward(middle);
+          /*
+           * 外周の辺では重心から中点へ向かう向きがそのまま法線に近く、ラベルは辺の外に出る。
+           * しかし中心から放射状に出る辺（円の半径など）では、その向きが辺と平行になり、ラベルが
+           * 辺の上を滑るだけで離れなかった。向きが辺に沿っている（45° 以内）ときは、法線のうち
+           * 重心から遠ざかる側を使う。外周の辺は従来どおりなので、既存の図の置き場所は変わらない。
+           */
+          const radial = outward(middle);
+          const parallel = Math.abs(radial.x * along.x + radial.y * along.y) > Math.SQRT1_2;
+          const sign = radial.x * across.x + radial.y * across.y >= 0 ? 1 : -1;
+          const push = parallel ? { x: across.x * sign, y: across.y * sign } : radial;
 
           return (
             <g key={`s${index}`}>
@@ -423,7 +437,10 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
               {segment.label
                 ? label(
                     segment.label,
-                    { x: middle.x + push.x * 34, y: middle.y + push.y * 34 },
+                    {
+                      x: middle.x + push.x * 34 * reach(segment.label),
+                      y: middle.y + push.y * 34 * reach(segment.label),
+                    },
                     color,
                     36,
                     fade(start + 0.35),
@@ -450,8 +467,8 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
         const radius = 48;
         const bisector = from + turn / 2;
         const labelAt = {
-          x: vertex.x + Math.cos(bisector) * (radius + 34),
-          y: vertex.y + Math.sin(bisector) * (radius + 34),
+          x: vertex.x + Math.cos(bisector) * (radius + 34 * reach(angle.label)),
+          y: vertex.y + Math.sin(bisector) * (radius + 34 * reach(angle.label)),
         };
 
         const mark = isRight

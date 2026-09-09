@@ -1,11 +1,20 @@
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
+import { registerHooks } from "node:module";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Player } from "@remotion/player";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { apiScriptSchema, normalizeVisual, sceneVisualSchema, type ApiScript } from "../src/types.js";
 
+// Figure は数式ラベルのために MathText を経由して KaTeX の CSS を読む。SSR で確かめるのは色と
+// 構造であり stylesheet ではないので、check-readability と同じく CSS は空 module に差し替える。
+registerHooks({
+  load(url, context, nextLoad) {
+    if (url.endsWith(".css")) return { format: "module", source: "", shortCircuit: true };
+    return nextLoad(url, context);
+  },
+});
 Object.assign(globalThis, { __STUDY_WEB__: true });
 const { themeOf, ThemeProvider } = await import("../src/remotion/theme.js");
 const { figureRoleColor } = await import("../src/remotion/math/figureRoleColor.js");

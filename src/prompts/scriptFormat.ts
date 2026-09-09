@@ -145,7 +145,7 @@ const VISUAL_DOCS = {
         複数の曲線に付ければ、その全部を満たす部分（連立不等式の領域）が塗られる
         例: y≧x² かつ y≦6 → 1本目 region="above"、2本目 expr="0*x+6" region="below"
         不要なら空文字列
-      label は10文字以内の凡例（不要なら空文字列）
+      label は10文字以内の凡例。数式は $y=x^2$ $y=\\frac{x}{2}$ のように $…$ で囲む（不要なら空文字列）
     visual_range = [xの最小, xの最大, yの最小, yの最大]。曲線が収まる範囲にする
         媒介変数曲線の t の範囲を変えたいときだけ、後ろに [tの最小, tの最大] を足して6数値
         （既定は0〜2π。サイクロイド2山なら [0, 12.6] を足す）
@@ -153,7 +153,8 @@ const VISUAL_DOCS = {
     visual_shade = [開始x, 終了x]。定積分の面積を塗るとき、または領域のx範囲を切るとき
         不要なら空配列
     visual_points = 印をつける点。接点・交点・解など「答えになる点」があるときだけ
-        [{x, y, label}] を1〜3個。label は "(-1, -1)" のような短い文字列。不要なら空配列
+        [{x, y, label}] を1〜3個。label は "(-1, -1)" のような短い文字列。根号や分数を含むなら
+        $(\\sqrt{2},\\ 1)$ のように $…$ で囲む。不要なら空配列
     visual_items = グラフと同時に見せる短い数式／[text]文章行を合計0〜2個（不要なら空配列）。図の下に表示される。
         接点と接線の式、塗った領域と定積分、交点と方程式の対応を説明するときに使う。
         formula と同じ行頭マーカーを使える。併記では自動の ↓ も最後の自動囲みも出ない。
@@ -162,11 +163,13 @@ const VISUAL_DOCS = {
     visual_caption = 図・式の関係を示す12文字以内の補足（不要なら空文字列）。式がなくても表示する`,
   figure: `- "figure":  図形そのものを描く。三角形・円・立体など、幾何の問題では必ず使う
     visual_points  = 頂点。label が名前であり、他のフィールドから参照するidにもなる
+        名前は A, B, P のような素の文字にし、$ は付けない（from / to / at / center と一致させる）
         [{x, y, label}] を2〜8個。座標は自分で計算した正しい値を入れる
         単位は自由。図全体が自動で画面に合わせて拡大縮小される（縦横は同じ倍率）
     visual_segments = 線分。[{from, to, label, dashed, emphasis, ticks, arrow}] を1〜10本
         from / to は visual_points の label
-        label = 長さなどの短い文字（不要なら空文字列）
+        label = 長さなどの短い文字。根号や分数は $\\sqrt{7}$ $\\frac{3}{2}$ $2\\sqrt{3}$ のように
+            $…$ で囲むと数式として組まれる（不要なら空文字列）
         dashed = true で破線。立体の隠れた辺や、追加した補助線に使う
         emphasis = 0 は通常線、1〜5 は色の役割を表す整数で、同じ番号は同じ色の太線になる
             対応する辺どうしを同じ番号、別の組や補助線を別番号、求める辺を独立した番号にする
@@ -178,10 +181,11 @@ const VISUAL_DOCS = {
         arrow = true で to 側に矢じり。ベクトルはこれで描く
     visual_angles   = 角の印。[{at, from, to, label, ticks}] を0〜3個
         at が頂点、from と to がその両側の点。90度なら自動で直角記号になる
+        label = 角の大きさか名前。"60°" のほか $\\theta$ $60^\\circ$ のように $…$ でも書ける（不要なら空文字列）
         ticks = 等しい角の印の本数（0〜3）。同じ本数の角どうしが等しい
     visual_circles  = 円・弧・扇形。[{center, radius, label, dashed, from_angle, to_angle, sector}] を0〜3個
         center は visual_points の label（中心も点として置く）
-        radius は visual_points と同じ単位。label は "r=2" などの短い文字
+        radius は visual_points と同じ単位。label は "r=2" や $r=\\sqrt{2}$ などの短い文字
         from_angle と to_angle は度。**同じ値なら円全体**、違えばその間の弧
             角度は反時計回りで、真右が0度。円周角なら対応する弧をこれで強調する
         sector = true で中心まで塗って扇形にする（弧度法・扇形の面積）

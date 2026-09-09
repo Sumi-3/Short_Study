@@ -2,8 +2,11 @@ import type { Script, SceneVisual } from "../types.js";
 
 type Figure = Extract<SceneVisual, { kind: "figure" }>;
 
-/** "110°" / "110度" / "110"。それ以外は大きさについての主張ではない。 */
-const DEGREES = /^(\d+(?:\.\d+)?)\s*(?:°|度)?$/;
+/**
+ * "110°" / "110度" / "110"、および数式で書いた "$110^\circ$" / "$110^{\circ}$"。それ以外は
+ * 大きさについての主張ではない。ラベルが $…$ で組めるようになっても、角度の検査は落とさない。
+ */
+const DEGREES = /^\$?\s*(\d+(?:\.\d+)?)\s*(?:°|度|\^\\circ|\^\{\\circ\})?\s*\$?$/;
 
 const TOLERANCE = 3;
 
