@@ -1,6 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import katex from "katex";
-import "katex/dist/katex.min.css";
+import { useLayoutEffect, useRef, useState } from "react";
 import {
   Box,
   Bracket,
@@ -18,19 +16,6 @@ import { MathText } from "../MathText";
 import { FORMULA_MAX_LINES, parseFormulaLine } from "../../formulaLines";
 export { parseFormulaLine } from "../../formulaLines";
 
-const render = (latex: string) => {
-  try {
-    return katex.renderToString(latex, {
-      displayMode: true,
-      // 不正な式は動画全体を落とさず、赤い source text として見せる。
-      throwOnError: false,
-      output: "html",
-    });
-  } catch {
-    return latex;
-  }
-};
-
 const Line: React.FC<{
   latex: string;
   text: boolean;
@@ -45,7 +30,6 @@ const Line: React.FC<{
 }> = ({ latex, text, delay, color, fontSize, timing, from, carried = false, measureRef }) => {
   const frame = (useCurrentFrame() - from) / timing;
   const theme = useTheme();
-  const html = useMemo(() => text ? "" : render(latex), [latex, text]);
 
   return (
     <div
@@ -72,10 +56,9 @@ const Line: React.FC<{
           theme.easing,
         ),
       }}
-      {...(text
-        ? { children: <MathText text={latex} /> }
-        : { dangerouslySetInnerHTML: { __html: html } })}
-    />
+    >
+      <MathText text={latex} formula={!text} />
+    </div>
   );
 };
 

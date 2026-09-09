@@ -62,20 +62,21 @@ assert.match(mathText(String.raw`$\lim_{n \to \infty} a_n$`), /mop op-limits/);
 assert.equal(mathText("$x^2$ と $a_n$"), `${inlineMath("x^2")} と ${inlineMath("a_n")}`);
 assert.equal(mathText("日本語だけ。単位km/h、9/8に公開。"), "日本語だけ。単位km/h、9/8に公開。");
 for (const source of [
-  "$", "$$", "$$$", "前$$後", "前$$x^2$$後", "前$ $後", "前$\n$後",
-  "前$x^2 後", String.raw`前$\frac{3}{4} 後`, "前$x^2$$後",
+  "$", "$$", "$$$", "前$$後", "前$ $後", "前$\n$後",
+  "前$x^2 後", String.raw`前$\frac{3}{4} 後`,
   String.raw`価格\$5です`, String.raw`前\$x^2\$後`,
   "前$<b>&後",
 ]) assert.equal(mathText(source), literalText(source), source);
+assert.equal(mathText("前$x^2$$後"), `前${inlineMath("x^2")}$後`);
 assert.equal(mathText("前$$中 $x$ 後$$"), `前$$中 ${inlineMath("x")} 後$$`);
 assert.equal(mathText("$x$ 後$未完"), `${inlineMath("x")} 後$未完`);
 assert.equal(mathText(String.raw`価格\$5 と $x$`), String.raw`価格\$5 と ${inlineMath("x")}`);
 assert.equal(mathText(String.raw`\\$x$`), String.raw`\\${inlineMath("x")}`);
 assert.equal(mathText(String.raw`$x+\$5$`), inlineMath(String.raw`x+\$5`));
 const malformed = mathText(String.raw`前$\frac{1}{$後`);
-assert.match(malformed, /class="katex-error"/);
-assert.ok(malformed.startsWith("前<span>"));
-assert.ok(malformed.endsWith("</span>後"));
+assert.doesNotMatch(malformed, /katex-error|color:#cc0000/);
+assert.ok(malformed.startsWith("前"));
+assert.ok(malformed.endsWith("後"));
 assert.ok(malformed.includes(String.raw`\frac{1}{`));
 
 const scene = { scene_id: 1, visual_type: "hook", visual_content: "", narration: "説明" };
@@ -218,16 +219,14 @@ assert.match(render(Formula, {
   lines: ["x+2=5", "x=3"], caption: "", accent, durationInFrames: 300,
 }), new RegExp(`font-size:76px;line-height:1[^;]*;color:${accent}`));
 
-// `$` のない文字列は推測せず文字どおりに出す。以前は `x^2` や `\frac{}{}` や `3√19/4` を手置きの
-// regex で上付きや分数にしていたが、`9/8に公開` の日付や隣接する根号から境界は決められない。
-// 境界は作者が `$…$` で書き、renderer は探すだけである。
-for (const plain of [
-  "\\frac{3√19}{4}", "\\frac{x^2}{2}", "3√19/4", "9/8に公開", "∫_0^π x dx",
-  "∑_{k=1}^{n} k", "lim_{n→∞} a_n", "x^2", "a_n", "面積を求める",
-]) {
-  const html = mathText(plain);
-  assert.equal(html, plain, plain);
-  assert.doesNotMatch(html, /class="katex"|<sup|<sub|border-top/);
+// 日付・単位・根号だけの曖昧な表記は保ち、LaTeX の命令や添字があれば数式として救う。
+for (const plain of ["3√19/4", "9/8に公開", "面積を求める", "km/h"]) {
+  assert.equal(mathText(plain), plain);
+}
+for (const tex of [String.raw`\frac{3\sqrt{19}}{4}`, String.raw`\frac{x^2}{2}`,
+  "∫_0^π x dx", "∑_{k=1}^{n} k", "lim_{n→∞} a_n", "x^2", "a_n"]) {
+  assert.match(mathText(tex), /class="katex"/);
+  assert.doesNotMatch(mathText(tex), /katex-error/);
 }
 // 字幕は text style。displaystyle の分数は 2 行の帯を押し広げるので、`display={false}` で
 // 分数を小さく組み、極限の条件は `lim` の横に置く。

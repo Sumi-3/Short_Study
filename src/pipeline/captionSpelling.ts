@@ -1,4 +1,7 @@
 import type { Caption } from "@remotion/captions";
+import { GREEK, TERMS, SPOKEN_SYMBOLS } from "../mathVocabulary.js";
+import { normalizeMathText, splitMathText } from "../mathText.js";
+import { structuredSpeechMatches } from "../mathSpeech.js";
 
 /**
  * 字幕トークンを読む人が期待する記法へ戻す。
@@ -40,69 +43,6 @@ const POWER_PHRASES = Object.fromEntries(
   Object.entries(POWERS).map(([spoken, written]) => [`の${spoken}`, `の${written}`]),
 );
 
-/**
- * ナレーションで読める綴りにした数列の項。
- *
- * synthesiser は `a_n` をアンダースコアまで含めて「a アンダーライン n」と読み、`an` に
- * 詰めると「案」と聞こえる。どちらも実測済みである。そのためナレーションでは項をカナで綴り、
- * 字幕で `$a_{n}$` の LaTeX へ戻して KaTeX に組ませる。以前は Unicode の下付き文字だったが、
- * 字体が本文と揃わず `n+1` のような添字も作れなかった。
- */
-const TERM_LETTERS: Record<string, string> = {
-  エー: "a",
-  ビー: "b",
-  シー: "c",
-  ディー: "d",
-  エス: "S",
-  ティー: "T",
-  ピー: "P",
-};
-
-const TERM_INDICES: Record<string, string> = {
-  エヌ: "n",
-  ケー: "k",
-  エム: "m",
-  イチ: "1",
-  ニ: "2",
-  サン: "3",
-  ヨン: "4",
-  // 漸化式の半分を成す a_{n+1} では添字を丸ごと取る必要がある。手前の `エーエヌ` を先に
-  // 変換すると、「プラスイチ」が添字の外に取り残される。
-  エヌプラスイチ: "n+1",
-  エヌマイナスイチ: "n-1",
-};
-
-const TERMS: Record<string, string> = Object.fromEntries(
-  Object.entries(TERM_LETTERS).flatMap(([letterKana, letter]) =>
-    Object.entries(TERM_INDICES).map(([indexKana, index]) => [
-      letterKana + indexKana,
-      `$${letter}_{${index}}$`,
-    ]),
-  ),
-);
-
-/**
- * ナレーションが読めるようカナで綴るギリシャ文字。
- *
- * 演算子と違って、これらを裸の部分文字列として置換するのは安全ではない。「アルファベット」と
- * 「パイプ」は文字名で始まるからである。判別には後続文字を使う。ギリシャ文字名の直後にさらに
- * カタカナが続けば長い単語の一部であり、ひらがな、漢字、記号、または末尾なら文字そのものである。
- */
-const GREEK: Record<string, string> = {
-  シータ: "θ",
-  パイ: "π",
-  アルファ: "α",
-  ベータ: "β",
-  ガンマ: "γ",
-  デルタ: "δ",
-  ラムダ: "λ",
-  オメガ: "ω",
-  // Σ を保つ。「シグマ」は統計の σ も指し、字幕には和だけを ∑ にする信頼できる文脈がない。
-  // MathText はどちらの大文字 sigma code point も表示サイズの演算子にするため、統計の
-  // 誤判定を増やさず一貫して見える。
-  シグマ: "Σ",
-};
-
 /** ギリシャ文字名の直後に続いてはならないカタカナと長音記号。 */
 const KATAKANA = /[\u30a0-\u30ff]/;
 
@@ -124,6 +64,9 @@ const FRACTION = new RegExp(
 
 /** カナでは曖昧でない。数学台本の他の語はこの綴りにならない。 */
 const ALWAYS: Record<string, string> = {
+  無限大: SPOKEN_SYMBOLS.無限大,
+  ノットイコール: SPOKEN_SYMBOLS.ノットイコール,
+  矢印: SPOKEN_SYMBOLS.矢印,
   コサイン: "cos",
   サイン: "sin",
   タンジェント: "tan",
@@ -343,7 +286,9 @@ const applyGreek = (text: string) => {
     let at = out.indexOf(spoken);
     while (at !== -1) {
       const next = out[at + spoken.length];
-      if (next !== undefined && KATAKANA.test(next)) {
+      const remainder = out.slice(at + spoken.length);
+      if (next !== undefined && KATAKANA.test(next) &&
+        ![...Object.keys(GREEK), ...Object.keys(OPERATORS)].some((word) => remainder.startsWith(word))) {
         at = out.indexOf(spoken, at + 1);
         continue;
       }
@@ -356,6 +301,14 @@ const applyGreek = (text: string) => {
 };
 
 export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
+  // 古い呼び出しや TTS の予想外の返答も、数式全体を結合してから直す。token ごとに囲むと
+  // `\\sqrt` | `{7}` の引数や、開閉の $ が別々の MathText に入ってしまう。
+  captions = normalizeCaptionMath(captions);
+  const structured = structuredSpeechMatches(captions.map((caption) => caption.text).join(""));
+  captions = mergeSplitWords(captions, structured.map(({ spoken }) => spoken)).map((caption) => ({
+    ...caption,
+    text: structured.reduce((text, { spoken, tex }) => text.split(spoken).join(`$${tex}$`), caption.text),
+  }));
   const fractionMatches = Array.from(captions.map((caption) => caption.text).join("").matchAll(FRACTION));
   const fractions = [...new Set(fractionMatches.map((match) => match[0]))];
   const fractionStarts = new Set(fractionMatches.map((match) => match.index));
@@ -366,7 +319,10 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
   const merged = mergeSplitWords(fractionMerged, [
     ...Object.keys(ALWAYS),
     ...Object.keys(GREEK),
+    ...Object.keys(SPOKEN_SYMBOLS),
     ...ROOT_WORDS,
+    ...Array.from(captions.map((caption) => caption.text).join("").matchAll(
+      new RegExp(`ルート(?:[0-9]+|${Object.keys(GREEK).join("|")})`, "g")), (match) => match[0]),
   ]);
   const always = byLengthDesc(Object.entries(ALWAYS));
 
@@ -399,5 +355,20 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
       return text === caption.text ? caption : { ...caption, text };
     });
   };
-  return pass(pass(normalised, applyPowers), applyRoots);
+  return pass(pass(pass(normalised, applyPowers), applyRoots), (text, context, offset) =>
+    text.replace(/以下|以上|小なり|大なり/g, (spoken, at: number) => {
+      const before = context[offset + at - 1];
+      return before && AFTER_NOTATION.test(before) ? SPOKEN_SYMBOLS[spoken] : spoken;
+    }));
+};
+
+/** 教科によらず生 TeX は修復する。数学用のカナ置換まで他教科に広げる必要はない。 */
+export const normalizeCaptionMath = (captions: Caption[]): Caption[] => {
+  const source = captions.map((caption) => caption.text).join("");
+  const words = splitMathText(source).filter((part) => part.math)
+    .map((part) => source.slice(part.start, part.end));
+  return mergeSplitWords(captions, words).map((caption) => {
+    const text = normalizeMathText(caption.text);
+    return text === caption.text ? caption : { ...caption, text };
+  });
 };

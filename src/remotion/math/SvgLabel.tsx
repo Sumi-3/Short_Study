@@ -1,16 +1,14 @@
 import { MathText } from "../MathText";
+import { splitMathText } from "../../mathText";
 
 /**
- * SVG 上のラベル。`$...$` を含むものだけ KaTeX で組み、含まないものは従来どおり `<text>` で描く。
+ * SVG 上のラベル。数式を含むものは KaTeX で組み、本文だけなら `<text>` で描く。
  *
  * 図形の辺の長さや角の名前は `$\sqrt{7}$` `$\theta$` `$\frac{3}{2}$` のように書きたいが、SVG の
  * `<text>` は文字列しか置けない。`<foreignObject>` なら SVG 座標系のまま HTML を置けるので、
  * viewBox の拡大縮小にも `<text>` と同じに追従し、置き場所の計算を変えずに済む。HTML を SVG の
  * 外に重ねる案は、`preserveAspectRatio` で決まる実寸を測って座標を写す必要があり、fitter と同じ
  * 種類の測定に依存してしまう。
- *
- * `$` のないラベルは属性まで以前と同じ `<text>` を返す。既存 15 本のラベルはすべてこちらで、
- * 画素が変わらないことを still の hash で確かめている。
  *
  * 縁取りは `<text>` の `paint-order: stroke` に相当するものを text-shadow で作る。HTML 文字への
  * `paint-order` は engine 間で揃っておらず、8 方向の影なら Chrome でも Safari でも同じに出る。
@@ -30,7 +28,7 @@ export const SvgLabel: React.FC<{
   /** 背景に紛れないための縁取り。`<text>` では stroke、数式では影になる。 */
   outline?: { color: string; width: number };
 }> = ({ text, x, y, size, color, weight, fontFamily, anchor, baseline, opacity, outline }) => {
-  if (!text.includes("$")) {
+  if (!splitMathText(text).some((part) => part.math)) {
     return (
       <text
         x={x}

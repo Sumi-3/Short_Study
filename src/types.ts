@@ -1,4 +1,5 @@
-import { FORMULA_MAX_LINES, COMPANION_MAX_LINES } from "./formulaLines.js";
+import { FORMULA_MAX_LINES, COMPANION_MAX_LINES, normalizeFormulaLine } from "./formulaLines.js";
+import { normalizeMathText } from "./mathText.js";
 import { z } from "zod/v4";
 import type { Caption } from "@remotion/captions";
 import { COURSE_IDS, type CourseId } from "./courses.js";
@@ -393,6 +394,7 @@ const markLines = (scene: ApiScript["scenes"][number]) =>
 export const normalizeVisual = (
   scene: ApiScript["scenes"][number],
 ): SceneVisual | undefined => {
+  scene = normalizeVisualText(scene);
   switch (scene.visual_kind) {
     case "bullets": {
       const items = scene.visual_items.filter(Boolean).slice(0, 4);
@@ -605,6 +607,29 @@ export const normalizeVisual = (
     default:
       return undefined;
   }
+};
+
+/** 表示文字だけを整える。描画用 expr は計算式であり、点名は参照先も同時に変えないと図が消える。 */
+export const normalizeVisualText = (scene: ApiScript["scenes"][number]): ApiScript["scenes"][number] => {
+  const label = <T extends { label: string }>(item: T): T => ({ ...item, label: normalizeMathText(item.label) });
+  const supportsLines = ["formula", "figure", "plot"].includes(scene.visual_kind);
+  const figure = scene.visual_kind === "figure";
+  const reference = (id: string) => figure ? normalizeMathText(id) : id;
+  return {
+    ...scene,
+    visual_content: normalizeMathText(scene.visual_content),
+    visual_caption: normalizeMathText(scene.visual_caption),
+    visual_unit: normalizeMathText(scene.visual_unit),
+    visual_items: scene.visual_items.map(supportsLines ? normalizeFormulaLine : normalizeMathText),
+    visual_table: scene.visual_table.map((row) => row.map(normalizeMathText)),
+    visual_bars: scene.visual_bars.map(label),
+    visual_points: scene.visual_points.map(label),
+    visual_segments: scene.visual_segments.map((item) => ({ ...label(item), from: reference(item.from), to: reference(item.to) })),
+    visual_angles: scene.visual_angles.map((item) => ({ ...label(item), at: reference(item.at), from: reference(item.from), to: reference(item.to) })),
+    visual_circles: scene.visual_circles.map((item) => ({ ...label(item), center: reference(item.center) })),
+    visual_curves: scene.visual_curves.map(label),
+    visual_highlight: scene.visual_highlight.map(reference),
+  };
 };
 
 /**

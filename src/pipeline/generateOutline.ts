@@ -3,6 +3,7 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { config } from "../config.js";
 import { OUTLINE_RULE } from "../prompts/scriptFormat.js";
 import { anthropic } from "./anthropic.js";
+import { normalizeMathText } from "../mathText.js";
 
 /**
  * 台本のスキーマに余地がないため、別の呼び出しにする。
@@ -33,6 +34,6 @@ export const generateOutline = async (topic: string): Promise<string[]> => {
 
   return (response.parsed_output?.outline ?? "")
     .split("\n")
-    .map((point) => point.trim())
+    .map((point) => normalizeMathText(point.trim()))
     .filter(Boolean);
 };

@@ -5,6 +5,7 @@ import { parseMedia } from "@remotion/media-parser";
 import { nodeReader } from "@remotion/media-parser/node";
 import { config, paths } from "../config.js";
 import type { Scene } from "../types.js";
+import { normalizeNarration } from "../mathSpeech.js";
 
 /** clip 先頭基準のタイミングを持つ単語（日本語では短い token）。 */
 export type WordBoundary = {
@@ -193,10 +194,11 @@ export const generateAudio = async ({
   /** 作成画面で動画ごとに選ぶ。なければ EDGE_VOICE へフォールバックする。 */
   voice?: string;
 }): Promise<SceneAudio[]> => {
+  // CLI 以外の呼び出しでも、生の TeX を外部の TTS に送らない最後の境界にする。
+  const texts = scenes.map((scene) => normalizeNarration(scene.narration));
   const dir = paths.projectDir(slug);
   fs.mkdirSync(dir, { recursive: true });
 
-  const texts = scenes.map((scene) => scene.narration);
   const synthesized =
     config.ttsProvider === "elevenlabs"
       ? (await synthesizeWithElevenLabs(texts)).map((audio) => ({

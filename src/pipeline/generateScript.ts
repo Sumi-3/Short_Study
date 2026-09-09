@@ -1,7 +1,9 @@
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { anthropic } from "./anthropic.js";
 import { config } from "../config.js";
-import { apiScriptSchema, normalizeVisual, type Script } from "../types.js";
+import { apiScriptSchema, normalizeVisual, normalizeVisualText, type Script } from "../types.js";
+import { normalizeMathText } from "../mathText.js";
+import { normalizeNarration } from "../mathSpeech.js";
 import { COURSES } from "../courses.js";
 import { mathPrompt } from "../prompts/math.js";
 import { assertScriptBudget, budgetFor, scriptMaxTokens } from "../scriptBudget.js";
@@ -128,6 +130,13 @@ export const generateScript = async (
     }
 
     try {
+      parsed.scenes = parsed.scenes.map((scene, index) => {
+        try {
+          return { ...normalizeVisualText(scene), narration: normalizeNarration(scene.narration) };
+        } catch (error) {
+          throw new Error(`シーン${index + 1}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      });
       assertScriptBudget(parsed.scenes, budget);
       assertFormulaCarry(parsed.scenes);
     } catch (error) {
@@ -166,7 +175,7 @@ export const generateScript = async (
 
   return {
     // 同じ問題を一貫した表記にする（TOPIC_RULE 参照）。モデルが別のものを返せば、入力どおりへ戻す。
-    topic: displayTopic(topic, parsed.topic),
+    topic: normalizeMathText(displayTopic(topic, parsed.topic)),
     // `runPipeline` が独自の呼び出しから埋める（generateOutline.ts 参照）。
     outline: [],
     ...classify(parsed.unit, MATH_UNIT_NAMES),
@@ -176,9 +185,7 @@ export const generateScript = async (
     subject: course.subject ?? parsed.subject,
     scenes: parsed.scenes.map((scene, index) => ({
       scene_id: index + 1,
-      // 画面用の $ が narration に紛れると TTS が読み上げ、字幕にも出る。規則で禁じたうえで、
-      // 混じったものは黙って外す。$y$ → y と読めば意味は変わらない。
-      narration: scene.narration.replace(/\$/g, ""),
+      narration: scene.narration,
       visual_type: scene.visual_type,
       visual_content: scene.visual_content,
       visual: normalizeVisual(scene),

@@ -4,7 +4,7 @@ import type { Caption } from "@remotion/captions";
 import { VIDEO, config, paths } from "../config.js";
 import type { Manifest, Script } from "../types.js";
 import type { SceneAudio } from "./generateAudio.js";
-import { applyDisplaySpelling } from "./captionSpelling.js";
+import { applyDisplaySpelling, normalizeCaptionMath } from "./captionSpelling.js";
 import { markPhraseBreaks } from "./captionBreaks.js";
 
 const prepareCaptions = (
@@ -14,7 +14,7 @@ const prepareCaptions = (
 ) => {
   const paged = markPhraseBreaks(narration, captions);
   // 数学だけは読む人でなく synthesiser 用の綴りで narration を意図的に書く教科である。
-  return subject === "math" ? applyDisplaySpelling(paged) : paged;
+  return subject === "math" ? applyDisplaySpelling(paged) : normalizeCaptionMath(paged);
 };
 
 export const buildManifest = ({

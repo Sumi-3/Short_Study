@@ -4,6 +4,8 @@
  * 型と強調を接頭辞に収めれば 20 個目の API シーンフィールドを避けられる。このプロジェクトでは
  * それが構造化出力の grammar 上限を超えていた。
  */
+import { normalizeMathText, splitMathText } from "./mathText";
+
 export const FORMULA_MAX_LINES = 6;
 export const COMPANION_MAX_LINES = 2;
 
@@ -53,6 +55,18 @@ export const parseFormulaLine = (line: string): {
     ? { latex: text || annotation || substitution ? body.trim() : line, annotation, text,
       ...(substitution ? { substitution } : {}) }
     : { latex: line, annotation: null, text: false };
+};
+
+/** 式専用行は裸の TeX が保存形式。本文と代入理由だけを $…$ にし、マーカーは解析前に壊さない。 */
+export const normalizeFormulaLine = (line: string): string => {
+  const parsed = parseFormulaLine(line);
+  const start = line.lastIndexOf(parsed.latex);
+  const prefix = line.slice(0, start).replace(/(\[substitute:\s*)([^\[\]\r\n]+)(\])/g,
+    (_, open, reason: string, close) => open + normalizeMathText(reason.trim()) + close);
+  const body = parsed.text ? normalizeMathText(parsed.latex)
+    : splitMathText(parsed.latex, true).map((part) => part.math
+      ? part.text : parsed.latex.slice(part.start, part.end)).join("");
+  return prefix + body;
 };
 
 /**
