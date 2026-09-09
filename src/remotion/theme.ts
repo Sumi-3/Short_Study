@@ -3,13 +3,13 @@ import { Easing } from "remotion";
 import { fontFamily as zenMaru, loadFont as loadRounded } from "@remotion/google-fonts/ZenMaruGothic";
 
 /**
- * Only the renderer downloads webfonts.
+ * Only the renderer eagerly downloads every webfont range.
  *
  * `loadFont()` eagerly fetches every unicode range of the japanese subset —
  * around 120 files per weight, each behind its own `delayRender()` — because
  * the renderer must have every glyph in memory before it captures a frame. A
- * phone browser does not: it already ships Japanese faces, and the stack below
- * falls through to them.
+ * phone browser instead uses the stylesheet in web/index.html, which fetches
+ * only the unicode ranges in use, with the same family and three weights.
  *
  * `__STUDY_WEB__` is defined by web/vite.config.ts and undefined in the
  * Remotion bundle, so this is decided at build time rather than by sniffing
@@ -32,12 +32,12 @@ if (!isWebPlayerBuild) {
   });
 }
 
-/** Device faces first in the browser; the webfont is what the renderer uses. */
+/** Share the webfont across targets, with device faces while it loads. */
 const stack = (webfont: string, ...system: string[]) =>
   [`"${webfont}"`, ...system.map((s) => `"${s}"`), "sans-serif"].join(", ");
 
-/** Rounded gothic stays legible at card sizes; system fallbacks matter because
- * the browser never downloads the webfont (see above). */
+/** Rounded gothic stays legible at card sizes; device faces cover pending or
+ * failed browser font requests. */
 const ROUNDED = stack(zenMaru, "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans CJK JP");
 
 export type Theme = {

@@ -1,6 +1,8 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useDelayRender } from "remotion";
 
+const isWebPlayerBuild = typeof __STUDY_WEB__ !== "undefined" && __STUDY_WEB__;
+
 /**
  * Scale the whole block, including gaps, arrows, caption and annotation room.
  * Font size alone cannot bound nested fractions or aligned environments.
@@ -87,6 +89,11 @@ export const useFitToStage = (compact: boolean) => {
       }
     }
     observer.observe(compact ? stage : viewport);
+    // Only Web fetches new ranges after `ready`. In the renderer, this extra
+    // callback races the width fit and annotation padding, shifting stills.
+    if (isWebPlayerBuild) {
+      document.fonts.addEventListener("loadingdone", measure);
+    }
     measure();
     void document.fonts.ready.then(() => {
       measure();
@@ -94,7 +101,12 @@ export const useFitToStage = (compact: boolean) => {
         requestAnimationFrame(() => continueRender(handle)),
       );
     });
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (isWebPlayerBuild) {
+        document.fonts.removeEventListener("loadingdone", measure);
+      }
+    };
   }, [compact, continueRender, handle]);
 
   return { viewportRef, contentRef, ...size };

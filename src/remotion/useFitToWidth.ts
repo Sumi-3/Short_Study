@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDelayRender } from "remotion";
 
+const isWebPlayerBuild = typeof __STUDY_WEB__ !== "undefined" && __STUDY_WEB__;
+
 /**
  * Sizes type so the widest of the registered elements fills `budget`.
  *
@@ -13,7 +15,8 @@ import { useDelayRender } from "remotion";
  * Webfonts: KaTeX and the Japanese faces are only fetched once something needs
  * them, so in the browser `document.fonts.ready` can resolve before they have
  * even been requested. A measurement taken then uses fallback metrics and the
- * line reflows wider afterwards. The observer is what catches that swap.
+ * line reflows wider afterwards. Font completion and the observer catch late
+ * swaps, including ranges first needed when a later scene mounts.
  *
  * Feedback: applying the result changes the very width being measured, so the
  * measured width is divided by the fit currently applied to recover the width
@@ -56,6 +59,12 @@ export const useFitToWidth = (budget: number, maxScale = 1) => {
         observer.observe(element);
       }
     }
+    // The renderer already waits for all font ranges. An extra completion
+    // callback changes the fitter's feedback order and can shift stills.
+    // Only Web needs to follow ranges fetched on demand after `ready`.
+    if (isWebPlayerBuild) {
+      document.fonts.addEventListener("loadingdone", remeasure);
+    }
 
     void document.fonts.ready.then(() => {
       remeasure();
@@ -66,7 +75,12 @@ export const useFitToWidth = (budget: number, maxScale = 1) => {
       );
     });
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (isWebPlayerBuild) {
+        document.fonts.removeEventListener("loadingdone", remeasure);
+      }
+    };
   }, [handle, continueRender, remeasure]);
 
   return { register, fit };

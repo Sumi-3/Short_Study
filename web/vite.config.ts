@@ -14,8 +14,8 @@ export default defineConfig({
   // Narration and manifests come from the API server, not from a public/ copy,
   // so a build never has to bundle every generated project.
   publicDir: false,
-  // Tells src/remotion/theme.ts to skip the 5.1MB webfont download and use the
-  // device's own Japanese face instead.
+  // Keep the renderer's eager font loader out of the browser; index.html lets
+  // CSS fetch only the unicode ranges used by the visible text.
   define: { __STUDY_WEB__: "true" },
   server: {
     port: 5173,
