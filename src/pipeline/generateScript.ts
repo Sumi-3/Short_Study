@@ -1,3 +1,4 @@
+import type { ThinkingConfigParam } from "@anthropic-ai/sdk/resources/messages";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { anthropic } from "./anthropic.js";
 import { config } from "../config.js";
@@ -85,6 +86,23 @@ const classify = (written: string, allowed: readonly string[] | null) => {
 /** Vercel の実行期限内にTTSの時間も残すため、再試行だけを制限する。動画の尺とは独立。 */
 const SCRIPT_RETRY_BUDGET_MS = 85_000;
 
+/**
+ * 思考の枠。0 なら adaptive（モデルが自分で決める）。
+ *
+ * API は `budget_tokens` に 1,024 以上かつ `max_tokens` 未満を要求する。範囲外の設定は
+ * 400 になるが、それが分かるのは要求を投げた後なので、ここで枠へ入れてから渡す。
+ */
+const thinkingConfig = (): ThinkingConfigParam => {
+  const budget = config.scriptThinkingTokens;
+  if (budget <= 0) {
+    return { type: "adaptive" };
+  }
+  return {
+    type: "enabled",
+    budget_tokens: Math.min(Math.max(Math.round(budget), 1_024), SCRIPT_MAX_TOKENS - 1_024),
+  };
+};
+
 /** モデルが守れる規則を破った台本であることを表す。 */
 class ScriptRejection extends Error {}
 
@@ -108,7 +126,7 @@ export const generateScript = async (
       .stream({
         model: config.anthropicModel,
         max_tokens: SCRIPT_MAX_TOKENS,
-        thinking: { type: "adaptive" },
+        thinking: thinkingConfig(),
         system: mathPrompt(),
         messages: correction
           ? [{ role: "user", content: `${topic}\n\n前回の出力は次の理由で却下されました。同じ問題を、この点だけ直して書き直してください。\n${correction}` }]

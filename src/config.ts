@@ -65,8 +65,18 @@ export const config = {
    * 止まったのか長いだけなのかを利用者が判断できないので、ここで上限を決める。
    */
 
-  /** 台本 1 要求の上限。adaptive thinking と長い台本の実測に対して余裕を持たせる。 */
+  /** 台本 1 要求の上限。thinking と長い台本に対して余裕を持たせる。 */
   scriptTimeoutMs: num(env("SCRIPT_TIMEOUT_MS"), 6 * 60_000),
+  /**
+   * 台本を書き始める前の思考に使えるトークン数。
+   *
+   * 思考トークンも生成される以上、そのまま待ち時間になる。`adaptive` はモデルが自分で
+   * 決めるので上限が無く、難しい問題ほど長く考える。ここで枠を決めると待ち時間の上限も
+   * 決まる。ただし答えを間違えれば動画ごと無駄なので、削りすぎないこと。
+   *
+   * 0 にすると `adaptive` に戻る。
+   */
+  scriptThinkingTokens: num(env("SCRIPT_THINKING_TOKENS"), 16_000),
   /** 問題文の整形 1 要求の上限。max_tokens が 2,000 なので台本より短くてよい。 */
   outlineTimeoutMs: num(env("OUTLINE_TIMEOUT_MS"), 60_000),
   /** 1 シーン分の音声合成の上限。EdgeTTS の WebSocket が黙って切れても止まらないため。 */
