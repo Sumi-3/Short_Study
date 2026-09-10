@@ -859,6 +859,35 @@ body {
   font-size: 18px;
   font-weight: 700;
   line-height: 1.4;
+  /* 折り返した問いは改行を持ったまま渡ってくる（parseProblemOutline 参照）。 */
+  white-space: pre-line;
+}
+
+/* 条件と問いの区切り。動画の1シーン目と同じ位置に同じ細い線を引き、card と動画で
+   問題の姿を揃える。線は accent なので色は card 側から渡す。 */
+.card__problem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card__problem .card__points:not(:first-child) {
+  padding-top: 8px;
+}
+
+.card__question {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3em;
+}
+
+.card__number {
+  flex-shrink: 0;
+  font-weight: 900;
+}
+
+.card__question-text {
+  min-width: 0;
 }
 
 /* Shorts made before the outline existed: the whole question, trimmed. */

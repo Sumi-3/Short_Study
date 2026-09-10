@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MathText } from "../../src/remotion/MathText";
-import { themeOf } from "../../src/remotion/theme";
+import { themeOf, withAlpha } from "../../src/remotion/theme";
+import { parseProblemOutline } from "../../src/problemOutline";
 import type { ShortSummary } from "./api";
 
 /**
@@ -29,6 +30,12 @@ export const LibraryCard: React.FC<{
   // summary を返す JSON API はこの bundle より古い deploy かもしれず、そのために
   // card 一枚で画面全体を落とす価値はない。
   const points = short.outline ?? [];
+  /*
+   * 条件と問いの見せ方は動画の1シーン目と同じ解析器から作る。card と動画で問題の姿が食い違うと、
+   * tap した瞬間に別の問題を開いたように見えるためである。
+   */
+  const { conditions, questions } = parseProblemOutline(points);
+  const outlined = conditions.length + questions.length > 0;
   const menuItems = [
     {
       id: "delete",
@@ -97,14 +104,39 @@ export const LibraryCard: React.FC<{
           ) : null}
         </div>
 
-        {points.length > 0 ? (
-          <ul className="card__points" style={{ "--accent": accent } as React.CSSProperties}>
-            {points.map((point) => (
-              <li key={point}>
-                <MathText text={point} />
-              </li>
-            ))}
-          </ul>
+        {outlined ? (
+          <div className="card__problem">
+            {conditions.length > 0 ? (
+              <ul className="card__points">
+                {conditions.map((condition, index) => (
+                  <li key={index}>
+                    <MathText text={condition} />
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <ul
+              className="card__points"
+              style={conditions.length > 0
+                ? { borderTop: `1px solid ${withAlpha(accent, 0.45)}` }
+                : undefined}
+            >
+              {questions.map((question, index) => (
+                <li key={index} className="card__question">
+                  {/* 番号を出すのは問いが複数あるときだけ。1問しかない list に (1) と振っても、
+                      番号を付ける対象が他にない。動画側と同じ規則である。 */}
+                  {question.number !== null && questions.length > 1 ? (
+                    <span className="card__number" style={{ color: accent }}>
+                      {`(${question.number})`}
+                    </span>
+                  ) : null}
+                  <span className="card__question-text">
+                    <MathText text={question.text} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : (
           // outline 導入前に作られた short には問題文しかなく、それは list ではなく
           // paragraph として扱う。

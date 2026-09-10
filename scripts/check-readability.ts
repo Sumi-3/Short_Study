@@ -251,6 +251,27 @@ for (const outline of [[], ["(1) $x^2$ の値を求めよ。"]]) {
   assert.ok(html.includes("の値を求めよ。"));
 }
 
+// card の問題は動画の1シーン目と同じ姿にする。1 問しかない list に番号は振らず、条件と問いの
+// 間には同じ細い線を引く。
+{
+  const card = (outline: string[]) => renderToStaticMarkup(React.createElement(LibraryCard, {
+    short: {
+      slug: "outline", topic: "問題文", outline,
+      headline: "", course: "math", subject: "math", unit: "数学", subunit: "",
+      createdAt: "", manifestSrc: "", durationInFrames: 300, fps: 30,
+    },
+    onOpen() {}, onDelete() {}, deleting: false,
+  }));
+  const condition = "三角形$ABC$は円に内接する。";
+  const single = card([condition, "(1) $x$ を求めよ。"]);
+  assert.doesNotMatch(single, /\(1\)/, "単独の問いに番号は振らない");
+  assert.match(single, /border-top/, "条件と問いの間に線を引く");
+  const many = card([condition, "(1) $x$ を求めよ。", "(2) $y$ を求めよ。"]);
+  assert.match(many, /\(1\)/);
+  assert.match(many, /\(2\)/);
+  assert.doesNotMatch(card(["(1) $x$ を求めよ。"]), /border-top/, "条件がなければ線は引かない");
+}
+
 let manifests = 0;
 let scenes = 0;
 for (const file of await readdir(new URL("../public/projects/", import.meta.url), { recursive: true })) {
@@ -290,4 +311,4 @@ for (const file of await readdir(new URL("../public/projects/", import.meta.url)
   }
   manifests++;
 }
-console.log(`PASS: compatibility branches, numbered/continued questions, no clamp, ${manifests} manifests (video/poster cards), ${scenes} scene SSR renders; browser layout not measured`);
+console.log(`PASS: compatibility branches, numbered/continued questions, card outline rule, no clamp, ${manifests} manifests (video/poster cards), ${scenes} scene SSR renders; browser layout not measured`);
