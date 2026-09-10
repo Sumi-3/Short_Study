@@ -12,6 +12,7 @@ import { assetSrc } from "./assetSrc";
 import { Background } from "./Background";
 import { Captions } from "./Captions";
 import { SceneText } from "./SceneText";
+import type { Problem } from "./SceneShell";
 import { SceneDiagram } from "./SceneDiagram";
 import { FormulaRun } from "./FormulaRun";
 import { sceneRuns } from "./sceneRuns";
@@ -68,7 +69,7 @@ const ProgressBar: React.FC<{ accent: string }> = ({ accent }) => {
 const SceneRenderer: React.FC<{
   scene: ManifestScene;
   accent: string;
-  problem?: { text: string; points: string[]; unit: string };
+  problem?: Problem;
 }> = ({ scene, accent, problem }) => {
   const { visual } = scene;
 
@@ -224,6 +225,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
                       // short に bullet があればそれを使い、outline 導入前に作ったものでは question 自体を使う。
                       points: manifest.outline ?? [],
                       unit: manifest.unit ?? "",
+                      difficulty: manifest.difficulty ?? 0,
                     }
                   : undefined
               }

@@ -4,6 +4,29 @@ import { themeOf, withAlpha } from "../../src/remotion/theme";
 import { parseProblemOutline } from "../../src/problemOutline";
 import type { ShortSummary } from "./api";
 
+const LEVELS = 5;
+
+/**
+ * 5 段階の難易度。分野の右に置く。
+ *
+ * 絵文字ではなく `★` を使い、残りは輪郭の `☆` で埋める。動画の unit banner と同じ
+ * 決まりで、card と動画で難易度の見え方が食い違わないようにする
+ * （src/remotion/SceneShell.tsx の `Difficulty` 参照）。
+ */
+const Difficulty: React.FC<{ level: number; accent: string }> = ({ level, accent }) => (
+  <span
+    className="card__difficulty"
+    style={{ color: accent }}
+    aria-label={`難易度 ${level} / ${LEVELS}`}
+  >
+    {Array.from({ length: LEVELS }, (_, index) => (
+      <span key={index} style={{ opacity: index < level ? 1 : 0.3 }}>
+        {index < level ? "★" : "☆"}
+      </span>
+    ))}
+  </span>
+);
+
 /**
  * library の一行。
  *
@@ -97,12 +120,21 @@ export const LibraryCard: React.FC<{
           >
             {short.unit || "数学"}
           </span>
-          {short.subunit ? (
-            <span className="card__subunit" style={{ color: accent }}>
-              {short.subunit}
-            </span>
+          {/* 難易度は分野そのものの性質なので、分野と同じ行に置く。単元は下へ送る。 */}
+          {short.difficulty > 0 ? (
+            <Difficulty level={short.difficulty} accent={accent} />
           ) : null}
         </div>
+
+        {short.subunit ? (
+          <p className="card__subunit" style={{ color: accent }}>
+            {short.subunit}
+          </p>
+        ) : null}
+
+        {/* 見出しと問題文を分ける細い罫。accent の実線は問題文の中で条件と問いを
+            分けるのに使っているので、こちらはそれより薄くして役割を混同させない。 */}
+        <div className="card__rule" style={{ background: withAlpha(theme.ink, 0.16) }} />
 
         {outlined ? (
           <div className="card__problem">

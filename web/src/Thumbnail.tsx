@@ -30,6 +30,7 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
         topic: short.topic,
         outline: short.outline ?? [],
         unit: short.unit,
+        difficulty: short.difficulty ?? 0,
       }}
       compositionWidth={POSTER_SIZE.width}
       compositionHeight={POSTER_SIZE.height}

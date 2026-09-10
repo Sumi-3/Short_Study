@@ -817,13 +817,30 @@ body {
   border-radius: 8px;
 }
 
+.card__difficulty {
+  flex: none;
+  display: inline-flex;
+  gap: 1px;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
+/* 分野 chip の下の行。以前は chip の右に並べていたが、その場所は難易度に譲った。 */
 .card__subunit {
   min-width: 0;
+  margin: 6px 0 0;
   font-size: 12px;
   font-weight: 700;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+/* 見出し（分野・難易度・単元）と問題文の境。 */
+.card__rule {
+  height: 1px;
+  margin-top: 10px;
 }
 
 /* The question, taken apart. Three to five lines a reader takes in at a

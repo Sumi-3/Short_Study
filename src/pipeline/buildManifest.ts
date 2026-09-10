@@ -33,6 +33,7 @@ export const buildManifest = ({
     outline: script.outline,
     unit: script.unit,
     subunit: script.subunit,
+    difficulty: script.difficulty,
     course: script.course,
     subject: script.subject,
     slug,

@@ -1,7 +1,7 @@
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "./clamped";
 import { shadowOf, useTheme } from "./theme";
-import { SceneShell } from "./SceneShell";
+import { SceneShell, type Problem } from "./SceneShell";
 import { MathText } from "./MathText";
 import type { Scene } from "../types";
 import { parsePlanStep, stepNumber } from "../solutionPlan";
@@ -97,7 +97,7 @@ export const SceneText: React.FC<{
   scene: Scene;
   durationInFrames: number;
   accent: string;
-  problem?: { text: string; points: string[]; unit: string };
+  problem?: Problem;
 }> = ({ scene, durationInFrames, accent, problem }) => {
   const items =
     scene.visual?.kind === "bullets" ? scene.visual.items : [];

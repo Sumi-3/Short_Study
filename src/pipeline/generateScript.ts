@@ -43,23 +43,36 @@ const resolveUnit = (written: string, allowed: readonly string[] | null) => {
 };
 
 /**
- * モデルが返す 1 本の `unit` 文字列を 2 階層へ戻す。
+ * 5 段階の難易度。範囲外・非数値は未判定として 0 に落とす。
  *
- * バナーに出すのは中分類で、小分類はホーム画面で short を分類するためだけにある。したがって
- * 認識できない小分類は表示せず捨てる。
+ * 判定できなかったことを 1 と偽らない。0 は星を出さないという意味であり、
+ * 記録導入前に作った short と同じ扱いになる。
+ */
+const rank = (written: string) => {
+  const value = Number.parseInt(written.trim(), 10);
+  return Number.isInteger(value) && value >= 1 && value <= 5 ? value : 0;
+};
+
+/**
+ * モデルが返す 1 本の `unit` 文字列を、2 階層と難易度へ戻す。
+ *
+ * バナーに出すのは中分類と難易度で、小分類はホーム画面で short を分類するためだけに
+ * ある。したがって認識できない小分類は表示せず捨てる。
  */
 const classify = (written: string, allowed: readonly string[] | null) => {
-  const [rawUnit = "", rawSubunit = ""] = written.split("｜");
+  const [rawUnit = "", rawSubunit = "", rawRank = ""] = written.split("｜");
   const unit = resolveUnit(rawUnit, allowed);
   const topics = topicsOf(unit);
   const subunit = rawSubunit.trim();
+  const difficulty = rank(rawRank);
 
   if (!topics || !subunit) {
-    return { unit, subunit: "" };
+    return { unit, subunit: "", difficulty };
   }
 
   return {
     unit,
+    difficulty,
     subunit:
       topics.find((topic) => topic === subunit) ??
       topics.find(

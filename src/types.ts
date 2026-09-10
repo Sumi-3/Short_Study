@@ -236,6 +236,11 @@ export const scriptSchema = z.object({
    * 1 段細かく絞り込むためにだけ持つ。
    */
   subunit: z.string().default(""),
+  /**
+   * 5 段階の難易度。単元名の右に星の数で出す。0 は未判定で、記録導入前に作った
+   * short がこれになる。星を出さないことで、判定した 1 と区別する。
+   */
+  difficulty: z.number().int().min(0).max(5).default(0),
   /** これを書いた system prompt。モデルには尋ねず、ユーザーが選ぶ。 */
   course: z.enum(COURSE_IDS).default("math"),
   /** 教科別のナレーションと字幕表記に使う。 */
@@ -260,9 +265,10 @@ export const apiScriptSchema = z.object({
    * ときどきラベルを捨てることより、シーン自体を生成できないことの方が悪い。
    */
   /**
-   * カリキュラムの 2 階層を `中分類｜小分類` の 1 文字列に収め、`generateScript` が分割する。
-   * 別フィールドにすると compiled grammar が構造化出力の許容範囲を超えたため一緒に届く。
-   * enum ではなく自由文にしたのと同じ上限である。
+   * カリキュラムの 2 階層と難易度を `中分類｜小分類｜難易度` の 1 文字列に収め、
+   * `generateScript` が分割する。別フィールドにすると compiled grammar が構造化出力の
+   * 許容範囲を超えたため一緒に届く。enum ではなく自由文にしたのと同じ上限である。
+   * 難易度を足すときも、この上限があるので新しい field ではなく区切りを 1 つ増やす。
    */
   unit: z.string(),
   subject: z.enum(SUBJECTS),
@@ -653,6 +659,8 @@ export type Manifest = {
   outline?: string[];
   unit: string;
   subunit: string;
+  /** 5 段階の難易度。0 と未定義は未判定で、星を出さない。 */
+  difficulty?: number;
   course: CourseId;
   subject: Subject;
   slug: string;

@@ -19,6 +19,8 @@ export type PosterProps = {
   /** bullet point としての question。空なら question 自体へ fallback する。 */
   outline: string[];
   unit: string;
+  /** 5 段階の難易度。0 は未判定で、星を出さない。 */
+  difficulty?: number;
 };
 
 /**
@@ -47,6 +49,7 @@ export const Poster: React.FC<PosterProps> = ({
   topic,
   outline,
   unit,
+  difficulty = 0,
 }) => {
   const theme = themeOf();
 
@@ -60,7 +63,7 @@ export const Poster: React.FC<PosterProps> = ({
           scene={HOOK}
           durationInFrames={POSTER_DURATION}
           accent={accentFor(theme, 0)}
-          problem={{ text: topic, points: outline, unit }}
+          problem={{ text: topic, points: outline, unit, difficulty }}
           poster
         />
       </AbsoluteFill>

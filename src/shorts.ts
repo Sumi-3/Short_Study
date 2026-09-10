@@ -18,6 +18,8 @@ export type ShortSummary = {
   unit: string;
   /** その単元の小分類。記録導入前に作った short では空。 */
   subunit: string;
+  /** 5 段階の難易度。0 は未判定で、記録導入前に作った short がこれになる。 */
+  difficulty: number;
   createdAt: string;
   manifestSrc: string;
   durationInFrames: number;
@@ -44,6 +46,7 @@ export const summarize = (
     subject: manifest.subject ?? "general",
     unit: manifest.unit ?? "",
     subunit: manifest.subunit ?? "",
+    difficulty: manifest.difficulty ?? 0,
     createdAt: manifest.createdAt,
     manifestSrc,
     durationInFrames: manifest.scenes.reduce(

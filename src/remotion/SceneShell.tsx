@@ -20,13 +20,60 @@ import { parsePlanStep, stepNumber } from "../solutionPlan";
  * feed 上で閲覧を止めるか決めるのはこの行である。「数I 図形と計量」なら問題文を読む前に何を練習するか
  * 分かるため、画面最上部に置き、それに見合うサイズにする。
  */
+/**
+ * 5 段階の難易度。単元名の右に置く。
+ *
+ * 絵文字ではなく `★` を使う。絵文字は自前の色を持ち込んでテーマの accent と衝突し、
+ * 描画時のフォントに依存する。輪郭の `☆` を残りに並べるのは、数えなくても 5 段階の
+ * どこにいるかが一目で分かるようにするためである。
+ */
+const LEVELS = 5;
+
+/**
+ * hook が見せる問題。video・poster・library card が同じ姿を出すための一組で、
+ * 三箇所に書き写すと今回のように片方だけ古くなるため、ここに一つ置く。
+ */
+export type Problem = {
+  text: string;
+  points: string[];
+  unit: string;
+  /** 5 段階の難易度。0 と未定義は未判定で、星を出さない。 */
+  difficulty?: number;
+};
+
+const Difficulty: React.FC<{ level: number; accent: string; fontSize: number }> = ({
+  level, accent, fontSize,
+}) => {
+  const theme = useTheme();
+  return (
+    <div
+      aria-label={`難易度 ${level} / ${LEVELS}`}
+      style={{
+        display: "flex",
+        gap: fontSize * 0.06,
+        fontSize,
+        lineHeight: 1,
+        color: accent,
+        textShadow: shadowOf(theme),
+      }}
+    >
+      {Array.from({ length: LEVELS }, (_, index) => (
+        <span key={index} style={{ opacity: index < level ? 1 : 0.28 }}>
+          {index < level ? "★" : "☆"}
+        </span>
+      ))}
+    </div>
+  );
+};
+
 const UnitBanner: React.FC<{
   unit: string;
+  difficulty: number;
   accent: string;
   fontSize: number;
   top: number;
   inset: number;
-}> = ({ unit, accent, fontSize, top, inset }) => {
+}> = ({ unit, difficulty, accent, fontSize, top, inset }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -42,18 +89,24 @@ const UnitBanner: React.FC<{
         opacity: appear,
       }}
     >
-      <div
-        style={{
-          fontFamily: theme.fontFamily,
-          fontWeight: 900,
-          fontSize,
-          letterSpacing: 2,
-          lineHeight: 1.2,
-          color: accent,
-          textShadow: shadowOf(theme),
-        }}
-      >
-        {unit}
+      <div style={{ display: "flex", alignItems: "center", gap: fontSize * 0.42 }}>
+        <div
+          style={{
+            fontFamily: theme.fontFamily,
+            fontWeight: 900,
+            fontSize,
+            letterSpacing: 2,
+            lineHeight: 1.2,
+            color: accent,
+            textShadow: shadowOf(theme),
+          }}
+        >
+          {unit}
+        </div>
+        {/* 単元名より小さく組む。難易度は単元名の添え物であって、見出しではない。 */}
+        {difficulty > 0 ? (
+          <Difficulty level={difficulty} accent={accent} fontSize={fontSize * 0.62} />
+        ) : null}
       </div>
       <div
         style={{
@@ -316,7 +369,7 @@ export const SceneShell: React.FC<{
   durationInFrames: number;
   accent: string;
   /** この video が答える question。渡すのは hook だけ。 */
-  problem?: { text: string; points: string[]; unit: string };
+  problem?: Problem;
   /**
    * 再生せず still card として描く。caption は来ないため、stage は banner から frame 下端までを使い、
    * question はそこを満たす。2列の home screen では video の44pxは8px未満になる。
@@ -387,6 +440,7 @@ export const SceneShell: React.FC<{
       {problem?.unit ? (
         <UnitBanner
           unit={problem.unit}
+          difficulty={problem.difficulty ?? 0}
           accent={accent}
           fontSize={poster ? POSTER_UNIT_SIZE : UNIT_SIZE}
           top={poster ? POSTER_SAFE_TOP : layout.safeTop}
