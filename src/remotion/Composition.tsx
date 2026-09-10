@@ -1,7 +1,6 @@
 import {
   AbsoluteFill,
   Html5Audio,
-  Internals,
   Sequence,
   useCurrentFrame,
   useRemotionEnvironment,
@@ -27,15 +26,8 @@ export type StudyShortProps = {
 };
 
 /**
- * blob storage から配信した場合にも narration を通す。
- *
- * `<Audio>` は独自 decoder を使えない環境、主に phone で HTML5 element へ fallback し、Remotion は
- * volume 適用のためその element を Web Audio に通す。`crossOrigin` のない cross-origin element は
- * graph を taint し、taint された source node は無音を出力する。動画は再生されても narration がない。
- * same-origin の再生には不要で、影響もない。
- *
- * object identity を変えないよう module-level に置く。render ごとに新しくすると新しい props と
- * 解釈され、audio を schedule し直すため単語が途切れる。
+ * blob 配信にも CORS を明示し、音声の読み込み待ちでは映像の時間軸を止める。
+ * オブジェクトを安定させ、再レンダーで音声を再スケジュールしない。
  */
 const FALLBACK_AUDIO = {
   crossOrigin: "anonymous",
@@ -115,15 +107,10 @@ const SceneRenderer: React.FC<{
 };
 
 export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
-  // この hook は Remotion 4.0.518 の内部実装で public API ではない。upgrade 時に再確認すること。
-  // Player context を読むと inputProps identity を変えずに済み、それが変わると narration を再 schedule
-  // して音節を繰り返してしまう。
-  const { playbackRate } = Internals.usePlaybackRate();
   const environment = useRemotionEnvironment();
-  // frame 正確な decoding は1xに保つ。browser の pitch-preserving time stretch と引き換えるのは Player
-  // だけで、export は常に従来の path を使う。
-  const usePitchPreservingAudio =
-    environment.isPlayer && !environment.isRendering && playbackRate !== 1;
+  // Player は全速度で native media 経路を使う。Web Audio は iOS の消音スイッチに従い、
+  // decoder の fallback は 4.0.518 では pauseWhenBuffering / crossOrigin を転送しない。
+  const useNativeAudio = environment.isPlayer && !environment.isRendering;
   const theme = themeOf();
 
   if (!manifest) {
@@ -192,7 +179,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
             durationInFrames={scene.durationInFrames}
             name={`Scene ${scene.scene_id} (${scene.visual_type})`}
           >
-            {usePitchPreservingAudio ? (
+            {useNativeAudio ? (
               // Html5Audio には Audio の timing props がないため、Sequence で同じ local timeline を与える。
               // playbackRate は重ねて渡さない。Html5Audio はすでに Player の context rate を掛けている。
               <Sequence
@@ -206,6 +193,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
                   src={assetSrc(scene.audioSrc)}
                   ref={preserveNarrationPitch}
                   preservePitch
+                  useWebAudioApi={false}
                   // shared tag を再利用しても CORS と buffering の挙動を保つ。buffering では route swap 中の
                   // frame を保持し、説明だけが voice より先へ進むのを防ぐ。
                   {...FALLBACK_AUDIO}

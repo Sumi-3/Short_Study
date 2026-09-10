@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Create } from "./Create";
 import { Feed } from "./Feed";
 import { Home } from "./Home";
-import { newAudioGate } from "./audioGate";
 import {
   deleteShort,
   fetchShorts,
@@ -38,16 +37,6 @@ export const App: React.FC = () => {
     list: ShortSummary[];
     index: number;
   } | null>(null);
-  /**
-   * すべての player が共有する、セッション全体の音声状態。最初の short はタップを待つ。
-   * phone 上で Player の audio tag を unlock できるのは、その click の中の play() だけ
-   * だからである。その後は short を画面に出した gesture だけで足りる。
-   *
-   * state ではなく ref にする。タップ中のセットで mounted ShortPlayer を再レンダー
-   * してしまうと、同じタップで auto-start と click-start の両方が起こる。
-   */
-  const gate = useRef(newAudioGate());
-
   /** tab に入るたび shuffle し直し、毎回異なる並びにする。 */
   const [shuffleKey, setShuffleKey] = useState(0);
 
@@ -130,13 +119,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    // 実際のタップならどれでも programmatic playback を unlock する gesture として使える。
-    <div
-      className="app"
-      onPointerDown={(event) => {
-        gate.current.gesture = event;
-      }}
-    >
+    <div className="app">
       <main className="app__body">
         {tab === "home" ? (
           <Home
@@ -159,7 +142,6 @@ export const App: React.FC = () => {
               key={shuffleKey}
               shorts={random}
               initialIndex={0}
-              gate={gate}
             />
           )
         ) : null}
@@ -193,7 +175,6 @@ export const App: React.FC = () => {
         <Feed
           shorts={viewing.list}
           initialIndex={viewing.index}
-          gate={gate}
           onClose={() => setViewing(null)}
         />
       ) : null}

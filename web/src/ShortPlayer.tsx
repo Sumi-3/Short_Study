@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Player, type PlayerRef } from "@remotion/player";
-import { StudyShort } from "../../src/remotion/Composition";
+import { PlaybackComposition } from "./PlaybackComposition";
 import { fetchManifest } from "./api";
-import type { AudioGate } from "./audioGate";
+import { AudioGate, type AudioStatus } from "./audioGate";
 import type { Manifest } from "../../src/types";
 
+const MEDIA_CONTROLS = { mode: "prevent-media-session" } as const;
 const PLAYER_STYLE = { width: "100%", height: "100%" } as const;
 const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5] as const;
 const PAUSE_OVERLAY_HOLD_MS = 800;
@@ -136,28 +138,15 @@ const SpeedControl: React.FC<{
   );
 };
 
-/**
- * MP4 を介さず、生成済みの short をブラウザで再生する。`<Player>` が renderer と
- * 同じ React composition を動かすため、pipeline が manifest を書いた瞬間に視聴できる。
- *
- * 再生開始は自動ではなくタップに限る。iOS Safari と Android Chrome はどちらも
- * user gesture なしの音声開始を拒むため、`autoPlay` の short は最初のフレームで
- * 無音のまま止まる。
- */
+/** MP4 を介さず、音声の開始成功を確認してから React composition を再生する。 */
 export const ShortPlayer: React.FC<{
   manifestSrc: string;
-  /**
-   * セッション全体の音声状態。最初の short はタップを待つ。Player の audio tag を
-   * unlock できるのはその click の中で実行した play() だけで、以降の short は自動で
-   * 開始し、画面に現れたときの swipe を渡される。
-   *
-   * 意図して prop value ではなく ref にする。state にするとセットした当のタップ中に
-   * この component が再レンダーされ、同じ gesture に対して auto-start effect と
-   * click handler の両方が発火した。
-   */
-  gate: React.RefObject<AudioGate>;
-}> = ({ manifestSrc, gate }) => {
+}> = ({ manifestSrc }) => {
   const player = useRef<PlayerRef>(null);
+  const container = useRef<HTMLDivElement>(null);
+  const [audioStatus, setAudioStatus] = useState<AudioStatus>("locked");
+  // Feed 内の swipe では要素ごと生存し、Feed を閉じたら権限も破棄する。
+  const [gate] = useState(() => new AudioGate(player, container, setAudioStatus));
   /**
    * manifest とその取得元アドレスを一緒に持つ。
    *
@@ -170,9 +159,6 @@ export const ShortPlayer: React.FC<{
   const [error, setError] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
-  // 音声経路の `gate` は意図して ref にしている。この小さな mirror は、その ref が
-  // 変わった後に最初のタップを促す表示を出すためだけにある。
-  const [audioUnlocked, setAudioUnlocked] = useState(() => gate.current.unlocked);
   const [pauseOverlay, setPauseOverlay] = useState<"hidden" | "shown" | "fading" | "settled">(
     "hidden",
   );
@@ -220,10 +206,8 @@ export const ShortPlayer: React.FC<{
     // 求めていないこの場面では overlay に伝えることがない。停止対象があるときだけ
     // セットする。初回 mount には player も `pause` event もなく、ここで立てた flag は
     // 視聴者が最初に実際に停止するまで残るからである。
-    if (player.current) {
-      programmaticPause.current = true;
-      player.current.pause();
-    }
+    programmaticPause.current = true;
+    gate.cancel();
 
     /*
      * 次の manifest を読み込む間も、前の manifest は意図して state に残す。消すと
@@ -238,7 +222,7 @@ export const ShortPlayer: React.FC<{
     return () => {
       cancelled = true;
     };
-  }, [manifestSrc, clearPauseOverlayTimers]);
+  }, [manifestSrc, clearPauseOverlayTimers, gate]);
 
   useEffect(() => {
     const instance = player.current;
@@ -247,6 +231,10 @@ export const ShortPlayer: React.FC<{
     }
 
     const onPlay = () => {
+      if (!gate.unlocked) {
+        gate.block();
+        return;
+      }
       clearPauseOverlayTimers();
       setPauseOverlay("hidden");
       // 念のため。すでに停止中の player への pause() は何も emit せず、flag が
@@ -258,8 +246,7 @@ export const ShortPlayer: React.FC<{
       setPlaying(false);
       const wasProgrammatic = programmaticPause.current;
       programmaticPause.current = false;
-      if (gate.current.unlocked && !wasProgrammatic) {
-        setAudioUnlocked(true);
+      if (gate.unlocked && !wasProgrammatic) {
         showPauseOverlay();
       }
     };
@@ -273,59 +260,72 @@ export const ShortPlayer: React.FC<{
     };
   }, [clearPauseOverlayTimers, gate, loaded, showPauseOverlay]);
 
-  // short の読み込みごとに一度実行する。最初のタップ以降は新しい short へ swipe する
-  // だけで始まり、最初の short はまだ gesture がないので待機する。
   useEffect(() => {
     const instance = player.current;
-    if (!loaded || !instance || started.current) {
-      return;
-    }
-    if (!gate.current.unlocked) {
-      // まだ何も再生できないので、各 scene が fade-in を始める空白フレームではなく、
-      // short らしく見えるフレームに置く。
+    if (!instance) return;
+    const onMute = (event: { detail: { isMuted: boolean } }) => {
+      // Remotion は context の再開失敗時に自動ミュートする。無音での続行を許さない。
+      if (event.detail.isMuted) gate.block();
+    };
+    const onVisibility = () => {
+      if (document.hidden) {
+        programmaticPause.current = true;
+        gate.block();
+      }
+    };
+    instance.addEventListener("mutechange", onMute);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      instance.removeEventListener("mutechange", onMute);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [loaded, gate]);
+
+  useLayoutEffect(() => {
+    gate.bindPool();
+  }, [gate, loaded]);
+
+  useEffect(() => () => gate.dispose(), [gate]);
+
+  useEffect(() => {
+    const instance = player.current;
+    if (!loaded || loaded.src !== manifestSrc || !instance || started.current) return;
+    if (!gate.unlocked) {
       instance.seekTo(Math.round(loaded.manifest.fps * 1.2));
       return;
     }
     started.current = true;
     instance.seekTo(0);
-    // Player が playAllAudios() を呼べるよう event を渡す。再生する tag は
-    // セッション最初のタップで unlock 済みなので、引き続き音が出る。
-    instance.play(gate.current.gesture ?? undefined);
-  }, [loaded, gate]);
+    // fetch / scroll は gesture ではない。同じ要素でも毎回成功を確認してから進める。
+    // seek 後の音声位置が commit されるまで待つ（初回解除は toggle 内で同期実行する）。
+    const timer = window.setTimeout(() => gate.start(), 0);
+    return () => window.clearTimeout(timer);
+  }, [loaded, manifestSrc, gate]);
 
-  const toggle = useCallback((event: React.MouseEvent) => {
+  const toggle = useCallback((event: React.MouseEvent | React.KeyboardEvent) => {
     const instance = player.current;
-    if (!instance) {
+    if (!instance || loaded?.src !== manifestSrc || audioStatus === "preparing") return;
+    if ((event.target as HTMLElement).closest(".scrubber, .speed-control")) return;
+    if (instance.isPlaying()) {
+      gate.cancel();
       return;
     }
-    // capture phase は scrubber 自身の handler より先に走るので、そこでの
-    // stopPropagation ではドラッグによる再生切替を防げない。click の出所を判定する。
-    if ((event.target as HTMLElement).closest(".scrubber, .speed-control")) {
-      return;
-    }
-    // event を捨てずに渡す。Player は実際の user gesture の間に無音の audio tag pool を
-    // warm し、mobile で発音を許されるのはそのように warm された tag だけである。
-    // これなしに play() を呼ぶと、phone では動画だけ動き narration は無音になる。
-    if (!started.current) {
-      // thumbnail が各 scene の fade-in 元となる空白フレームにならないよう、poster は
-      // hook の少し先に置く。最初の実再生時に先頭へ戻す。
-      started.current = true;
-      // セッション最初の unlock は click 内でしかできない。これ以降は自動開始してよい。
-      gate.current.unlocked = true;
-      setAudioUnlocked(true);
-      instance.seekTo(0);
-      instance.play(event);
-      return;
-    }
-    gate.current.unlocked = true;
-    instance.toggle(event);
-  }, [gate]);
+    // seek と unmute の React 更新を先に確定する。後続 effect に初回 play を移すと
+    // Safari の gesture チェーンが切れるため、native play / resume はこの click 内で呼ぶ。
+    flushSync(() => {
+      instance.unmute();
+      instance.setVolume(1);
+      if (!started.current) instance.seekTo(0);
+    });
+    started.current = true;
+    gate.start();
+  }, [gate, loaded, manifestSrc, audioStatus]);
 
   // identity を安定させる。ここで新しい object を渡すと prop 変更と見なされ、
   // render ごとに audio が再スケジュールされる。
   const inputProps = useMemo(
-    () => (loaded ? { manifestSrc: loaded.src, manifest: loaded.manifest } : null),
-    [loaded],
+    () => (loaded ? { manifestSrc: loaded.src, manifest: loaded.manifest, audioGate: gate } : null),
+    [loaded, gate],
   );
 
   const durationInFrames = useMemo(
@@ -339,23 +339,33 @@ export const ShortPlayer: React.FC<{
     [loaded],
   );
 
-  if (error) {
-    return <div className="player-placeholder">読み込めませんでした: {error}</div>;
-  }
-
   // placeholder は最初の manifest が届く前だけにする。その後は前の short がフレームを
   // 保持する。Player の unmount が audio の unlock を失わせるためである。
   if (!loaded || !inputProps) {
-    return <div className="player-placeholder">読み込み中…</div>;
+    return <div className="player-placeholder">{error ? `読み込めませんでした: ${error}` : "読み込み中…"}</div>;
   }
 
   const manifest = loaded.manifest;
+  const audioUnlocked = audioStatus === "ready" && !error && loaded.src === manifestSrc;
 
   return (
-    <div className="short" onClickCapture={toggle}>
+    <div
+      className="short"
+      ref={container}
+      tabIndex={0}
+      aria-label="動画の再生・一時停止"
+      onClickCapture={toggle}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget || event.repeat) return;
+        if (event.key === " " || event.key === "Enter") {
+          event.preventDefault();
+          toggle(event);
+        }
+      }}
+    >
       <Player
         ref={player}
-        component={StudyShort}
+        component={PlaybackComposition}
         inputProps={inputProps}
         durationInFrames={durationInFrames}
         compositionWidth={manifest.width}
@@ -366,6 +376,9 @@ export const ShortPlayer: React.FC<{
         loop
         controls={false}
         clickToPlay={false}
+        spaceKeyToPlayOrPause={false}
+        browserMediaControlsBehavior={MEDIA_CONTROLS}
+        initialVolume={1}
         style={PLAYER_STYLE}
       />
 
@@ -393,7 +406,13 @@ export const ShortPlayer: React.FC<{
           ) : (
             <>
               <div className="short__play" aria-hidden>▶</div>
-              <p className="short__hint">タップして再生</p>
+              <p className="short__hint" role="status">
+                {error ? `読み込めませんでした: ${error}` :
+                  loaded.src !== manifestSrc ? "読み込み中…" :
+                  audioStatus === "preparing" ? "音声を準備中…" :
+                  audioStatus === "blocked" ? "音声を有効にして再生 — タップして再試行" :
+                  "タップして音声つきで再生"}
+              </p>
             </>
           )}
         </div>

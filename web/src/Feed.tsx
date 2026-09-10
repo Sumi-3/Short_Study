@@ -3,7 +3,6 @@ import { themeOf } from "../../src/remotion/theme";
 import { ShortPlayer } from "./ShortPlayer";
 import { Thumbnail } from "./Thumbnail";
 import { prefetchManifest, type ShortSummary } from "./api";
-import type { AudioGate } from "./audioGate";
 
 /**
  * 縦 swipe の feed。
@@ -22,10 +21,9 @@ import type { AudioGate } from "./audioGate";
 export const Feed: React.FC<{
   shorts: ShortSummary[];
   initialIndex: number;
-  gate: React.RefObject<AudioGate>;
   /** feed が tab を満たすのでなく app の上を覆う場合に渡される。 */
   onClose?: () => void;
-}> = ({ shorts, initialIndex, gate, onClose }) => {
+}> = ({ shorts, initialIndex, onClose }) => {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const scroller = useRef<HTMLDivElement>(null);
   /* 一つの item が scroller を満たすため、これは行の高さであると同時に、固定した
@@ -128,7 +126,7 @@ export const Feed: React.FC<{
             }}
           >
             <div className="phone">
-              <ShortPlayer manifestSrc={active.manifestSrc} gate={gate} />
+              <ShortPlayer manifestSrc={active.manifestSrc} />
             </div>
           </section>
         ) : null}
