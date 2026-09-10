@@ -23,9 +23,9 @@ import { parsePlanStep, stepNumber } from "../solutionPlan";
 /**
  * 5 段階の難易度。単元名の右に置く。
  *
- * 絵文字ではなく `★` を使う。絵文字は自前の色を持ち込んでテーマの accent と衝突し、
- * 描画時のフォントに依存する。輪郭の `☆` を残りに並べるのは、数えなくても 5 段階の
- * どこにいるかが一目で分かるようにするためである。
+ * 絵文字ではなく `★` を使う。絵文字は描画時のフォントに依存し、色も自前で持ち込む。
+ * 色はテーマの `star` に置き、library card と 1 箇所で共有する（web/src/LibraryCard.tsx）。
+ * 輪郭の `☆` を残りに並べるのは、数えなくても 5 段階のどこにいるかが分かるようにするため。
  */
 const LEVELS = 5;
 
@@ -41,9 +41,7 @@ export type Problem = {
   difficulty?: number;
 };
 
-const Difficulty: React.FC<{ level: number; accent: string; fontSize: number }> = ({
-  level, accent, fontSize,
-}) => {
+const Difficulty: React.FC<{ level: number; fontSize: number }> = ({ level, fontSize }) => {
   const theme = useTheme();
   return (
     <div
@@ -53,7 +51,7 @@ const Difficulty: React.FC<{ level: number; accent: string; fontSize: number }> 
         gap: fontSize * 0.06,
         fontSize,
         lineHeight: 1,
-        color: accent,
+        color: theme.star,
         textShadow: shadowOf(theme),
       }}
     >
@@ -103,9 +101,8 @@ const UnitBanner: React.FC<{
         >
           {unit}
         </div>
-        {/* 単元名より小さく組む。難易度は単元名の添え物であって、見出しではない。 */}
         {difficulty > 0 ? (
-          <Difficulty level={difficulty} accent={accent} fontSize={fontSize * 0.62} />
+          <Difficulty level={difficulty} fontSize={fontSize * 0.78} />
         ) : null}
       </div>
       <div

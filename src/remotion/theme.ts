@@ -24,6 +24,13 @@ export type Theme = {
   inkDim: string;
   /** 隣接シーンで同じ accent にならないよう、シーンごとに循環させる。 */
   accents: readonly string[];
+  /**
+   * 難易度の星。accent の循環には入れない。
+   *
+   * 星は単元ではなく問題の重さを表すので、単元ごとに色が変わってはいけない。明るい
+   * ボード上で金色として読め、かつ accent の青とも警告の赤とも混同しない濃さにする。
+   */
+  star: string;
   fontFamily: string;
   /** 背景のにじみをどの程度透かして見せるか。 */
   veil: string;
@@ -46,6 +53,7 @@ const whiteboard: Theme = {
   ink: "#16202E",
   inkDim: "rgba(22,32,46,0.56)",
   accents: ["#1F6FEB", "#D92D20", "#0E9F6E", "#7C3AED", "#B45309"],
+  star: "#F5A524",
   fontFamily: ROUNDED,
   veil: "rgba(255,255,255,0.5)",
   radius: 12,

@@ -10,14 +10,14 @@ const LEVELS = 5;
 /**
  * 5 段階の難易度。分野の右に置く。
  *
- * 絵文字ではなく `★` を使い、残りは輪郭の `☆` で埋める。動画の unit banner と同じ
- * 決まりで、card と動画で難易度の見え方が食い違わないようにする
+ * 絵文字ではなく `★` を使い、残りは輪郭の `☆` で埋める。色も含めて動画の unit banner と
+ * 同じ決まりにし、card と動画で難易度の見え方が食い違わないようにする
  * （src/remotion/SceneShell.tsx の `Difficulty` 参照）。
  */
-const Difficulty: React.FC<{ level: number; accent: string }> = ({ level, accent }) => (
+const Difficulty: React.FC<{ level: number; color: string }> = ({ level, color }) => (
   <span
     className="card__difficulty"
-    style={{ color: accent }}
+    style={{ color }}
     aria-label={`難易度 ${level} / ${LEVELS}`}
   >
     {Array.from({ length: LEVELS }, (_, index) => (
@@ -116,6 +116,9 @@ export const LibraryCard: React.FC<{
       } as React.CSSProperties}
     >
       <button className="card__open" type="button" onClick={onOpen}>
+        {/* 分野・難易度・単元・罫を 1 つの見出しとしてまとめる。card__open の
+            10px の gap は問題文との間だけに効かせ、見出しの中は詰める。 */}
+        <div className="card__heading">
         <div className="card__head">
           <span
             className="card__unit"
@@ -125,7 +128,7 @@ export const LibraryCard: React.FC<{
           </span>
           {/* 難易度は分野そのものの性質なので、分野と同じ行に置く。単元は下へ送る。 */}
           {short.difficulty > 0 ? (
-            <Difficulty level={short.difficulty} accent={accent} />
+            <Difficulty level={short.difficulty} color={theme.star} />
           ) : null}
         </div>
 
@@ -138,6 +141,7 @@ export const LibraryCard: React.FC<{
         {/* 見出しと問題文を分ける細い罫。accent の実線は問題文の中で条件と問いを
             分けるのに使っているので、こちらはそれより薄くして役割を混同させない。 */}
         <div className="card__rule" style={{ background: withAlpha(theme.ink, 0.16) }} />
+      </div>
 
         {outlined ? (
           <div className="card__problem">

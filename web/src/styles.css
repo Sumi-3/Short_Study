@@ -861,16 +861,25 @@ body {
   flex: none;
   display: inline-flex;
   gap: 1px;
-  font-size: 12px;
+  /* 分野 chip の 13px より大きくする。星は走査するとき最初に目に入ってよい。 */
+  font-size: 18px;
   line-height: 1;
   letter-spacing: 0.5px;
+}
+
+/* 分野・難易度・単元・罫の塊。card__open の 10px は問題文との間にだけ効かせる。 */
+.card__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* 分野 chip の下の行。以前は chip の右に並べていたが、その場所は難易度に譲った。 */
 .card__subunit {
   min-width: 0;
-  margin: 6px 0 0;
-  font-size: 12px;
+  margin: 0;
+  /* 分野と同じ大きさ。単元は分野より細かい分類だが、格下ではない。 */
+  font-size: 13px;
   font-weight: 700;
   overflow: hidden;
   white-space: nowrap;
@@ -880,7 +889,7 @@ body {
 /* 見出し（分野・難易度・単元）と問題文の境。 */
 .card__rule {
   height: 1px;
-  margin-top: 10px;
+  margin-top: 2px;
 }
 
 /* The question, taken apart. Three to five lines a reader takes in at a
