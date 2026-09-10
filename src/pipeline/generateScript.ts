@@ -1,4 +1,3 @@
-import type { ThinkingConfigParam } from "@anthropic-ai/sdk/resources/messages";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { anthropic } from "./anthropic.js";
 import { config } from "../config.js";
@@ -86,29 +85,14 @@ const classify = (written: string, allowed: readonly string[] | null) => {
 /** Vercel の実行期限内にTTSの時間も残すため、再試行だけを制限する。動画の尺とは独立。 */
 const SCRIPT_RETRY_BUDGET_MS = 85_000;
 
-/**
- * 思考の枠。0 なら adaptive（モデルが自分で決める）。
- *
- * API は `budget_tokens` に 1,024 以上かつ `max_tokens` 未満を要求する。範囲外の設定は
- * 400 になるが、それが分かるのは要求を投げた後なので、ここで枠へ入れてから渡す。
- */
-const thinkingConfig = (): ThinkingConfigParam => {
-  const budget = config.scriptThinkingTokens;
-  if (budget <= 0) {
-    return { type: "adaptive" };
-  }
-  return {
-    type: "enabled",
-    budget_tokens: Math.min(Math.max(Math.round(budget), 1_024), SCRIPT_MAX_TOKENS - 1_024),
-  };
-};
-
 /** モデルが守れる規則を破った台本であることを表す。 */
 class ScriptRejection extends Error {}
 
 export const generateScript = async (
   topic: string,
   courseId: CourseId = "math",
+  /** 作成画面での選択。省略時は ANTHROPIC_MODEL。 */
+  model: string = config.anthropicModel,
 ): Promise<Script> => {
   const course = COURSES[courseId];
 
@@ -124,14 +108,19 @@ export const generateScript = async (
   const attempt = async (correction?: string) => {
     const response = await client.messages
       .stream({
-        model: config.anthropicModel,
+        model,
         max_tokens: SCRIPT_MAX_TOKENS,
-        thinking: thinkingConfig(),
+        // opus-5 で思考量を決めるのは thinking ではなく output_config.effort。
+        // `thinking: { type: "enabled", budget_tokens }` はこのモデルでは 400 になる。
+        thinking: { type: "adaptive" },
         system: mathPrompt(),
         messages: correction
           ? [{ role: "user", content: `${topic}\n\n前回の出力は次の理由で却下されました。同じ問題を、この点だけ直して書き直してください。\n${correction}` }]
           : [{ role: "user", content: topic }],
-        output_config: { format: zodOutputFormat(apiScriptSchema) },
+        output_config: {
+          effort: config.scriptEffort,
+          format: zodOutputFormat(apiScriptSchema),
+        },
       }, { timeout: config.scriptTimeoutMs })
       .finalMessage();
 
@@ -184,6 +173,7 @@ export const generateScript = async (
   return {
     // 同じ問題を一貫した表記にする（TOPIC_RULE 参照）。モデルが別のものを返せば、入力どおりへ戻す。
     topic: normalizeMathText(displayTopic(topic, parsed.topic)),
+    model,
     // `runPipeline` が独自の呼び出しから埋める（generateOutline.ts 参照）。
     outline: [],
     ...classify(parsed.unit, MATH_UNIT_NAMES),

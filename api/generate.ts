@@ -1,5 +1,6 @@
 import { isCourseId } from "../src/courses.js";
 import { isVoiceId } from "../src/voices.js";
+import { isModelId } from "../src/models.js";
 import { runPipeline } from "../src/pipeline/run.js";
 
 /**
@@ -29,6 +30,7 @@ export async function POST(request: Request): Promise<Response> {
 
     const course = isCourseId(body?.course) ? body.course : "math";
     const voice = isVoiceId(body?.voice) ? body.voice : undefined;
+    const model = isModelId(body?.model) ? body.model : undefined;
 
     const encoder = new TextEncoder();
     const stream = new ReadableStream<Uint8Array>({
@@ -38,6 +40,7 @@ export async function POST(request: Request): Promise<Response> {
             topic,
             course,
             voice,
+            model,
           })) {
             controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
           }

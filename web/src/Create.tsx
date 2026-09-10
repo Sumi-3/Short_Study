@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { COURSES } from "../../src/courses";
 import { VOICES } from "../../src/voices";
+import { SCRIPT_MODELS } from "../../src/models";
 import type { JobEvent } from "./api";
 import { playSample } from "./voiceSamples";
 
@@ -92,11 +93,12 @@ const JobCard: React.FC<{ job: JobEvent; onDismiss: () => void }> = ({
 export const Create: React.FC<{
   job: JobEvent | null;
   busy: boolean;
-  onSubmit: (topic: string, voice: string) => void;
+  onSubmit: (topic: string, voice: string, model: string) => void;
   onDismiss: () => void;
 }> = ({ job, busy, onSubmit, onDismiss }) => {
   const [topic, setTopic] = useState("");
   const [voice, setVoice] = useState(VOICES[0].id);
+  const [model, setModel] = useState(SCRIPT_MODELS[0].id);
 
   return (
     <div className="create">
@@ -107,7 +109,7 @@ export const Create: React.FC<{
           if (!topic.trim() || busy) {
             return;
           }
-          onSubmit(topic.trim(), voice);
+          onSubmit(topic.trim(), voice, model);
           setTopic("");
         }}
       >
@@ -155,6 +157,26 @@ export const Create: React.FC<{
             >
               ▶
             </button>
+          </div>
+        </div>
+
+        <div className="field">
+          <span className="field__label">台本モデル</span>
+          {/* 声と違って2択なので chip にする。選ぶたびに開かせる理由がない。
+              速さと深さのどちらを取ったかを、選んだ後も読めるようにしておく。 */}
+          <div className="models">
+            {SCRIPT_MODELS.map((entry) => (
+              <button
+                key={entry.id}
+                type="button"
+                className={`models__chip${model === entry.id ? " is-on" : ""}`}
+                onClick={() => setModel(entry.id)}
+                aria-pressed={model === entry.id}
+              >
+                <span className="models__name">{entry.label}</span>
+                <span className="models__note">{entry.note}</span>
+              </button>
+            ))}
           </div>
         </div>
 

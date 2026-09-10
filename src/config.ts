@@ -39,6 +39,13 @@ const env = (name: string) => {
   return value ? value : undefined;
 };
 
+/** API が受け付ける effort。範囲外を投げると 400 になるが、それが分かるのは要求の後。 */
+const EFFORTS = ["low", "medium", "high", "xhigh", "max"] as const;
+export type Effort = (typeof EFFORTS)[number];
+
+const effort = (value: string | undefined, fallback: Effort): Effort =>
+  EFFORTS.find((level) => level === value?.trim().toLowerCase()) ?? fallback;
+
 const num = (value: string | undefined, fallback: number) => {
   const parsed = Number(value);
   // Number("") は有限な 0 になるため、先に空文字を除外する必要がある。
@@ -68,15 +75,15 @@ export const config = {
   /** 台本 1 要求の上限。thinking と長い台本に対して余裕を持たせる。 */
   scriptTimeoutMs: num(env("SCRIPT_TIMEOUT_MS"), 6 * 60_000),
   /**
-   * 台本を書き始める前の思考に使えるトークン数。
+   * 台本を書く前にモデルがどれだけ考えるか。
    *
-   * 思考トークンも生成される以上、そのまま待ち時間になる。`adaptive` はモデルが自分で
-   * 決めるので上限が無く、難しい問題ほど長く考える。ここで枠を決めると待ち時間の上限も
-   * 決まる。ただし答えを間違えれば動画ごと無駄なので、削りすぎないこと。
-   *
-   * 0 にすると `adaptive` に戻る。
+   * 思考も 1 token ずつ生成される以上、そのまま待ち時間になる。opus-5 は
+   * `thinking.budget_tokens` を受け付けず（400 が返る）、この effort で制御する。
+   * 下げれば速くなるが、思考はモデルが実際に問題を解いている部分でもある。答えを
+   * 間違えれば動画ごと無駄で、規則違反なら書き直し 1 回ぶん増えるので、削りすぎは
+   * かえって遅くなる。
    */
-  scriptThinkingTokens: num(env("SCRIPT_THINKING_TOKENS"), 16_000),
+  scriptEffort: effort(env("SCRIPT_EFFORT"), "medium"),
   /** 問題文の整形 1 要求の上限。max_tokens が 2,000 なので台本より短くてよい。 */
   outlineTimeoutMs: num(env("OUTLINE_TIMEOUT_MS"), 60_000),
   /** 1 シーン分の音声合成の上限。EdgeTTS の WebSocket が黙って切れても止まらないため。 */

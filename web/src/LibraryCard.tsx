@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { MathText } from "../../src/remotion/MathText";
 import { themeOf, withAlpha } from "../../src/remotion/theme";
 import { parseProblemOutline } from "../../src/problemOutline";
+import { SCRIPT_MODELS } from "../../src/models";
 import type { ShortSummary } from "./api";
 
 const LEVELS = 5;
@@ -48,6 +49,8 @@ export const LibraryCard: React.FC<{
   const theme = themeOf();
   const accent = theme.accents[0];
   const seconds = Math.round(short.durationInFrames / short.fps);
+  // 記録導入前の short には無い。その場合は何も出さず、空欄で嘘をつかない。
+  const modelLabel = SCRIPT_MODELS.find((entry) => entry.id === short.model)?.label ?? "";
   const [menuOpen, setMenuOpen] = useState(false);
   const menu = useRef<HTMLDivElement>(null);
   // summary を返す JSON API はこの bundle より古い deploy かもしれず、そのために
@@ -179,6 +182,7 @@ export const LibraryCard: React.FC<{
 
         <p className="card__foot" style={{ color: theme.inkDim }}>
           {seconds}秒
+          {modelLabel ? <span className="card__model">{modelLabel}</span> : null}
         </p>
       </button>
       <div className="card__menu" ref={menu}>

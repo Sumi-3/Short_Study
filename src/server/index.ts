@@ -11,6 +11,7 @@ import {
 } from "../storage.js";
 import { isCourseId } from "../courses.js";
 import { isVoiceId } from "../voices.js";
+import { isModelId } from "../models.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
 const WEB_DIST = path.join(paths.root, "web", "dist");
@@ -102,6 +103,7 @@ const server = http.createServer(async (req, res) => {
           topic,
           course,
           voice: isVoiceId(body.voice) ? body.voice : undefined,
+          model: isModelId(body.model) ? body.model : undefined,
         })) {
           res.write(`${JSON.stringify(event)}\n`);
         }

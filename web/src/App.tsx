@@ -79,6 +79,7 @@ export const App: React.FC = () => {
   const submit = async (
     topic: string,
     voice: string,
+    model: string,
   ) => {
     setJob({
       status: "queued",
@@ -91,7 +92,7 @@ export const App: React.FC = () => {
     });
 
     try {
-      for await (const next of generate(topic, "math", voice)) {
+      for await (const next of generate(topic, "math", voice, model)) {
         setJob(next);
         if (next.status === "done" && next.slug) {
           const list = await refreshShorts();

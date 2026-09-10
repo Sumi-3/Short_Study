@@ -7,6 +7,7 @@ import { generateAudio } from "./generateAudio.js";
 import { generateCaptions } from "./generateCaptions.js";
 import { generateOutline } from "./generateOutline.js";
 import { generateScript } from "./generateScript.js";
+import { config } from "../config.js";
 
 /**
  * bar が工程数ではなく実時間を追うよう重み付けする。待ち時間の大半は Claude 呼び出しで、
@@ -41,18 +42,21 @@ export async function* runPipeline({
   topic,
   course,
   voice,
+  model = config.anthropicModel,
 }: {
   topic: string;
   course: CourseId;
   /** 作成画面で選ぶ EdgeTTS ShortName。 */
   voice?: string;
+  /** 作成画面で選ぶ台本モデル。比較用で、省略時は ANTHROPIC_MODEL。 */
+  model?: string;
 }): AsyncGenerator<JobEvent> {
   const base = { course, slug: null, manifestSrc: null, error: null } as const;
   const at = (index: number): JobEvent => ({ ...base, ...STEPS[index] });
 
   try {
     yield at(0);
-    const script = await generateScript(topic, course);
+    const script = await generateScript(topic, course, model);
 
     const slug = makeSlug(topic);
 
@@ -61,7 +65,7 @@ export async function* runPipeline({
      * 重ねなければその全遅延を生成に足してしまうが、重ねれば実時間の負担はない。ない card は問題文を
      * 表示してフォールバックできるため、この失敗で動画を失ってはならず、rejection を握りつぶす。
      */
-    const outline = generateOutline(script.topic).catch(() => [] as string[]);
+    const outline = generateOutline(script.topic, model).catch(() => [] as string[]);
 
     yield at(1);
     const sceneAudios = await generateAudio({

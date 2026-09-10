@@ -18,13 +18,17 @@ import { normalizeMathText } from "../mathText.js";
  */
 const outlineSchema = z.object({ outline: z.string() });
 
-export const generateOutline = async (topic: string): Promise<string[]> => {
+export const generateOutline = async (
+  topic: string,
+  /** 台本と同じモデルで揃える。比較のとき片方だけ別モデルでは条件が揃わない。 */
+  model: string = config.anthropicModel,
+): Promise<string[]> => {
   if (!config.anthropicApiKey || !topic.trim()) {
     return [];
   }
 
   const response = await anthropic().messages.parse({
-    model: config.anthropicModel,
+    model,
     // 完全な条件と複数の問いには、一覧の要約より広い余地が必要である。
     max_tokens: 2_000,
     system: `あなたは数学の問題を、条件とすべての問いを保って画面用に整えます。\n\n${OUTLINE_RULE}`,

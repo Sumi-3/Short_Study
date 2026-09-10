@@ -29,11 +29,12 @@ export async function* generate(
   topic: string,
   course: CourseId,
   voice: string,
+  model: string,
 ): AsyncGenerator<JobEvent> {
   const response = await fetch("/api/generate", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ topic, course, voice }),
+    body: JSON.stringify({ topic, course, voice, model }),
   });
 
   // 拒否された request は stream ではなく JSON で応答する。

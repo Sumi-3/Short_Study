@@ -241,6 +241,8 @@ export const scriptSchema = z.object({
    * short がこれになる。星を出さないことで、判定した 1 と区別する。
    */
   difficulty: z.number().int().min(0).max(5).default(0),
+  /** 台本を書いたモデル。モデルには尋ねず、呼び出し側が入れる。 */
+  model: z.string().default(""),
   /** これを書いた system prompt。モデルには尋ねず、ユーザーが選ぶ。 */
   course: z.enum(COURSE_IDS).default("math"),
   /** 教科別のナレーションと字幕表記に使う。 */
@@ -661,6 +663,8 @@ export type Manifest = {
   subunit: string;
   /** 5 段階の難易度。0 と未定義は未判定で、星を出さない。 */
   difficulty?: number;
+  /** 台本を書いたモデル。記録導入前に作った short では未定義。 */
+  model?: string;
   course: CourseId;
   subject: Subject;
   slug: string;
