@@ -14,21 +14,6 @@ import { COURSE_IDS, type CourseId } from "./courses.js";
 const figureEmphasisSchema = z.number().int().min(0).max(5);
 
 /**
- * API 側は範囲を検証しない。
- *
- * 構造化出力の compiled grammar に載るのは型・required・additionalProperties だけで、
- * `minimum` / `maximum` / `enum` / `const` は description へ降格する（実測済み）。つまり
- * モデルは範囲外の値を返せるが、`zodOutputFormat` の応答パースはローカルの Zod で行うため、
- * 範囲を書いておくと `parsed_output` が null になり台本ごと落ちる。しかもそれは
- * `ScriptRejection` ではないので、再試行に理由が渡らず同じ失敗を 2 回繰り返して終わる
- * （`visualTypeSchema` の注記にある改名時の事故と同じ経路である）。
- *
- * よって API では受けるだけ受け、範囲は `normalizeVisual` で丸める。保存済み manifest を
- * 読む側は上の厳しいスキーマを使い続ける。
- */
-const apiEmphasisSchema = z.number();
-
-/**
  * より豊かな視覚データは任意にする。基本スキーマで必須の `visual_content` には常に
  * 同じ内容のプレーンテキストがあるため、`visual` のないシーンも描画でき、
  * アニメーション付きテキストへフォールバックするだけで済む。
@@ -251,19 +236,6 @@ const visualTypeSchema = z.preprocess(
 );
 
 /**
- * API 側は知らない値も受け、解説シーンへ畳む。
- *
- * 上の注記が言う事故は `point` に限らない。grammar は enum を強制しないので、モデルは
- * "intro" のような値も返せる。厳しい enum で受けると台本ごとパースに失敗し、理由の付かない
- * 再試行を 1 回浪費して終わる。畳んでおけば、シーン 1 が hook でないことは
- * `assertSolutionPlans` が名指しで却下でき、再試行に理由が渡る。
- */
-const apiVisualTypeSchema = z.preprocess(
-  (value) => (value === "hook" || value === "summary" ? value : "step"),
-  z.enum(["hook", "step", "summary"]),
-);
-
-/**
  * 解説シーンか。
  *
  * manifest は再生時に検証されず型として受け取るだけなので（web/src/api.ts の
@@ -340,24 +312,29 @@ export const apiScriptSchema = z.object({
    * 難易度を足すときも、この上限があるので新しい field ではなく区切りを 1 つ増やす。
    */
   unit: z.string(),
-  /** 教科が固定されたコースでは捨てる値である。照合は `generateScript` で行う。 */
-  subject: z.string(),
+  subject: z.enum(SUBJECTS),
   scenes: z.array(
     z.object({
       scene_id: z.number(),
       narration: z.string(),
-      visual_type: apiVisualTypeSchema,
+      visual_type: visualTypeSchema,
       visual_content: z.string(),
-      /**
-       * enum ではなく自由文で受ける。`apiEmphasisSchema` と同じ理由で、grammar は値を
-       * 強制しないのに Zod は検証するため、綴り違い 1 つで台本ごと落ちる。知らない種別は
-       * `normalizeVisual` が図なしへ落とし、`assertSceneIntegrity` が名前を挙げて却下する。
-       */
-      visual_kind: z
-        .string()
-        .describe(
-          "bullets / flow / bars / formula / plot / figure / table / tree / venn / histogram / box / scatter / dot / none",
-        ),
+      visual_kind: z.enum([
+        "bullets",
+        "flow",
+        "bars",
+        "formula",
+        "plot",
+        "figure",
+        "table",
+        "tree",
+        "venn",
+        "histogram",
+        "box",
+        "scatter",
+        "dot",
+        "none",
+      ]),
       /**
        * `bullets` の項目、`flow` の手順、最大 6 行の混在した `formula`、または
        * `figure` / `plot` の数式・文章の補助 2 行。型と注釈のマーカーも文字列内に置くので、
@@ -403,7 +380,7 @@ export const apiScriptSchema = z.object({
           to: z.string(),
           label: z.string(),
           dashed: z.boolean(),
-          emphasis: apiEmphasisSchema,
+          emphasis: figureEmphasisSchema,
           /** 等長を示す印の数。なしなら 0。 */
           ticks: z.number(),
           /** ベクトル用に `to` へ付ける矢印。 */
@@ -454,10 +431,6 @@ export const apiScriptSchema = z.object({
 });
 
 export type ApiScript = z.infer<typeof apiScriptSchema>;
-
-/** 印の本数と emphasis の役割番号を 0〜max の整数へ丸める。NaN は印なしに落とす。 */
-const clamped = (value: number, max: number) =>
-  Number.isFinite(value) ? Math.max(0, Math.min(max, Math.round(value))) : 0;
 
 /** 基準線は `visual_points` で渡し、x を値として使う。 */
 const markLines = (scene: ApiScript["scenes"][number]) =>
@@ -621,16 +594,17 @@ export const normalizeVisual = (
         points,
         segments: segments.map((segment) => ({
           ...segment,
-          ticks: clamped(segment.ticks, 3),
-          // API が範囲を強制できないので（apiEmphasisSchema 参照）ここで役割の番号に丸める。
-          emphasis: clamped(segment.emphasis, 5),
+          ticks: Math.max(0, Math.min(3, Math.round(segment.ticks))),
         })),
         angles: scene.visual_angles
           .filter(
             (a) => known.has(a.at) && known.has(a.from) && known.has(a.to),
           )
           .slice(0, 3)
-          .map((angle) => ({ ...angle, ticks: clamped(angle.ticks, 3) })),
+          .map((angle) => ({
+            ...angle,
+            ticks: Math.max(0, Math.min(3, Math.round(angle.ticks))),
+          })),
         circles: circles.map((circle) => ({
           center: circle.center,
           radius: circle.radius,
