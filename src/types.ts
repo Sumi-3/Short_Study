@@ -217,12 +217,20 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
 /**
  * 解説シーンの種別。改名前は `point` だった。
  *
- * 保存済みの `script.json` には旧い値が残っている。再生成も移行もしない方針なので、
- * 読み込む側でだけ受けて新しい名前に直す。モデルへ渡す `apiScriptSchema` の側は
- * 素の enum のままにする。構造化出力の grammar に旧名を教える理由がなく、
- * 受け入れる値を増やせばモデルがそちらを選ぶ余地も増えるからである。
+ * 旧名を受けて新しい名前に直す。保存済みの `script.json` を読み直せるようにするのが
+ * 一つ、モデルの応答を受けるのがもう一つの理由である。
+ *
+ * 後者が要るのは、この enum が API では**強制されていない**からである。
+ * `zodOutputFormat` は `{"type":"string","description":"{enum: [...]}"}` を出すだけで、
+ * 許される値は説明文にしか現れない。つまりモデルは旧名を返せる。実際に、改名時に
+ * プロンプト側だけが後のコミットで巻き戻り、全生成が「Failed to parse structured
+ * output」で落ちた。しかも parse 失敗は `ScriptRejection` ではないため、再試行に
+ * 却下理由が渡らず、同じ失敗を 2 回繰り返してから諦める。
+ *
+ * ここで吸収すれば、プロンプトとスキーマがずれても生成そのものは通る。
+ * 名前の正本はプロンプトのままで、ここは受け皿である。
  */
-const storedVisualType = z.preprocess(
+const visualTypeSchema = z.preprocess(
   (value) => (value === "point" ? "step" : value),
   z.enum(["hook", "step", "summary"]),
 );
@@ -240,7 +248,7 @@ export const isStepScene = (visualType: string) =>
 export const sceneSchema = z.object({
   scene_id: z.number(),
   narration: z.string(),
-  visual_type: storedVisualType,
+  visual_type: visualTypeSchema,
   visual_content: z.string(),
   visual: sceneVisualSchema.optional(),
 });
@@ -308,7 +316,7 @@ export const apiScriptSchema = z.object({
     z.object({
       scene_id: z.number(),
       narration: z.string(),
-      visual_type: z.enum(["hook", "step", "summary"]),
+      visual_type: visualTypeSchema,
       visual_content: z.string(),
       visual_kind: z.enum([
         "bullets",

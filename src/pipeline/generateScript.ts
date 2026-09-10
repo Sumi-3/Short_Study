@@ -85,6 +85,46 @@ const classify = (written: string, allowed: readonly string[] | null) => {
 /** Vercel の実行期限内にTTSの時間も残すため、再試行だけを制限する。動画の尺とは独立。 */
 const SCRIPT_RETRY_BUDGET_MS = 85_000;
 
+/**
+ * system プロンプトを prompt cache に載せる。
+ *
+ * このプロンプトは 19,700 tokens あり、問題文以外は毎回まったく同じである。書き込みは
+ * 通常入力の 1.25 倍、読み出しは 0.1 倍なので、同じプロンプトで 2 回呼べば元が取れる。
+ *
+ * とくに効くのが却下後の書き直しである。`attempt()` は最大 2 回走り、2 回目は必ず
+ * 数十秒後に始まるので確実に読み出しになる。失敗が最も高くつく経路がそのまま
+ * 最も確実に得をする経路になる。
+ *
+ * TTL は既定の 5 分にする。寿命はリクエストの*開始*時点から数えるため、長い生成の
+ * 後では次の開始までに切れることもあるが、1 時間 TTL は書き込みが 2 倍になり、
+ * 元を取るのに 3 回必要になる。1 本だけ作って終わる使い方では損になる。
+ *
+ * 速度はほぼ変わらない（実測 1,450ms → 1,436ms）。入れる目的は入力課金の削減である。
+ */
+const cachedSystem = () => [{
+  type: "text" as const,
+  text: mathPrompt(),
+  cache_control: { type: "ephemeral" as const },
+}];
+
+/**
+ * キャッシュが効いているかは usage しか教えてくれない。繰り返し呼んでも読み出しが
+ * 0 のままなら、プロンプトに毎回変わるものが混ざっている。
+ */
+const reportUsage = (usage: {
+  input_tokens: number;
+  output_tokens: number;
+  cache_creation_input_tokens?: number | null;
+  cache_read_input_tokens?: number | null;
+}) => {
+  const write = usage.cache_creation_input_tokens ?? 0;
+  const read = usage.cache_read_input_tokens ?? 0;
+  console.log(
+    `   tokens: 入力 ${usage.input_tokens} / 出力 ${usage.output_tokens}` +
+    ` / cache 書込 ${write} 読出 ${read}`,
+  );
+};
+
 /** モデルが守れる規則を破った台本であることを表す。 */
 class ScriptRejection extends Error {}
 
@@ -113,7 +153,7 @@ export const generateScript = async (
         // opus-5 で思考量を決めるのは thinking ではなく output_config.effort。
         // `thinking: { type: "enabled", budget_tokens }` はこのモデルでは 400 になる。
         thinking: { type: "adaptive" },
-        system: mathPrompt(),
+        system: cachedSystem(),
         messages: correction
           ? [{ role: "user", content: `${topic}\n\n前回の出力は次の理由で却下されました。同じ問題を、この点だけ直して書き直してください。\n${correction}` }]
           : [{ role: "user", content: topic }],
@@ -123,6 +163,8 @@ export const generateScript = async (
         },
       }, { timeout: config.scriptTimeoutMs })
       .finalMessage();
+
+    reportUsage(response.usage);
 
     const parsed = response.parsed_output;
     if (!parsed || response.stop_reason === "max_tokens") {

@@ -31,7 +31,13 @@ export const generateOutline = async (
     model,
     // 完全な条件と複数の問いには、一覧の要約より広い余地が必要である。
     max_tokens: 2_000,
-    system: `あなたは数学の問題を、条件とすべての問いを保って画面用に整えます。\n\n${OUTLINE_RULE}`,
+    // 台本と同じく prompt cache に載せる。1,321 tokens で最小サイズを満たすことを
+    // 実測で確認済み（下回ると黙ってキャッシュされない）。問題文以外は毎回同じである。
+    system: [{
+      type: "text",
+      text: `あなたは数学の問題を、条件とすべての問いを保って画面用に整えます。\n\n${OUTLINE_RULE}`,
+      cache_control: { type: "ephemeral" },
+    }],
     messages: [{ role: "user", content: topic }],
     output_config: { format: zodOutputFormat(outlineSchema) },
   }, { timeout: config.outlineTimeoutMs });
