@@ -197,8 +197,8 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
            */
           exprY: z.string().nullable().default(null),
           label: z.string(),
-          /** between は2曲線の間、inside は媒介変数の閉曲線内部。 */
-          region: z.enum(["above", "below", "between", "inside"]).nullable().default(null),
+          /** between は2曲線の間、inside は媒介変数の閉曲線内部、revolve は x 軸まわりの回転体。 */
+          region: z.enum(["above", "below", "between", "inside", "revolve"]).nullable().default(null),
         }),
       )
       .min(1)
@@ -629,9 +629,10 @@ export const normalizeVisual = (
           expr: curve.expr,
           exprY: curve.expr_y || null,
           label: curve.label,
-          region: ((): "above" | "below" | "between" | "inside" | null =>
+          region: ((): "above" | "below" | "between" | "inside" | "revolve" | null =>
             curve.region === "above" || curve.region === "below" ||
-            curve.region === "between" || curve.region === "inside"
+            curve.region === "between" || curve.region === "inside" ||
+            curve.region === "revolve"
               ? curve.region
               : null)(),
         }));

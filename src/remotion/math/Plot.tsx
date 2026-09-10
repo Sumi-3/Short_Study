@@ -131,6 +131,45 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
     [data, xMin, xMax, yMin, yMax],
   );
 
+  /**
+   * 回転体の「どちらへ回すか」を示す印。
+   *
+   * 立体を描かずに済ませる。回転体の絵は普通シルエットで描くもので、陰影を付けると
+   * 見せたい断面がかえって隠れる。ここでは断面の円を真横から見た楕円として置き、
+   * その上を進む矢印だけで向きを伝える。3D を持ち込まないので追加の依存もない。
+   */
+  const revolve = useMemo(() => {
+    const curve = compiled.find((entry) => entry.region === "revolve" && entry.fn);
+    if (!curve || !data.shade) return null;
+    const [from, to] = data.shade;
+    /*
+     * 置くのは区間の真ん中。最も太いところへ置くと、y=x のような単調な曲線では必ず
+     * 端に寄り、塗った領域からはみ出して軸の目盛りに重なる。真ん中なら断面が領域の
+     * 内側に収まり、大きさも半分で済む。
+     */
+    let at = (from + to) / 2;
+    let radius = Math.abs(curve.fn!(at));
+    if (!Number.isFinite(radius) || radius < (yMax - yMin) * 0.02) {
+      // 真ん中が潰れている場合だけ、太いところを探し直す。
+      radius = 0;
+      for (let i = 0; i <= 40; i++) {
+        const x = from + ((to - from) * i) / 40;
+        const y = curve.fn!(x);
+        if (Number.isFinite(y) && Math.abs(y) > radius) {
+          radius = Math.abs(y);
+          at = x;
+        }
+      }
+    }
+    if (radius === 0) return null;
+    const cx = toX(at);
+    const cy = toY(0);
+    const ry = Math.abs(toY(radius) - cy);
+    // 回転面を斜めから見た見かけの幅。1 にすると円になり、軸方向から見た絵になってしまう。
+    const rx = ry * 0.3;
+    return { cx, cy, rx, ry };
+  }, [compiled, data.shade, xMin, xMax, yMin, yMax]);
+
   const axesProgress = clamped(frame, [0, 0.7 * fps], [0, 1], theme.easing);
 
   const zeroY = yMin <= 0 && yMax >= 0 ? toY(0) : null;
@@ -320,6 +359,65 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
           </g>
         );
       })}
+
+      {/* 回転の向き。曲線を引き終えてから出す。 */}
+      {revolve
+        ? (() => {
+            const { cx, cy, rx, ry } = revolve;
+            const swept = clamped(
+              frame,
+              [2.2 * fps, 3.0 * fps],
+              [0, 1],
+              theme.easing,
+            );
+            if (swept <= 0) return null;
+            // θ=0 を上端にし、手前側（右）へ回る向きを正にする。
+            const point = (theta: number): [number, number] => [
+              cx + rx * Math.sin(theta),
+              cy - ry * Math.cos(theta),
+            ];
+            /*
+             * 手前側を半周だけ描く。ほぼ一周させると楕円と重なって、時計回りなのか
+             * 反時計回りなのかが読めなくなる。上から手前を通って下へ、で向きは足りる。
+             */
+            const span = Math.PI * swept;
+            const steps = 64;
+            const path = Array.from({ length: steps + 1 }, (_, i) =>
+              point((span * i) / steps).map((v) => v.toFixed(2)).join(","),
+            ).join(" ");
+            // 矢じりは接線に合わせる。終点だけで向きを決めると、弧の曲がりと食い違う。
+            const [hx, hy] = point(span);
+            const [px, py] = point(span - 0.06);
+            const angle = (Math.atan2(hy - py, hx - px) * 180) / Math.PI;
+            return (
+              <g opacity={Math.min(1, swept * 2)}>
+                {/* 回転面そのもの。矢印だけでは、何の上を回っているのかが分からない。 */}
+                <ellipse
+                  cx={cx}
+                  cy={cy}
+                  rx={rx}
+                  ry={ry}
+                  fill="none"
+                  stroke={withAlpha(theme.ink, 0.28)}
+                  strokeWidth={2}
+                  strokeDasharray="7 7"
+                />
+                <polyline
+                  points={path}
+                  fill="none"
+                  stroke={accent}
+                  strokeWidth={5}
+                  strokeLinecap="round"
+                />
+                <polygon
+                  points="0,0 -26,11 -26,-11"
+                  fill={accent}
+                  transform={`translate(${hx.toFixed(2)},${hy.toFixed(2)}) rotate(${angle.toFixed(2)})`}
+                />
+              </g>
+            );
+          })()
+        : null}
 
       {/* mark 済み point。answer を何も覆わないよう最後に描く。 */}
       {/* 旧 manifest はこの field 導入前のもの。 */}

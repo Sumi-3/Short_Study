@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { config } from "../config.js";
-import { OUTLINE_RULE } from "../prompts/scriptFormat.js";
+import { OUTLINE_RULE } from "../prompts/outline.js";
 import { anthropic } from "./anthropic.js";
 import { normalizeMathText } from "../mathText.js";
 

@@ -95,6 +95,9 @@ export const buildRegionPolygons = (
       boundaries.push((x) => {
         const y = fn(x);
         if (!Number.isFinite(y)) return [];
+        // 回転体で塗るのは、回す前の断面である曲線と x 軸の間。上下どちらの側かは
+        // f の符号が決めるので、above/below のように片側を無限へ開かない。
+        if (curve.region === "revolve") return [[Math.min(0, y), Math.max(0, y)]];
         return curve.region === "above" ? [[y, Infinity]] : [[-Infinity, y]];
       });
     }
