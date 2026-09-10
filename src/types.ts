@@ -17,6 +17,13 @@ const figureEmphasisSchema = z.number().int().min(0).max(5);
  * より豊かな視覚データは任意にする。基本スキーマで必須の `visual_content` には常に
  * 同じ内容のプレーンテキストがあるため、`visual` のないシーンも描画でき、
  * アニメーション付きテキストへフォールバックするだけで済む。
+ *
+ * 後から足した装飾のフィールドには `.default()` を付ける。これは保存済みの
+ * `script.json` を読み直せるようにするためである。必須のまま足すと、そのフィールドが
+ * 生まれる前に書かれた台本が丸ごと読めなくなる（実際に 16 本中 8 本が読めなくなっていた）。
+ * `.optional()` ではなく `.default()` にするのは、出力の型を変えずに済み、描画側が
+ * `undefined` を気にしなくてよいからである。ここはローカル専用のスキーマなので、
+ * 構造化出力の grammar には影響しない（API 側は `apiScriptSchema` が必須で持つ）。
  */
 export const sceneVisualSchema = z.discriminatedUnion("kind", [
   z.object({
@@ -135,10 +142,10 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
         dashed: z.boolean(),
         /** 0 は通常、1–5 は固定パレットの役割。旧 Boolean の見た目も維持する。 */
         emphasis: z.union([figureEmphasisSchema, z.boolean()]),
-        /** 等しい個数の印を持つ線分は等長であることを示す。 */
-        ticks: z.number(),
+        /** 等しい個数の印を持つ線分は等長であることを示す。0 は印なし。 */
+        ticks: z.number().default(0),
         /** `to` に矢印を描き、この線分をベクトルとして示す。 */
-        arrow: z.boolean(),
+        arrow: z.boolean().default(false),
       }),
     ).max(10),
     angles: z.array(
@@ -147,8 +154,8 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
         from: z.string(),
         to: z.string(),
         label: z.string(),
-        /** 同じ個数の弧印を持つ角は等しいことを示す。 */
-        ticks: z.number(),
+        /** 同じ個数の弧印を持つ角は等しいことを示す。0 は印なし。 */
+        ticks: z.number().default(0),
       }),
     ).max(3),
     circles: z.array(
@@ -166,11 +173,11 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
         /** 弧から中心までを塗り、扇形にする。 */
         sector: z.boolean(),
       }),
-    ).max(3),
+    ).max(3).default([]),
     /** 着色する面または領域の点 id。 */
     highlight: z.array(z.string()),
     /** 原点を通る座標軸を描く。 */
-    axes: z.boolean(),
+    axes: z.boolean().default(false),
   }),
   z.object({
     kind: z.literal("plot"),
@@ -188,16 +195,16 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
            * y(t) となる。円・楕円・サイクロイドはいずれも x の関数ではないため、
            * グラフに描くにはこれが必要になる。
            */
-          exprY: z.string().nullable(),
+          exprY: z.string().nullable().default(null),
           label: z.string(),
           /** 網掛けする領域がこの曲線のどちら側にあるか。 */
-          region: z.enum(["above", "below"]).nullable(),
+          region: z.enum(["above", "below"]).nullable().default(null),
         }),
       )
       .min(1)
       .max(3),
     /** 媒介変数曲線のパラメータ区間。既定値は 1 周分。 */
-    tRange: z.tuple([z.number(), z.number()]).nullable(),
+    tRange: z.tuple([z.number(), z.number()]).nullable().default(null),
     /** 積分用に、最初の曲線の下を塗る範囲。 */
     shade: z.tuple([z.number(), z.number()]).nullable(),
     /** 接点・交点・解など、印を付ける点。 */
@@ -207,10 +214,33 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
   }),
 ]);
 
+/**
+ * 解説シーンの種別。改名前は `point` だった。
+ *
+ * 保存済みの `script.json` には旧い値が残っている。再生成も移行もしない方針なので、
+ * 読み込む側でだけ受けて新しい名前に直す。モデルへ渡す `apiScriptSchema` の側は
+ * 素の enum のままにする。構造化出力の grammar に旧名を教える理由がなく、
+ * 受け入れる値を増やせばモデルがそちらを選ぶ余地も増えるからである。
+ */
+const storedVisualType = z.preprocess(
+  (value) => (value === "point" ? "step" : value),
+  z.enum(["hook", "step", "summary"]),
+);
+
+/**
+ * 解説シーンか。
+ *
+ * manifest は再生時に検証されず型として受け取るだけなので（web/src/api.ts の
+ * `fetchManifest`）、改名前に生成した 32 本に残る旧 `point` を弾く場所がない。
+ * manifest を読む側はこの関数を通し、両方を解説シーンとして扱う。
+ */
+export const isStepScene = (visualType: string) =>
+  visualType === "step" || visualType === "point";
+
 export const sceneSchema = z.object({
   scene_id: z.number(),
   narration: z.string(),
-  visual_type: z.enum(["hook", "point", "summary"]),
+  visual_type: storedVisualType,
   visual_content: z.string(),
   visual: sceneVisualSchema.optional(),
 });
@@ -278,7 +308,7 @@ export const apiScriptSchema = z.object({
     z.object({
       scene_id: z.number(),
       narration: z.string(),
-      visual_type: z.enum(["hook", "point", "summary"]),
+      visual_type: z.enum(["hook", "step", "summary"]),
       visual_content: z.string(),
       visual_kind: z.enum([
         "bullets",

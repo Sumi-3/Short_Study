@@ -84,8 +84,8 @@ export const assertSolutionPlans = (scenes: readonly PlanScene[], topic: string,
     const number = solutionPlanNumber(scene.visual_content);
     if (number !== null) {
       finish(index);
-      if (summarizing || scene.visual_type !== "point" || scene.visual_kind !== "bullets") {
-        reject(index, "各設問の解説前に独立したpoint / bulletsの方針シーンを置いてください。");
+      if (summarizing || scene.visual_type !== "step" || scene.visual_kind !== "bullets") {
+        reject(index, "各設問の解説前に独立したstep / bulletsの方針シーンを置いてください。");
       }
       if (!numbered && completed.length) {
         reject(index, "設問が1つの動画に方針シーンは1つだけです。");
@@ -103,7 +103,7 @@ export const assertSolutionPlans = (scenes: readonly PlanScene[], topic: string,
       finish(index);
       summarizing = true;
     } else {
-      if (!active || summarizing || scene.visual_type !== "point") {
+      if (!active || summarizing || scene.visual_type !== "step") {
         reject(index, "問題文の直後に「方針」（2問以上なら「(番号)の方針」）のbulletsシーンが必要です。");
       }
       const plan = active!;

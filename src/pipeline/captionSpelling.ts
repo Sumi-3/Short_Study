@@ -1,5 +1,5 @@
 import type { Caption } from "@remotion/captions";
-import { GREEK, TERMS, SPOKEN_SYMBOLS } from "../mathVocabulary.js";
+import { GREEK, TERMS, TERM_LETTERS, SPOKEN_SYMBOLS } from "../mathVocabulary.js";
 import { normalizeMathText, splitMathText } from "../mathText.js";
 import { structuredSpeechMatches } from "../mathSpeech.js";
 
@@ -327,6 +327,54 @@ const applyGreek = (text: string) => {
 };
 
 /**
+ * 裸の文字読みを、字幕では表記へ戻す。
+ *
+ * ナレーションでは文字をそのまま書く決まりだが（prompts/scriptFormat.ts）、添字付きの項だけは
+ * カナで綴らせるため、モデルは点 P のような裸の文字までカナにすることがある。字幕は聞くもの
+ * ではなく読むものなので、ここで表記へ戻す。音声とタイミングは変えない。
+ *
+ * カナは大文字と小文字を区別しない。「エー」は点 A でも係数 a でもありうる。どちらかを知って
+ * いるのは画面に出ている表記なので、その scene の表記を根拠にし、無ければ `TERM_LETTERS` の
+ * 綴りに従う。
+ */
+const otherCase = (letter: string) =>
+  letter === letter.toUpperCase() ? letter.toLowerCase() : letter.toUpperCase();
+
+/** LaTeX コマンドは変数ではない。`\frac` の f が根拠にならないよう先に落とす。 */
+const variablesOf = (notation: string) => notation.replace(/\\[a-zA-Z]+/g, " ");
+
+const letterFor = (kana: string, variables: string) => {
+  const written = TERM_LETTERS[kana]!;
+  const alternate = otherCase(written);
+  return variables.includes(alternate) && !variables.includes(written) ? alternate : written;
+};
+
+const applyLetters = (text: string, variables: string) => {
+  let out = text;
+
+  // `applyGreek` と同じ歩き方と guard。後ろにカタカナが続けば長い語の一部とみなし、
+  // 「ピーク」「ビーカー」を P や b にしない。既知の数学語が続くときだけ文字と認める。
+  for (const kana of Object.keys(TERM_LETTERS).sort((a, b) => b.length - a.length)) {
+    const letter = letterFor(kana, variables);
+    let at = out.indexOf(kana);
+    while (at !== -1) {
+      const next = out[at + kana.length];
+      const remainder = out.slice(at + kana.length);
+      if (next !== undefined && KATAKANA.test(next) &&
+        ![...Object.keys(TERM_LETTERS), ...Object.keys(GREEK), ...Object.keys(OPERATORS)]
+          .some((word) => remainder.startsWith(word))) {
+        at = out.indexOf(kana, at + 1);
+        continue;
+      }
+      out = out.slice(0, at) + letter + out.slice(at + kana.length);
+      at = out.indexOf(kana, at + letter.length);
+    }
+  }
+
+  return out;
+};
+
+/**
  * 数式の隣に置ける文字。KaTeX がそのまま組める記号だけを並べる（`²` は指数へ直し、`√` は
  * 範囲を決められないので取り込まない）。ここに無い文字（日本語・空白・読点）で式は終わる。
  */
@@ -430,7 +478,12 @@ const fuseMathTokens = (captions: Caption[]): Caption[] => {
   return merged;
 };
 
-export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
+export const applyDisplaySpelling = (
+  captions: Caption[],
+  /** この scene が画面に出す文字列。裸の文字読みを大文字・小文字どちらに戻すかの根拠。 */
+  notation = "",
+): Caption[] => {
+  const variables = variablesOf(notation);
   // 古い呼び出しや TTS の予想外の返答も、数式全体を結合してから直す。token ごとに囲むと
   // `\\sqrt` | `{7}` の引数や、開閉の $ が別々の MathText に入ってしまう。
   captions = normalizeCaptionMath(captions);
@@ -449,6 +502,7 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
   const merged = mergeSplitWords(fractionMerged, [
     ...Object.keys(ALWAYS),
     ...Object.keys(GREEK),
+    ...Object.keys(TERM_LETTERS),
     ...Object.keys(SPOKEN_SYMBOLS),
     ...ROOT_WORDS,
     ...Array.from(captions.map((caption) => caption.text).join("").matchAll(
@@ -468,6 +522,8 @@ export const applyDisplaySpelling = (captions: Caption[]): Caption[] => {
       text = text.split(spoken).join(written);
     }
     text = applyGreek(text);
+    // ギリシャ文字より後に置く。「シータ」の頭は「シー」なので、先に走らせると C になる。
+    text = applyLetters(text, variables);
     text = applyGuarded(text);
     return text === caption.text ? caption : { ...caption, text };
   });

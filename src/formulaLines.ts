@@ -111,8 +111,8 @@ export const assertFormulaCarry = (scenes: readonly {
       [() => lines.length > limit, `このシーンの行数が上限${limit}行を超えています`],
       [() => !lines.slice(1).some((line) => !line.text),
         "[carry]の後に、続きとなる数式行を必ず置いてください"],
-      [() => scene.visual_type !== "point", "[carry]が使えるのはpointのシーンだけです"],
-      [() => previous?.visual_type !== "point", "直前のシーンがpointではありません"],
+      [() => scene.visual_type !== "step", "[carry]が使えるのはstepのシーンだけです"],
+      [() => previous?.visual_type !== "step", "直前のシーンがstepではありません"],
       [() => Boolean(scene.visual_content.trim()) && !parsePlanStep(scene.visual_content),
         "続きのシーンでは方針の番号付きタイトルを維持し、それ以外のvisual_contentは空文字にしてください"],
       [() => !lastEquation, "直前のシーンに写せる数式がありません"],
@@ -127,7 +127,7 @@ export const assertFormulaCarry = (scenes: readonly {
     if (failure.length) {
       // 最初の 1 件ではなく全理由を出す。複数が同時に起きがちで、1 件直して次を告げられると
       // もう 1 回の生成を無駄にするためである。
-      throw new Error(`シーン${index + 1}の[carry]: ${failure.join("／")}。前のpointの未確定の最終数式を、継続シーンの先頭にそのまま写してください。`);
+      throw new Error(`シーン${index + 1}の[carry]: ${failure.join("／")}。前のstepの未確定の最終数式を、継続シーンの先頭にそのまま写してください。`);
     }
   }
 };

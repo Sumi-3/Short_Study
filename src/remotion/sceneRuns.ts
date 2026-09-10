@@ -1,7 +1,7 @@
-import type { ManifestScene } from "../types";
+import { isStepScene, type ManifestScene } from "../types";
 
 /**
- * 連続する formula の point シーンを、ひとつの舞台にまとめる単位。
+ * 連続する formula の step シーンを、ひとつの舞台にまとめる単位。
  *
  * シーンの切れ目は音声の切れ目でしかない。`buildManifest.ts` はナレーション 1 本の実長から
  * `durationInFrames` を出すので、「音声 1 を読み終えたら描画 2 に進む」時刻は manifest に
@@ -12,7 +12,7 @@ import type { ManifestScene } from "../types";
  * 0.09% まで消え、続きの式であることが見て取れなかった。run は音声と字幕をシーンのまま残し、
  * 描画の器だけを複数シーンにまたがらせる。
  *
- * まとめるのは formula の point だけである。hook と summary は独立した節で、figure / plot の
+ * まとめるのは formula の step だけである。hook と summary は独立した節で、figure / plot の
  * 併記は図の下に置く別の layout を持ち、bullets や flow は行を積む形ではない。1 シーンだけの
  * run は従来どおり描くので、既存の動画の見た目は run が生じる区間以外で変わらない。
  */
@@ -26,7 +26,7 @@ export type SceneRun = {
 };
 
 export const isRunnable = (scene: Pick<ManifestScene, "visual_type" | "visual">) =>
-  scene.visual_type === "point" && scene.visual?.kind === "formula";
+  isStepScene(scene.visual_type) && scene.visual?.kind === "formula";
 
 export const sceneRuns = (
   scenes: readonly Pick<ManifestScene, "visual_type" | "visual" | "durationInFrames">[],

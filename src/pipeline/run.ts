@@ -14,10 +14,10 @@ import { config } from "../config.js";
  * TTS は数秒、残りは disk I/O である。
  */
 const STEPS: { status: JobStatus; message: string; progress: number }[] = [
-  { status: "script", message: "台本を書いています", progress: 0.70 },
-  { status: "audio", message: "ナレーションを合成しています", progress: 0.75 },
-  { status: "captions", message: "字幕のタイミングを取っています", progress: 0.9 },
-  { status: "manifest", message: "動画を組み立てています", progress: 0.96 },
+  { status: "script", message: "台本を書いています", progress: 0.90 },
+  { status: "audio", message: "ナレーションを合成しています", progress: 0.93 },
+  { status: "captions", message: "字幕のタイミングを取っています", progress: 0.6 },
+  { status: "manifest", message: "動画を組み立てています", progress: 0.99 },
 ];
 
 const makeSlug = (topic: string) => {
