@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Player, type PlayerRef } from "@remotion/player";
+import { firstSceneFrame } from "./FirstFrame";
 import { PlaybackComposition } from "./PlaybackComposition";
 import { fetchManifest } from "./api";
 import { AudioGate, type AudioStatus } from "./audioGate";
@@ -301,7 +302,7 @@ export const ShortPlayer: React.FC<{
     // 視聴者がまだ再生を求めていない、または解除できていない short は、表紙の
     // 1 コマで止めておく。gesture の外で音つき再生は始められない。
     if (!wantsPlay.current || !gate.unlocked) {
-      instance.seekTo(Math.round(loaded.manifest.fps * 1.2));
+      instance.seekTo(firstSceneFrame(loaded.manifest.fps));
       return;
     }
     started.current = true;

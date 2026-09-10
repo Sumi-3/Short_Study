@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { themeOf } from "../../src/remotion/theme";
+import { FirstFrame } from "./FirstFrame";
 import { ShortPlayer, type ShortPlayerHandle } from "./ShortPlayer";
 import { Thumbnail } from "./Thumbnail";
 import { prefetchManifest, type ShortSummary } from "./api";
@@ -110,7 +111,14 @@ export const Feed: React.FC<{
             style={{ background: themeOf().bgDeep }}
           >
             <div className="phone">
-              <Thumbnail short={short} />
+              {/* swipe で次に来るのはこの両隣だけ。そこには動画自身の最初の絵を敷き、
+                  player が乗っても何も変わらないようにする。遠くの short は library
+                  と同じ Poster のままにして、composition を余分に組まない。 */}
+              {Math.abs(index - activeIndex) <= 1 ? (
+                <FirstFrame short={short} />
+              ) : (
+                <Thumbnail short={short} />
+              )}
             </div>
           </section>
         ))}
