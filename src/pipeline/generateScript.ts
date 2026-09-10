@@ -1,7 +1,7 @@
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { anthropic } from "./anthropic.js";
 import { config } from "../config.js";
-import { apiScriptSchema, normalizeVisual, normalizeVisualText, type Script } from "../types.js";
+import { apiScriptSchema, normalizeVisual, normalizeVisualText, SUBJECTS, type Script } from "../types.js";
 import { normalizeMathText } from "../mathText.js";
 import { normalizeNarration } from "../mathSpeech.js";
 import { NARRATION_SEPARATOR, splitNarration } from "../narration.js";
@@ -10,6 +10,7 @@ import { mathPrompt } from "../prompts/math.js";
 import { SCRIPT_MAX_TOKENS } from "../scriptBudget.js";
 import { assertSolutionPlans } from "../solutionPlan.js";
 import { assertFormulaCarry } from "../formulaLines.js";
+import { assertSceneIntegrity } from "../sceneIntegrity.js";
 import { MATH_UNIT_NAMES, topicsOf } from "../curriculum.js";
 import type { CourseId } from "../courses.js";
 
@@ -89,7 +90,7 @@ const SCRIPT_RETRY_BUDGET_MS = 85_000;
 /**
  * system プロンプトを prompt cache に載せる。
  *
- * このプロンプトは 19,700 tokens あり、問題文以外は毎回まったく同じである。書き込みは
+ * このプロンプトは 18,800 tokens あり、問題文以外は毎回まったく同じである。書き込みは
  * 通常入力の 1.25 倍、読み出しは 0.1 倍なので、同じプロンプトで 2 回呼べば元が取れる。
  *
  * とくに効くのが却下後の書き直しである。`attempt()` は最大 2 回走り、2 回目は必ず
@@ -187,6 +188,9 @@ export const generateScript = async (
       });
       assertSolutionPlans(parsed.scenes, parsed.topic, topic);
       assertFormulaCarry(parsed.scenes);
+      // 最後に置く。再試行へ渡せる理由は1つなので、シーン単位の誤りより先に構成の誤りを告げる。
+      // 構成を組み直せば、そのシーンの中身も書き換わるためである。
+      assertSceneIntegrity(parsed.scenes);
     } catch (error) {
       // 再試行でこの理由を引用できるよう印を付ける。API やネットワークの失敗も再試行には
       // 値するが、モデルへ伝える内容はない。
@@ -209,6 +213,11 @@ export const generateScript = async (
   try {
     parsed = await attempt();
   } catch (error) {
+    // 却下は再試行のプロンプトにしか現れないので、ここで出さないと何が起きたのか誰にも見えない。
+    // どの規則が繰り返し破られるかは、プロンプト側を直すべきかの判断材料になる。
+    console.log(
+      `   却下: ${error instanceof Error ? error.message : String(error)}`,
+    );
     // ローカルでは長い台本にも修正の機会を残す。デプロイ時だけ関数の実行期限を考慮する。
     if (process.env.VERCEL && Date.now() - startedAt > SCRIPT_RETRY_BUDGET_MS) {
       throw error;
@@ -225,8 +234,9 @@ export const generateScript = async (
     ...classify(parsed.unit, MATH_UNIT_NAMES),
     course: course.id,
     // 教科が固定されたコースでは選択を既にモデルへ伝えているので両者は一致する。回答が必要なのは
-    // `general` の場合である。
-    subject: course.subject ?? parsed.subject,
+    // `general` の場合である。API は自由文で受けるので（types.ts の `subject` 参照）、
+    // 落ちてくる文字列は一覧と照合し、認識できなければ教科を決めない。
+    subject: course.subject ?? SUBJECTS.find((name) => name === parsed.subject) ?? "general",
     scenes: parsed.scenes.map((scene, index) => ({
       scene_id: index + 1,
       narration: scene.narration,
