@@ -49,12 +49,35 @@ export { VIDEO } from "./config-video.js";
 
 export const config = {
   anthropicApiKey: env("ANTHROPIC_API_KEY") ?? "",
-  anthropicModel: env("ANTHROPIC_MODEL") ?? "claude-opus-5",
+  anthropicModel: env("ANTHROPIC_MODEL") ?? "claude-sonnet-5",
   /**
    * 要求の課金先 workspace をキー自身が示さない identity-linked API key にだけ必要。
    * workspace-scoped key では空のままにする。
    */
   anthropicWorkspaceId: env("ANTHROPIC_WORKSPACE_ID") ?? "",
+
+  /*
+   * どの待ちにも締め切りを持たせる。
+   *
+   * SDK の既定は 1 要求 10 分、しかも timeout も再試行するため、既定のままだと
+   * 台本 1 本で 10 分 × (1 + maxRetries) かかり、そこへ generateScript 自身の
+   * 書き直し 1 回が掛かる。応答が返らない相手を、生成 1 本で 1 時間近く待つことになる。
+   * 止まったのか長いだけなのかを利用者が判断できないので、ここで上限を決める。
+   */
+
+  /** 台本 1 要求の上限。adaptive thinking と長い台本の実測に対して余裕を持たせる。 */
+  scriptTimeoutMs: num(env("SCRIPT_TIMEOUT_MS"), 6 * 60_000),
+  /** 問題文の整形 1 要求の上限。max_tokens が 2,000 なので台本より短くてよい。 */
+  outlineTimeoutMs: num(env("OUTLINE_TIMEOUT_MS"), 60_000),
+  /** 1 シーン分の音声合成の上限。EdgeTTS の WebSocket が黙って切れても止まらないため。 */
+  ttsTimeoutMs: num(env("TTS_TIMEOUT_MS"), 90_000),
+  /** whisper 1 本の上限。CAPTION_SOURCE=whisper のときだけ使う。 */
+  whisperTimeoutMs: num(env("WHISPER_TIMEOUT_MS"), 5 * 60_000),
+  /**
+   * API 側の再試行回数。SDK の既定 2 回は、上の締め切りに毎回掛かる。
+   * 一度の失敗は生成全体をやり直させるより、早く伝えたほうがよい。
+   */
+  anthropicMaxRetries: num(env("ANTHROPIC_MAX_RETRIES"), 1),
 
   /** "edge"（無料・既定値）| "elevenlabs" */
   ttsProvider: (env("TTS_PROVIDER") ?? "edge") as "edge" | "elevenlabs",

@@ -114,7 +114,7 @@ export const generateScript = async (
           ? [{ role: "user", content: `${topic}\n\n前回の出力は次の理由で却下されました。同じ問題を、この点だけ直して書き直してください。\n${correction}` }]
           : [{ role: "user", content: topic }],
         output_config: { format: zodOutputFormat(apiScriptSchema) },
-      })
+      }, { timeout: config.scriptTimeoutMs })
       .finalMessage();
 
     const parsed = response.parsed_output;

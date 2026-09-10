@@ -30,7 +30,7 @@ export const generateOutline = async (topic: string): Promise<string[]> => {
     system: `あなたは数学の問題を、条件とすべての問いを保って画面用に整えます。\n\n${OUTLINE_RULE}`,
     messages: [{ role: "user", content: topic }],
     output_config: { format: zodOutputFormat(outlineSchema) },
-  });
+  }, { timeout: config.outlineTimeoutMs });
 
   return (response.parsed_output?.outline ?? "")
     .split("\n")

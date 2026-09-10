@@ -9,6 +9,9 @@ import { config } from "../config.js";
 export const anthropic = () =>
   new Anthropic({
     apiKey: config.anthropicApiKey,
+    // 要求ごとの締め切りは呼び出し側が渡す。ここは、渡し忘れても無限には
+    // ならないための下支えである。
+    maxRetries: config.anthropicMaxRetries,
     ...(config.anthropicWorkspaceId
       ? {
           defaultHeaders: {

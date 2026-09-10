@@ -33,12 +33,44 @@ const TICKS_PER_MS = 10_000;
 const sceneFileName = (sceneId: number) =>
   `scene-${String(sceneId).padStart(2, "0")}.mp3`;
 
-const streamToBuffer = async (stream: NodeJS.ReadableStream) => {
+/**
+ * 締め切り付きで stream を読み切る。
+ *
+ * EdgeTTS は WebSocket 1 本で全シーンを直列に合成する。接続が黙って落ちると、この
+ * stream は end も error も出さないまま止まり、await が永久に返らない。工程の表示は
+ * 「ナレーションを合成しています」のままで、利用者には壊れたのか長いだけなのかが
+ * 分からない。だから最後の chunk からの無音時間で切る。全体ではなく chunk 間で計るのは、
+ * 長いナレーションを合成しているだけの状態を落とさないためである。
+ */
+const streamToBuffer = async (stream: NodeJS.ReadableStream, timeoutMs: number) => {
   const chunks: Buffer[] = [];
-  for await (const chunk of stream) {
-    chunks.push(Buffer.from(chunk));
+  let idle: ReturnType<typeof setTimeout> | undefined;
+
+  const stalled = new Promise<never>((_, reject) => {
+    const arm = () => {
+      clearTimeout(idle);
+      idle = setTimeout(
+        () => reject(new Error(`TTS stream stalled for ${Math.round(timeoutMs / 1000)}s`)),
+        timeoutMs,
+      );
+    };
+    arm();
+    stream.on("data", arm);
+    stream.on("end", () => clearTimeout(idle));
+  });
+
+  const read = (async () => {
+    for await (const chunk of stream) {
+      chunks.push(Buffer.from(chunk));
+    }
+    return Buffer.concat(chunks);
+  })();
+
+  try {
+    return await Promise.race([read, stalled]);
+  } finally {
+    clearTimeout(idle);
   }
-  return Buffer.concat(chunks);
 };
 
 /**
@@ -140,7 +172,7 @@ const synthesizeWithEdge = async (
         metadataRaw += chunk.toString();
       });
 
-      const audio = await streamToBuffer(audioStream);
+      const audio = await streamToBuffer(audioStream, config.ttsTimeoutMs);
       results.push({ audio, boundaries: parseWordBoundaries(metadataRaw) });
     }
     return results;
@@ -171,6 +203,8 @@ const synthesizeWithElevenLabs = async (texts: string[]): Promise<Buffer[]> => {
           model_id: config.elevenLabsModel,
           voice_settings: { stability: 0.4, similarity_boost: 0.75 },
         }),
+        // fetch に既定の締め切りは無い。応答本文の読み取りまでこの signal が覆う。
+        signal: AbortSignal.timeout(config.ttsTimeoutMs),
       },
     );
 

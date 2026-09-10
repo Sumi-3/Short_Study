@@ -13,8 +13,20 @@ export const parsePlanStep = (value: string) => {
   return number > 0 && text ? { number, text } : null;
 };
 
-export const solutionPlanNumber = (title: string) =>
-  /^\(([0-9]+)\)の方針$/.exec(title.trim())?.[1] ?? null;
+/**
+ * 方針シーンのタイトルを、その設問の番号へ戻す。方針シーンでなければ null。
+ *
+ * 単問には設問番号が無く、タイトルも「方針」だけになる。番号のある設問と区別できるよう
+ * 空文字を返す。null と紛れないよう、呼び出し側は `!== null` で判定する。
+ */
+export const solutionPlanNumber = (title: string) => {
+  const trimmed = title.trim();
+  if (trimmed === "方針") return "";
+  return /^\(([0-9]+)\)の方針$/.exec(trimmed)?.[1] ?? null;
+};
+
+/** 却下理由の文面。単問の方針には設問番号が無い。 */
+const planLabel = (number: string) => (number ? `(${number})の方針` : "方針");
 
 type PlanScene = {
   visual_type: string;
@@ -38,6 +50,11 @@ const questionNumbers = (topic: string) => {
 /**
  * 新規生成だけを検証する。既存の文字列チャネルで対応を表せば API の19フィールドを保て、
  * 方針を持たない旧 manifest は再生成も移行もせず再生できる。
+ *
+ * 単問にも方針シーンを求めるのはプロンプトの役目で、ここではしない。シーンは「問題」と
+ * 「概念の説明」を区別する印を持たず、概念の動画に方針は無い。取り違えれば正しい台本を
+ * 却下して数分かけて引き直させるので、方針が無い単問はここを素通りさせ、
+ * 置かれていれば下の構成をすべて検証する。
  */
 export const assertSolutionPlans = (scenes: readonly PlanScene[], topic: string, input = topic) => {
   const written = questionNumbers(topic);
@@ -45,6 +62,8 @@ export const assertSolutionPlans = (scenes: readonly PlanScene[], topic: string,
   const expected = original.length >= 2 ? original : written;
   const planned = scenes.filter((scene) => solutionPlanNumber(scene.visual_content) !== null);
   if (expected.length < 2 && !planned.length) return;
+  /** 設問が2つ以上あるときだけ、方針の順番を設問番号と突き合わせられる。 */
+  const numbered = expected.length >= 2;
 
   const reject = (index: number, reason: string): never => {
     throw new Error(`シーン${index + 1}の構成: ${reason}`);
@@ -56,7 +75,7 @@ export const assertSolutionPlans = (scenes: readonly PlanScene[], topic: string,
   let summarizing = false;
   const finish = (index: number) => {
     if (active && active.step !== active.items.length - 1) {
-      reject(index, `(${active.number})の方針をすべて順に解説してから次の設問やまとめへ進んでください。`);
+      reject(index, `「${planLabel(active.number)}」をすべて順に解説してから次の設問やまとめへ進んでください。`);
     }
   };
 
@@ -68,7 +87,10 @@ export const assertSolutionPlans = (scenes: readonly PlanScene[], topic: string,
       if (summarizing || scene.visual_type !== "point" || scene.visual_kind !== "bullets") {
         reject(index, "各設問の解説前に独立したpoint / bulletsの方針シーンを置いてください。");
       }
-      if (completed.includes(number) || (expected.length && number !== expected[completed.length])) {
+      if (!numbered && completed.length) {
+        reject(index, "設問が1つの動画に方針シーンは1つだけです。");
+      }
+      if (completed.includes(number) || (numbered && number !== expected[completed.length])) {
         reject(index, `方針は設問の順番どおりに1回ずつ置いてください（次は(${expected[completed.length] ?? "未解説の設問"})）。`);
       }
       if (!scene.visual_items.length || scene.visual_items.some((item, step) => parsePlanStep(item)?.number !== step + 1)) {
@@ -82,18 +104,18 @@ export const assertSolutionPlans = (scenes: readonly PlanScene[], topic: string,
       summarizing = true;
     } else {
       if (!active || summarizing || scene.visual_type !== "point") {
-        reject(index, "問題文の直後と各設問の解説前に「(番号)の方針」のbulletsシーンが必要です。");
+        reject(index, "問題文の直後に「方針」（2問以上なら「(番号)の方針」）のbulletsシーンが必要です。");
       }
       const plan = active!;
       const step = plan.items.indexOf(scene.visual_content);
       if (step < 0 || (step !== plan.step && step !== plan.step + 1)) {
-        reject(index, `解説タイトルは(${plan.number})の方針項目を番号・文言ごと完全に写し、①から順に使ってください。同じ項目の続きでも空にしないでください。`);
+        reject(index, `解説タイトルは「${planLabel(plan.number)}」の項目を番号・文言ごと完全に写し、①から順に使ってください。同じ項目の続きでも空にしないでください。`);
       }
       plan.step = step;
     }
   }
   finish(scenes.length - 1);
-  if (expected.some((number, index) => completed[index] !== number)) {
+  if (numbered && expected.some((number, index) => completed[index] !== number)) {
     reject(scenes.length - 1, `全設問 ${expected.map((number) => `(${number})`).join("、")} に方針と解説を用意してください。`);
   }
   if (!summarizing) reject(scenes.length - 1, "全設問の解説後に答えを振り返るsummaryを置いてください。");

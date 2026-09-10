@@ -23,7 +23,9 @@ const toWhisperWav = async (mp3Path: string) => {
   execFileSync(
     ffmpegPath,
     ["-i", mp3Path, "-ar", "16000", "-ac", "1", "-y", wavPath],
-    { stdio: "ignore" },
+    // timeout を過ぎれば子プロセスごと落とす。await を race で見捨てるのと違い、
+    // ffmpeg を残さない。
+    { stdio: "ignore", timeout: config.whisperTimeoutMs },
   );
   return wavPath;
 };
