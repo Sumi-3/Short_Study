@@ -5,7 +5,6 @@ import { apiScriptSchema, normalizeVisual, normalizeVisualText, type Script } fr
 import { normalizeMathText } from "../mathText.js";
 import { normalizeNarration } from "../mathSpeech.js";
 import { NARRATION_SEPARATOR, splitNarration } from "../narration.js";
-import { assertNarrationAlignment } from "./captionAlignment.js";
 import { COURSES } from "../courses.js";
 import { mathPrompt } from "../prompts/math.js";
 import { SCRIPT_MAX_TOKENS } from "../scriptBudget.js";
@@ -128,15 +127,13 @@ const reportUsage = (usage: {
 };
 
 /** モデルが守れる規則を破った台本であることを表す。 */
-export class ScriptRejection extends Error {}
+class ScriptRejection extends Error {}
 
 export const generateScript = async (
   topic: string,
   courseId: CourseId = "math",
   /** 作成画面での選択。省略時は ANTHROPIC_MODEL。 */
   model: string = config.anthropicModel,
-  /** TTSの実トークンで初めて判明した字幕の破綻も、同じ訂正プロンプトへ戻す。 */
-  rejection?: ScriptRejection,
 ): Promise<Script> => {
   const course = COURSES[courseId];
 
@@ -183,7 +180,6 @@ export const generateScript = async (
           const { display } = splitNarration(scene.narration);
           const reading = normalizeNarration(scene.narration);
           const narration = display === null ? reading : `${display}\n${NARRATION_SEPARATOR}\n${reading}`;
-          assertNarrationAlignment(narration);
           return { ...normalizeVisualText(scene), narration };
         } catch (error) {
           throw new Error(`シーン${index + 1}: ${error instanceof Error ? error.message : String(error)}`);
@@ -211,9 +207,8 @@ export const generateScript = async (
   let parsed;
   const startedAt = Date.now();
   try {
-    parsed = await attempt(rejection?.message);
+    parsed = await attempt();
   } catch (error) {
-    if (rejection) throw error;
     // ローカルでは長い台本にも修正の機会を残す。デプロイ時だけ関数の実行期限を考慮する。
     if (process.env.VERCEL && Date.now() - startedAt > SCRIPT_RETRY_BUDGET_MS) {
       throw error;

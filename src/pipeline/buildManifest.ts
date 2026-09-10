@@ -12,7 +12,7 @@ const prepareCaptions = (
   captions: Caption[],
   subject: Script["subject"],
 ) => {
-  const aligned = alignCaptions(narration, captions).captions;
+  const aligned = alignCaptions(narration, captions);
   return subject === "math" ? aligned : normalizeCaptionMath(aligned);
 };
 

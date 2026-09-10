@@ -4,7 +4,6 @@ import type { Caption } from "@remotion/captions";
 import { config, paths } from "../config.js";
 import type { SceneAudio, WordBoundary } from "./generateAudio.js";
 import { splitNarration } from "../narration.js";
-import { assertCaptionAlignments } from "./captionAlignment.js";
 
 const captionsFromWordBoundaries = (boundaries: WordBoundary[]): Caption[] =>
   boundaries.map((boundary) => ({
@@ -47,8 +46,6 @@ export const generateCaptions = async ({
       captionsPerScene.push(await captionsFromWhisper(sceneAudio.filePath));
     }
   }
-
-  assertCaptionAlignments(scenes, captionsPerScene);
 
   // 中間出力を確認できるよう audio の隣に保管する。
   fs.writeFileSync(
