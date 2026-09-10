@@ -199,7 +199,8 @@ npm run studio -- --props=public/projects/mock/props.json
 - `TTS_PROVIDER` — `edge`（無料・デフォルト）/ `elevenlabs`
 - `CAPTION_SOURCE` — `tts`（デフォルト）/ `whisper`
 - `EDGE_VOICE` / `EDGE_RATE` / `EDGE_PITCH` — 声質（後述）
-- 尺は問題の難しさから自動決定。生成上限は10シーン・ナレーション552文字（約120秒、実際の再生時間はTTSとシーン間の余白で決まる）。旧 `TARGET_SECONDS` は参照しない。
+- 複数設問は「問題文 → (1)の番号付き方針 → 各項目の解説・答え → (2)の方針 → 解説・答え → … → まとめ」で構成する。解説タイトルには直前の方針の番号と文言をそのまま使う。
+- シーン数・ナレーション文字数・動画長の上限は設けない。再生時間は全シーンのTTS実長と余白の合計で決まる。旧 `TARGET_SECONDS` は参照しない。API応答は64,000 tokensまで確保し、途中終了した台本は採用しない。Vercelの関数実行期限300秒は動画長とは別の実行環境の制約として残る。
 
 ### 声を変える
 

@@ -81,8 +81,7 @@ export const config = {
   whisperVersion: env("WHISPER_VERSION") ?? "1.5.5",
   language: "ja" as const,
 
-  // TARGET_SECONDS は廃止した。長さは解説の複雑さで決まり、共通の台本予算はユーザーが選ぶ
-  // 時間ではなくデプロイ時の安全上限である。
+  // TARGET_SECONDS は参照しない。再生時間は全シーンの音声実長と余白の合計で決める。
   /** 各シーンのナレーション後へ加える無音（秒）。 */
   scenePaddingSeconds: num(env("SCENE_PADDING_SECONDS"), 0.35),
 } as const;

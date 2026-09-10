@@ -21,7 +21,8 @@ const figureEmphasisSchema = z.number().int().min(0).max(5);
 export const sceneVisualSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("bullets"),
-    items: z.array(z.string()).min(1).max(4),
+    // 方針の末尾を落とすと、その手順を使う解説タイトルとの対応が失われる。
+    items: z.array(z.string()).min(1),
   }),
   z.object({
     kind: z.literal("flow"),
@@ -397,7 +398,7 @@ export const normalizeVisual = (
   scene = normalizeVisualText(scene);
   switch (scene.visual_kind) {
     case "bullets": {
-      const items = scene.visual_items.filter(Boolean).slice(0, 4);
+      const items = scene.visual_items.filter((item) => item.trim());
       return items.length ? { kind: "bullets", items } : undefined;
     }
     case "flow": {

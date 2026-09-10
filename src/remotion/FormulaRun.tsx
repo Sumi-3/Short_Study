@@ -1,6 +1,7 @@
 import { SceneShell } from "./SceneShell";
 import { Formula, parseFormulaLine } from "./math/Formula";
 import type { ManifestScene } from "../types";
+import { parsePlanStep } from "../solutionPlan";
 
 /**
  * 複数の formula シーンを、ひとつの舞台で続けて描く。
@@ -36,7 +37,9 @@ export const FormulaRun: React.FC<{
       : scene.visual.lines.filter((line) => parseFormulaLine(line).annotation !== "carry");
     lines.push(...own);
     segments.push({ from, durationInFrames: scene.durationInFrames, count: own.length });
-    if (scene.visual_content.trim()) {
+    // 同じ方針項目の続きではタイトルを消して出し直さず、そのまま読み続けられるようにする。
+    if (scene.visual_content.trim() &&
+        (!parsePlanStep(scene.visual_content) || headings.at(-1)?.text !== scene.visual_content)) {
       headings.push({ text: scene.visual_content, from });
     }
     caption = scene.visual.caption;

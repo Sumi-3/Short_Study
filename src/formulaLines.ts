@@ -5,6 +5,7 @@
  * それが構造化出力の grammar 上限を超えていた。
  */
 import { normalizeMathText, splitMathText } from "./mathText.js";
+import { parsePlanStep } from "./solutionPlan.js";
 
 export const FORMULA_MAX_LINES = 6;
 export const COMPANION_MAX_LINES = 2;
@@ -112,8 +113,8 @@ export const assertFormulaCarry = (scenes: readonly {
         "[carry]の後に、続きとなる数式行を必ず置いてください"],
       [() => scene.visual_type !== "point", "[carry]が使えるのはpointのシーンだけです"],
       [() => previous?.visual_type !== "point", "直前のシーンがpointではありません"],
-      [() => Boolean(scene.visual_content.trim()),
-        "続きのシーンなのでvisual_contentは空文字にしてください"],
+      [() => Boolean(scene.visual_content.trim()) && !parsePlanStep(scene.visual_content),
+        "続きのシーンでは方針の番号付きタイトルを維持し、それ以外のvisual_contentは空文字にしてください"],
       [() => !lastEquation, "直前のシーンに写せる数式がありません"],
       [() => autoBoxed, "直前のシーンの最終式は自動で囲まれた答えなので、式変形は続いていません"],
       // `!` 断言ではなく guard する。全 predicate が走るため、この 2 つは上の

@@ -6,7 +6,8 @@ import { normalizeMathText } from "../mathText.js";
 import { normalizeNarration } from "../mathSpeech.js";
 import { COURSES } from "../courses.js";
 import { mathPrompt } from "../prompts/math.js";
-import { assertScriptBudget, budgetFor, scriptMaxTokens } from "../scriptBudget.js";
+import { SCRIPT_MAX_TOKENS } from "../scriptBudget.js";
+import { assertSolutionPlans } from "../solutionPlan.js";
 import { assertFormulaCarry } from "../formulaLines.js";
 import { MATH_UNIT_NAMES, topicsOf } from "../curriculum.js";
 import type { CourseId } from "../courses.js";
@@ -68,7 +69,7 @@ const classify = (written: string, allowed: readonly string[] | null) => {
   };
 };
 
-/** 300s 上限内で scriptBudget.ts がこの工程に確保する 170s の半分。 */
+/** Vercel の実行期限内にTTSの時間も残すため、再試行だけを制限する。動画の尺とは独立。 */
 const SCRIPT_RETRY_BUDGET_MS = 85_000;
 
 /** モデルが守れる規則を破った台本であることを表す。 */
@@ -88,31 +89,12 @@ export const generateScript = async (
 
   const client = anthropic();
 
-  /*
-   * adaptive thinking もここから消費するため、上限はシーン数に連動させる必要がある。
-   *
-   * 完成シーンの JSON は 275–560 文字なので、1 シーン 1,500 tokens は余裕があり、
-   * 固定の 12,000 は thinking の余白になる。旧来の固定 16,000 では長い台本がシーン途中で
-   * 止まり、解析不能な `stop_reason: max_tokens` として返っていた。
-   *
-   * 実際のシーン数も同じ呼び出しでモデルが決めるため、許容する最大台本に合わせて確保する。
-   * 到達しない 64k の clamp は不要で、10 シーンには adaptive thinking を含めても
-   * 12,000 + 10 * 1,500 = 27,000 tokens で足りる。
-   */
-  const budget = budgetFor();
-  const maxTokens = scriptMaxTokens(budget);
-
-  /*
-   * 通常の `.parse()` ではなく stream を使う。SDK は `max_tokens` から 10 分超の処理を
-   * 見込む非ストリーミング要求を拒否するためで、`3600 * max_tokens / 128000 > 600`、すなわち
-   * 21,333 超が該当する。10 シーンの安全上限は既にこれを超える。`finalMessage()` にも
-   * `parsed_output` は残るため構造化出力は維持でき、ここで中間イベントは消費しない。
-   */
+  // 大きい応答はSDKが非ストリーミング要求を拒否するため、構造化出力もstreamで受け取る。
   const attempt = async (correction?: string) => {
     const response = await client.messages
       .stream({
         model: config.anthropicModel,
-        max_tokens: maxTokens,
+        max_tokens: SCRIPT_MAX_TOKENS,
         thinking: { type: "adaptive" },
         system: mathPrompt(),
         messages: correction
@@ -123,7 +105,7 @@ export const generateScript = async (
       .finalMessage();
 
     const parsed = response.parsed_output;
-    if (!parsed) {
+    if (!parsed || response.stop_reason === "max_tokens") {
       throw new Error(
         `Claude returned no parseable script (stop_reason: ${response.stop_reason}).`,
       );
@@ -137,7 +119,7 @@ export const generateScript = async (
           throw new Error(`シーン${index + 1}: ${error instanceof Error ? error.message : String(error)}`);
         }
       });
-      assertScriptBudget(parsed.scenes, budget);
+      assertSolutionPlans(parsed.scenes, parsed.topic, topic);
       assertFormulaCarry(parsed.scenes);
     } catch (error) {
       // 再試行でこの理由を引用できるよう印を付ける。API やネットワークの失敗も再試行には
@@ -161,13 +143,8 @@ export const generateScript = async (
   try {
     parsed = await attempt();
   } catch (error) {
-    /*
-     * 2 回目がまだ収まる場合だけ実行する。`vercel.json` は関数を 300s に制限し、
-     * scriptBudget.ts はそのうち 170s をこの工程へ確保するので、2 回で共有しなければならない。
-     * 1 回目が半分を超えていれば、再試行は上限を越えて原因を示すエラーではなく timeout で
-     * 実行を失わせる。ローカルにはこの上限がないが、同じ計算は 2 回目の所要時間の妥当な推定になる。
-     */
-    if (Date.now() - startedAt > SCRIPT_RETRY_BUDGET_MS) {
+    // ローカルでは長い台本にも修正の機会を残す。デプロイ時だけ関数の実行期限を考慮する。
+    if (process.env.VERCEL && Date.now() - startedAt > SCRIPT_RETRY_BUDGET_MS) {
       throw error;
     }
     parsed = await attempt(error instanceof ScriptRejection ? error.message : undefined);

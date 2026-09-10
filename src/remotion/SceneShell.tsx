@@ -6,6 +6,7 @@ import { Formula } from "./math/Formula";
 import type { Scene } from "../types";
 import { parseProblemOutline } from "../problemOutline";
 import { useFitToStage } from "./useFitToStage";
+import { parsePlanStep, stepNumber } from "../solutionPlan";
 
 /**
  * hook の最初の frame から見せる問題。
@@ -339,8 +340,7 @@ export const SceneShell: React.FC<{
    */
   const inset = poster || problem ? POSTER_SAFE_X : layout.safeX;
   const label = labelFor(scene);
-  // 前 step の続きを示す step は heading を空にする。その場合 stage には計算だけがあり、上で新しい
-  // section を告知するものはない。
+  // 旧台本の空見出しも受け付ける。新しい番号付き方針では続きのシーンにもタイトルを保つ。
   const heading = problem ? "" : scene.visual_content;
   const headingList = problem ? [] : headings ?? (heading ? [{ text: heading, from: 0 }] : []);
   // 下に置く diagram がないなら headline が stage 全体を使う。ただし problem card がすでに使っている場合を除く。
@@ -448,6 +448,7 @@ export const SceneShell: React.FC<{
       // scene では、cell が 1 つの grid は以前の block と同じ大きさに組まれる。
       <div style={{ display: "grid", width: "fit-content", maxWidth: "100%" }}>
       {headingList.map(({ text, from }, index) => {
+        const step = parsePlanStep(text);
         const local = frame - from;
         const next = headingList[index + 1]?.from;
         // 次の見出しが立ち上がる 0.15 秒のうちに退き切る。同じ場所に二つの文が重なって透けると
@@ -460,7 +461,8 @@ export const SceneShell: React.FC<{
           marginTop: label ? (isHook ? 88 : 56) : 0,
           fontFamily: theme.fontFamily,
           fontWeight: 900,
-          fontSize: isHook ? 124 : 90,
+          fontSize: isHook ? 124 : step ? 64 : 90,
+          ...(step ? { display: "flex", alignItems: "baseline", gap: 16 } : {}),
           overflowWrap: "anywhere",
           lineHeight: 1.18,
           color: theme.ink,
@@ -478,7 +480,10 @@ export const SceneShell: React.FC<{
         }}
       >
         {/* headline には question と同じ `a_n`/`x^2` 表記があるため、同じように組版する。 */}
-        <MathText text={text} />
+        {step ? <>
+          <span style={{ color: accent, flexShrink: 0 }}>{stepNumber(step.number)}</span>
+          <span style={{ minWidth: 0 }}><MathText text={step.text} display={false} /></span>
+        </> : <MathText text={text} />}
       </div>
 
       {/* headline 下に wipe in する accent rule。 */}
