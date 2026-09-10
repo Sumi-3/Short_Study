@@ -49,7 +49,7 @@ export { VIDEO } from "./config-video.js";
 
 export const config = {
   anthropicApiKey: env("ANTHROPIC_API_KEY") ?? "",
-  anthropicModel: env("ANTHROPIC_MODEL") ?? "claude-sonnet-5",
+  anthropicModel: env("ANTHROPIC_MODEL") ?? "claude-opus-5",
   /**
    * 要求の課金先 workspace をキー自身が示さない identity-linked API key にだけ必要。
    * workspace-scoped key では空のままにする。
