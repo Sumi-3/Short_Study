@@ -3,6 +3,8 @@ import path from "node:path";
 import type { Caption } from "@remotion/captions";
 import { config, paths } from "../config.js";
 import type { SceneAudio, WordBoundary } from "./generateAudio.js";
+import { splitNarration } from "../narration.js";
+import { assertCaptionAlignments } from "./captionAlignment.js";
 
 const captionsFromWordBoundaries = (boundaries: WordBoundary[]): Caption[] =>
   boundaries.map((boundary) => ({
@@ -19,17 +21,20 @@ const captionsFromWordBoundaries = (boundaries: WordBoundary[]): Caption[] =>
 export const generateCaptions = async ({
   sceneAudios,
   slug,
+  scenes,
 }: {
   sceneAudios: SceneAudio[];
   slug: string;
+  scenes: readonly { narration: string }[];
 }): Promise<Caption[][]> => {
   const captionsPerScene: Caption[][] = [];
 
-  for (const sceneAudio of sceneAudios) {
-    if (config.captionSource === "tts") {
+  for (const [index, sceneAudio] of sceneAudios.entries()) {
+    // 新形式の対応付けでは、音声認識による言い換えを含まないEdgeの境界だけを使う。
+    if (config.captionSource === "tts" || splitNarration(scenes[index].narration).display !== null) {
       if (!sceneAudio.wordBoundaries) {
         throw new Error(
-          `CAPTION_SOURCE=tts requires TTS_PROVIDER=edge (scene ${sceneAudio.sceneId} has no word boundaries).`,
+          `TTS字幕と2ブロックのnarrationには TTS_PROVIDER=edge が必要です（シーン${sceneAudio.sceneId}にword boundaryがありません）。`,
         );
       }
       captionsPerScene.push(
@@ -42,6 +47,8 @@ export const generateCaptions = async ({
       captionsPerScene.push(await captionsFromWhisper(sceneAudio.filePath));
     }
   }
+
+  assertCaptionAlignments(scenes, captionsPerScene);
 
   // 中間出力を確認できるよう audio の隣に保管する。
   fs.writeFileSync(

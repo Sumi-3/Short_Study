@@ -1,4 +1,5 @@
-import { COMMAND_READINGS, TERMS, TERM_INDICES, TERM_LETTERS } from "./mathVocabulary.js";
+import { COMMAND_READINGS, TERM_INDICES, TERM_LETTERS } from "./mathVocabulary.js";
+import { splitNarration } from "./narration.js";
 import { splitMathText } from "./mathText.js";
 
 /** 変換不能な式を読み飛ばすと音声が誤った説明になるため、再生成できる段階で止める。 */
@@ -125,95 +126,11 @@ export const mathToSpeech = (tex: string): string => {
 };
 
 export const normalizeNarration = (narration: string): string => {
-  const result = splitMathText(narration).map((part) => part.math ? mathToSpeech(part.text) : part.text).join("");
+  const { display, reading } = splitNarration(narration);
+  // 旧台本の数式読み下しは保ち、新形式はモデルが書いた読みだけを検査する。
+  const result = display !== null ? reading : splitMathText(reading).map((part) => part.math ? mathToSpeech(part.text) : part.text).join("");
   if (/[\\$^_{}]/.test(result)) {
-    throw new NarrationMathError(`narration に未変換の数式が残っています「${result}」。日本語の読みで書き直してください。`);
+    throw new NarrationMathError(`narration の読み用文章に未変換の数式が残っています「${result}」。日本語の読みで書き直してください。`);
   }
   return result;
-};
-
-/**
- * 複合式の読みには閉じ括弧まで付けるので、既存の小問番号「かっこ1」と区別できる。
- * 実際に見つかった読みを結合キーとして返し、TTS がどこで分割しても括弧の範囲を保つ。
- */
-export const structuredSpeechMatches = (source: string): { spoken: string; tex: string }[] => {
-  const words = Object.entries({
-    ...Object.fromEntries(Object.entries(COMMAND_READINGS).map(([command, speech]) => [speech, `\\${command} `])),
-    ...Object.fromEntries(Object.entries(OPERATORS).map(([symbol, speech]) => [speech, symbol])),
-    ...Object.fromEntries(Object.entries(TERMS).map(([speech, tex]) => [speech, tex.slice(1, -1)])),
-  }).sort(([a], [b]) => b.length - a.length);
-  const results: { spoken: string; tex: string }[] = [];
-  let at = 0;
-  type Atom = { tex: string; grouped?: boolean };
-  const ungroup = (atom: Atom) => atom.grouped ? atom.tex.slice(1, -1) : atom.tex;
-  const eat = (word: string) => {
-    if (!source.startsWith(word, at)) return false;
-    at += word.length;
-    return true;
-  };
-  const atom = (): Atom | null => {
-    const start = at;
-    let value: Atom | null = null;
-    if (eat("かっこ")) {
-      const inner = expression();
-      if (inner && eat("かっことじ")) value = { tex: `(${inner})`, grouped: true };
-    } else if (eat("ルート")) {
-      const inner = atom();
-      if (inner) value = { tex: `\\sqrt{${ungroup(inner)}}` };
-    } else {
-      const term = Object.keys(TERMS).sort((a, b) => b.length - a.length).find((key) => source.startsWith(key, at));
-      const word = words.find(([key, tex]) => source.startsWith(key, at) && !/[+\-−=<>×÷→≤≥≠]/.test(tex));
-      const literal = /^(?:\d+(?:\.\d+)?|[a-zA-Z])/.exec(source.slice(at))?.[0];
-      if (term) { at += term.length; value = { tex: TERMS[term].slice(1, -1) }; }
-      else if (word) { at += word[0].length; value = { tex: word[1] }; }
-      else if (literal) { at += literal.length; value = { tex: literal }; }
-    }
-    if (!value) { at = start; return null; }
-    const beforePower = at;
-    if (eat("の")) {
-      const power = atom();
-      if (power && eat("乗")) value = { tex: `${value.tex}^{${ungroup(power)}}` };
-      else at = beforePower;
-    }
-    return value;
-  };
-  const product = (): Atom | null => {
-    const first = atom();
-    if (!first) return null;
-    let tex = first.tex;
-    let count = 1;
-    for (let next = atom(); next; next = atom()) { tex += next.tex; count++; }
-    return { tex, grouped: count === 1 && first.grouped };
-  };
-  const fraction = (): string | null => {
-    const denominator = product();
-    if (!denominator) return null;
-    if (!eat("分の")) return denominator.tex;
-    const numerator = product();
-    return numerator ? `\\frac{${ungroup(numerator)}}{${ungroup(denominator)}}` : null;
-  };
-  const expression = (): string | null => {
-    const sign = eat("マイナス") ? "-" : "";
-    const first = fraction();
-    if (!first) return null;
-    let tex = sign + first;
-    while (true) {
-      const beforeOperator = at;
-      const operator = words.find(([key, value]) => source.startsWith(key, at) && /^[+\-−=<>×÷→≤≥≠]$/.test(value));
-      if (!operator) break;
-      at += operator[0].length;
-      const next = fraction();
-      if (!next) { at = beforeOperator; break; }
-      tex += operator[1] + next;
-    }
-    return tex;
-  };
-  while (at < source.length) {
-    const start = at;
-    const tex = expression();
-    const spoken = source.slice(start, at);
-    if (tex && spoken.includes("かっことじ")) results.push({ spoken, tex });
-    else at = start + 1;
-  }
-  return results;
 };

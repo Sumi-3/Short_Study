@@ -6,7 +6,8 @@ import { buildManifest } from "./buildManifest.js";
 import { generateAudio } from "./generateAudio.js";
 import { generateCaptions } from "./generateCaptions.js";
 import { generateOutline } from "./generateOutline.js";
-import { generateScript } from "./generateScript.js";
+import { CaptionAlignmentError } from "./captionAlignment.js";
+import { generateScript, ScriptRejection } from "./generateScript.js";
 import { config } from "../config.js";
 
 /**
@@ -55,38 +56,30 @@ export async function* runPipeline({
   const at = (index: number): JobEvent => ({ ...base, ...STEPS[index] });
 
   try {
-    yield at(0);
-    const script = await generateScript(topic, course, model);
-
     const slug = makeSlug(topic);
+    let rejection: ScriptRejection | undefined;
+    let manifest;
+    for (let attempt = 0; ; attempt++) {
+      yield at(0);
+      const script = await generateScript(topic, course, model, rejection);
+      // TTSと並行に作り、字幕の再試行で台本が変われば問題文の箇条書きも作り直す。
+      const outline = generateOutline(script.topic, model).catch(() => [] as string[]);
 
-    /*
-     * ここで開始し下で回収するため、ナレーションの合成・計時中に走る。2 回目の model call なので、
-     * 重ねなければその全遅延を生成に足してしまうが、重ねれば実時間の負担はない。ない card は問題文を
-     * 表示してフォールバックできるため、この失敗で動画を失ってはならず、rejection を握りつぶす。
-     */
-    const outline = generateOutline(script.topic, model).catch(() => [] as string[]);
-
-    yield at(1);
-    const sceneAudios = await generateAudio({
-      scenes: script.scenes,
-      slug,
-      voice,
-    });
-
-    yield at(2);
-    const captionsPerScene = await generateCaptions({ sceneAudios, slug });
-
-    yield at(3);
-    const manifest = buildManifest({
-      script: {
-        ...script,
-        outline: await outline,
-      },
-      slug,
-      sceneAudios,
-      captionsPerScene,
-    });
+      yield at(1);
+      const sceneAudios = await generateAudio({ scenes: script.scenes, slug, voice });
+      yield at(2);
+      try {
+        const captionsPerScene = await generateCaptions({ sceneAudios, slug, scenes: script.scenes });
+        yield at(3);
+        manifest = buildManifest({
+          script: { ...script, outline: await outline }, slug, sceneAudios, captionsPerScene,
+        });
+        break;
+      } catch (error) {
+        if (!(error instanceof CaptionAlignmentError) || attempt > 0) throw error;
+        rejection = new ScriptRejection(error.message);
+      }
+    }
     const manifestSrc = await publishProject(slug, manifest);
 
     yield {

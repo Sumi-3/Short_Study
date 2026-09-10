@@ -50,9 +50,9 @@
   `400 The compiled grammar is too large`）。経緯は `src/pipeline/generateOutline.ts` の
   冒頭コメント。フィールドを増やす方向で解こうとせず、既存フィールドの再利用か
   文字列マーカーで表現する（`src/formulaLines.ts` の `[text]` `[carry]` `[substitute: …]` など）。
-- ナレーションはカナで書いて TTS に正しく読ませ、字幕は `src/pipeline/captionSpelling.ts` で
-  記法に戻す。`mergeSplitWords` は**リテラルのキー**で分割トークンを繋ぐので、
-  正規表現だけのルールはこの経路に乗らない。
+- `narration` は字幕用文章と読み用文章を `<<<TTS_READING>>>` で区切る。
+  `src/pipeline/captionAlignment.ts` が `$…$` を1原子として差分で対応付ける。
+  区切りのない旧台本は読み用のみ。既存manifestの字幕は書き換えない。
 
 ## 触らないもの
 

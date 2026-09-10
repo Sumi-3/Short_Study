@@ -2,7 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { config, paths } from "./config.js";
-import { generateScript } from "./pipeline/generateScript.js";
+import { CaptionAlignmentError } from "./pipeline/captionAlignment.js";
+import { generateScript, ScriptRejection } from "./pipeline/generateScript.js";
 import { generateAudio } from "./pipeline/generateAudio.js";
 import { generateCaptions } from "./pipeline/generateCaptions.js";
 import { buildManifest, manifestSrc } from "./pipeline/buildManifest.js";
@@ -87,7 +88,7 @@ const main = async () => {
     : `台本生成 (${COURSES[course].label} / ${config.anthropicModel})`;
   step(1, totalSteps, stepOneLabel);
 
-  const script: Script = scriptPath
+  let script: Script = scriptPath
     ? scriptSchema.parse(JSON.parse(fs.readFileSync(scriptPath, "utf-8")))
     : await generateScript(topic, course);
   for (const scene of script.scenes) {
@@ -97,17 +98,27 @@ const main = async () => {
     console.warn(`   ⚠︎ ${warning}`);
   }
 
-  step(2, totalSteps, `ナレーション生成 (TTS: ${config.ttsProvider})`);
-  const sceneAudios = await generateAudio({ scenes: script.scenes, slug });
-  const totalSeconds = sceneAudios.reduce((sum, a) => sum + a.durationInSeconds, 0);
-  console.log(`   ${sceneAudios.length} clips / ${totalSeconds.toFixed(1)}s`);
+  let manifest;
+  for (let attempt = 0; ; attempt++) {
+    step(2, totalSteps, `ナレーション生成 (TTS: ${config.ttsProvider})`);
+    const sceneAudios = await generateAudio({ scenes: script.scenes, slug });
+    const totalSeconds = sceneAudios.reduce((sum, a) => sum + a.durationInSeconds, 0);
+    console.log(`   ${sceneAudios.length} clips / ${totalSeconds.toFixed(1)}s`);
 
-  step(3, totalSteps, `字幕タイミング取得 (${config.captionSource})`);
-  const captionsPerScene = await generateCaptions({ sceneAudios, slug });
-  console.log(`   ${captionsPerScene.reduce((sum, c) => sum + c.length, 0)} tokens`);
-
-  step(4, totalSteps, "manifest 書き出し");
-  const manifest = buildManifest({ script, slug, sceneAudios, captionsPerScene });
+    step(3, totalSteps, `字幕タイミング取得 (${config.captionSource})`);
+    try {
+      const captionsPerScene = await generateCaptions({ sceneAudios, slug, scenes: script.scenes });
+      console.log(`   ${captionsPerScene.reduce((sum, c) => sum + c.length, 0)} tokens`);
+      step(4, totalSteps, "manifest 書き出し");
+      manifest = buildManifest({ script, slug, sceneAudios, captionsPerScene });
+      break;
+    } catch (error) {
+      // --script は利用者の台本なので、モデルに勝手に書き換えさせない。
+      if (!(error instanceof CaptionAlignmentError) || scriptPath || attempt > 0) throw error;
+      console.warn(`字幕の対応付けを修正して台本を再生成します: ${error.message}`);
+      script = await generateScript(topic, course, config.anthropicModel, new ScriptRejection(error.message));
+    }
+  }
   const frames = manifest.scenes.reduce((sum, s) => sum + s.durationInFrames, 0);
   console.log(`   ${frames} frames (${(frames / manifest.fps).toFixed(1)}s)`);
 

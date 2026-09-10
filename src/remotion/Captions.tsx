@@ -62,7 +62,7 @@ const withPageBreaks = (captions: Caption[]): Caption[] => {
       next && charsOnPage + displayLength(next.text) > MAX_CHARS_PER_PAGE;
     const phraseEnded = next && next.startMs - caption.endMs > PHRASE_GAP_MS;
 
-    // pipeline が付けた break は narration 自体の文境界であり、ここで時間から推測するより確かである。
+    // pipeline が付けた break は字幕本文の句読点であり、ここで時間から推測するより確かである。
     const pageBreakAfter = Boolean(
       caption.pageBreakAfter || pageIsFull || phraseEnded,
     );
@@ -142,9 +142,8 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
                   : shadowOf(theme),
               }}
             >
-              {/* 分数・根号・数列の項は captionSpelling が `$…$` の LaTeX にしてある。pipeline は
-                  書き換える前に分割された kana を結合するので、`$…$` が token をまたぐことはない。
-                  text style で組み、2 行の帯を分数で押し広げない。 */}
+              {/* $…$ は発話区間全体を持つ1原子として対応付け済み。
+                  text style で組み、2行の帯を分数で押し広げない。 */}
               <MathText text={token.text} display={false} />
             </span>
           );

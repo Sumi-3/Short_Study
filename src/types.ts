@@ -247,6 +247,7 @@ export const isStepScene = (visualType: string) =>
 
 export const sceneSchema = z.object({
   scene_id: z.number(),
+  /** 19フィールドと旧台本の互換性を保つため、2ブロックも文字列のまま持つ（splitNarration）。 */
   narration: z.string(),
   visual_type: visualTypeSchema,
   visual_content: z.string(),

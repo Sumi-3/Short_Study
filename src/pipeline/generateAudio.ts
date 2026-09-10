@@ -228,7 +228,7 @@ export const generateAudio = async ({
   /** 作成画面で動画ごとに選ぶ。なければ EDGE_VOICE へフォールバックする。 */
   voice?: string;
 }): Promise<SceneAudio[]> => {
-  // CLI 以外の呼び出しでも、生の TeX を外部の TTS に送らない最後の境界にする。
+  // 字幕のLaTeXを送らず、読み用だけを取り出して検査する。旧台本は従来の読み下しを保つ。
   const texts = scenes.map((scene) => normalizeNarration(scene.narration));
   const dir = paths.projectDir(slug);
   fs.mkdirSync(dir, { recursive: true });
