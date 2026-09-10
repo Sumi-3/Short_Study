@@ -154,17 +154,30 @@ const VISUAL_DOCS = {
         楕円 x²/16+y²/4=1: expr="4*cos(t)", expr_y="2*sin(t)"
         サイクロイド     : expr="t-sin(t)", expr_y="1-cos(t)"
         y=f(x) で書けるものには使わない。expr_y は空文字列にする
-      region に "above" か "below" を入れると、その曲線の上側／下側が塗られる
-        複数の曲線に付ければ、その全部を満たす部分（連立不等式の領域）が塗られる
-        例: y≧x² かつ y≦6 → 1本目 region="above"、2本目 expr="0*x+6" region="below"
-        不要なら空文字列
+      面積・囲まれた部分・不等式の領域を説明するシーンでは、必ず対象を色塗りする。境界線だけで済ませない
+      region は目的に合わせて次の値を入れる（塗らない補助曲線だけ空文字列）
+        "between": y=f(x) の2曲線の両方に指定し、visual_shade=[左端x,右端x] を必ず併用する
+          区間内で2曲線の間を塗る。上下が交点で入れ替わっても両側の領域を塗れる
+          閉領域の左右端には交点のx座標を入れる。visual_range は表示範囲なので代用しない
+          例: y=x² と y=x+2 で囲まれた部分 → expr="x^2" と expr="x+2" の両方を region="between"、visual_shade=[-1,2]
+          例: y=x³ と y=x の囲む2つの領域 → expr="x^3" と expr="x" の両方を region="between"、visual_shade=[-1,1]
+          片方の領域だけなら、その交点間の区間にする（上の右側だけなら [0,1]）
+        "above" / "below": y=f(x) の上側／下側。不等式ごとに指定すると、すべてを満たす共通部分を塗る
+          例: y≧x² かつ y≦6 → expr="x^2" region="above"、expr="6" region="below"
+          3本の境界や追加条件も、各曲線の above/below を組み合わせる（曲線は最大3本）
+        "inside": 媒介変数表示の閉曲線の内部。円・楕円は1周分を指定する。開いた弧には使わない
+          例: 円 x²+y²≦9 の内部 → expr="3*cos(t)", expr_y="3*sin(t)", region="inside"、visual_shade=[]
+          例: その円の内部かつ y≧x → 円の region="inside" に加え、expr="x", expr_y="", region="above"
+          inside と above/below、複数の inside は共通部分になる。between に加えた条件も共通部分になる
       label は10文字以内の凡例。数式は $y=x^2$ $y=\\frac{x}{2}$ のように $…$ で囲む（不要なら空文字列）
     visual_range = [xの最小, xの最大, yの最小, yの最大]。曲線が収まる範囲にする
         媒介変数曲線の t の範囲を変えたいときだけ、後ろに [tの最小, tの最大] を足して6数値
         （既定は0〜2π。サイクロイド2山なら [0, 12.6] を足す）
         円を丸く描きたいときは x の幅と y の幅を等しくする（例: [-5,5,-5,5]）
-    visual_shade = [開始x, 終了x]。定積分の面積を塗るとき、または領域のx範囲を切るとき
-        不要なら空配列
+    visual_shade = [開始x, 終了x]（開始x < 終了x）、不要なら空配列。region の有無で役割が決まる
+        region がある: 指定した領域をこのx範囲に制限する。between では必須、above/below/inside だけなら任意
+        region がすべて空: 最初の曲線とx軸の間をこの区間で塗る（1関数の定積分用）
+        2曲線の間の面積には visual_shade だけを使わず、両曲線に between を付ける
     visual_points = 印をつける点。接点・交点・解など「答えになる点」があるときだけ
         [{x, y, label}] を1〜3個。label は "(-1, -1)" のような短い文字列。根号や分数を含むなら
         $(\\sqrt{2},\\ 1)$ のように $…$ で囲む。不要なら空配列

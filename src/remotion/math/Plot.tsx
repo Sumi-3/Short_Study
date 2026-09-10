@@ -4,14 +4,15 @@ import { clamped } from "../clamped";
 import { useTheme, withAlpha } from "../theme";
 import { compileExpression } from "./expression";
 import { SvgLabel } from "./SvgLabel";
+import { buildRegionPolygons, type PlotRegion } from "./plotRegions";
 
 export type PlotCurve = {
   expr: string;
   /** curve が parametric のときの y(t)。その場合 `expr` は x(t)。 */
   exprY: string | null;
   label: string;
-  /** shade する region が curve のどちら側か。 */
-  region: "above" | "below" | null;
+  /** between は shade の区間で2曲線の間、inside は閉曲線内部。 */
+  region: PlotRegion | null;
 };
 
 export type PlotData = {
@@ -19,7 +20,7 @@ export type PlotData = {
   yRange: [number, number];
   curves: PlotCurve[];
   tRange: [number, number] | null;
-  /** 積分用の、最初の curve 下の area。空 tuple はなしを表す。 */
+  /** region 指定時は x 範囲。それ以外は最初の曲線と x 軸の間。 */
   shade: [number, number] | null;
   points: { x: number; y: number; label: string }[];
 };
@@ -124,62 +125,11 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
 
   const [tMin, tMax] = data.tRange ?? [0, Math.PI * 2];
 
-  /**
-   * すべての inequality を満たす region。空でない column の連続区間ごとに1 polygon とする。
-   *
-   * plane を走査せず column ごとに解く。各 constraint は `y > f(x)` または `y < f(x)` なので、ある x では
-   * region は1 interval になり、その intersection は境界を絞るだけでよい。run に分けることで、parabola 上の
-   * inequality の組のように region が2片に分かれる場合を扱える。
-   */
-  const regionPolygons = useMemo(() => {
-    const constraints = compiled.filter((curve) => curve.region && curve.fn);
-    if (constraints.length === 0) {
-      return [];
-    }
-
-    const [from, to] = data.shade ?? [xMin, xMax];
-    const polygons: string[][] = [];
-    let upper: string[] = [];
-    let lower: string[] = [];
-
-    const close = () => {
-      if (upper.length > 1) {
-        polygons.push([...upper, ...lower.reverse()]);
-      }
-      upper = [];
-      lower = [];
-    };
-
-    for (let i = 0; i <= SAMPLES; i++) {
-      const x = from + ((to - from) * i) / SAMPLES;
-      let low = yMin;
-      let high = yMax;
-      let usable = true;
-
-      for (const constraint of constraints) {
-        const value = constraint.fn!(x);
-        if (!Number.isFinite(value)) {
-          usable = false;
-          break;
-        }
-        if (constraint.region === "above") {
-          low = Math.max(low, value);
-        } else {
-          high = Math.min(high, value);
-        }
-      }
-
-      if (!usable || high <= low) {
-        close();
-        continue;
-      }
-      upper.push(`${toX(x)},${toY(high)}`);
-      lower.push(`${toX(x)},${toY(low)}`);
-    }
-    close();
-
-    return polygons;
-  }, [compiled, data.shade, xMin, xMax, yMin, yMax]);
+  const hasRegion = data.curves.some((curve) => curve.region);
+  const regionPolygons = useMemo(
+    () => buildRegionPolygons(data, [xMin, xMax], [yMin, yMax]),
+    [data, xMin, xMax, yMin, yMax],
+  );
 
   const axesProgress = clamped(frame, [0, 0.7 * fps], [0, 1], theme.easing);
 
@@ -271,9 +221,8 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
             ))
         : null}
 
-      {/* shade area。積分を表す visual。scene が代わりに region を説明する場合、`shade` は x-bound となり、
-          上の polygon が fill を担うため、こちらは描かない。 */}
-      {data.shade && compiled[0]?.fn && regionPolygons.length === 0
+      {/* region 指定時の shade は x 範囲。共通部分が空でも積分の塗りへ戻すと誤った領域になる。 */}
+      {data.shade && compiled[0]?.fn && !hasRegion
         ? (() => {
             const [from, to] = data.shade;
             const grow = clamped(
@@ -304,11 +253,11 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
           })()
         : null}
 
-      {/* inequality が表す region。境界となる curve の下に置く。 */}
+      {/* 境界線を隠さないよう、領域を先に塗る。 */}
       {regionPolygons.map((polygon, index) => (
         <polygon
           key={`region${index}`}
-          points={polygon.join(" ")}
+          points={polygon.map(([x, y]) => `${toX(x)},${toY(y)}`).join(" ")}
           fill={withAlpha(accent, 0.28)}
           opacity={clamped(frame, [1.6 * fps, 2.3 * fps], [0, 1], theme.easing)}
         />

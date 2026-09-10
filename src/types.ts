@@ -197,15 +197,15 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
            */
           exprY: z.string().nullable().default(null),
           label: z.string(),
-          /** 網掛けする領域がこの曲線のどちら側にあるか。 */
-          region: z.enum(["above", "below"]).nullable().default(null),
+          /** between は2曲線の間、inside は媒介変数の閉曲線内部。 */
+          region: z.enum(["above", "below", "between", "inside"]).nullable().default(null),
         }),
       )
       .min(1)
       .max(3),
     /** 媒介変数曲線のパラメータ区間。既定値は 1 周分。 */
     tRange: z.tuple([z.number(), z.number()]).nullable().default(null),
-    /** 積分用に、最初の曲線の下を塗る範囲。 */
+    /** region 指定時は領域の x 範囲。それ以外は最初の曲線と x 軸の間。 */
     shade: z.tuple([z.number(), z.number()]).nullable(),
     /** 接点・交点・解など、印を付ける点。 */
     points: z.array(
@@ -354,7 +354,7 @@ export const apiScriptSchema = z.object({
           /** `plot` の媒介変数曲線用 y(t)。y = f(x) なら空。 */
           expr_y: z.string(),
           label: z.string(),
-          /** `plot` でその側を塗る "above" / "below"。それ以外では空。 */
+          /** `plot` の "above" / "below" / "between" / "inside"。塗らなければ空。 */
           region: z.string(),
         }),
       ),
@@ -363,7 +363,7 @@ export const apiScriptSchema = z.object({
        * `histogram`: 階級が覆う範囲。
        */
       visual_range: z.array(z.number()),
-      /** `plot` 用。最初の曲線の下を塗る [from, to]。 */
+      /** `plot` の [from, to]。region 指定時は x 範囲（between では必須）、他は最初の曲線と x 軸の間。 */
       visual_shade: z.array(z.number()),
       /**
        * `plot`: 接点など、印を付ける点。
@@ -628,8 +628,9 @@ export const normalizeVisual = (
           expr: curve.expr,
           exprY: curve.expr_y || null,
           label: curve.label,
-          region: ((): "above" | "below" | null =>
-            curve.region === "above" || curve.region === "below"
+          region: ((): "above" | "below" | "between" | "inside" | null =>
+            curve.region === "above" || curve.region === "below" ||
+            curve.region === "between" || curve.region === "inside"
               ? curve.region
               : null)(),
         }));

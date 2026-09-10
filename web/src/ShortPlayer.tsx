@@ -366,6 +366,15 @@ export const ShortPlayer: React.FC<{
   // manifest 到着で Player を作り直さず、サムネイルのタップ中に解除した pool を使い続ける。
   const manifest = loaded?.manifest;
   const audioUnlocked = audioStatus === "ready" && !error && loaded?.src === manifestSrc;
+  /*
+   * 再生は許可済みで、次の manifest の到着だけを待っている状態。
+   *
+   * swipe のたびにここを通る。この間も後ろの FirstFrame が次の short の1シーン目を
+   * 出しており、manifest が届けば自動で再生に入るので、視聴者に求めることは何もない。
+   * それでも overlay を出していたため、スクロールの途中で一瞬グレーアウトして
+   * 「読み込み中」に見えていた。何も描かないのが正しい。
+   */
+  const swapping = audioStatus === "ready" && !error && loaded?.src !== manifestSrc;
 
   return (
     <div
@@ -414,7 +423,7 @@ export const ShortPlayer: React.FC<{
         style={PLAYER_STYLE}
       />
 
-      {playing ? null : (
+      {playing || swapping ? null : (
         <div
           className={`short__overlay${
             audioUnlocked ? ` short__overlay--paused short__overlay--${pauseOverlay}` : ""
@@ -439,9 +448,10 @@ export const ShortPlayer: React.FC<{
             <>
               <div className="short__play" aria-hidden>▶</div>
               <p className="short__hint" role="status">
+                {/* 取得中でも、このタップは pool を解除して到着後の再生を予約する。
+                    待てとは言わず、押せる操作をそのまま案内する。 */}
                 {error ? `読み込めませんでした: ${error}` :
                   audioStatus === "blocked" ? "音声を有効にするにはタップしてください" :
-                  loaded?.src !== manifestSrc ? "読み込み中…" :
                   "タップして再生"}
               </p>
             </>
