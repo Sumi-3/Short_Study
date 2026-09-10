@@ -18,7 +18,7 @@ import type { ShortSummary } from "./api";
  */
 export const LibraryCard: React.FC<{
   short: ShortSummary;
-  onOpen: () => void;
+  onOpen: (event: React.MouseEvent) => void;
   onDelete: () => void;
   deleting: boolean;
 }> = ({ short, onOpen, onDelete, deleting }) => {

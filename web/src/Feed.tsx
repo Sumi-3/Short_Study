@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { themeOf } from "../../src/remotion/theme";
-import { ShortPlayer } from "./ShortPlayer";
+import { ShortPlayer, type ShortPlayerHandle } from "./ShortPlayer";
 import { Thumbnail } from "./Thumbnail";
 import { prefetchManifest, type ShortSummary } from "./api";
 
@@ -21,9 +21,10 @@ import { prefetchManifest, type ShortSummary } from "./api";
 export const Feed: React.FC<{
   shorts: ShortSummary[];
   initialIndex: number;
+  playbackRef?: React.Ref<ShortPlayerHandle>;
   /** feed が tab を満たすのでなく app の上を覆う場合に渡される。 */
   onClose?: () => void;
-}> = ({ shorts, initialIndex, onClose }) => {
+}> = ({ shorts, initialIndex, playbackRef, onClose }) => {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const scroller = useRef<HTMLDivElement>(null);
   /* 一つの item が scroller を満たすため、これは行の高さであると同時に、固定した
@@ -116,7 +117,7 @@ export const Feed: React.FC<{
 
         {/* item と同じ markup にし、player がその item の thumbnail とまったく同じ位置に
             着地して、引き継いでも何もずれないようにする。 */}
-        {active && itemHeight > 0 ? (
+        {active ? (
           <section
             className="feed-item feed-item--player"
             style={{
@@ -126,7 +127,7 @@ export const Feed: React.FC<{
             }}
           >
             <div className="phone">
-              <ShortPlayer manifestSrc={active.manifestSrc} />
+              <ShortPlayer manifestSrc={active.manifestSrc} playbackRef={playbackRef} />
             </div>
           </section>
         ) : null}

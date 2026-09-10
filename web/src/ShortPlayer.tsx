@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Player, type PlayerRef } from "@remotion/player";
 import { PlaybackComposition } from "./PlaybackComposition";
@@ -138,15 +138,25 @@ const SpeedControl: React.FC<{
   );
 };
 
-/** MP4 を介さず、音声の開始成功を確認してから React composition を再生する。 */
+export type ShortPlayerHandle = { play: (event?: React.SyntheticEvent) => void };
+
+/**
+ * MP4 を介さず React composition を直接再生する。音つきで始めるための解除は
+ * [audioGate.ts](./audioGate.ts) が持つ。
+ */
 export const ShortPlayer: React.FC<{
   manifestSrc: string;
-}> = ({ manifestSrc }) => {
+  playbackRef?: React.Ref<ShortPlayerHandle>;
+}> = ({ manifestSrc, playbackRef }) => {
   const player = useRef<PlayerRef>(null);
   const container = useRef<HTMLDivElement>(null);
+  const wantsPlay = useRef(false);
   const [audioStatus, setAudioStatus] = useState<AudioStatus>("locked");
   // Feed 内の swipe では要素ごと生存し、Feed を閉じたら権限も破棄する。
-  const [gate] = useState(() => new AudioGate(player, container, setAudioStatus));
+  const [gate] = useState(() => new AudioGate(player, container, (status) => {
+    if (status === "blocked") wantsPlay.current = false;
+    setAudioStatus(status);
+  }));
   /**
    * manifest とその取得元アドレスを一緒に持つ。
    *
@@ -207,7 +217,7 @@ export const ShortPlayer: React.FC<{
     // セットする。初回 mount には player も `pause` event もなく、ここで立てた flag は
     // 視聴者が最初に実際に停止するまで残るからである。
     programmaticPause.current = true;
-    gate.cancel();
+    gate.pause();
 
     /*
      * 次の manifest を読み込む間も、前の manifest は意図して state に残す。消すと
@@ -231,10 +241,6 @@ export const ShortPlayer: React.FC<{
     }
 
     const onPlay = () => {
-      if (!gate.unlocked) {
-        gate.block();
-        return;
-      }
       clearPauseOverlayTimers();
       setPauseOverlay("hidden");
       // 念のため。すでに停止中の player への pause() は何も emit せず、flag が
@@ -270,7 +276,9 @@ export const ShortPlayer: React.FC<{
     const onVisibility = () => {
       if (document.hidden) {
         programmaticPause.current = true;
-        gate.block();
+        wantsPlay.current = false;
+        gate.pause();
+        setPauseOverlay("settled");
       }
     };
     instance.addEventListener("mutechange", onMute);
@@ -290,42 +298,57 @@ export const ShortPlayer: React.FC<{
   useEffect(() => {
     const instance = player.current;
     if (!loaded || loaded.src !== manifestSrc || !instance || started.current) return;
-    if (!gate.unlocked) {
+    // 視聴者がまだ再生を求めていない、または解除できていない short は、表紙の
+    // 1 コマで止めておく。gesture の外で音つき再生は始められない。
+    if (!wantsPlay.current || !gate.unlocked) {
       instance.seekTo(Math.round(loaded.manifest.fps * 1.2));
       return;
     }
     started.current = true;
     instance.seekTo(0);
-    // fetch / scroll は gesture ではない。同じ要素でも毎回成功を確認してから進める。
-    // seek 後の音声位置が commit されるまで待つ（初回解除は toggle 内で同期実行する）。
-    const timer = window.setTimeout(() => gate.start(), 0);
+    // seek 後の音声位置が commit されてから鳴らす。
+    const timer = window.setTimeout(() => gate.resume(), 0);
     return () => window.clearTimeout(timer);
   }, [loaded, manifestSrc, gate]);
 
+  const playFromGesture = useCallback((event?: React.SyntheticEvent) => {
+    const instance = player.current;
+    if (!instance) return;
+    wantsPlay.current = true;
+    const ready = loaded?.src === manifestSrc;
+    // 表紙で止めていた分を巻き戻してから鳴らす。unlock() の play() より先に行う。
+    if (ready && !started.current) {
+      started.current = true;
+      flushSync(() => instance.seekTo(0));
+    }
+    gate.unlock(event);
+    if (!ready) {
+      // manifest はまだ取得中。pool の解除だけこの gesture で済ませ、中身のない
+      // composition は進めない。到着後に自動で再生へ入る。
+      programmaticPause.current = true;
+      instance.pause();
+    }
+  }, [gate, loaded, manifestSrc]);
+
+  useImperativeHandle(playbackRef, () => ({ play: playFromGesture }), [playFromGesture]);
+
   const toggle = useCallback((event: React.MouseEvent | React.KeyboardEvent) => {
     const instance = player.current;
-    if (!instance || loaded?.src !== manifestSrc || audioStatus === "preparing") return;
+    if (!instance) return;
     if ((event.target as HTMLElement).closest(".scrubber, .speed-control")) return;
     if (instance.isPlaying()) {
-      gate.cancel();
+      wantsPlay.current = false;
+      gate.pause();
       return;
     }
-    // seek と unmute の React 更新を先に確定する。後続 effect に初回 play を移すと
-    // Safari の gesture チェーンが切れるため、native play / resume はこの click 内で呼ぶ。
-    flushSync(() => {
-      instance.unmute();
-      instance.setVolume(1);
-      if (!started.current) instance.seekTo(0);
-    });
-    started.current = true;
-    gate.start();
-  }, [gate, loaded, manifestSrc, audioStatus]);
+    playFromGesture(event);
+  }, [gate, playFromGesture]);
 
   // identity を安定させる。ここで新しい object を渡すと prop 変更と見なされ、
   // render ごとに audio が再スケジュールされる。
   const inputProps = useMemo(
-    () => (loaded ? { manifestSrc: loaded.src, manifest: loaded.manifest, audioGate: gate } : null),
-    [loaded, gate],
+    () => ({ manifestSrc: loaded?.src ?? "", manifest: loaded?.manifest ?? null }),
+    [loaded],
   );
 
   const durationInFrames = useMemo(
@@ -339,14 +362,9 @@ export const ShortPlayer: React.FC<{
     [loaded],
   );
 
-  // placeholder は最初の manifest が届く前だけにする。その後は前の short がフレームを
-  // 保持する。Player の unmount が audio の unlock を失わせるためである。
-  if (!loaded || !inputProps) {
-    return <div className="player-placeholder">{error ? `読み込めませんでした: ${error}` : "読み込み中…"}</div>;
-  }
-
-  const manifest = loaded.manifest;
-  const audioUnlocked = audioStatus === "ready" && !error && loaded.src === manifestSrc;
+  // manifest 到着で Player を作り直さず、サムネイルのタップ中に解除した pool を使い続ける。
+  const manifest = loaded?.manifest;
+  const audioUnlocked = audioStatus === "ready" && !error && loaded?.src === manifestSrc;
 
   return (
     <div
@@ -367,11 +385,11 @@ export const ShortPlayer: React.FC<{
         ref={player}
         component={PlaybackComposition}
         inputProps={inputProps}
-        durationInFrames={durationInFrames}
-        compositionWidth={manifest.width}
-        compositionHeight={manifest.height}
-        fps={manifest.fps}
-        initialFrame={Math.round(manifest.fps * 1.2)}
+        durationInFrames={Math.max(1, durationInFrames)}
+        compositionWidth={manifest?.width ?? 1080}
+        compositionHeight={manifest?.height ?? 1920}
+        fps={manifest?.fps ?? 30}
+        initialFrame={0}
         playbackRate={playbackRate}
         loop
         controls={false}
@@ -379,6 +397,19 @@ export const ShortPlayer: React.FC<{
         spaceKeyToPlayOrPause={false}
         browserMediaControlsBehavior={MEDIA_CONTROLS}
         initialVolume={1}
+        /*
+         * AudioContext を停止のたびに suspend させない。
+         *
+         * 既定では Player は pause で AudioContext を suspend し、play で resume して、
+         * 実際に running へ戻るのを待つ。戻らなければ Remotion は自身を mute して映像
+         * だけ進める。phone では gesture の外からの resume が届かないことがあり、swipe
+         * のたびにこの mute 経路に落ちていた。gain で無音にする方式なら context は
+         * running のまま、resume は即座に返り、mute 経路そのものに入らない。
+         *
+         * 音そのものは Composition が Html5Audio（`useWebAudioApi={false}`）で native
+         * 再生しているので、この context は再生速度を変えた Safari の増幅にしか関わらない。
+         */
+        _experimentalKeepAudioContextAlive
         style={PLAYER_STYLE}
       />
 
@@ -408,23 +439,21 @@ export const ShortPlayer: React.FC<{
               <div className="short__play" aria-hidden>▶</div>
               <p className="short__hint" role="status">
                 {error ? `読み込めませんでした: ${error}` :
-                  loaded.src !== manifestSrc ? "読み込み中…" :
-                  audioStatus === "preparing" ? "音声を準備中…" :
-                  audioStatus === "blocked" ? "音声を有効にして再生 — タップして再試行" :
-                  "タップして音声つきで再生"}
+                  audioStatus === "blocked" ? "音声を有効にするにはタップしてください" :
+                  loaded?.src !== manifestSrc ? "読み込み中…" :
+                  "タップして再生"}
               </p>
             </>
           )}
         </div>
       )}
 
-      <Scrubber
-        player={player}
-        durationInFrames={durationInFrames}
-        fps={manifest.fps}
-      />
-
-      <SpeedControl playbackRate={playbackRate} onChange={setPlaybackRate} />
+      {manifest ? (
+        <>
+          <Scrubber player={player} durationInFrames={durationInFrames} fps={manifest.fps} />
+          <SpeedControl playbackRate={playbackRate} onChange={setPlaybackRate} />
+        </>
+      ) : null}
     </div>
   );
 };

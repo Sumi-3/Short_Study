@@ -43,7 +43,7 @@ const Bar: React.FC<{
  */
 export const Home: React.FC<{
   shorts: ShortSummary[];
-  onOpen: (list: ShortSummary[], index: number) => void;
+  onOpen: (list: ShortSummary[], index: number, event: React.MouseEvent) => void;
   onDelete: (slug: string) => Promise<void>;
 }> = ({ shorts, onOpen, onDelete }) => {
   const [major, setMajor] = useState<string | null>(null);
@@ -170,7 +170,7 @@ export const Home: React.FC<{
               >
                 <LibraryCard
                   short={short}
-                  onOpen={() => onOpen(visible, index)}
+                  onOpen={(event) => onOpen(visible, index, event)}
                   onDelete={() => remove(short)}
                   deleting={deletingSlug === short.slug}
                 />
