@@ -169,17 +169,6 @@ assert.ok(carryHtml.includes("前の式"));
 assert.match(carryHtml, /opacity:0.68;translate:0px 0px/);
 assert.ok(!carryHtml.includes("[carry]"));
 
-// 導出の矢印は文字の ↓ ではなく <Arrow> の SVG なので、Formula.tsx が付けた印を数える。
-// 属性の形 `="` まで含めて数えること。Formula.tsx の <style> は同じ名前を CSS セレクタ
-// としても書いており、裸の名前で数えると規則の1件が要素と一緒に数えられる。
-
-/**
- * 代入の説明の中だけを見る。説明は MathText を通すので `x=2` は KaTeX に組まれ、
- * 生の「x=2 を代入」は HTML に現れない。他の行の数式まで数えないよう範囲を切る。
- */
-const substitutionCell = (html: string) =>
-  html.match(/data-formula-substitution="true"[\s\S]*?<\/div>/)?.[0] ?? "";
-
 // incoming edge は、無関係な条件や prose を implication にせず statement/companion mode を
 // 通過しなければならない。ここでは markup だけを検査し、label の折返し後の高さと fit した
 // 配置には依然 browser が必要である。
@@ -189,12 +178,9 @@ for (const compact of [false, true]) {
     caption: "", accent, compact, durationInFrames: 300,
   });
   assert.match(html, /class="formula-statements"/);
-  assert.equal((html.match(/data-derivation-arrow="/g) ?? []).length, 1);
-  assert.equal((html.match(/data-formula-substitution="/g) ?? []).length, 1);
-  // 地の文はそのまま残り、式だけが組まれる。生のまま出ていたら組版されていない。
-  assert.ok(html.includes(" を代入"));
-  assert.ok(!html.includes("x=2 を代入"), "substitution label must be typeset, not raw text");
-  assert.equal((substitutionCell(html).match(/class="katex"/g) ?? []).length, 1);
+  assert.equal((html.match(/↓/g) ?? []).length, 1);
+  assert.equal((html.match(/data-formula-substitution/g) ?? []).length, 1);
+  assert.ok(html.includes("x=2 を代入"));
   assert.ok(!html.includes("[substitute:"));
   assert.match(html, /grid-template-columns:1fr auto 1fr/);
 }
@@ -203,22 +189,18 @@ const longLabelHtml = render(Formula, {
   lines: ["[carry] z=x+y", `[substitute: ${label}] z=2+3`, "[text] 和を求める", "[box] z=5"],
   caption: "", accent, durationInFrames: 300,
 });
-assert.ok(longLabelHtml.includes("前に求めた"));
-assert.ok(longLabelHtml.includes("をそれぞれ対応する文字に代入する"));
-assert.ok(!longLabelHtml.includes(label), "long label must be typeset, not raw text");
-// x=2 と y=3 の2つが別々に組まれる。
-assert.equal((substitutionCell(longLabelHtml).match(/class="katex"/g) ?? []).length, 2);
+assert.ok(longLabelHtml.includes(label));
 assert.match(longLabelHtml, /overflow-wrap:anywhere;white-space:normal/);
-assert.equal((longLabelHtml.match(/data-derivation-arrow="/g) ?? []).length, 1);
+assert.equal((longLabelHtml.match(/↓/g) ?? []).length, 1);
 for (const lines of [["[substitute: x=2 を代入] y=5"], ["[text] 条件", "[substitute: x=2 を代入] y=5"]]) {
   const html = render(Formula, { lines, caption: "", accent, durationInFrames: 300 });
-  assert.ok(!html.includes('data-derivation-arrow="'), "no arrow without an immediately preceding equation");
+  assert.ok(!html.includes("↓"), "no arrow without an immediately preceding equation");
 }
 const legacyDerivation = render(Formula, {
   lines: ["x+2=5", "x=3"], caption: "", accent, durationInFrames: 300,
 });
 assert.match(legacyDerivation, /class="formula-derivation"/);
-assert.equal((legacyDerivation.match(/data-derivation-arrow="/g) ?? []).length, 1);
+assert.equal((legacyDerivation.match(/↓/g) ?? []).length, 1);
 assert.equal(mathText("x=±2"), "x=±2");
 
 // `[text]` line は MathText を通る prose なので、解説内の inline math も問題 card と
@@ -232,12 +214,10 @@ assert.ok(proseLine.includes("の符号を調べる"));
 assert.doesNotMatch(proseLine, /\$D = b/);
 // 数式の下の読み上げ行を heading weight にしてはならない。
 assert.match(proseLine, /font-weight:500/);
-// arrow は導出の各 step を示す。句読点サイズでは小さすぎた。787b13d で文字の ↓ から
-// <Arrow> の SVG になったので、字の大きさと color ではなく図形の高さと塗りを見る。
-// 2行なら Formula.tsx の arrowSize は 76 で、これは行の文字と同じ高さである。
+// arrow は導出の各 step を示す。句読点サイズでは小さすぎた。
 assert.match(render(Formula, {
   lines: ["x+2=5", "x=3"], caption: "", accent, durationInFrames: 300,
-}), new RegExp(`<svg width="[0-9.]+" height="76"[\\s\\S]*?fill="${accent}"`));
+}), new RegExp(`font-size:76px;line-height:1[^;]*;color:${accent}`));
 
 // 日付・単位・根号だけの曖昧な表記は保ち、LaTeX の命令や添字があれば数式として救う。
 for (const plain of ["3√19/4", "9/8に公開", "面積を求める", "km/h"]) {
@@ -263,7 +243,6 @@ for (const outline of [[], ["(1) $x^2$ の値を求めよ。"]]) {
     short: {
       slug: "inline-math", topic: "$x^2$ の値を求めよ。", outline,
       headline: "", course: "math", subject: "math", unit: "数学", subunit: "",
-      difficulty: 0, model: "",
       createdAt: "", manifestSrc: "", durationInFrames: 300, fps: 30,
     },
     onOpen() {}, onDelete() {}, deleting: false,
@@ -279,7 +258,6 @@ for (const outline of [[], ["(1) $x^2$ の値を求めよ。"]]) {
     short: {
       slug: "outline", topic: "問題文", outline,
       headline: "", course: "math", subject: "math", unit: "数学", subunit: "",
-      difficulty: 0, model: "",
       createdAt: "", manifestSrc: "", durationInFrames: 300, fps: 30,
     },
     onOpen() {}, onDelete() {}, deleting: false,

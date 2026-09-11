@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { registerHooks } from "node:module";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import type { Caption } from "@remotion/captions";
 import { normalizeMathText, splitMathText } from "../src/mathText.js";
 import { normalizeNarration, NarrationMathError } from "../src/mathSpeech.js";
 import { renderMathParts } from "../src/renderMath.js";
+import { applyDisplaySpelling } from "../src/pipeline/captionSpelling.js";
 import { normalizeVisual, normalizeVisualText, type ApiScript } from "../src/types.js";
 import { normalizeFormulaLine } from "../src/formulaLines.js";
 
@@ -16,6 +18,13 @@ const { MathText } = await import("../src/remotion/MathText.js");
 const { SvgLabel } = await import("../src/remotion/math/SvgLabel.js");
 const { themeOf } = await import("../src/remotion/theme.js");
 const html = (text: string, formula = false) => renderToStaticMarkup(React.createElement(MathText, { text, formula }));
+const caps = (parts: string[]): Caption[] => parts.map((text, index) => ({
+  text, startMs: index * 100, endMs: (index + 1) * 100, timestampMs: index * 100,
+  confidence: null, pageBreakAfter: index === parts.length - 1,
+}));
+const shown = (parts: string[]) => applyDisplaySpelling(caps(parts)).map((c) => c.text).join("");
+const splits = (text: string) => [[text], [...text], ...Array.from({ length: text.length - 1 }, (_, index) =>
+  [text.slice(0, index + 1), text.slice(index + 1)])];
 
 for (const tex of [String.raw`\sqrt{7}`, String.raw`\theta`, String.raw`\frac{3}{4}`, "x^2", "a_{n+1}"]) {
   for (const expression of [tex, `$${tex}$`, `$$${tex}$$`, `\\(${tex}\\)`, `\\[${tex}\\]`]) {
@@ -25,6 +34,14 @@ for (const tex of [String.raw`\sqrt{7}`, String.raw`\theta`, String.raw`\frac{3}
     assert.equal(html(source), html(`解説は$${tex}$です。`));
     assert.match(html(source), /class="katex"/);
     assert.doesNotMatch(html(source), /katex-error|cjk_fallback/);
+    for (const parts of splits(expression)) {
+      const input = caps(["答えは", ...parts, "です"]);
+      const before = structuredClone(input);
+      const result = applyDisplaySpelling(input);
+      assert.deepEqual(input, before);
+      assert.equal(result.length, 3, JSON.stringify(parts));
+      assert.deepEqual(result[1], { ...input[1], text: `$${tex}$`, endMs: input.at(-2)!.endMs });
+    }
     const svg = renderToStaticMarkup(React.createElement("svg", null, React.createElement(SvgLabel, {
       text: expression, x: 0, y: 0, size: 40, color: themeOf().ink,
     })));
@@ -63,42 +80,47 @@ assert.match(mixedFormula, /または/);
 assert.doesNotMatch(mixedFormula, /cjk_fallback|katex-error/);
 assert.doesNotMatch(renderToStaticMarkup(React.createElement(MathText, { text: String.raw`\frac{3}{4}`, display: false })), /katex-display|displaystyle/);
 
-for (const [tex, speech] of [
-  [String.raw`\sqrt{7}`, "ルート7"],
-  [String.raw`\sqrt{0}`, "ルート0"],
-  [String.raw`\sqrt{1001}`, "ルート1001"],
-  [String.raw`\frac{3}{4}`, "4分の3"],
-  [String.raw`\frac{3\sqrt{19}}{4}`, "4分の3ルート19"],
-  [String.raw`\theta`, "シータ"], [String.raw`\pi`, "パイ"],
-  [String.raw`\theta\pi`, "シータパイ"],
-  ["x^2", "xの2乗"], ["a_{n+1}", "エーエヌプラスイチ"],
-  [String.raw`x\le 2`, "x以下2"], [String.raw`x\ge 1`, "x以上1"],
-  [String.raw`n\to\infty`, "n矢印無限大"], [String.raw`\sin\theta`, "サインシータ"],
-  [String.raw`\sqrt{x+1}`, "ルートかっこxたす1かっことじ"],
-  [String.raw`\frac{x+1}{2}`, "2分のかっこxたす1かっことじ"],
-  [String.raw`\frac{1}{x+1}`, "かっこxたす1かっことじ分の1"],
-  [String.raw`\sqrt{\frac{3}{4}}`, "ルートかっこ4分の3かっことじ"],
-  [String.raw`\frac{1}{\sqrt{2}}`, "かっこルート2かっことじ分の1"],
-  [String.raw`\sqrt{19.5}`, "ルートかっこ19.5かっことじ"],
-  [String.raw`\frac{-3}{4}`, "4分のかっこマイナス3かっことじ"],
-  [String.raw`\frac12`, "2分の1"],
-  [String.raw`\sqrt{2}x`, "ルートかっこ2かっことじx"],
-  [String.raw`\sqrt{7}\theta`, "ルートかっこ7かっことじシータ"],
-  [String.raw`\sqrt{\pi x}`, "ルートかっこパイxかっことじ"],
-  [String.raw`\frac{\theta x}{2}`, "2分のかっこシータxかっことじ"],
-  ["(x+1)^2", "かっこxたす1かっことじの2乗"],
-  ["2^{n+1}", "2のかっこnたす1かっことじ乗"],
+for (const [tex, speech, written] of [
+  [String.raw`\sqrt{7}`, "ルート7", String.raw`$\sqrt{7}$`],
+  [String.raw`\sqrt{0}`, "ルート0", String.raw`$\sqrt{0}$`],
+  [String.raw`\sqrt{1001}`, "ルート1001", String.raw`$\sqrt{1001}$`],
+  [String.raw`\frac{3}{4}`, "4分の3", String.raw`$\frac{3}{4}$`],
+  [String.raw`\frac{3\sqrt{19}}{4}`, "4分の3ルート19", String.raw`$\frac{3\sqrt{19}}{4}$`],
+  [String.raw`\theta`, "シータ", "θ"], [String.raw`\pi`, "パイ", "π"],
+  [String.raw`\theta\pi`, "シータパイ", "θπ"],
+  ["x^2", "xの2乗", "x²"], ["a_{n+1}", "エーエヌプラスイチ", "$a_{n+1}$"],
+  [String.raw`x\le 2`, "x以下2", "x≤2"], [String.raw`x\ge 1`, "x以上1", "x≥1"],
+  [String.raw`n\to\infty`, "n矢印無限大", "n→∞"], [String.raw`\sin\theta`, "サインシータ", "sinθ"],
+  [String.raw`\sqrt{x+1}`, "ルートかっこxたす1かっことじ", String.raw`$\sqrt{x+1}$`],
+  [String.raw`\frac{x+1}{2}`, "2分のかっこxたす1かっことじ", String.raw`$\frac{x+1}{2}$`],
+  [String.raw`\frac{1}{x+1}`, "かっこxたす1かっことじ分の1", String.raw`$\frac{1}{x+1}$`],
+  [String.raw`\sqrt{\frac{3}{4}}`, "ルートかっこ4分の3かっことじ", String.raw`$\sqrt{\frac{3}{4}}$`],
+  [String.raw`\frac{1}{\sqrt{2}}`, "かっこルート2かっことじ分の1", String.raw`$\frac{1}{\sqrt{2}}$`],
+  [String.raw`\sqrt{19.5}`, "ルートかっこ19.5かっことじ", String.raw`$\sqrt{19.5}$`],
+  [String.raw`\frac{-3}{4}`, "4分のかっこマイナス3かっことじ", String.raw`$\frac{-3}{4}$`],
+  [String.raw`\frac12`, "2分の1", String.raw`$\frac{1}{2}$`],
+  [String.raw`\sqrt{2}x`, "ルートかっこ2かっことじx", String.raw`$\sqrt{2}x$`],
+  [String.raw`\sqrt{7}\theta`, "ルートかっこ7かっことじシータ", String.raw`$\sqrt{7}θ$`],
+  [String.raw`\sqrt{\pi x}`, "ルートかっこパイxかっことじ", String.raw`$\sqrt{πx}$`],
+  [String.raw`\frac{\theta x}{2}`, "2分のかっこシータxかっことじ", String.raw`$\frac{θx}{2}$`],
+  ["(x+1)^2", "かっこxたす1かっことじの2乗", "$(x+1)^{2}$"],
+  ["2^{n+1}", "2のかっこnたす1かっことじ乗", "$2^{n+1}$"],
 ]) {
   assert.equal(normalizeNarration(tex), speech, tex);
   assert.equal(normalizeNarration(`答えは$${tex}$です。`), `答えは${speech}です。`);
   assert.equal(normalizeNarration(speech), speech, "TTS 直前の二度目の正規化は読みを変えない");
+  for (const parts of splits(speech)) {
+    assert.equal(shown(parts), written, JSON.stringify(parts));
+    assert.doesNotMatch(html(shown(parts)), /katex-error/);
+  }
 }
 for (const source of [String.raw`\unknown{2}`, String.raw`\frac{1}{`, "x_", "$x", String.raw`\sqrt[3]{2}`]) {
   assert.throws(() => normalizeNarration(source), NarrationMathError, source);
 }
+assert.equal(shown(["以下の条件とパイプとアルファベット"]), "以下の条件とパイプとアルファベット");
 
 const base: ApiScript["scenes"][number] = {
-  scene_id: 1, narration: "説明", visual_type: "step", visual_content: String.raw`値は\theta`,
+  scene_id: 1, narration: "説明", visual_type: "point", visual_content: String.raw`値は\theta`,
   visual_kind: "figure", visual_items: [String.raw`[text] 長さは\sqrt{7}`], visual_bars: [], visual_unit: "axes",
   visual_caption: String.raw`角は\(\theta\)`, visual_curves: [], visual_range: [], visual_shade: [],
   visual_points: [{ x: 0, y: 0, label: "a_n" }, { x: 3, y: 0, label: "B" }],
@@ -137,4 +159,4 @@ assert.equal(normalizeFormulaLine(String.raw`[box][text] 値は\sqrt{7}`), Strin
 assert.equal(normalizeFormulaLine(String.raw`[substitute: \theta を代入] $$x^2$$`), String.raw`[substitute: $\theta$ を代入] x^2`);
 assert.equal(normalizeFormulaLine(String.raw`[carry] \(x^2\)`), "[carry] x^2");
 assert.ok(splitMathText("普通の文").every((part) => !part.math));
-console.log("PASS: delimiters, bare/mixed/error TeX, SVG labels, TeX-to-speech readings, visual fields/references and idempotence");
+console.log("PASS: delimiters, bare/mixed/error TeX, SVG labels, speech/caption round trips at every token split, visual fields/references and idempotence");

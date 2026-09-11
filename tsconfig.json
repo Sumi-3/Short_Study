@@ -22,7 +22,6 @@
   },
   "include": [
     "api",
-    "scripts",
     "src",
     "web/src"
   ],

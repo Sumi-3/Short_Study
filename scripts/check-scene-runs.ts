@@ -4,12 +4,12 @@ import path from "node:path";
 import { isRunnable, sceneRuns } from "../src/remotion/sceneRuns.js";
 
 /**
- * run の切り方。まとめるのは formula の step が隣り合う場合だけで、hook・summary・図の併記・
+ * run の切り方。まとめるのは formula の point が隣り合う場合だけで、hook・summary・図の併記・
  * 箇条書きは境界になる。from と durationInFrames は音声の尺の累積と一致しなければならない。
  * ここがずれると FormulaRun の舞台が音声とずれて、行が声より先か後に出る。
  */
 const scene = (
-  visual_type: "hook" | "step" | "summary",
+  visual_type: "hook" | "point" | "summary",
   kind: string | null,
   durationInFrames: number,
 ) => ({
@@ -20,12 +20,12 @@ const scene = (
 
 const runs = sceneRuns([
   scene("hook", null, 100),
-  scene("step", "formula", 200),
-  scene("step", "formula", 210),
-  scene("step", "formula", 220),
-  scene("step", "plot", 50),
-  scene("step", "formula", 60),
-  scene("step", "formula", 70),
+  scene("point", "formula", 200),
+  scene("point", "formula", 210),
+  scene("point", "formula", 220),
+  scene("point", "plot", 50),
+  scene("point", "formula", 60),
+  scene("point", "formula", 70),
   scene("summary", "formula", 80),
 ]);
 assert.deepEqual(runs, [
@@ -36,13 +36,13 @@ assert.deepEqual(runs, [
   { first: 7, count: 1, from: 910, durationInFrames: 80 },
 ]);
 // run に入る・入らないの判定は visual_type と kind の両方で決まる。
-assert.equal(isRunnable(scene("step", "formula", 1)), true);
+assert.equal(isRunnable(scene("point", "formula", 1)), true);
 assert.equal(isRunnable(scene("summary", "formula", 1)), false);
-assert.equal(isRunnable(scene("step", "figure", 1)), false);
-assert.equal(isRunnable(scene("step", null, 1)), false);
+assert.equal(isRunnable(scene("point", "figure", 1)), false);
+assert.equal(isRunnable(scene("point", null, 1)), false);
 // 空の列と 1 シーンだけの列でも壊れない。
 assert.deepEqual(sceneRuns([]), []);
-assert.deepEqual(sceneRuns([scene("step", "formula", 5)]), [
+assert.deepEqual(sceneRuns([scene("point", "formula", 5)]), [
   { first: 0, count: 1, from: 0, durationInFrames: 5 },
 ]);
 
