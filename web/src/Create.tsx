@@ -1,9 +1,81 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { COURSES } from "../../src/courses";
 import { VOICES } from "../../src/voices";
 import { SCRIPT_MODELS } from "../../src/models";
-import type { JobEvent } from "./api";
+import { extractProblem, type JobEvent } from "./api";
 import { playSample } from "./voiceSamples";
+
+type Crop = { x: number; y: number; width: number; height: number };
+
+const INITIAL_CROP: Crop = { x: 8, y: 8, width: 84, height: 84 };
+const MIN_CROP_SIZE = 12;
+const MAX_CROP_EDGE = 2_048;
+// 2.4 MB の JPEG は base64 化しても最大 3.2 MB なので、JSON を足しても Vercel の 4.5 MB 未満になる。
+const MAX_JPEG_BYTES = 2_400_000;
+
+const clamp = (value: number, lower: number, upper: number) =>
+  Math.min(Math.max(value, lower), upper);
+
+const toBlob = (canvas: HTMLCanvasElement, quality: number) =>
+  new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject(new Error("画像をJPEGに変換できませんでした"));
+      }
+    }, "image/jpeg", quality);
+  });
+
+const toBase64 = (blob: Blob) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("画像を読み込めませんでした"));
+    reader.onload = () => {
+      const dataUrl = String(reader.result);
+      resolve(dataUrl.slice(dataUrl.indexOf(",") + 1));
+    };
+    reader.readAsDataURL(blob);
+  });
+
+/** 写真は送信前に 2048px と 2.4 MB に収める。圧縮不足なら解像度も段階的に下げる。 */
+const cropToJpeg = async (image: HTMLImageElement, crop: Crop) => {
+  const sourceWidth = image.naturalWidth * (crop.width / 100);
+  const sourceHeight = image.naturalHeight * (crop.height / 100);
+  const sourceX = image.naturalWidth * (crop.x / 100);
+  const sourceY = image.naturalHeight * (crop.y / 100);
+  let scale = Math.min(1, MAX_CROP_EDGE / Math.max(sourceWidth, sourceHeight));
+
+  for (;;) {
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(sourceWidth * scale));
+    canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+    const context = canvas.getContext("2d");
+    if (!context) {
+      throw new Error("画像を処理できませんでした");
+    }
+    context.drawImage(
+      image,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
+
+    for (let quality = 0.9; quality >= 0.5; quality -= 0.1) {
+      const jpeg = await toBlob(canvas, quality);
+      if (jpeg.size <= MAX_JPEG_BYTES) {
+        return toBase64(jpeg);
+      }
+    }
+    // JPEG の品質だけをこれ以上下げると細い数式が潰れるので、寸法を下げて読みやすさを保つ。
+    scale *= 0.8;
+  }
+};
 
 const JobCard: React.FC<{ job: JobEvent; progress: number; onDismiss: () => void }> = ({
   job,
@@ -43,6 +115,106 @@ export const Create: React.FC<{
   const [topic, setTopic] = useState("");
   const [voice, setVoice] = useState(VOICES[0].id);
   const [model, setModel] = useState(SCRIPT_MODELS[0].id);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [imageReady, setImageReady] = useState(false);
+  const [crop, setCrop] = useState<Crop>(INITIAL_CROP);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const [extractError, setExtractError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const cropBoundsRef = useRef<HTMLDivElement>(null);
+  const imageUrlRef = useRef<string | null>(null);
+  const cropDragRef = useRef<{
+    action: "move" | "resize";
+    clientX: number;
+    clientY: number;
+    crop: Crop;
+  } | null>(null);
+
+  useEffect(() => () => {
+    if (imageUrlRef.current) {
+      URL.revokeObjectURL(imageUrlRef.current);
+    }
+  }, []);
+
+  const chooseImage = (file: File | undefined) => {
+    if (!file) {
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      setImageError("画像ファイルを選んでください。");
+      return;
+    }
+    if (imageUrlRef.current) {
+      URL.revokeObjectURL(imageUrlRef.current);
+    }
+    const source = URL.createObjectURL(file);
+    imageUrlRef.current = source;
+    setImageSrc(source);
+    setImageReady(false);
+    setCrop(INITIAL_CROP);
+    setImageError(null);
+    setExtractError(null);
+  };
+
+  const clearImage = () => {
+    if (imageUrlRef.current) {
+      URL.revokeObjectURL(imageUrlRef.current);
+      imageUrlRef.current = null;
+    }
+    setImageSrc(null);
+    setImageReady(false);
+    setImageError(null);
+    setExtractError(null);
+  };
+
+  const startCropDrag = (action: "move" | "resize") =>
+    (event: React.PointerEvent<HTMLElement>) => {
+      event.preventDefault();
+      event.currentTarget.setPointerCapture(event.pointerId);
+      cropDragRef.current = { action, clientX: event.clientX, clientY: event.clientY, crop };
+    };
+
+  const updateCropDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = cropDragRef.current;
+    const bounds = cropBoundsRef.current?.getBoundingClientRect();
+    if (!drag || !bounds) {
+      return;
+    }
+    const dx = ((event.clientX - drag.clientX) / bounds.width) * 100;
+    const dy = ((event.clientY - drag.clientY) / bounds.height) * 100;
+    if (drag.action === "move") {
+      setCrop({
+        ...drag.crop,
+        x: clamp(drag.crop.x + dx, 0, 100 - drag.crop.width),
+        y: clamp(drag.crop.y + dy, 0, 100 - drag.crop.height),
+      });
+      return;
+    }
+    setCrop({
+      ...drag.crop,
+      width: clamp(drag.crop.width + dx, MIN_CROP_SIZE, 100 - drag.crop.x),
+      height: clamp(drag.crop.height + dy, MIN_CROP_SIZE, 100 - drag.crop.y),
+    });
+  };
+
+  const extract = async () => {
+    if (!imageRef.current || !imageReady || extracting) {
+      return;
+    }
+    setExtracting(true);
+    setExtractError(null);
+    try {
+      const image = await cropToJpeg(imageRef.current, crop);
+      const result = await extractProblem(image, model);
+      setTopic(result.topic);
+    } catch (error) {
+      setExtractError(error instanceof Error ? error.message : "テキストを抽出できませんでした。");
+    } finally {
+      setExtracting(false);
+    }
+  };
 
   return (
     <div className="create">
@@ -56,8 +228,82 @@ export const Create: React.FC<{
           onSubmit(topic.trim(), voice, model);
           setTopic("");
         }}
-      >
+        >
+        <input
+          ref={inputRef}
+          className="image-input"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={(event) => {
+            chooseImage(event.target.files?.[0]);
+            // 同じ写真を撮り直して選んでも change を発火させ、すぐ再試行できるようにする。
+            event.target.value = "";
+          }}
+        />
         <h2>解きたい問題は？</h2>
+        {!imageSrc ? (
+          <div className="image-entry">
+            <button type="button" className="image-entry__button" onClick={() => inputRef.current?.click()}>
+              <span aria-hidden>▣</span>
+              <span>写真を撮る／画像を選ぶ</span>
+            </button>
+            <p>問題の部分を切り抜いてから、文字を読み取れます。</p>
+          </div>
+        ) : (
+          <section className="image-crop" aria-labelledby="crop-title">
+            <div className="image-crop__heading">
+              <div>
+                <h3 id="crop-title">問題の部分を囲む</h3>
+                <p>枠をドラッグして移動し、右下で大きさを調整します。</p>
+              </div>
+              <button type="button" className="image-crop__change" onClick={() => inputRef.current?.click()}>
+                画像を替える
+              </button>
+            </div>
+            <div className="image-crop__viewport" ref={cropBoundsRef}>
+              <img
+                ref={imageRef}
+                src={imageSrc}
+                alt="選択した問題の写真"
+                onLoad={() => setImageReady(true)}
+                onError={() => setImageError("画像を表示できませんでした。別の画像を選んでください。")}
+              />
+              <div
+                className="image-crop__selection"
+                style={{ left: `${crop.x}%`, top: `${crop.y}%`, width: `${crop.width}%`, height: `${crop.height}%` }}
+                onPointerDown={startCropDrag("move")}
+                onPointerMove={updateCropDrag}
+                onPointerUp={() => { cropDragRef.current = null; }}
+                onPointerCancel={() => { cropDragRef.current = null; }}
+              >
+                <span className="image-crop__label">問題</span>
+                <span
+                  className="image-crop__handle"
+                  aria-label="トリミング範囲を広げる"
+                  onPointerDown={(event) => {
+                    event.stopPropagation();
+                    startCropDrag("resize")(event);
+                  }}
+                />
+              </div>
+            </div>
+            <div className="image-crop__actions">
+              <button type="button" className="image-crop__cancel" onClick={clearImage}>画像を閉じる</button>
+              <button type="button" className="image-crop__extract" onClick={() => void extract()} disabled={extracting || !imageReady}>
+                {extracting ? "テキストを抽出中…" : imageReady ? "テキストを抽出" : "画像を読み込み中…"}
+              </button>
+            </div>
+          </section>
+        )}
+        {imageError ? <p className="image-message image-message--error" role="alert">{imageError}</p> : null}
+        {extractError ? (
+          <div className="image-message image-message--error" role="alert">
+            <span>{extractError}</span>
+            <button type="button" onClick={() => void extract()} disabled={extracting}>再試行</button>
+          </div>
+        ) : null}
+        {extracting ? <p className="image-message" aria-live="polite">画像を縮小して、問題文を読み取っています…</p> : null}
         <textarea
           value={topic}
           onChange={(e) => setTopic(e.target.value)}

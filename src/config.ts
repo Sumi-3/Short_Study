@@ -86,6 +86,8 @@ export const config = {
   scriptEffort: effort(env("SCRIPT_EFFORT"), "medium"),
   /** 問題文の整形 1 要求の上限。max_tokens が 2,000 なので台本より短くてよい。 */
   outlineTimeoutMs: num(env("OUTLINE_TIMEOUT_MS"), 60_000),
+  /** 写真の問題文転記 1 要求の上限。画像は小さくして送り、台本ほど長く待たせない。 */
+  extractTimeoutMs: num(env("EXTRACT_TIMEOUT_MS"), 60_000),
   /** 1 シーン分の音声合成の上限。EdgeTTS の WebSocket が黙って切れても止まらないため。 */
   ttsTimeoutMs: num(env("TTS_TIMEOUT_MS"), 90_000),
   /** whisper 1 本の上限。CAPTION_SOURCE=whisper のときだけ使う。 */

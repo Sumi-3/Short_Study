@@ -12,6 +12,7 @@ import {
 import { isCourseId } from "../courses.js";
 import { isVoiceId } from "../voices.js";
 import { isModelId } from "../models.js";
+import { extractProblem, isExtractImage } from "../pipeline/extractProblem.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
 const WEB_DIST = path.join(paths.root, "web", "dist");
@@ -109,6 +110,23 @@ const server = http.createServer(async (req, res) => {
         }
       });
       return res.end();
+    }
+
+    if (route === "/api/extract" && req.method === "POST") {
+      const body = JSON.parse((await readBody(req)) || "{}") as Record<string, unknown>;
+      if (!isExtractImage(body.image)) {
+        return sendJson(res, 400, { error: "JPEG image is required" });
+      }
+      const topic = await extractProblem(
+        body.image,
+        isModelId(body.model) ? body.model : undefined,
+      );
+      if (!topic) {
+        return sendJson(res, 422, {
+          error: "問題文を読み取れませんでした。画像を調整して再試行してください。",
+        });
+      }
+      return sendJson(res, 200, { topic });
     }
 
     if (route === "/api/shorts" && req.method === "GET") {

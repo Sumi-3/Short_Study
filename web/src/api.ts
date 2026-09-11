@@ -80,6 +80,14 @@ export const deleteShort = (slug: string) =>
     method: "DELETE",
   });
 
+/** crop 後の JPEG だけを送り、返った問題文は既存の topic と同じ扱いにする。 */
+export const extractProblem = (image: string, model: string) =>
+  json<{ topic: string }>("/api/extract", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ image, model }),
+  });
+
 /**
  * manifest の fetch はセッションごとに最大一回にする。
  *
