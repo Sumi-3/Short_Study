@@ -222,6 +222,17 @@ body {
   cursor: pointer;
 }
 
+.short__player {
+  /* Player の inline の composition 寸法より、表示枠の寸法を優先する。 */
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.short__player--waiting {
+  /* display:none や unmount は避け、測定と gesture で解除済みの audio pool を維持する。 */
+  visibility: hidden;
+}
+
 /* The first-tap prompt keeps its scrim until the audio has been unlocked. */
 .short__overlay {
   position: absolute;

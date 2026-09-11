@@ -2,16 +2,12 @@ import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, 
 import { flushSync } from "react-dom";
 import { Player, type PlayerRef } from "@remotion/player";
 import { firstSceneFrame } from "./FirstFrame";
-import { PlaybackComposition } from "./PlaybackComposition";
+import { PlaybackComposition, PlaybackLayoutContext } from "./PlaybackComposition";
 import { fetchManifest } from "./api";
 import { AudioGate, type AudioStatus } from "./audioGate";
 import type { Manifest } from "../../src/types";
 
 const MEDIA_CONTROLS = { mode: "prevent-media-session" } as const;
-const PLAYER_STYLE = { width: "100%", height: "100%" } as const;
-// Player は mount したままにして audio pool を維持しつつ、切替中だけ下の FirstFrame に
-// 描画を譲る。`display: none` は media 要素の扱いまで変えうるため使わない。
-const HIDDEN_PLAYER_STYLE = { ...PLAYER_STYLE, visibility: "hidden" } as const;
 const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5] as const;
 const PAUSE_OVERLAY_HOLD_MS = 800;
 const PAUSE_OVERLAY_FADE_MS = 320;
@@ -373,6 +369,33 @@ export const ShortPlayer: React.FC<{
 
   // manifest 到着で Player を作り直さず、サムネイルのタップ中に解除した pool を使い続ける。
   const manifest = loaded?.manifest;
+  const width = manifest?.width ?? 1080;
+  const height = manifest?.height ?? 1920;
+  const committedScale = useRef<number | null>(null);
+  const [layoutReady, setLayoutReady] = useState(false);
+  const checkLayout = useCallback(() => {
+    const rect = container.current?.getBoundingClientRect();
+    const scale = committedScale.current;
+    const expected = rect ? Math.min(rect.width / width, rect.height / height) : 0;
+    // 4.0.518 は寸法 0 でも layout を作り、scale=1 / opacity=1 を返す。
+    // 「測定済み」では足りず、現物の枠に合うことを確認する。許容差は画面上の半 pixel。
+    setLayoutReady(scale !== null && expected > 0 &&
+      Math.abs(scale - expected) * Math.max(width, height) < 0.5);
+  }, [width, height]);
+  const onCompositionLayout = useCallback((scale: number | null) => {
+    committedScale.current = scale;
+    checkLayout();
+  }, [checkLayout]);
+
+  useLayoutEffect(() => {
+    const element = container.current;
+    if (!element) return;
+    // 枠だけ先に resize されても、古い scale の絵を paint しない。
+    const observer = new ResizeObserver(() => flushSync(checkLayout));
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [checkLayout]);
+
   const audioUnlocked = audioStatus === "ready" && !error && loaded?.src === manifestSrc;
   /*
    * 再生は許可済みで、次の manifest の到着だけを待っている状態。
@@ -383,12 +406,13 @@ export const ShortPlayer: React.FC<{
    * 「読み込み中」に見えていた。何も描かないのが正しい。
    */
   const swapping = audioStatus === "ready" && !error && loaded?.src !== manifestSrc;
+  const waitingForPicture = swapping || !manifest || !layoutReady;
 
   // Player の絵を隠すだけでは、その親が持つ letterbox 用の背景が FirstFrame を覆う。
   // layout effect で親の背景も同じ paint 前に透明化し、前の short が見える隙間を作らない。
   useLayoutEffect(() => {
-    onSwappingChange?.(swapping);
-  }, [onSwappingChange, swapping]);
+    onSwappingChange?.(waitingForPicture);
+  }, [onSwappingChange, waitingForPicture]);
 
   return (
     <div
@@ -405,13 +429,14 @@ export const ShortPlayer: React.FC<{
         }
       }}
     >
+      <PlaybackLayoutContext.Provider value={onCompositionLayout}>
       <Player
         ref={player}
         component={PlaybackComposition}
         inputProps={inputProps}
         durationInFrames={Math.max(1, durationInFrames)}
-        compositionWidth={manifest?.width ?? 1080}
-        compositionHeight={manifest?.height ?? 1920}
+        compositionWidth={width}
+        compositionHeight={height}
         fps={manifest?.fps ?? 30}
         initialFrame={0}
         playbackRate={playbackRate}
@@ -434,10 +459,11 @@ export const ShortPlayer: React.FC<{
          * 再生しているので、この context は再生速度を変えた Safari の増幅にしか関わらない。
          */
         _experimentalKeepAudioContextAlive
-        style={swapping ? HIDDEN_PLAYER_STYLE : PLAYER_STYLE}
+        className={`short__player${waitingForPicture ? " short__player--waiting" : ""}`}
       />
+      </PlaybackLayoutContext.Provider>
 
-      {playing || swapping ? null : (
+      {playing || swapping || (audioUnlocked && waitingForPicture) ? null : (
         <div
           className={`short__overlay${
             audioUnlocked ? ` short__overlay--paused short__overlay--${pauseOverlay}` : ""
