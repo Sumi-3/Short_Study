@@ -19,7 +19,13 @@ import type { ShortSummary } from "./api";
  * 代償はサイズである。composition は 1080px の stage 用に組まれているため、その
  * 五分の一幅の card では 44px の問題文が約 8px で描画される。
  */
-export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
+export const Thumbnail: React.FC<{
+  short: ShortSummary;
+  /** full-screen fallback は、直後に Player が描く opening と同じ舞台にする。 */
+  layout?: "poster" | "video";
+  /** video に存在しない library 用の補助情報は、full-screen fallback では重ねない。 */
+  showMeta?: boolean;
+}> = ({ short, layout = "poster", showMeta = true }) => {
   const theme = themeOf();
 
   return (
@@ -31,6 +37,7 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
         outline: short.outline ?? [],
         unit: short.unit,
         difficulty: short.difficulty ?? 0,
+        layout,
       }}
       compositionWidth={POSTER_SIZE.width}
       compositionHeight={POSTER_SIZE.height}
@@ -40,24 +47,26 @@ export const Thumbnail: React.FC<{ short: ShortSummary }> = ({ short }) => {
       style={{ width: "100%", height: "100%" }}
     />
 
-    {/* 動画には出ないが library には必要な二つ、syllabus 上の位置と再生時間を示す。
-        再生中は caption が占め、hook では空いている帯に置く。 */}
-    <div
-      className="thumb__meta"
-      style={{
-        color: theme.ink,
-        background: `linear-gradient(to top, ${withAlpha(
-          theme.bgDeep,
-          0.82,
-        )} 0%, ${withAlpha(theme.bgDeep, 0.5)} 55%, ${withAlpha(
-          theme.bgDeep,
-          0,
-        )} 100%)`,
-      }}
-    >
-      {short.subunit ? <span>{short.subunit}</span> : null}
-      <span>{Math.round(short.durationInFrames / short.fps)}秒</span>
-    </div>
+    {showMeta ? (
+      /* 動画には出ないが library には必要な二つ、syllabus 上の位置と再生時間を示す。
+          再生中は caption が占め、hook では空いている帯に置く。 */
+      <div
+        className="thumb__meta"
+        style={{
+          color: theme.ink,
+          background: `linear-gradient(to top, ${withAlpha(
+            theme.bgDeep,
+            0.82,
+          )} 0%, ${withAlpha(theme.bgDeep, 0.5)} 55%, ${withAlpha(
+            theme.bgDeep,
+            0,
+          )} 100%)`,
+        }}
+      >
+        {short.subunit ? <span>{short.subunit}</span> : null}
+        <span>{Math.round(short.durationInFrames / short.fps)}秒</span>
+      </div>
+    ) : null}
   </div>
   );
 };

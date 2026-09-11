@@ -21,6 +21,8 @@ export type PosterProps = {
   unit: string;
   /** 5 段階の難易度。0 は未判定で、星を出さない。 */
   difficulty?: number;
+  /** card では可読性を優先し、全画面の待機表示では動画の opening と同じ舞台を使う。 */
+  layout?: "poster" | "video";
 };
 
 /**
@@ -50,6 +52,7 @@ export const Poster: React.FC<PosterProps> = ({
   outline,
   unit,
   difficulty = 0,
+  layout: posterLayout = "poster",
 }) => {
   const theme = themeOf();
 
@@ -64,7 +67,7 @@ export const Poster: React.FC<PosterProps> = ({
           durationInFrames={POSTER_DURATION}
           accent={accentFor(theme, 0)}
           problem={{ text: topic, points: outline, unit, difficulty }}
-          poster
+          poster={posterLayout === "poster"}
         />
       </AbsoluteFill>
     </ThemeProvider>

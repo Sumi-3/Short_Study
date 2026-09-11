@@ -114,11 +114,11 @@ export const Feed: React.FC<{
             <div className="phone">
               {/* swipe で次に来るのはこの両隣だけ。そこには動画自身の最初の絵を敷き、
                   player が乗っても何も変わらないようにする。遠くの short は library
-                  と同じ Poster のままにして、composition を余分に組まない。 */}
+                  と同じ video layout の Poster を使い、manifest がまだ無い間も文字の大きさを揃える。 */}
               {Math.abs(index - activeIndex) <= 1 ? (
                 <FirstFrame short={short} />
               ) : (
-                <Thumbnail short={short} />
+                <Thumbnail short={short} layout="video" showMeta={false} />
               )}
             </div>
           </section>

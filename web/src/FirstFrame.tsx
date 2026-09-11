@@ -38,7 +38,7 @@ export const FirstFrame: React.FC<{ short: ShortSummary }> = ({ short }) => {
   }, [short.manifestSrc]);
 
   if (loaded?.src !== short.manifestSrc) {
-    return <Thumbnail short={short} />;
+    return <Thumbnail short={short} layout="video" showMeta={false} />;
   }
 
   const { manifest } = loaded;

@@ -3,7 +3,7 @@ import { MathText } from "../../src/remotion/MathText";
 import { themeOf, withAlpha } from "../../src/remotion/theme";
 import { parseProblemOutline } from "../../src/problemOutline";
 import { SCRIPT_MODELS } from "../../src/models";
-import type { ShortSummary } from "./api";
+import { prefetchManifest, type ShortSummary } from "./api";
 
 const LEVELS = 5;
 
@@ -52,6 +52,7 @@ export const LibraryCard: React.FC<{
   // 記録導入前の short には無い。その場合は何も出さず、空欄で嘘をつかない。
   const modelLabel = SCRIPT_MODELS.find((entry) => entry.id === short.model)?.label ?? "";
   const [menuOpen, setMenuOpen] = useState(false);
+  const card = useRef<HTMLDivElement>(null);
   const menu = useRef<HTMLDivElement>(null);
   // summary を返す JSON API はこの bundle より古い deploy かもしれず、そのために
   // card 一枚で画面全体を落とす価値はない。
@@ -102,9 +103,29 @@ export const LibraryCard: React.FC<{
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+    const element = card.current;
+    if (!element || !("IntersectionObserver" in window)) {
+      return;
+    }
+
+    // 一覧は仮想化していないので、見えて初めて取得すれば初回表示の数本だけで済む。filter 後に
+    // mount される card もここを通るため、新しく画面に入った short を取り逃がさない。
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries[0]?.isIntersecting) {
+        return;
+      }
+      prefetchManifest(short.manifestSrc);
+      observer.disconnect();
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [short.manifestSrc]);
+
   return (
     <div
       className="card"
+      ref={card}
       style={{
         background: `linear-gradient(150deg, ${theme.bg} 0%, ${theme.bgDeep} 100%)`,
         fontFamily: theme.fontFamily,
