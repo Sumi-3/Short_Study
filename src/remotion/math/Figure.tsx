@@ -17,6 +17,20 @@ const RIGHT_ANGLE_TOLERANCE = 0.035; // ~2°
 
 type Screen = { x: number; y: number };
 
+type FigureLabel = {
+  key: string;
+  text: string;
+  position: Screen;
+  color: string;
+  size: number;
+  opacity: number;
+  /** 衝突したときも、どの図形を指すか分かる範囲で逃がす向き。 */
+  directions: Screen[];
+  anchor?: "start" | "middle" | "end";
+  baseline?: "middle";
+  outline?: boolean;
+};
+
 /** `from` から `to` への最短の符号付き回転量。範囲は (-π, π]。 */
 const shortestTurn = (from: number, to: number) => {
   let delta = to - from;
@@ -207,7 +221,14 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
     return best;
   };
 
-  const label = (text: string, position: Screen, color: string, size: number, opacity: number) => (
+  const label = (
+    text: string,
+    position: Screen,
+    color: string,
+    size: number,
+    opacity: number,
+    options?: Pick<FigureLabel, "anchor" | "baseline" | "outline">,
+  ) => (
     <SvgLabel
       text={text}
       x={position.x}
@@ -215,13 +236,194 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
       color={color}
       size={size}
       weight={700}
-      anchor="middle"
-      baseline="middle"
+      anchor={options?.anchor ?? "middle"}
+      baseline={options?.baseline ?? "middle"}
       opacity={opacity}
       // auto-placement の位置を問わず読めるよう、各 label の下に暗い outline を置く。
-      outline={{ color: theme.bgDeep, width: 7 }}
+      outline={options?.outline === false ? undefined : { color: theme.bgDeep, width: 7 }}
     />
   );
+
+  const labelExtent = (text: string, size: number) => {
+    // KaTeX の実寸は SSR では得られない。コマンドと括弧を一文字相当に丸めれば、短い図形 label の
+    // 衝突だけを保守的に避けられ、文字のない場所まで動かすこともない。
+    const visible = text
+      .replace(/\\[a-zA-Z]+/g, "m")
+      .replace(/[${}_^{}]/g, "");
+    const width = Math.max(
+      size * 1.15,
+      [...visible].reduce((sum, glyph) => sum + size * (/[\u3040-\u30ff\u3400-\u9fff]/.test(glyph) ? 0.95 : 0.68), 0),
+    ) + 14;
+    return { width, height: size * (text.includes("$") ? 1.35 : 1) + 14 };
+  };
+
+  const placeLabels = (candidates: FigureLabel[]) => {
+    const placed: Array<FigureLabel & { position: Screen }> = [];
+    for (const candidate of candidates) {
+      const extent = labelExtent(candidate.text, candidate.size);
+      const center = (position: Screen) => ({
+        x: position.x + (candidate.anchor === "start" ? extent.width / 2 : candidate.anchor === "end" ? -extent.width / 2 : 0),
+        y: position.y,
+      });
+      const overlaps = (position: Screen) => {
+        const here = center(position);
+        return placed.some((other) => {
+          const otherExtent = labelExtent(other.text, other.size);
+          const otherCenter = {
+            x: other.position.x + (other.anchor === "start" ? otherExtent.width / 2 : other.anchor === "end" ? -otherExtent.width / 2 : 0),
+            y: other.position.y,
+          };
+          return Math.abs(here.x - otherCenter.x) < (extent.width + otherExtent.width) / 2
+            && Math.abs(here.y - otherCenter.y) < (extent.height + otherExtent.height) / 2;
+        });
+      };
+      const positions = [candidate.position];
+      for (const distance of [24, 48, 72, 96]) {
+        for (const direction of candidate.directions) {
+          positions.push({
+            x: candidate.position.x + direction.x * distance,
+            y: candidate.position.y + direction.y * distance,
+          });
+        }
+      }
+      placed.push({ ...candidate, position: positions.find((position) => !overlaps(position)) ?? candidate.position });
+    }
+    return placed;
+  };
+
+  /*
+   * SVG は z-index でなく文書順に塗るため、label を各図形の `<g>` に置くと後から伸びる edge や
+   * vertex が文字を塗り潰す。図形をすべて描いた後の一つの pass に集め、描画順そのものを保証にする。
+   *
+   * それでも label 同士は重なり得るので、点名を基準として先に固定し、辺なら辺に沿って、円なら半径方向、
+   * 角なら二等分線方向だけへ少しずつ逃がす。衝突しない候補は必ず最初の座標を選ぶので、既存の図は動かない。
+   */
+  const figureLabels = placeLabels([
+    ...data.points.flatMap((point) => {
+      const position = at(point.label);
+      if (!position) return [];
+      const push = outward(position);
+      return [{
+        key: `point-label-${point.label}`,
+        text: point.label,
+        position: { x: position.x + push.x * 38, y: position.y + push.y * 38 },
+        color: theme.ink,
+        size: 40,
+        opacity: fade(0.4 + data.points.indexOf(point) * 0.08, 0.25),
+        directions: [push],
+      }];
+    }),
+    ...data.angles.flatMap((angle, index) => {
+      const vertex = at(angle.at);
+      const a = at(angle.from);
+      const b = at(angle.to);
+      if (!angle.label || !vertex || !a || !b) return [];
+      const from = Math.atan2(a.y - vertex.y, a.x - vertex.x);
+      const turn = shortestTurn(from, Math.atan2(b.y - vertex.y, b.x - vertex.x));
+      const isRight = Math.abs(Math.abs(turn) - Math.PI / 2) < RIGHT_ANGLE_TOLERANCE;
+      if (isRight) return [];
+      const bisector = from + turn / 2;
+      const direction = { x: Math.cos(bisector), y: Math.sin(bisector) };
+      return [{
+        key: `angle-label-${index}`,
+        text: angle.label,
+        position: {
+          x: vertex.x + direction.x * (48 + 34 * reach(angle.label)),
+          y: vertex.y + direction.y * (48 + 34 * reach(angle.label)),
+        },
+        color: accent,
+        size: 34,
+        opacity: fade(lastSegmentEnd + index * 0.15),
+        directions: [direction],
+      }];
+    }),
+    ...[...data.segments]
+      .map((segment, index) => ({ segment, index }))
+      .sort((a, b) => Number(Boolean(a.segment.emphasis)) - Number(Boolean(b.segment.emphasis)))
+      .flatMap(({ segment, index }) => {
+        const from = at(segment.from);
+        const to = at(segment.to);
+        if (!segment.label || !from || !to) return [];
+        const angle = Math.atan2(to.y - from.y, to.x - from.x);
+        const along = { x: Math.cos(angle), y: Math.sin(angle) };
+        const across = { x: -along.y, y: along.x };
+        const middle = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
+        /*
+         * 外周の辺では重心から中点へ向かう向きがそのまま法線に近く、ラベルは辺の外に出る。
+         * しかし中心から放射状に出る辺（円の半径など）では、その向きが辺と平行になり、ラベルが
+         * 辺の上を滑るだけで離れなかった。向きが辺に沿っている（45° 以内）ときは、法線のうち
+         * 重心から遠ざかる側を使う。外周の辺は従来どおりなので、既存の図の置き場所は変わらない。
+         */
+        const radial = outward(middle);
+        const parallel = Math.abs(radial.x * along.x + radial.y * along.y) > Math.SQRT1_2;
+        const sign = radial.x * across.x + radial.y * across.y >= 0 ? 1 : -1;
+        const push = parallel ? { x: across.x * sign, y: across.y * sign } : radial;
+        const color = segment.emphasis
+          ? segment.emphasis === true ? accent : figureRoleColor(theme, segment.emphasis)
+          : segment.dashed ? theme.inkDim : theme.ink;
+        return [{
+          key: `segment-label-${index}`,
+          text: segment.label,
+          position: {
+            x: middle.x + push.x * 34 * reach(segment.label),
+            y: middle.y + push.y * 34 * reach(segment.label),
+          },
+          color,
+          size: 36,
+          opacity: fade(segmentStart(index) + 0.35),
+          directions: [along, { x: -along.x, y: -along.y }, push],
+        }];
+      }),
+    ...(data.circles ?? []).flatMap((circle, index) => {
+      const center = at(circle.center);
+      if (!circle.label || !center) return [];
+      const radius = circle.radius * unitScale;
+      const start = 0.55 + index * 0.3;
+      const whole = circle.fromAngle === circle.toAngle;
+      const a0 = (-circle.fromAngle * Math.PI) / 180;
+      const a1 = (-circle.toAngle * Math.PI) / 180;
+      if (!whole) {
+        const direction = { x: Math.cos((a0 + a1) / 2), y: Math.sin((a0 + a1) / 2) };
+        return [{
+          key: `circle-label-${index}`,
+          text: circle.label,
+          position: {
+            x: center.x + direction.x * (radius + 40 * reach(circle.label)),
+            y: center.y + direction.y * (radius + 40 * reach(circle.label)),
+          },
+          color: accent,
+          size: 36,
+          opacity: clamped(frame, [start * fps, (start + 0.65) * fps], [0, 1], theme.easing),
+          directions: [direction],
+        }];
+      }
+      const distance = radius + 34 * reach(circle.label);
+      const direction = clearDirection(center, distance, outward(center));
+      return [{
+        key: `circle-label-${index}`,
+        text: circle.label,
+        position: { x: center.x + direction.x * distance, y: center.y + direction.y * distance },
+        color: theme.ink,
+        size: 36,
+        opacity: fade(start + 0.5),
+        directions: [direction, { x: -direction.y, y: direction.x }, { x: direction.y, y: -direction.x }],
+      }];
+    }),
+    ...(data.axes ? (() => {
+      const origin = project(0, 0);
+      return [{
+        key: "axis-label-origin",
+        text: "O",
+        position: { x: origin.x - 18, y: origin.y + 38 },
+        color: theme.inkDim,
+        size: 30,
+        opacity: fade(0.2, 0.5),
+        directions: [{ x: -1, y: 0 }, { x: 0, y: 1 }],
+        anchor: "end" as const,
+        outline: false,
+      }];
+    })() : []),
+  ]);
 
   return (
     <svg
@@ -255,16 +457,6 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
                   strokeOpacity={0.45}
                   strokeWidth={4}
                 />
-                <text
-                  x={origin.x - 18}
-                  y={origin.y + 38}
-                  fill={theme.inkDim}
-                  fontSize={30}
-                  fontWeight={700}
-                  textAnchor="end"
-                >
-                  O
-                </text>
               </g>
             );
           })()
@@ -316,8 +508,6 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           frame,
           [start * fps, (start + 0.65) * fps],
           [0, 1], theme.easing);
-        const outwards = outward(center);
-
         if (!whole) {
           return (
             <g key={`c${index}`} opacity={sweep}>
@@ -337,18 +527,6 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
                   strokeLinecap="round"
                 />
               )}
-              {circle.label
-                ? label(
-                    circle.label,
-                    {
-                      x: center.x + Math.cos((a0 + a1) / 2) * (radius + 40 * reach(circle.label)),
-                      y: center.y + Math.sin((a0 + a1) / 2) * (radius + 40 * reach(circle.label)),
-                    },
-                    accent,
-                    36,
-                    1,
-                  )
-                : null}
             </g>
           );
         }
@@ -371,22 +549,6 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
                     transform: `rotate(-90 ${center.x} ${center.y})`,
                   })}
             />
-            {circle.label
-              ? label(
-                  circle.label,
-                  (() => {
-                    const distance = radius + 34 * reach(circle.label);
-                    const direction = clearDirection(center, distance, outwards);
-                    return {
-                      x: center.x + direction.x * distance,
-                      y: center.y + direction.y * distance,
-                    };
-                  })(),
-                  theme.ink,
-                  36,
-                  fade(start + 0.5),
-                )
-              : null}
           </g>
         );
       })}
@@ -424,17 +586,6 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
           const across = { x: -along.y, y: along.x };
           const head = segment.arrow ? 26 : 0;
           const middle = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
-          /*
-           * 外周の辺では重心から中点へ向かう向きがそのまま法線に近く、ラベルは辺の外に出る。
-           * しかし中心から放射状に出る辺（円の半径など）では、その向きが辺と平行になり、ラベルが
-           * 辺の上を滑るだけで離れなかった。向きが辺に沿っている（45° 以内）ときは、法線のうち
-           * 重心から遠ざかる側を使う。外周の辺は従来どおりなので、既存の図の置き場所は変わらない。
-           */
-          const radial = outward(middle);
-          const parallel = Math.abs(radial.x * along.x + radial.y * along.y) > Math.SQRT1_2;
-          const sign = radial.x * across.x + radial.y * across.y >= 0 ? 1 : -1;
-          const push = parallel ? { x: across.x * sign, y: across.y * sign } : radial;
-
           return (
             <g key={`s${index}`}>
               <line
@@ -484,18 +635,6 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
                     );
                   })
                 : null}
-              {segment.label
-                ? label(
-                    segment.label,
-                    {
-                      x: middle.x + push.x * 34 * reach(segment.label),
-                      y: middle.y + push.y * 34 * reach(segment.label),
-                    },
-                    color,
-                    36,
-                    fade(start + 0.35),
-                  )
-                : null}
             </g>
           );
         })}
@@ -515,12 +654,6 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
         const opacity = fade(lastSegmentEnd + index * 0.15);
 
         const radius = 48;
-        const bisector = from + turn / 2;
-        const labelAt = {
-          x: vertex.x + Math.cos(bisector) * (radius + 34 * reach(angle.label)),
-          y: vertex.y + Math.sin(bisector) * (radius + 34 * reach(angle.label)),
-        };
-
         const mark = isRight
           ? (() => {
               const size = 30;
@@ -569,22 +702,17 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
         return (
           <g key={`a${index}`} opacity={opacity}>
             {mark}
-            {angle.label && !isRight
-              ? label(angle.label, labelAt, accent, 34, 1)
-              : null}
           </g>
         );
       })}
 
-      {/* vertex は最後。dot と名前が決して覆われないようにする。 */}
+      {/* vertex は edge の上に置く。label はこの後の最前面 pass で描く。 */}
       {data.points.map((point, index) => {
         const position = at(point.label);
         if (!position) {
           return null;
         }
         const opacity = fade(0.4 + index * 0.08, 0.25);
-        const push = outward(position);
-
         return (
           <g key={`p${point.label}`}>
             <circle
@@ -594,16 +722,15 @@ export const Figure: React.FC<{ data: FigureData; accent: string }> = ({
               fill={theme.ink}
               opacity={opacity}
             />
-            {label(
-              point.label,
-              { x: position.x + push.x * 38, y: position.y + push.y * 38 },
-              theme.ink,
-              40,
-              opacity,
-            )}
           </g>
         );
       })}
+
+      {figureLabels.map((item) => (
+        <g key={item.key}>
+          {label(item.text, item.position, item.color, item.size, item.opacity, item)}
+        </g>
+      ))}
     </svg>
   );
 };
