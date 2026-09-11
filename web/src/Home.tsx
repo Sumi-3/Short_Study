@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { MATH_TAXONOMY, splitUnit } from "../../src/curriculum";
 import { LibraryCard } from "./LibraryCard";
 import type { ShortSummary } from "./api";
@@ -11,62 +11,28 @@ const Bar: React.FC<{
   options: string[];
   value: string | null;
   onPick: (next: string | null) => void;
-}> = ({ label, options, value, onPick }) => {
-  const chipsRef = useRef<HTMLDivElement>(null);
-  const [edge, setEdge] = useState<"fits" | "start" | "middle" | "end">("fits");
-
-  useEffect(() => {
-    const chips = chipsRef.current;
-    if (!chips) return;
-
-    const updateEdge = () => {
-      const overflows = chips.scrollWidth - chips.clientWidth > 1;
-      if (!overflows) {
-        setEdge("fits");
-        return;
-      }
-
-      const atStart = chips.scrollLeft <= 1;
-      const atEnd = chips.scrollLeft + chips.clientWidth >= chips.scrollWidth - 1;
-      setEdge(atStart ? "start" : atEnd ? "end" : "middle");
-    };
-
-    updateEdge();
-    chips.addEventListener("scroll", updateEdge, { passive: true });
-    const observer = new ResizeObserver(updateEdge);
-    observer.observe(chips);
-
-    return () => {
-      chips.removeEventListener("scroll", updateEdge);
-      observer.disconnect();
-    };
-  }, [options]);
-
-  return (
-    <div className="bar">
-      <span className="bar__label">{label}</span>
-      <div ref={chipsRef} className={`bar__chips bar__chips--${edge}`}>
+}> = ({ label, options, value, onPick }) => (
+  <div className="bar">
+    <span className="bar__label">{label}</span>
+    <div className="bar__chips">
+      <button
+        className={`chip${value === null ? " is-on" : ""}`}
+        onClick={() => onPick(null)}
+      >
+        {ALL}
+      </button>
+      {options.map((option) => (
         <button
-          aria-pressed={value === null}
-          className={`chip${value === null ? " is-on" : ""}`}
-          onClick={() => onPick(null)}
+          key={option}
+          className={`chip${value === option ? " is-on" : ""}`}
+          onClick={() => onPick(option)}
         >
-          {ALL}
+          {option}
         </button>
-        {options.map((option) => (
-          <button
-            key={option}
-            aria-pressed={value === option}
-            className={`chip${value === option ? " is-on" : ""}`}
-            onClick={() => onPick(option)}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
+      ))}
     </div>
-  );
-};
+  </div>
+);
 
 /**
  * library。card の一覧に対し、curriculum の三段階 filter を連動させる。
