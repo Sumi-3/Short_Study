@@ -9,6 +9,9 @@ import type { Manifest } from "../../src/types";
 
 const MEDIA_CONTROLS = { mode: "prevent-media-session" } as const;
 const PLAYER_STYLE = { width: "100%", height: "100%" } as const;
+// Player は mount したままにして audio pool を維持しつつ、切替中だけ下の FirstFrame に
+// 描画を譲る。`display: none` は media 要素の扱いまで変えうるため使わない。
+const HIDDEN_PLAYER_STYLE = { ...PLAYER_STYLE, visibility: "hidden" } as const;
 const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5] as const;
 const PAUSE_OVERLAY_HOLD_MS = 800;
 const PAUSE_OVERLAY_FADE_MS = 320;
@@ -148,7 +151,8 @@ export type ShortPlayerHandle = { play: (event?: React.SyntheticEvent) => void }
 export const ShortPlayer: React.FC<{
   manifestSrc: string;
   playbackRef?: React.Ref<ShortPlayerHandle>;
-}> = ({ manifestSrc, playbackRef }) => {
+  onSwappingChange?: (swapping: boolean) => void;
+}> = ({ manifestSrc, playbackRef, onSwappingChange }) => {
   const player = useRef<PlayerRef>(null);
   const container = useRef<HTMLDivElement>(null);
   const wantsPlay = useRef(false);
@@ -380,6 +384,12 @@ export const ShortPlayer: React.FC<{
    */
   const swapping = audioStatus === "ready" && !error && loaded?.src !== manifestSrc;
 
+  // Player の絵を隠すだけでは、その親が持つ letterbox 用の背景が FirstFrame を覆う。
+  // layout effect で親の背景も同じ paint 前に透明化し、前の short が見える隙間を作らない。
+  useLayoutEffect(() => {
+    onSwappingChange?.(swapping);
+  }, [onSwappingChange, swapping]);
+
   return (
     <div
       className="short"
@@ -424,7 +434,7 @@ export const ShortPlayer: React.FC<{
          * 再生しているので、この context は再生速度を変えた Safari の増幅にしか関わらない。
          */
         _experimentalKeepAudioContextAlive
-        style={PLAYER_STYLE}
+        style={swapping ? HIDDEN_PLAYER_STYLE : PLAYER_STYLE}
       />
 
       {playing || swapping ? null : (

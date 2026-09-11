@@ -27,6 +27,7 @@ export const Feed: React.FC<{
   onClose?: () => void;
 }> = ({ shorts, initialIndex, playbackRef, onClose }) => {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [playerSwapping, setPlayerSwapping] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
   /* 一つの item が scroller を満たすため、これは行の高さであると同時に、固定した
      player をずらす pitch でもある。 */
@@ -131,11 +132,17 @@ export const Feed: React.FC<{
             style={{
               top: activeIndex * itemHeight,
               height: itemHeight,
-              background: themeOf().bgDeep,
+              // swapping 中は上層の Player とこの背景を同時に退かせ、下の FirstFrame を見せる。
+              // 通常時は 9:16 の外に残る帯を、動画自身の濃い背景色で埋める。
+              background: playerSwapping ? "transparent" : themeOf().bgDeep,
             }}
           >
             <div className="phone">
-              <ShortPlayer manifestSrc={active.manifestSrc} playbackRef={playbackRef} />
+              <ShortPlayer
+                manifestSrc={active.manifestSrc}
+                playbackRef={playbackRef}
+                onSwappingChange={setPlayerSwapping}
+              />
             </div>
           </section>
         ) : null}
