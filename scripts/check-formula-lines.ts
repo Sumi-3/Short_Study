@@ -53,7 +53,7 @@ const mixed = [
   "[text][underline] どちらかの因数が0", "x-2=0 \\quad \\text{または} \\quad x-3=0", "[box] x=2,3",
 ];
 const base: ApiScript["scenes"][number] = {
-  scene_id: 1, narration: "説明", visual_type: "point", visual_content: "",
+  scene_id: 1, narration: "説明", visual_type: "step", visual_content: "",
   visual_kind: "formula", visual_items: mixed, visual_bars: [], visual_unit: "",
   visual_caption: "", visual_curves: [], visual_range: [], visual_shade: [],
   visual_points: [], visual_segments: [], visual_angles: [], visual_circles: [],
@@ -137,7 +137,7 @@ for (const invalid of [
 // author が得られるのは message だけである。これが throw する時点で生成は失われ、
 // retry もないため、最初の一つだけでなく失敗した rule をすべて明示しなければならない。
 const carried = (items: string[], extra = {}) => ({
-  visual_kind: "formula", visual_type: "point", visual_content: "", visual_items: items, ...extra,
+  visual_kind: "formula", visual_type: "step", visual_content: "", visual_items: items, ...extra,
 });
 const carryMessage = (scenes: any[]) => {
   try { assertFormulaCarry(scenes); return ""; } catch (error) { return (error as Error).message; }

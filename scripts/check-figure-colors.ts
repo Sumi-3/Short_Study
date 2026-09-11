@@ -37,7 +37,7 @@ for (const value of [0, 1, 2, 3, 4, 5]) assert.ok(apiEmphasis.safeParse(value).s
 for (const value of [-1, 6, 1.5, true, false]) assert.ok(!apiEmphasis.safeParse(value).success);
 
 const base: ApiScript["scenes"][number] = {
-  scene_id: 1, narration: "説明", visual_type: "point", visual_content: "",
+  scene_id: 1, narration: "説明", visual_type: "step", visual_content: "",
   visual_kind: "figure", visual_items: [], visual_bars: [], visual_unit: "",
   visual_caption: "", visual_curves: [], visual_range: [], visual_shade: [],
   visual_points: [{ x: 0, y: 0, label: "A" }, { x: 3, y: 0, label: "B" }],
@@ -114,7 +114,7 @@ for (const file of await readdir(new URL("../public/projects/", import.meta.url)
       assert.ok(figureSchema.shape.segments.element.shape.emphasis.safeParse(segment.emphasis).success, file);
     }
     const html = renderToStaticMarkup(React.createElement(Player, {
-      component: Figure, inputProps: { data: scene.visual, accent: theme.accents[0] },
+      component: Figure as React.ComponentType<any>, inputProps: { data: scene.visual, accent: theme.accents[0] },
       compositionWidth: 1080, compositionHeight: 1920, fps: 30,
       durationInFrames: 300, initialFrame: 240, acknowledgeRemotionLicense: true,
     }));

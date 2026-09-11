@@ -1,13 +1,12 @@
 import fs from "node:fs";
 import { coursePrompts } from "../src/prompts/math.js";
-import { TOPIC_RULE, OUTLINE_RULE } from "../src/prompts/scriptFormat.js";
-import { budgetFor, scriptMaxTokens } from "../src/scriptBudget.js";
-const budget = budgetFor();
+import { OUTLINE_RULE } from "../src/prompts/outline.js";
+import { SCRIPT_MAX_TOKENS } from "../src/scriptBudget.js";
 const dump = [
+  // TOPIC_RULE は mathPrompt() に取り込まれたので、下の mathPrompt 節に含まれる。
   "### mathPrompt", coursePrompts.math.buildSystemPrompt(),
-  "### TOPIC_RULE", TOPIC_RULE,
   "### OUTLINE_RULE", OUTLINE_RULE,
-  "### budget", JSON.stringify(budget), String(scriptMaxTokens(budget)),
+  "### budget", String(SCRIPT_MAX_TOKENS),
   "### units", JSON.stringify(coursePrompts.math.units),
   "### meta", JSON.stringify({ id: coursePrompts.math.id, label: coursePrompts.math.label,
     subject: coursePrompts.math.subject, placeholder: coursePrompts.math.placeholder }),
