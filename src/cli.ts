@@ -8,7 +8,8 @@ import { generateCaptions } from "./pipeline/generateCaptions.js";
 import { buildManifest, manifestSrc } from "./pipeline/buildManifest.js";
 import { checkFigures } from "./pipeline/checkFigures.js";
 import { publishProject } from "./storage.js";
-import { scriptSchema, type Script } from "./types.js";
+import { type Script } from "./types.js";
+import { parseScriptDraft } from "./pipeline/normalizeScript.js";
 import { COURSE_IDS, COURSES, isCourseId, type CourseId } from "./courses.js";
 
 const usage = `Usage: npm run generate -- "<トピック>" [options]
@@ -89,7 +90,7 @@ const main = async () => {
   step(1, totalSteps, stepOneLabel);
 
   const script: Script = scriptPath
-    ? scriptSchema.parse(JSON.parse(fs.readFileSync(scriptPath, "utf-8")))
+    ? parseScriptDraft(JSON.parse(fs.readFileSync(scriptPath, "utf-8")), topic, course)
     : await generateScript(topic, course);
   for (const scene of script.scenes) {
     console.log(`   ${scene.scene_id}. [${scene.visual_type}] ${scene.narration.slice(0, 32)}…`);
