@@ -46,7 +46,7 @@ export const FirstFrame: React.FC<{ short: ShortSummary }> = ({ short }) => {
     <div className="thumb">
       <StillFrame
         component={PlaybackComposition}
-        inputProps={{ manifestSrc: loaded.src, manifest }}
+        inputProps={{ manifestSrc: loaded.src, manifest, renderCaptions: false }}
         compositionWidth={manifest.width}
         compositionHeight={manifest.height}
         durationInFrames={Math.max(

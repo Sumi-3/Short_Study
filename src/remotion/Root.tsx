@@ -11,6 +11,7 @@ const defaultProps: StudyShortProps = {
   manifestSrc: "projects/mock/manifest.json",
   manifest: null,
   animateHookEntrance: true,
+  renderCaptions: true,
 };
 
 export const RemotionRoot: React.FC = () => {

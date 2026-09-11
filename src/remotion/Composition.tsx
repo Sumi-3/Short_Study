@@ -26,6 +26,8 @@ export type StudyShortProps = {
   manifest: Manifest | null;
   /** feed の完成済み first frame に Player を重ねるときだけ、hook の再入場を止める。 */
   animateHookEntrance?: boolean;
+  /** feed の first frame を静止画として描くときだけ、字幕帯の描画を止める。 */
+  renderCaptions?: boolean;
 };
 
 /**
@@ -115,6 +117,7 @@ const SceneRenderer: React.FC<{
 export const StudyShort: React.FC<StudyShortProps> = ({
   manifest,
   animateHookEntrance = true,
+  renderCaptions = true,
 }) => {
   const environment = useRemotionEnvironment();
   // Player は全速度で native media 経路を使う。Web Audio は iOS の消音スイッチに従い、
@@ -240,7 +243,9 @@ export const StudyShort: React.FC<StudyShortProps> = ({
               animateHookEntrance={animateHookEntrance}
             />
             ) : null}
-            <Captions captions={scene.captions} accent={accent} />
+            {renderCaptions ? (
+              <Captions captions={scene.captions} accent={accent} />
+            ) : null}
           </Sequence>
         );
       })}
