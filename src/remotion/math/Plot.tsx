@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "../clamped";
 import { useTheme, withAlpha } from "../theme";
@@ -62,6 +62,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
+  const clipId = useId();
   // curve を scene 自身の accent と区別できるよう、その色は飛ばす。
   const curveColors = theme.accents.filter((c) => c !== accent);
 
@@ -172,8 +173,9 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
 
   const axesProgress = clamped(frame, [0, 0.7 * fps], [0, 1], theme.easing);
 
-  const zeroY = yMin <= 0 && yMax >= 0 ? toY(0) : null;
-  const zeroX = xMin <= 0 && xMax >= 0 ? toX(0) : null;
+  // 原点が window の外でも、最寄りの端に軸と名前を残して座標の意味を読めるようにする。
+  const axisY = toY(Math.max(yMin, Math.min(yMax, 0)));
+  const axisX = toX(Math.max(xMin, Math.min(xMax, 0)));
 
   return (
     <div
@@ -191,6 +193,11 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
       preserveAspectRatio="xMidYMid meet"
       style={{ width: "100%", height: "100%", overflow: "visible" }}
     >
+      <defs>
+        <clipPath id={clipId}>
+          <rect x={PAD} y={PAD} width={plotWidth} height={plotHeight} />
+        </clipPath>
+      </defs>
       {/* grid */}
       <g stroke={withAlpha(theme.ink, 0.12)} strokeWidth={1}>
         {ticks(xMin, xMax).map((x) => (
@@ -203,62 +210,60 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
 
       {/* origin から外へ wipe する axis。 */}
       <g stroke={withAlpha(theme.ink, 0.85)} strokeWidth={3} strokeLinecap="round">
-        {zeroY !== null ? (
-          <line
-            x1={PAD}
-            y1={zeroY}
-            x2={PAD + (WIDTH - PAD * 2) * axesProgress}
-            y2={zeroY}
-          />
-        ) : null}
-        {zeroX !== null ? (
-          <line
-            x1={zeroX}
-            y1={HEIGHT - PAD}
-            x2={zeroX}
-            y2={HEIGHT - PAD - (HEIGHT - PAD * 2) * axesProgress}
-          />
-        ) : null}
+        <line
+          x1={PAD}
+          y1={axisY}
+          x2={PAD + (WIDTH - PAD * 2) * axesProgress}
+          y2={axisY}
+        />
+        <line
+          x1={axisX}
+          y1={HEIGHT - PAD}
+          x2={axisX}
+          y2={HEIGHT - PAD - (HEIGHT - PAD * 2) * axesProgress}
+        />
       </g>
 
       {/* tick label。 */}
-      {zeroY !== null
-        ? ticks(xMin, xMax)
-            .filter((x) => x !== 0)
-            .map((x) => (
-              <text
-                key={`tx${x}`}
-                x={toX(x)}
-                y={zeroY + 36}
-                fill={withAlpha(theme.ink, 0.55)}
-                fontSize={28}
-                fontFamily={theme.fontFamily}
-                textAnchor="middle"
-                opacity={axesProgress}
-              >
-                {x}
-              </text>
-            ))
-        : null}
+      {ticks(xMin, xMax)
+        .filter((x) => x !== 0)
+        .map((x) => (
+          <text
+            key={`tx${x}`}
+            x={toX(x)}
+            y={axisY + 36}
+            fill={withAlpha(theme.ink, 0.55)}
+            fontSize={28}
+            fontFamily={theme.fontFamily}
+            textAnchor="middle"
+            opacity={axesProgress}
+          >
+            {x}
+          </text>
+        ))}
 
-      {zeroX !== null
-        ? ticks(yMin, yMax)
-            .filter((y) => y !== 0)
-            .map((y) => (
-              <text
-                key={`ty${y}`}
-                x={zeroX - 14}
-                y={toY(y) + 9}
-                fill={withAlpha(theme.ink, 0.55)}
-                fontSize={28}
-                fontFamily={theme.fontFamily}
-                textAnchor="end"
-                opacity={axesProgress}
-              >
-                {y}
-              </text>
-            ))
-        : null}
+      {ticks(yMin, yMax)
+        .filter((y) => y !== 0)
+        .map((y) => (
+          <text
+            key={`ty${y}`}
+            x={axisX - 14}
+            y={toY(y) + 9}
+            fill={withAlpha(theme.ink, 0.55)}
+            fontSize={28}
+            fontFamily={theme.fontFamily}
+            textAnchor="end"
+            opacity={axesProgress}
+          >
+            {y}
+          </text>
+        ))}
+
+      {/* 軸名は端の外側に置き、目盛りと window 内の曲線凡例から離す。 */}
+      <g fill={theme.inkDim} fontSize={32} fontWeight={700} fontFamily={theme.fontFamily} opacity={axesProgress}>
+        <text x={WIDTH - PAD + 18} y={axisY + 10}>x</text>
+        <text x={axisX} y={PAD - 18} textAnchor="middle">y</text>
+      </g>
 
       {/* region 指定時の shade は x 範囲。共通部分が空でも積分の塗りへ戻すと誤った領域になる。 */}
       {data.shade && compiled[0]?.fn && !hasRegion
@@ -283,6 +288,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
             points.push(`${toX(end)},${toY(0)}`);
             return (
               <polygon
+                clipPath={`url(#${clipId})`}
                 points={points.join(" ")}
                 fill={withAlpha(accent, 0.45)}
                 stroke={withAlpha(accent, 0.9)}
@@ -296,13 +302,14 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
       {regionPolygons.map((polygon, index) => (
         <polygon
           key={`region${index}`}
+          clipPath={`url(#${clipId})`}
           points={polygon.map(([x, y]) => `${toX(x)},${toY(y)}`).join(" ")}
           fill={withAlpha(accent, 0.28)}
           opacity={clamped(frame, [1.6 * fps, 2.3 * fps], [0, 1], theme.easing)}
         />
       ))}
 
-      {/* curve。 */}
+      {/* SVG 全体の overflow は文字のために残し、線と塗りだけを window 内に収める。 */}
       {compiled.map((curve, index) => {
         const color = curveColors[index % curveColors.length];
         const start = (0.8 + index * 0.5) * fps;
@@ -342,7 +349,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
         }
 
         return (
-          <g key={curve.expr}>
+          <g key={curve.expr} clipPath={`url(#${clipId})`}>
             {segments
               .filter((segment) => segment.length > 1)
               .map((segment, segmentIndex) => (
@@ -390,7 +397,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
             const [px, py] = point(span - 0.06);
             const angle = (Math.atan2(hy - py, hx - px) * 180) / Math.PI;
             return (
-              <g opacity={Math.min(1, swept * 2)}>
+              <g opacity={Math.min(1, swept * 2)} clipPath={`url(#${clipId})`}>
                 {/* 回転面そのもの。矢印だけでは、何の上を回っているのかが分からない。 */}
                 <ellipse
                   cx={cx}
@@ -437,17 +444,19 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
 
         return (
           <g key={`${point.x},${point.y}`}>
-            {/* point へ縮む ring。目線をその point に着地させる。 */}
-            <circle
-              cx={cx}
-              cy={cy}
-              r={10 + 26 * (1 - pop)}
-              fill="none"
-              stroke={accent}
-              strokeWidth={4}
-              opacity={pop}
-            />
-            <circle cx={cx} cy={cy} r={11} fill={accent} opacity={pop} />
+            <g clipPath={`url(#${clipId})`}>
+              {/* point へ縮む ring。目線をその point に着地させる。 */}
+              <circle
+                cx={cx}
+                cy={cy}
+                r={10 + 26 * (1 - pop)}
+                fill="none"
+                stroke={accent}
+                strokeWidth={4}
+                opacity={pop}
+              />
+              <circle cx={cx} cy={cy} r={11} fill={accent} opacity={pop} />
+            </g>
             {point.label ? (
               <SvgLabel
                 text={point.label}
@@ -480,7 +489,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
           >
             <rect
               x={PAD}
-              y={PAD - 34 + index * 40}
+              y={PAD + 24 + index * 40}
               width={26}
               height={8}
               rx={4}
@@ -489,7 +498,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
             <SvgLabel
               text={curve.label}
               x={PAD + 40}
-              y={PAD - 24 + index * 40}
+              y={PAD + 34 + index * 40}
               color={theme.ink}
               size={30}
               weight={700}
