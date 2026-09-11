@@ -16,7 +16,7 @@ import { config } from "../config.js";
 const STEPS: { status: JobStatus; message: string; progress: number }[] = [
   { status: "script", message: "台本を書いています", progress: 0.90 },
   { status: "audio", message: "ナレーションを合成しています", progress: 0.93 },
-  { status: "captions", message: "字幕のタイミングを取っています", progress: 0.6 },
+  { status: "captions", message: "字幕のタイミングを取っています", progress: 0.95 },
   { status: "manifest", message: "動画を組み立てています", progress: 0.99 },
 ];
 

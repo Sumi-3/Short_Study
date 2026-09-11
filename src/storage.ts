@@ -38,6 +38,10 @@ const PROJECT_SLUG = /^[a-zA-Z0-9-]+$/;
 
 export const isProjectSlug = (slug: string) => PROJECT_SLUG.test(slug);
 
+/** ローカルから Blob へ書くには、OIDC ではなく長期 token が必要になる。 */
+export const hasBlobWriteToken = () =>
+  Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
+
 export class ProjectDeleteError extends Error {
   constructor(
     message: string,
@@ -61,7 +65,17 @@ const assertDeletableSlug = (slug: string) => {
 /** `projects/<slug>/manifest.json` から `<slug>` を得る。 */
 const slugOf = (pathname: string) => pathname.split("/")[1] ?? pathname;
 
-const publishToBlob = async (slug: string, manifest: Manifest) => {
+const publishToBlob = async (
+  slug: string,
+  manifest: Manifest,
+  {
+    existingFiles = new Map<string, string>(),
+    publishManifest = true,
+  }: {
+    existingFiles?: ReadonlyMap<string, string>;
+    publishManifest?: boolean;
+  } = {},
+) => {
   const { put } = await import("@vercel/blob");
   const dir = paths.projectDir(slug);
 
@@ -69,20 +83,26 @@ const publishToBlob = async (slug: string, manifest: Manifest) => {
   // 予算は同時実行中のすべての invocation で共有されるためである。
   for (const scene of manifest.scenes) {
     const name = path.basename(scene.audioSrc);
-    const { url } = await put(
-      `projects/${slug}/${name}`,
-      fs.createReadStream(path.join(dir, name)),
-      {
-        access: "public",
-        contentType: "audio/mpeg",
-        addRandomSuffix: false,
-        allowOverwrite: true,
-        // これがないとナレーションに cache-control が付かず、端末は swipe ごとに各 clip を
-        // 再取得し、再生は download との競争になる。パスはすでに不変のファイルを指している。
-        cacheControlMaxAge: 31536000,
-      },
-    );
+    const pathname = `projects/${slug}/${name}`;
+    const existingUrl = existingFiles.get(pathname);
+    if (existingUrl) {
+      scene.audioSrc = existingUrl;
+      continue;
+    }
+    const { url } = await put(pathname, fs.createReadStream(path.join(dir, name)), {
+      access: "public",
+      contentType: "audio/mpeg",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      // これがないとナレーションに cache-control が付かず、端末は swipe ごとに各 clip を
+      // 再取得し、再生は download との競争になる。パスはすでに不変のファイルを指している。
+      cacheControlMaxAge: 31536000,
+    });
     scene.audioSrc = url;
+  }
+
+  if (!publishManifest) {
+    return existingFiles.get(`projects/${slug}/manifest.json`) ?? "";
   }
 
   // 指す音声がすべて読めるようになってから、最後に upload する。
@@ -109,6 +129,135 @@ export const publishProject = async (
   manifest: Manifest,
 ): Promise<string> =>
   usingBlob() ? publishToBlob(slug, manifest) : localManifestSrc(slug);
+
+type BlobSyncFile = {
+  pathname: string;
+  file: string;
+  size: number;
+};
+
+export type BlobSyncPlan = {
+  slug: string;
+  files: BlobSyncFile[];
+  missingFiles: BlobSyncFile[];
+  manifest: Manifest;
+};
+
+const localProjectsForBlobSync = (): Omit<BlobSyncPlan, "missingFiles">[] => {
+  if (!fs.existsSync(paths.projects)) {
+    return [];
+  }
+
+  return fs.readdirSync(paths.projects, { withFileTypes: true }).flatMap((entry) => {
+    if (!entry.isDirectory() || !isProjectSlug(entry.name)) {
+      return [];
+    }
+
+    const slug = entry.name;
+    const dir = paths.projectDir(slug);
+    const manifestFile = path.join(dir, "manifest.json");
+    if (!fs.existsSync(manifestFile)) {
+      return [];
+    }
+
+    const manifest = JSON.parse(fs.readFileSync(manifestFile, "utf-8")) as Manifest;
+    const audioFiles = new Map<string, BlobSyncFile>();
+    for (const scene of manifest.scenes) {
+      const name = path.basename(scene.audioSrc);
+      const file = path.join(dir, name);
+      if (!fs.existsSync(file)) {
+        throw new Error(`Audio file is missing: ${file}`);
+      }
+      const pathname = `projects/${slug}/${name}`;
+      audioFiles.set(pathname, { pathname, file, size: fs.statSync(file).size });
+    }
+
+    const manifestPathname = `projects/${slug}/manifest.json`;
+    return [{
+      slug,
+      manifest,
+      files: [
+        ...audioFiles.values(),
+        {
+          pathname: manifestPathname,
+          file: manifestFile,
+          size: fs.statSync(manifestFile).size,
+        },
+      ],
+    }];
+  });
+};
+
+/** Blob の全ページを読む。同期漏れが件数の増加で復活しないようにする。 */
+export const listBlobFiles = async (): Promise<Map<string, string>> => {
+  const { list } = await import("@vercel/blob");
+  const files = new Map<string, string>();
+  let cursor: string | undefined;
+
+  do {
+    const page = await list({ prefix: "projects/", cursor });
+    for (const blob of page.blobs) {
+      files.set(blob.pathname, blob.url);
+    }
+    cursor = page.cursor;
+    if (!page.hasMore) {
+      break;
+    }
+  } while (cursor);
+
+  return files;
+};
+
+/** ローカルの project と Blob の pathname を比べ、まだないファイルだけを返す。 */
+export const planBlobSync = (
+  remoteFiles: ReadonlyMap<string, string> = new Map(),
+): BlobSyncPlan[] =>
+  localProjectsForBlobSync().map((project) => ({
+    ...project,
+    missingFiles: project.files.filter((file) => !remoteFiles.has(file.pathname)),
+  }));
+
+export type BlobSyncResult = {
+  uploaded: BlobSyncPlan[];
+  failures: { slug: string; error: Error }[];
+};
+
+/**
+ * ローカル生成物で Blob を補完する。
+ *
+ * 個々の project は独立しているため、一つの壊れた音声で他の完成品まで配信不能にしない。
+ * ただし失敗を成功として push を進めると本番 feed が欠けるため、呼び出し元には最後に失敗を返す。
+ */
+export const syncProjectsToBlob = async (): Promise<BlobSyncResult> => {
+  const remoteFiles = await listBlobFiles();
+  const plans = planBlobSync(remoteFiles);
+  const uploaded: BlobSyncPlan[] = [];
+  const failures: BlobSyncResult["failures"] = [];
+
+  for (const plan of plans) {
+    if (plan.missingFiles.length === 0) {
+      continue;
+    }
+    try {
+      // publishToBlob は player 用 URL を scene へ入れる。ローカル再生用 manifest まで絶対 URL に
+      // 変えると staticFile() の前提が壊れるため、同期専用に JSON として複製する。
+      await publishToBlob(plan.slug, structuredClone(plan.manifest), {
+        existingFiles: remoteFiles,
+        publishManifest: plan.missingFiles.some(
+          (file) => file.pathname === `projects/${plan.slug}/manifest.json`,
+        ),
+      });
+      uploaded.push(plan);
+    } catch (error) {
+      failures.push({
+        slug: plan.slug,
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
+    }
+  }
+
+  return { uploaded, failures };
+};
 
 const listFromDisk = (): ShortSummary[] => {
   if (!fs.existsSync(paths.projects)) {

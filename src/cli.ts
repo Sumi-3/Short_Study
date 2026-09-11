@@ -7,6 +7,7 @@ import { generateAudio } from "./pipeline/generateAudio.js";
 import { generateCaptions } from "./pipeline/generateCaptions.js";
 import { buildManifest, manifestSrc } from "./pipeline/buildManifest.js";
 import { checkFigures } from "./pipeline/checkFigures.js";
+import { publishProject } from "./storage.js";
 import { scriptSchema, type Script } from "./types.js";
 import { COURSE_IDS, COURSES, isCourseId, type CourseId } from "./courses.js";
 
@@ -111,10 +112,23 @@ const main = async () => {
   const frames = manifest.scenes.reduce((sum, s) => sum + s.durationInFrames, 0);
   console.log(`   ${frames} frames (${(frames / manifest.fps).toFixed(1)}s)`);
 
+  /*
+   * ライブラリは Blob ストアが設定されていればディスクではなくそちらを読む（storage.ts の
+   * `usingBlob` 参照）。ここで上げないと、CLI で作った動画だけが一覧に出ず、次の同期まで
+   * 見えないままになる。
+   *
+   * `buildManifest` がディスクへ書き終えたあとに呼ぶ。`publishProject` は渡された manifest の
+   * `audioSrc` を絶対 URL へ書き換えるので、先に呼ぶとディスクの manifest が Blob の URL に
+   * なり、ローカル再生が store 越しになる。
+   */
+  const src = await publishProject(slug, manifest);
+  const uploaded = src !== manifestSrc(slug);
+
   const propsPath = path.join(paths.projectDir(slug), "props.json");
-  fs.writeFileSync(propsPath, JSON.stringify({ manifestSrc: manifestSrc(slug) }));
+  fs.writeFileSync(propsPath, JSON.stringify({ manifestSrc: src }));
   console.log(
-    `\n✅ manifest: public/${manifestSrc(slug)}` +
+    `\n✅ manifest: ${uploaded ? src : `public/${src}`}` +
+      (uploaded ? `\n   Blob へ upload 済み（Vercel でも見えます）` : "") +
       `\n   Web アプリで再生できます` +
       `\n   Studio で確認: npm run studio -- --props=${propsPath}`,
   );

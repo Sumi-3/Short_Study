@@ -157,6 +157,22 @@ node -e "import('/tmp/probe/api/generate.js')"
 なお **Blob の URL 自体は公開**です。Vercel Authentication はアプリを保護しますが、
 音声と manifest の URL を知っている人は直接取得できます。
 
+### ローカル生成物を push 時に同期する
+
+`public/projects/` は Git 管理しないため、ローカルで作った動画は pre-push で Blob へ補完する。
+最初に一度だけフックを有効化し、Vercel Storage で発行した長期 token をローカル `.env` の
+`BLOB_READ_WRITE_TOKEN` に設定する（`BLOB_STORE_ID` の OIDC は Vercel 内だけで使える）。
+
+```bash
+npm run hooks:install
+npm run sync:blob                 # 手動同期
+npm run sync:blob -- --dry-run    # token がなくても初回 upload 対象を確認
+```
+
+Blob に既にある `manifest.json` と scene mp3 は pathname ごとに飛ばし、未アップロード分だけを送る。
+`mock` も Blob の feed がローカルの一覧と一致するよう同期対象に含める。失敗した project があっても
+他を続けるが、最後に非ゼロで終了して push は止める。token がない通常時は何もせず成功終了する。
+
 ## パイプライン
 
 | # | 段階 | 実装 | 出力 |
