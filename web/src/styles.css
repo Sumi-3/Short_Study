@@ -846,32 +846,34 @@ body {
   flex: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: calc(9px + env(safe-area-inset-top)) 0 8px;
+  gap: 2px;
+  padding: calc(5px + env(safe-area-inset-top)) 0 5px;
   border-bottom: 1px solid var(--line);
 }
 
 .bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   min-width: 0;
 }
 
 .bar__label {
   flex: none;
   padding-left: 12px;
-  width: 46px;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--ink-dim);
 }
 
 /* Each level scrolls on its own: nine courses and ninety-one topics will not
    fit a phone's width, and wrapping would push the grid off the screen. */
 .bar__chips {
+  --chip-edge-fade: 18px;
   display: flex;
-  gap: 6px;
+  gap: 5px;
   padding-right: 12px;
   overflow-x: auto;
   scrollbar-width: none;
@@ -881,24 +883,129 @@ body {
   display: none;
 }
 
+/* A fade only appears where more choices exist, so a short row does not imply
+   that it can be scrolled. The edge follows scroll position rather than
+   permanently masking the first or last choice. */
+.bar__chips--start {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    var(--ink) calc(100% - var(--chip-edge-fade)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    var(--ink) calc(100% - var(--chip-edge-fade)),
+    transparent
+  );
+}
+
+.bar__chips--middle {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    var(--ink) var(--chip-edge-fade),
+    var(--ink) calc(100% - var(--chip-edge-fade)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    var(--ink) var(--chip-edge-fade),
+    var(--ink) calc(100% - var(--chip-edge-fade)),
+    transparent
+  );
+}
+
+.bar__chips--end {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    var(--ink) var(--chip-edge-fade)
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    var(--ink) var(--chip-edge-fade)
+  );
+}
+
 .chip {
   flex: none;
-  padding: 6px 13px;
-  border: 1px solid var(--line);
+  min-height: 30px;
+  padding: 5px 11px;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: var(--control-bg);
+  background: color-mix(in srgb, var(--accent-soft) 44%, var(--control-bg));
   color: var(--ink-dim);
   font: inherit;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
+  line-height: 1.15;
   white-space: nowrap;
   cursor: pointer;
 }
 
-.chip.is-on {
+.chip:first-child {
+  background: transparent;
+  color: color-mix(in srgb, var(--ink-dim) 78%, transparent);
+}
+
+/* The unfiltered state is deliberately quieter: all three rows start there,
+   so treating it like a category selection would make the filter compete with
+   the library itself. */
+.chip:first-child.is-on {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  color: var(--ink);
+}
+
+.bar:nth-child(1) .chip {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.bar:nth-child(2) .chip {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.bar:nth-child(3) .chip {
+  font-size: 11px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--ink-dim) 88%, transparent);
+}
+
+.chip.is-on:not(:first-child) {
+  border-color: color-mix(in srgb, var(--accent) 36%, var(--line));
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Selection becomes progressively lighter down the taxonomy, preserving the
+   parent-first reading order when several filters are active together. */
+.bar:nth-child(2) .chip.is-on:not(:first-child) {
   border-color: transparent;
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: color-mix(in srgb, var(--accent-soft) 54%, transparent);
+  box-shadow: inset 0 -2px var(--accent);
+}
+
+.bar:nth-child(3) .chip.is-on:not(:first-child) {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: inset 0 -1px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.chip:hover {
+  background: color-mix(in srgb, var(--accent-soft) 70%, var(--control-bg));
+  color: var(--ink);
+}
+
+.chip.is-on:not(:first-child):hover {
+  color: var(--accent);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* ---------- library grid ---------- */
