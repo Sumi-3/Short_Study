@@ -98,7 +98,8 @@ export const SceneText: React.FC<{
   durationInFrames: number;
   accent: string;
   problem?: Problem;
-}> = ({ scene, durationInFrames, accent, problem }) => {
+  animateHookEntrance: boolean;
+}> = ({ scene, durationInFrames, accent, problem, animateHookEntrance }) => {
   const items =
     scene.visual?.kind === "bullets" ? scene.visual.items : [];
 
@@ -108,6 +109,7 @@ export const SceneText: React.FC<{
       durationInFrames={durationInFrames}
       accent={accent}
       problem={problem}
+      animateHookEntrance={animateHookEntrance}
     >
       {items.length ? <BulletList items={items} accent={accent} /> : null}
     </SceneShell>

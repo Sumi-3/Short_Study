@@ -71,11 +71,14 @@ const UnitBanner: React.FC<{
   fontSize: number;
   top: number;
   inset: number;
-}> = ({ unit, difficulty, accent, fontSize, top, inset }) => {
+  animateHookEntrance: boolean;
+}> = ({ unit, difficulty, accent, fontSize, top, inset, animateHookEntrance }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
-  const appear = clamped(frame, [0, 0.4 * fps], [0, 1], theme.easing);
+  const appear = animateHookEntrance
+    ? clamped(frame, [0, 0.4 * fps], [0, 1], theme.easing)
+    : 1;
 
   return (
     <div
@@ -214,7 +217,8 @@ const ProblemCard: React.FC<{
   accent: string;
   /** still card。caption は来ないため question が frame を使う。 */
   poster?: boolean;
-}> = ({ text, points, accent, poster }) => {
+  animateHookEntrance: boolean;
+}> = ({ text, points, accent, poster, animateHookEntrance }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -247,8 +251,12 @@ const ProblemCard: React.FC<{
         flexDirection: "column",
         height: "100%",
         minHeight: 0,
-        opacity: clamped(frame, [0, 0.35 * fps], [0, 1], theme.easing),
-        translate: clamped(frame, [0, 0.5 * fps], ["0px -24px", "0px 0px"], theme.easing),
+        opacity: animateHookEntrance
+          ? clamped(frame, [0, 0.35 * fps], [0, 1], theme.easing)
+          : 1,
+        translate: animateHookEntrance
+          ? clamped(frame, [0, 0.5 * fps], ["0px -24px", "0px 0px"], theme.easing)
+          : "0px 0px",
       }}
     >
       {/* 問題 chip は置かない。card は video が最初に見せるもので、unit banner の下、question 自身の周囲に
@@ -367,6 +375,8 @@ export const SceneShell: React.FC<{
   accent: string;
   /** この video が答える question。渡すのは hook だけ。 */
   problem?: Problem;
+  /** feed が完成済みの first frame を敷いているときは、hook を初めから完成形で重ねる。 */
+  animateHookEntrance?: boolean;
   /**
    * 再生せず still card として描く。caption は来ないため、stage は banner から frame 下端までを使い、
    * question はそこを満たす。2列の home screen では video の44pxは8px未満になる。
@@ -378,7 +388,16 @@ export const SceneShell: React.FC<{
    */
   headings?: readonly { text: string; from: number }[];
   children?: React.ReactNode;
-}> = ({ scene, durationInFrames, accent, problem, poster, headings, children }) => {
+}> = ({
+  scene,
+  durationInFrames,
+  accent,
+  problem,
+  animateHookEntrance = true,
+  poster,
+  headings,
+  children,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
@@ -409,7 +428,9 @@ export const SceneShell: React.FC<{
    * この入退場を run の両端だけに置く。formula 自体を morph せず積み重ねる理由は
    * math/Formula.tsx の注記を参照。
    */
-  const arrival = clamped(frame, [0, ENTER], [0, 1], theme.easing);
+  const arrival = isHook && !animateHookEntrance
+    ? 1
+    : clamped(frame, [0, ENTER], [0, 1], theme.easing);
   const departure = clamped(
     frame,
     [durationInFrames - LEAVE, durationInFrames],
@@ -420,7 +441,9 @@ export const SceneShell: React.FC<{
       style={{
         opacity: arrival * departure,
         // slide ではなく scale にする。slide は各 headline と formula line がすでに持つ entrance と競合する。
-        scale: `${clamped(frame, [0, ENTER], [0.985, 1], theme.easing)}`,
+        scale: `${isHook && !animateHookEntrance
+          ? 1
+          : clamped(frame, [0, ENTER], [0.985, 1], theme.easing)}`,
         paddingLeft: inset,
         paddingRight: inset,
         // poster の question box は、absolute 配置で上書きされる unit banner まで届く高さがある。完全な
@@ -442,6 +465,7 @@ export const SceneShell: React.FC<{
           fontSize={poster ? POSTER_UNIT_SIZE : UNIT_SIZE}
           top={poster ? POSTER_SAFE_TOP : layout.safeTop}
           inset={inset}
+          animateHookEntrance={animateHookEntrance}
         />
       ) : null}
 
@@ -451,6 +475,7 @@ export const SceneShell: React.FC<{
           points={problem.points}
           accent={accent}
           poster={poster}
+          animateHookEntrance={animateHookEntrance}
         />
       ) : null}
 

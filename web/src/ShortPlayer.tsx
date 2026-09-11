@@ -348,7 +348,11 @@ export const ShortPlayer: React.FC<{
   // identity を安定させる。ここで新しい object を渡すと prop 変更と見なされ、
   // render ごとに audio が再スケジュールされる。
   const inputProps = useMemo(
-    () => ({ manifestSrc: loaded?.src ?? "", manifest: loaded?.manifest ?? null }),
+    () => ({
+      manifestSrc: loaded?.src ?? "",
+      manifest: loaded?.manifest ?? null,
+      animateHookEntrance: false,
+    }),
     [loaded],
   );
 

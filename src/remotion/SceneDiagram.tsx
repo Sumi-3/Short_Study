@@ -199,11 +199,17 @@ export const SceneDiagram: React.FC<{
   };
   durationInFrames: number;
   accent: string;
-}> = ({ scene, durationInFrames, accent }) => {
+  animateHookEntrance: boolean;
+}> = ({ scene, durationInFrames, accent, animateHookEntrance }) => {
   const { visual } = scene;
 
   return (
-    <SceneShell scene={scene} durationInFrames={durationInFrames} accent={accent}>
+    <SceneShell
+      scene={scene}
+      durationInFrames={durationInFrames}
+      accent={accent}
+      animateHookEntrance={animateHookEntrance}
+    >
       {visual.kind === "flow" ? (
         <Flow steps={visual.steps} accent={accent} />
       ) : null}

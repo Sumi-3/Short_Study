@@ -24,6 +24,8 @@ export type StudyShortProps = {
   manifestSrc: string;
   /** `calculateMetadata` が設定する値で、手渡しはしない。 */
   manifest: Manifest | null;
+  /** feed の完成済み first frame に Player を重ねるときだけ、hook の再入場を止める。 */
+  animateHookEntrance?: boolean;
 };
 
 /**
@@ -70,7 +72,8 @@ const SceneRenderer: React.FC<{
   scene: ManifestScene;
   accent: string;
   problem?: Problem;
-}> = ({ scene, accent, problem }) => {
+  animateHookEntrance: boolean;
+}> = ({ scene, accent, problem, animateHookEntrance }) => {
   const { visual } = scene;
 
   if (
@@ -93,6 +96,7 @@ const SceneRenderer: React.FC<{
         scene={{ ...scene, visual }}
         durationInFrames={scene.durationInFrames}
         accent={accent}
+        animateHookEntrance={animateHookEntrance}
       />
     );
   }
@@ -103,11 +107,15 @@ const SceneRenderer: React.FC<{
       durationInFrames={scene.durationInFrames}
       accent={accent}
       problem={problem}
+      animateHookEntrance={animateHookEntrance}
     />
   );
 };
 
-export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
+export const StudyShort: React.FC<StudyShortProps> = ({
+  manifest,
+  animateHookEntrance = true,
+}) => {
   const environment = useRemotionEnvironment();
   // Player は全速度で native media 経路を使う。Web Audio は iOS の消音スイッチに従い、
   // decoder の fallback は 4.0.518 では pauseWhenBuffering / crossOrigin を転送しない。
@@ -229,6 +237,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({ manifest }) => {
                     }
                   : undefined
               }
+              animateHookEntrance={animateHookEntrance}
             />
             ) : null}
             <Captions captions={scene.captions} accent={accent} />
