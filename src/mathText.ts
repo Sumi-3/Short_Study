@@ -94,6 +94,18 @@ export const splitMathText = (text: string, formula = false): MathPart[] => {
 export const normalizeMathText = (text: string) =>
   splitMathText(text).map((part) => part.math ? `$${part.text}$` : part.text).join("");
 
+/**
+ * 同じことを式専用の欄として行う。
+ *
+ * 本文の規則では `\` も `^` も持たない `x=2` に数式の証拠がなく、地の文として残る。日付や単位を
+ * 式にしないためにそれが正しいが、式だけを書く欄ではそのせいで組まれないままになる。
+ *
+ * 任意引数にはしない。`normalizeMathText` は `.map()` へ直に渡している箇所があり、第2引数を
+ * 足すと配列の添字が黙って渡る（実際に tsc が捕まえた）。
+ */
+export const normalizeExprText = (text: string) =>
+  splitMathText(text, true).map((part) => part.math ? `$${part.text}$` : part.text).join("");
+
 /** 未知の命令を捨てたり閉じ括弧を補ったりすると式の意味が変わるので、失敗範囲を保つ。 */
 export const texAtoms = (tex: string): string[] => {
   const atoms: string[] = [];

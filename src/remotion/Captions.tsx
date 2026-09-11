@@ -23,15 +23,19 @@ import { layout, plateOf, shadowOf, useTheme } from "./theme";
 const SWITCH_CAPTIONS_EVERY_MS = 6000;
 
 /**
- * 内幅は 1080 − 2×88（safe area）− 2×32（plate padding）= 840px。全角日本語 glyph は約1emなので、
- * 66pxでは11文字で1行が埋まる。
+ * 内幅は 1080 − 2×48（`captionSafeX`）− 2×32（plate padding）= 920px。全角日本語 glyph は約1emなので、
+ * 66pxでは13文字強で1行が埋まる。
  *
  * 2行を許す。band は元からそのためのサイズで、2 × 66 × 1.3 に plate の40pxを加えたものが
  * `captionBandHeight` の212である。1行に縛ると、本来ひと続きに読む「1回目に赤球が出たとき」が
  * 3 page に分かれ、各 page はほぼ1秒しか画面に残らなかった。`captionBottom` を下げても同じ
- * band を移動するだけで、幅・66px type・212px高は変わらないため、22文字の予算も維持する必要がある。
+ * band を移動するだけで、66px type と212px高は変わらない。
+ *
+ * この予算は内幅に連動する。840pxだった頃の22文字は2行を埋めきる値だったので、920pxへ広げた分だけ
+ * 上げないと2行目が短いまま余る。1行13文字の2行で26文字だが、25に留める。1文字あたりの実測が
+ * 毎秒4.45文字なので、26文字は5.8秒で `SWITCH_CAPTIONS_EVERY_MS` の6秒にほぼ接してしまう。
  */
-const MAX_CHARS_PER_PAGE = 22;
+const MAX_CHARS_PER_PAGE = 25;
 
 /**
  * 字幕 1 page に載る文字数の見積もり。`$\frac{1}{2}$` は 13 文字だが画面では 1〜2 文字幅なので、
@@ -92,8 +96,8 @@ const CaptionPage: React.FC<{ page: TikTokPage; accent: string }> = ({
       style={{
         top: layout.height - layout.captionBottom - layout.captionBandHeight,
         height: layout.captionBandHeight,
-        paddingLeft: layout.safeX,
-        paddingRight: layout.safeX,
+        paddingLeft: layout.captionSafeX,
+        paddingRight: layout.captionSafeX,
         // 下端寄せにして、まれな3行目は text をフレーム下へ押し出さず上の gap へ伸ばす。
         justifyContent: "flex-end",
         alignItems: "center",

@@ -7,14 +7,43 @@ import {
   StrikeThrough,
   Underline,
 } from "@remotion/rough-notation";
+import { Arrow } from "@remotion/shapes";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { clamped } from "../clamped";
 import { layout, shadowOf, useTheme, withAlpha } from "../theme";
 import { useFitToWidth } from "../useFitToWidth";
 import { useFitToStage } from "../useFitToStage";
-import { MathText } from "../MathText";
+import { BOLD_MATH, BoldMathStyle, MathText } from "../MathText";
+import { normalizeExprText } from "../../mathText";
 import { FORMULA_MAX_LINES, parseFormulaLine } from "../../formulaLines";
 export { parseFormulaLine } from "../../formulaLines";
+
+/**
+ * 式変形の矢印。
+ *
+ * 以前は文字の ↓ で、線の太さをフォントに任せていた。58〜76px の数式の横では細く、字面の
+ * 半分ほどしか占めないため、導出の向きを示す記号として弱かった。`@remotion/shapes` の
+ * `<Arrow />` は塗りの図形なので、軸と頭の大きさを数式の大きさに比例させて決められる。
+ *
+ * 比率はパッケージの既定（頭幅 0.62、頭長 0.4、軸幅 0.27）を少し細めたもの。矢印が数式より
+ * 目立つと、読む順が式ではなく矢印から始まってしまう。
+ */
+const DerivationArrow: React.FC<{ size: number; color: string }> = ({ size, color }) => (
+  // 印は Row の余白測定から外す。あの測定が拾うべきなのは rough annotation が行の外へ描く ink で、
+  // この矢印は layout の中に収まっている。目印がないと矢印のある行だけ 8px 広がる。
+  <span data-derivation-arrow style={{ display: "block", lineHeight: 0 }}>
+    <Arrow
+      direction="down"
+      length={size}
+      headWidth={size * 0.55}
+      headLength={size * 0.38}
+      shaftWidth={size * 0.22}
+      cornerRadius={size * 0.03}
+      fill={color}
+      style={{ display: "block" }}
+    />
+  </span>
+);
 
 const Line: React.FC<{
   latex: string;
@@ -119,8 +148,8 @@ const Row: React.FC<{
       let y = 0;
       for (const svg of Array.from(element.querySelectorAll("svg"))) {
         // KaTeX の radical は clip された span の背後に意図して巨大な SVG を描く。padding に含めるべき
-        // なのは rough annotation の overflow である。
-        if (svg.closest(".katex")) continue;
+        // なのは rough annotation の overflow である。式変形の矢印も図形なので同じく除く。
+        if (svg.closest(".katex") || svg.closest("[data-derivation-arrow]")) continue;
         if (!svg.querySelector("path")) continue;
         /*
          * layout から直接得る、screen pixel での描画 box。
@@ -401,23 +430,33 @@ export const Formula: React.FC<{
                   width: compact ? 620 : 720,
                   opacity: clamped(revealFrame, [delay - 8, delay], [0, 1]),
                 }}>
-                  <span style={{ gridColumn: 2, color: accent, fontSize: arrowSize, lineHeight: 1 }}>↓</span>
-                  <span style={{
+                  <span style={{ gridColumn: 2, lineHeight: 1 }}>
+                    <DerivationArrow size={arrowSize} color={accent} />
+                  </span>
+                  {/* 説明は 700 で組むので、中の数式も同じ太さで組ませる（MathText.tsx の BOLD_MATH 参照）。 */}
+                  <BoldMathStyle />
+                  <span className={BOLD_MATH} style={{
                     gridColumn: 3, minWidth: 0, fontFamily: theme.fontFamily,
                     fontWeight: 700, fontSize: fontSize * 0.7, lineHeight: 1.35,
                     color: theme.ink, overflowWrap: "anywhere", whiteSpace: "normal",
-                  }}><MathText text={substitution} /></span>
+                  }}>
+                    {/*
+                      「x=2 を代入」のような説明は、プロンプトが本文表記で書かせる約束なので `$` を
+                      持たない。本文の規則では `\` も `^` も無い式に数式の証拠がなく、そのまま地の文として
+                      組まれていた。式専用として読み直し、`x=2` だけを数式にして「を代入」は文に残す。
+                      display を切るのは、行内の label で分数を全高に伸ばさないためである。
+                    */}
+                    <MathText text={normalizeExprText(substitution)} display={false} />
+                  </span>
                 </div>
               ) : derivation && index > 0 ? (
                 <div
                   style={{
-                    fontSize: arrowSize,
                     lineHeight: 1,
-                    color: accent,
                     opacity: clamped(revealFrame, [delay - 8, delay], [0, 1]),
                   }}
                 >
-                  ↓
+                  <DerivationArrow size={arrowSize} color={accent} />
                 </div>
               ) : null}
 
@@ -477,7 +516,11 @@ export const Formula: React.FC<{
             1/4em と既存の gap/arrow なら derivation を明瞭に保てる。statement mark は依然として実際の
             mathematical ink だけを囲む。 */}
         <style>{`.formula-derivation .katex-display { margin: 0.25em 0; }
-          .formula-statements .katex-display { margin: 0; }`}</style>
+          .formula-statements .katex-display { margin: 0; }
+          /* 代入の説明は文と式の混在で、列幅を超えたら折り返してよい。ただし KaTeX の出力は
+             inline span の列なので、放っておくと式の内側で割れて「AB =」「2, R = 2」になる。
+             式のまとまりだけを不可分にし、折り返しは式と文の境目に落とす。 */
+          [data-formula-substitution] .katex { white-space: nowrap; }`}</style>
         {windowed ? (
           // 窓の高さは measured な行位置から出す。測り終えるまでは切らずに流し、最初の layout で確定する。
           <div
