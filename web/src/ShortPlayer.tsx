@@ -3,7 +3,6 @@ import { flushSync } from "react-dom";
 import { Player, type PlayerRef } from "@remotion/player";
 import { firstSceneFrame } from "./FirstFrame";
 import { PlaybackComposition } from "./PlaybackComposition";
-import { Explanation } from "./Explanation";
 import { fetchManifest } from "./api";
 import { AudioGate, type AudioStatus } from "./audioGate";
 import type { Manifest } from "../../src/types";
@@ -337,9 +336,7 @@ export const ShortPlayer: React.FC<{
   const toggle = useCallback((event: React.MouseEvent | React.KeyboardEvent) => {
     const instance = player.current;
     if (!instance) return;
-    if ((event.target as HTMLElement).closest(
-      ".scrubber, .speed-control, .explanation-control, .explanation-sheet",
-    )) return;
+    if ((event.target as HTMLElement).closest(".scrubber, .speed-control")) return;
     if (instance.isPlaying()) {
       wantsPlay.current = false;
       gate.pause();
@@ -347,25 +344,6 @@ export const ShortPlayer: React.FC<{
     }
     playFromGesture(event);
   }, [gate, playFromGesture]);
-
-  const pauseForExplanation = useCallback(() => {
-    wantsPlay.current = false;
-    // pause event が来る場合だけ flag を立てる。すでに停止中なら次の視聴者の停止まで
-    // programmatic 扱いにしてしまい、フィードバックが消えるためである。
-    if (player.current?.isPlaying()) {
-      programmaticPause.current = true;
-    }
-    gate.pause();
-  }, [gate]);
-
-  const seekAndPlayExplanation = useCallback((event: React.SyntheticEvent<HTMLElement>, frame: number) => {
-    const instance = player.current;
-    if (!instance) return;
-    // playFromGesture が初回用に seek(0) へ戻さないよう先に開始済みにし、選んだ節の位置を保つ。
-    started.current = true;
-    flushSync(() => instance.seekTo(frame));
-    playFromGesture(event);
-  }, [playFromGesture]);
 
   // identity を安定させる。ここで新しい object を渡すと prop 変更と見なされ、
   // render ごとに audio が再スケジュールされる。
@@ -485,12 +463,6 @@ export const ShortPlayer: React.FC<{
         <>
           <Scrubber player={player} durationInFrames={durationInFrames} fps={manifest.fps} />
           <SpeedControl playbackRate={playbackRate} onChange={setPlaybackRate} />
-          <Explanation
-            manifest={manifest}
-            player={player}
-            onOpen={pauseForExplanation}
-            onSeekAndPlay={seekAndPlayExplanation}
-          />
         </>
       ) : null}
     </div>
