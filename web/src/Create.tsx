@@ -317,7 +317,6 @@ export const Create: React.FC<{
             <button type="button" onClick={() => void extract()} disabled={extracting}>再試行</button>
           </div>
         ) : null}
-        {extracting ? <p className="image-message" aria-live="polite">画像を縮小して、問題文を読み取っています…</p> : null}
         <textarea
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
@@ -359,7 +358,7 @@ export const Create: React.FC<{
         </div>
 
         <button type="submit" disabled={!topic.trim() || busy}>
-          {busy ? "生成中…" : "動画をつくる"}
+          {busy ? "生成中…" : "動画を生成"}
         </button>
       </form>
 
