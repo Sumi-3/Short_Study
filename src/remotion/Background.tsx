@@ -55,7 +55,6 @@ export const Background: React.FC = () => {
         backgroundImage: `linear-gradient(160deg, ${theme.bg} 0%, ${theme.bgDeep} 100%)`,
         overflow: "hidden",
       }}
-      from={36}
     >
       <Blob
         color={theme.accents[2]}
@@ -82,7 +81,7 @@ export const Background: React.FC = () => {
         phase={150}
       />
       {/* にじみを和らげ、文字の可読性を保つための veil。 */}
-      <AbsoluteFill style={{ backgroundColor: theme.veil }} from={-764} />
+      <AbsoluteFill style={{ backgroundColor: theme.veil }} />
     </AbsoluteFill>
   );
 };

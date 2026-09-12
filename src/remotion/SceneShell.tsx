@@ -465,8 +465,6 @@ export const SceneShell: React.FC<{
 
         // question とそれに答える行は一体なので、両端へ押し分けず1 group として中央に置く。
         justifyContent: problem ? "center" : "flex-start",
-
-        translate: "-650.4px -564.9px",
       }}
     >
       {problem?.unit ? (
