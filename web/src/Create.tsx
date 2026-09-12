@@ -252,7 +252,7 @@ export const Create: React.FC<{
           accept="image/*"
           onChange={pickImage}
         />
-        <h2>解きたい問題は？</h2>
+        <h2>解説動画を生成</h2>
         {!imageSrc ? (
           <div className="image-entry">
             <div className="image-entry__choices">
@@ -265,7 +265,6 @@ export const Create: React.FC<{
                 <span>画像を選ぶ</span>
               </button>
             </div>
-            <p>問題の部分を切り抜いてから、文字を読み取れます。</p>
           </div>
         ) : (
           <section className="image-crop" aria-labelledby="crop-title">
@@ -334,7 +333,7 @@ export const Create: React.FC<{
         />
 
         <div className="field">
-          <span className="field__label">声</span>
+          <span className="field__label">声を選択</span>
           {/* chip ではなく select にする。14個の chip なら三行にわたって scroll し、
               これは一度選べば済む設定だからである。選択時に再生するのは、label は候補を
               絞れても、決め手になるのは sample だけだからである。 */}
