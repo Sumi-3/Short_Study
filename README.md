@@ -71,34 +71,52 @@ npm run server    # http://localhost:3001 で web/dist を配信
 |---|---|
 | `POST /api/generate` | `{topic, voice?, design?}` → 進捗を NDJSON で流しながら1本作る |
 | `GET /api/shorts` | 生成済み一覧 |
-| `GET /projects/…` | manifest とナレーション音声（ローカルのみ。デプロイ時は Blob の URL） |
+| `GET /projects/…` | manifest とナレーション音声（ローカルと Railway Volume で配信） |
 
 進捗はジョブ表をポーリングさせるのではなく、**接続を開いたまま1行ずつ流します**
-（[src/pipeline/run.ts](src/pipeline/run.ts) が各段階を yield し、サーバーと
-Vercel Functions が同じものを読む）。デプロイ先にはリクエストより長生きする
-プロセスが無いので、ジョブ表を置ける場所がそもそもありません。
+（[src/pipeline/run.ts](src/pipeline/run.ts) が各段階を yield し、サーバーが
+そのまま読む）。旧 Vercel 構成にはリクエストより長生きするプロセスが無いので、
+ジョブ表を置ける場所がそもそもありません。
 
 引き換えに、生成中にリロードすると進捗の表示を見失います。生成そのものは
 完走し、動画はフィードに出ます。
 
-ローカルでは生成を1件ずつ逐次実行します。遅い工程はどちらも外部サービス待ちなので、
-並列にしてもレート制限に当たるだけです。**これはデプロイ先では保証できません** —
-別々のリクエストが別々のインスタンスに落ちるので、ロックを取る相手がいません。
+ローカルと Railway の単一インスタンスでは生成を1件ずつ逐次実行します。遅い工程はどちらも
+外部サービス待ちなので、並列にしてもレート制限に当たるだけです。
 
-## デプロイ（Vercel）
+## デプロイ（Railway）
 
 ```bash
-# 1. GitHub に push して Vercel でインポートする（設定は vercel.json が持つ）
-# 2. Vercel の Storage タブで Blob ストアを作る
-#    → BLOB_READ_WRITE_TOKEN が自動で入る
-# 3. 環境変数を入れる
-#      ANTHROPIC_API_KEY   ← 必須なのはこれだけ
+# 1. GitHub リポジトリから Railway service を Import する（railway.json が Nixpacks を設定する）
+# 2. Volume を作成し、この service の /data にマウントする
+# 3. service variables を設定する
+#      SHORT_STUDY_DATA_DIR=/data
+#      ANTHROPIC_API_KEY=...  ← 必須
 #      EDGE_VOICE / EDGE_RATE …（任意）
-# 4. Settings → Deployment Protection → Vercel Authentication を有効化
+# 4. 既存の Vercel Blob を初回だけ取り込む場合は、下記の BLOB_READ_WRITE_TOKEN も一時設定する
+#    railway ssh
+#    npm run import:blob -- --dry-run
+#    npm run import:blob
 ```
 
-**4 は省かないでください。** `/api/generate` にはアプリ側の認証がありません。
-URL を知られた時点で他人が `ANTHROPIC_API_KEY` を消費できます。
+`import:blob` には Vercel Blob の長期 token `BLOB_READ_WRITE_TOKEN` が必要です。既に
+`/data/public/projects/<slug>/manifest.json` がある project は飛ばすため、実行をやり直しても
+安全です。取り込み後は token を Railway の variables から外せます。
+
+Railway では Blob を通常の保存先に使いません。`/data/public/projects/` に音声と manifest を
+残し、manifest の `audioSrc` もローカルと同じ `projects/<slug>/scene-01.mp3` の相対パスのままです。
+単体サーバーが `/projects/*` を Volume から配信します。
+
+**Railway service は 1 インスタンスで運用してください。** replica を増やすと Volume は各 replica
+に共有で付かず、プロセス内の `serialize()` による生成の直列化も別インスタンス間では効きません。
+
+`/api/generate` にはアプリ側の認証がありません。公開 URL を使える人が `ANTHROPIC_API_KEY` を
+消費できるため、Railway 側で公開範囲を運用に合わせて制限してください。
+
+### 旧構成: Vercel + Blob
+
+`vercel.json` と Blob の同期コードは、既存の完成品を Railway へ移すためにも残しています。
+Vercel を継続利用する場合の構成は次のとおりです。
 
 ローカルとデプロイ先で動くコードは同じです。分かれるのは置き場所だけで、
 それも設定ではなく実行環境から決まります:
@@ -113,7 +131,7 @@ URL を知られた時点で他人が `ANTHROPIC_API_KEY` を消費できます�
 `staticFile()` は先頭に `/` を足すだけなので絶対URLを渡すと壊れます。
 両方を通すために [assetSrc.ts](src/remotion/assetSrc.ts) を挟んでいます。
 
-### 相対 import には拡張子が要る
+#### 相対 import には拡張子が要る
 
 Vercel は TypeScript を**ファイル単位でトランスパイルするだけでバンドルしません**。
 このパッケージは `"type": "module"` なので、`import { runPipeline } from "../src/pipeline/run"`
@@ -141,7 +159,7 @@ node -e "import('/tmp/probe/api/generate.js')"
 `src/remotion/` だけ拡張子なしのままなのは、そこが Vite と Remotion からしか
 読まれず、`.js` から `.tsx` への解決を新たに当てにしたくないからです。
 
-### Vercel でできなくなること
+#### Vercel でできなくなること
 
 - **MP4 の書き出し**（`npm run render`）— Remotion は Chromium に依存し、関数の
   サイズ枠に収まりません。手元では従来どおり動きます
@@ -157,7 +175,7 @@ node -e "import('/tmp/probe/api/generate.js')"
 なお **Blob の URL 自体は公開**です。Vercel Authentication はアプリを保護しますが、
 音声と manifest の URL を知っている人は直接取得できます。
 
-### ローカル生成物を push 時に同期する
+#### ローカル生成物を push 時に同期する
 
 `public/projects/` は Git 管理しないため、ローカルで作った動画は pre-push で Blob へ補完する。
 最初に一度だけフックを有効化し、Vercel Storage で発行した長期 token をローカル `.env` の
