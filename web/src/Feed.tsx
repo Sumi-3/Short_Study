@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { themeOf } from "../../src/remotion/theme";
 import { FirstFrame } from "./FirstFrame";
 import { ShortPlayer, type ShortPlayerHandle } from "./ShortPlayer";
 import { Thumbnail } from "./Thumbnail";
@@ -94,15 +93,7 @@ export const Feed: React.FC<{
     <div className="feed">
       <div className="feed-scroll" ref={scroller}>
         {shorts.map((short, index) => (
-          <section
-            className="feed-item"
-            key={short.slug}
-            data-index={index}
-            /* video は 9:16 で screen のほうが高いため、padding にかかわらず上下に帯が
-               残る。その帯を動画自身の最も濃い色で塗り、letterbox に置かれたのでなく
-               frame が端まで届いているように見せる。 */
-            style={{ background: themeOf().bgDeep }}
-          >
+          <section className="feed-item" key={short.slug} data-index={index}>
             <div className="phone">
               {/* swipe で次に来るのはこの両隣だけ。そこには動画自身の最初の絵を敷き、
                   player が乗っても何も変わらないようにする。遠くの short は library
@@ -125,8 +116,8 @@ export const Feed: React.FC<{
               top: activeIndex * itemHeight,
               height: itemHeight,
               // swapping 中は上層の Player とこの背景を同時に退かせ、下の FirstFrame を見せる。
-              // 通常時は 9:16 の外に残る帯を、動画自身の濃い背景色で埋める。
-              background: playerSwapping ? "transparent" : themeOf().bgDeep,
+              // 通常時は 9:16 の外に残る帯を、item と同じ白で埋める。
+              background: playerSwapping ? "transparent" : "var(--white)",
             }}
           >
             <div className="phone">

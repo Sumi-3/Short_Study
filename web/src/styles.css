@@ -80,11 +80,12 @@ body {
 }
 
 /* One short per screenful, like a shorts feed.
-   No side padding: the video is 9:16 and the screen is taller than that, so
-   width is the only thing that decides how big it can be. Every pixel of
-   padding came straight off the video. */
+   No side padding: 幅は動画がどれだけ大きくなれるかを決める唯一の寸法で、padding は
+   そのまま動画から削られる。 */
 .feed-item {
   height: 100%;
+  /* 切り落としきれずに 9:16 の外へ残った帯。動画自身の白いボードと地続きに見せる。 */
+  background: var(--white);
   scroll-snap-align: start;
   scroll-snap-stop: always;
   display: flex;
@@ -94,6 +95,9 @@ body {
   padding: env(safe-area-inset-top) 0 0;
   /* `.phone` がこの箱の実寸から自分の大きさを決める（下の `.phone` のコメント参照）。 */
   container-type: size;
+  /* 幅を埋めるために 9:16 が枠より高くなることがある。溢れた分は隣の short へ
+     滲ませず、この箱で切り落とす。 */
+  overflow: hidden;
 }
 
 /*
@@ -122,9 +126,23 @@ body {
  */
 .phone {
   aspect-ratio: 9 / 16;
-  /* 幅と高さのどちらが先に尽きても、はみ出さず最大になる幅を1つの式で選ぶ。
-     56.25cqh は container の高さをちょうど埋める幅（9/16）。 */
-  width: min(100cqw, 56.25cqh);
+  /*
+   * 高さより幅を優先する。
+   *
+   * iPhone の Chrome は上下にブラウザの bar を出すため、この container は 9:16 より
+   * 横長になる。高さに合わせると左右に帯が残り、動画が画面幅に届かなかった。枠より
+   * 高くなる分は上下から同じだけ切り落とす（`.feed-item` が clip する）。
+   *
+   * 切り落としは動画の高さの 5%（composition の 96px）までとする。それ以上は
+   * theme.ts の `safeTop` 120px と `captionBottom` 100px の余白を食い、見出しや字幕の
+   * 端に掛かり始める。62.5cqh は上下 5% ずつを溢れさせる幅（56.25 / 0.9）で、
+   * 100cqw = container の幅、56.25cqh = 高さをちょうど埋める幅（9/16）。
+   * 切りきれずに残った帯は `Feed.tsx` が白で埋める。
+   */
+  --video-width: min(100cqw, 62.5cqh);
+  /* 上下それぞれで隠れる量。下端に置くコントロールを可視領域へ引き上げるのに使う。 */
+  --crop: max(0px, (var(--video-width) * 16 / 9 - 100cqh) / 2);
+  width: var(--video-width);
   height: auto;
   /* 縮められると 9:16 が崩れるので、flex の伸縮から外す。 */
   flex: none;
@@ -318,7 +336,7 @@ body {
 .short__pause-status {
   position: absolute;
   left: 18px;
-  bottom: 49px;
+  bottom: calc(49px + var(--crop, 0px));
   display: flex;
   align-items: center;
   gap: 6px;
@@ -376,7 +394,7 @@ body {
 .speed-control {
   position: absolute;
   right: 6px;
-  bottom: 34px;
+  bottom: calc(34px + var(--crop, 0px));
   width: 56px;
   height: 44px;
   display: flex;
@@ -438,7 +456,8 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  /* 動画の下端ではなく、切り落とされた後に見えている下端。 */
+  bottom: var(--crop, 0px);
   /* The visible bar is thin; the touch target is not. */
   padding: 18px 14px 12px;
   /* Stops the feed's vertical snap-scroll from stealing the drag. */
