@@ -77,75 +77,30 @@ const cropToJpeg = async (image: HTMLImageElement, crop: Crop) => {
   }
 };
 
-const JOB_STEPS: { status: JobEvent["status"]; label: string }[] = [
-  { status: "script", label: "台本をつくる" },
-  { status: "audio", label: "ナレーションをつくる" },
-  { status: "captions", label: "字幕を整える" },
-  { status: "manifest", label: "動画を仕上げる" },
-];
-
-const jobStepIndex = (status: JobEvent["status"]) =>
-  JOB_STEPS.findIndex((step) => step.status === status);
-
-const jobStatusLabel = (status: JobEvent["status"]) => {
-  switch (status) {
-    case "queued": return "生成の順番を待っています";
-    case "script": return "台本をつくっています";
-    case "audio": return "ナレーションをつくっています";
-    case "captions": return "字幕を整えています";
-    case "manifest": return "動画を仕上げています";
-    case "done": return "動画ができました";
-    case "error": return "生成が止まりました";
-  }
-};
-
-const JobCard: React.FC<{
-  job: JobEvent;
-  progress: number;
-  onDismiss: () => void;
-  onRetry?: () => void;
-}> = ({ job, progress, onDismiss, onRetry }) => {
+const JobCard: React.FC<{ job: JobEvent; progress: number; onDismiss: () => void }> = ({
+  job,
+  progress,
+  onDismiss,
+}) => {
   const settled = job.status === "done" || job.status === "error";
-  const activeStep = jobStepIndex(job.status);
 
   return (
-    <section
-      className={`job job--${job.status}`}
-      aria-labelledby="job-title"
-      aria-live={settled ? "off" : "polite"}
-      aria-atomic="true"
-    >
+    <div className={`job job--${job.status}`}>
       <div className="job__row">
-        <div>
-          <p className="job__eyebrow">生成の進み具合</p>
-          <h2 id="job-title" className="job__title">{jobStatusLabel(job.status)}</h2>
-        </div>
+        <span className="job__message">{job.message}</span>
         {settled ? (
-          <button className="job__close" onClick={onDismiss} aria-label="生成状況を閉じる">✕</button>
+          <button className="job__close" onClick={onDismiss} aria-label="閉じる">
+            ✕
+          </button>
         ) : (
           <span className="job__percent">{Math.round(progress * 100)}%</span>
         )}
       </div>
-      <p className="job__message">{job.message}</p>
       <div className="job__track">
         <div className="job__fill" style={{ width: `${progress * 100}%` }} />
       </div>
-      {!settled ? (
-        <ol className="job__steps" aria-label="生成工程">
-          {JOB_STEPS.map((step, index) => {
-            const complete = activeStep > index;
-            const active = activeStep === index;
-            return <li key={step.status} className={complete ? "is-complete" : active ? "is-active" : ""}>
-              <span aria-hidden>{complete ? "✓" : index + 1}</span>{step.label}
-            </li>;
-          })}
-        </ol>
-      ) : null}
-      {job.error ? <div className="job__failure" role="alert">
-        <p className="job__error">{job.error}</p>
-        {onRetry ? <button type="button" className="job__retry" onClick={onRetry}>同じ内容でもう一度試す</button> : null}
-      </div> : null}
-    </section>
+      {job.error ? <p className="job__error">{job.error}</p> : null}
+    </div>
   );
 };
 
@@ -165,13 +120,11 @@ export const Create: React.FC<{
   const [imageError, setImageError] = useState<string | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState<string | null>(null);
-  const [lastSubmission, setLastSubmission] = useState<{ topic: string; voice: string } | null>(null);
   // カメラ用と選択用で input を分ける。capture は「常に撮影」を意味し、
   // 付いた input はスマホで写真ライブラリを開けないためである。
   const cameraRef = useRef<HTMLInputElement>(null);
   const libraryRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const topicRef = useRef<HTMLTextAreaElement>(null);
   const cropBoundsRef = useRef<HTMLDivElement>(null);
   const imageUrlRef = useRef<string | null>(null);
   const cropDragRef = useRef<{
@@ -186,16 +139,6 @@ export const Create: React.FC<{
       URL.revokeObjectURL(imageUrlRef.current);
     }
   }, []);
-
-  useEffect(() => {
-    const textarea = topicRef.current;
-    if (!textarea) {
-      return;
-    }
-    // 入力量に合わせて伸ばし、長い問題文でも編集領域をスクロールさせずに読めるようにする。
-    textarea.style.height = "auto";
-    textarea.style.height = `${textarea.scrollHeight}px`;
-  }, [topic]);
 
   const chooseImage = (file: File | undefined) => {
     if (!file) {
@@ -281,58 +224,19 @@ export const Create: React.FC<{
     }
   };
 
-  const moveCropByKey = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    const directions: Record<string, readonly [number, number]> = {
-      ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1],
-    };
-    const direction = directions[event.key];
-    if (!direction) {
-      return;
-    }
-    const amount = event.shiftKey ? 5 : 1;
-    event.preventDefault();
-    setCrop((current) => ({
-      ...current,
-      x: clamp(current.x + direction[0] * amount, 0, 100 - current.width),
-      y: clamp(current.y + direction[1] * amount, 0, 100 - current.height),
-    }));
-  };
-
-  const resizeCropByKey = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    const directions: Record<string, readonly [number, number]> = {
-      ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1],
-    };
-    const direction = directions[event.key];
-    if (!direction) {
-      return;
-    }
-    const amount = event.shiftKey ? 5 : 1;
-    event.preventDefault();
-    event.stopPropagation();
-    setCrop((current) => ({
-      ...current,
-      width: clamp(current.width + direction[0] * amount, MIN_CROP_SIZE, 100 - current.x),
-      height: clamp(current.height + direction[1] * amount, MIN_CROP_SIZE, 100 - current.y),
-    }));
-  };
-
-  const submitTopic = (value: string, selectedVoice: string) => {
-    const trimmed = value.trim();
-    if (!trimmed || busy) {
-      return;
-    }
-    setLastSubmission({ topic: trimmed, voice: selectedVoice });
-    onSubmit(trimmed, selectedVoice, FIXED_SCRIPT_MODEL.id);
-    setTopic("");
-  };
-
   return (
     <div className="create">
-      {job ? <JobCard job={job} progress={progress} onDismiss={onDismiss} onRetry={job.status === "error" && lastSubmission ? () => submitTopic(lastSubmission.topic, lastSubmission.voice) : undefined} /> : null}
-      <form className="composer" onSubmit={(event) => {
-        event.preventDefault();
-        submitTopic(topic, voice);
-      }}>
+      <form
+        className="composer"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (!topic.trim() || busy) {
+            return;
+          }
+          onSubmit(topic.trim(), voice, FIXED_SCRIPT_MODEL.id);
+          setTopic("");
+        }}
+        >
         <input
           ref={cameraRef}
           className="image-input"
@@ -348,27 +252,9 @@ export const Create: React.FC<{
           accept="image/*"
           onChange={pickImage}
         />
-        <header className="create__header">
-          <p className="create__eyebrow">数学ショートを生成</p>
-          <h1>問題を動画で解こう</h1>
-          <p>写真から読み取るか、問題文を直接入力して始めます。</p>
-        </header>
-        <ol className="create-flow" aria-label="動画をつくる手順">
-          <li className={imageSrc ? "is-complete" : ""}><span>1</span>読み取る</li>
-          <li className={topic.trim() ? "is-complete" : "is-current"}><span>2</span>問題文</li>
-          <li><span>3</span>声</li>
-          <li><span>4</span>生成</li>
-        </ol>
-
-        <section className="create-step create-step--source" aria-labelledby="source-title">
-          <div className="create-step__heading">
-            <p className="create-step__number">1 <span>任意</span></p>
-            <div>
-              <h2 id="source-title">画像から読み取る</h2>
-              <p>ノートや問題集の写真から問題文を取り出せます。</p>
-            </div>
-          </div>
-          {!imageSrc ? <div className="image-entry">
+        <h2>解きたい問題は？</h2>
+        {!imageSrc ? (
+          <div className="image-entry">
             <div className="image-entry__choices">
               <button type="button" className="image-entry__button" onClick={() => cameraRef.current?.click()}>
                 <span aria-hidden>▣</span>
@@ -380,7 +266,9 @@ export const Create: React.FC<{
               </button>
             </div>
             <p>問題の部分を切り抜いてから、文字を読み取れます。</p>
-          </div> : <div className="image-crop" aria-labelledby="crop-title">
+          </div>
+        ) : (
+          <section className="image-crop" aria-labelledby="crop-title">
             <div className="image-crop__heading">
               <div>
                 <h3 id="crop-title">問題の部分を囲む</h3>
@@ -410,17 +298,11 @@ export const Create: React.FC<{
                 onPointerMove={updateCropDrag}
                 onPointerUp={() => { cropDragRef.current = null; }}
                 onPointerCancel={() => { cropDragRef.current = null; }}
-                onKeyDown={moveCropByKey}
-                tabIndex={0}
-                role="group"
-                aria-label="トリミング範囲。矢印キーで移動できます"
               >
                 <span className="image-crop__label">問題</span>
-                <button
-                  type="button"
+                <span
                   className="image-crop__handle"
-                  aria-label="トリミング範囲を広げる。矢印キーで調整できます"
-                  onKeyDown={resizeCropByKey}
+                  aria-label="トリミング範囲を広げる"
                   onPointerDown={(event) => {
                     event.stopPropagation();
                     startCropDrag("resize")(event);
@@ -434,42 +316,30 @@ export const Create: React.FC<{
                 {extracting ? "テキストを抽出中…" : imageReady ? "テキストを抽出" : "画像を読み込み中…"}
               </button>
             </div>
-          </div>}
-        </section>
-        {imageError ? <div className="create-notice create-notice--error" role="alert">
-          <p>{imageError}</p><button type="button" onClick={() => libraryRef.current?.click()}>別の画像を選ぶ</button>
-        </div> : null}
+          </section>
+        )}
+        {imageError ? <p className="image-message image-message--error" role="alert">{imageError}</p> : null}
         {extractError ? (
-          <div className="create-notice create-notice--error" role="alert">
-            <p>{extractError}</p>
+          <div className="image-message image-message--error" role="alert">
+            <span>{extractError}</span>
             <button type="button" onClick={() => void extract()} disabled={extracting}>再試行</button>
           </div>
         ) : null}
-        {extracting ? <p className="create-notice" role="status">画像を縮小して、問題文を読み取っています…</p> : null}
+        {extracting ? <p className="image-message" aria-live="polite">画像を縮小して、問題文を読み取っています…</p> : null}
+        <textarea
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
+          placeholder={COURSES.math.placeholder}
+          rows={5}
+        />
 
-        <section className="create-step create-step--problem" aria-labelledby="topic-title">
-          <div className="create-step__heading">
-            <p className="create-step__number">2 <span>必須</span></p>
-            <div><h2 id="topic-title">問題文を確認・修正</h2><p>読み取り結果はそのまま編集できます。式や条件もここで整えます。</p></div>
-          </div>
-          <label className="topic-label" htmlFor="problem-topic">解きたい問題</label>
-          <textarea ref={topicRef} id="problem-topic" value={topic} onChange={(event) => setTopic(event.target.value)} placeholder={COURSES.math.placeholder} rows={7} aria-describedby="topic-help" />
-          <div className="topic-meta" id="topic-help"><span>入力後に、解説の台本をつくります。</span><output aria-live="off">{topic.trim().length} 文字</output></div>
-        </section>
-
-        <section className="create-step create-step--voice" aria-labelledby="voice-title">
-          <div className="create-step__heading">
-            <p className="create-step__number">3</p>
-            <div><h2 id="voice-title">声を選ぶ</h2><p>再生ボタンで、選んだ声の話し方を確認できます。</p></div>
-          </div>
-          <div className="field">
-          <label className="field__label" htmlFor="voice">ナレーションの声</label>
+        <div className="field">
+          <span className="field__label">声</span>
           {/* chip ではなく select にする。14個の chip なら三行にわたって scroll し、
               これは一度選べば済む設定だからである。選択時に再生するのは、label は候補を
               絞れても、決め手になるのは sample だけだからである。 */}
           <div className="voice">
             <select
-              id="voice"
               value={voice}
               onChange={(e) => {
                 setVoice(e.target.value);
@@ -495,19 +365,19 @@ export const Create: React.FC<{
               type="button"
               className="voice__play"
               onClick={() => playSample(voice)}
-              aria-label="選んだ声を試聴する"
+              aria-label="声を試聴する"
             >
               ▶
             </button>
           </div>
-          </div>
-        </section>
-
-        <div className="create-submit">
-          <p>{topic.trim() ? "問題文の準備ができました" : "問題文を入力すると生成できます"}</p>
-          <button type="submit" disabled={!topic.trim() || busy}>{busy ? "動画をつくっています…" : "この内容で動画をつくる"}</button>
         </div>
+
+        <button type="submit" disabled={!topic.trim() || busy}>
+          {busy ? "生成中…" : "動画をつくる"}
+        </button>
       </form>
+
+      {job ? <JobCard job={job} progress={progress} onDismiss={onDismiss} /> : null}
     </div>
   );
 };
