@@ -25,5 +25,14 @@ export const SCRIPT_MODELS: readonly ScriptModel[] = [
   { id: "claude-sonnet-5", label: "Sonnet 5", note: "速い" },
 ];
 
+/**
+ * 作成画面が使う台本モデル。当面は Opus 5 に固定し、選択UIは出さない。
+ *
+ * `ANTHROPIC_MODEL` への fallback に任せず、client が明示して送る。env は deploy ごとに
+ * 変わり得るのに対し、ここは「どの動画も同じモデルで書かれている」ことを保証する位置だからである。
+ * 比較を再開するときは上の一覧を選択UIへ戻せばよいので、一覧自体は残す。
+ */
+export const FIXED_SCRIPT_MODEL = SCRIPT_MODELS[0];
+
 export const isModelId = (value: unknown): value is string =>
   typeof value === "string" && SCRIPT_MODELS.some((model) => model.id === value);

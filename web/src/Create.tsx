@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { COURSES } from "../../src/courses";
 import { VOICES } from "../../src/voices";
-import { SCRIPT_MODELS } from "../../src/models";
+import { FIXED_SCRIPT_MODEL } from "../../src/models";
 import { extractProblem, type JobEvent } from "./api";
 import { playSample } from "./voiceSamples";
 
@@ -114,7 +114,6 @@ export const Create: React.FC<{
 }> = ({ job, progress, busy, onSubmit, onDismiss }) => {
   const [topic, setTopic] = useState("");
   const [voice, setVoice] = useState(VOICES[0].id);
-  const [model, setModel] = useState(SCRIPT_MODELS[0].id);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageReady, setImageReady] = useState(false);
   const [crop, setCrop] = useState<Crop>(INITIAL_CROP);
@@ -216,7 +215,7 @@ export const Create: React.FC<{
     setExtractError(null);
     try {
       const image = await cropToJpeg(imageRef.current, crop);
-      const result = await extractProblem(image, model);
+      const result = await extractProblem(image, FIXED_SCRIPT_MODEL.id);
       setTopic(result.topic);
     } catch (error) {
       setExtractError(error instanceof Error ? error.message : "テキストを抽出できませんでした。");
@@ -234,7 +233,7 @@ export const Create: React.FC<{
           if (!topic.trim() || busy) {
             return;
           }
-          onSubmit(topic.trim(), voice, model);
+          onSubmit(topic.trim(), voice, FIXED_SCRIPT_MODEL.id);
           setTopic("");
         }}
         >
@@ -370,26 +369,6 @@ export const Create: React.FC<{
             >
               ▶
             </button>
-          </div>
-        </div>
-
-        <div className="field">
-          <span className="field__label">台本モデル</span>
-          {/* 声と違って2択なので chip にする。選ぶたびに開かせる理由がない。
-              速さと深さのどちらを取ったかを、選んだ後も読めるようにしておく。 */}
-          <div className="models">
-            {SCRIPT_MODELS.map((entry) => (
-              <button
-                key={entry.id}
-                type="button"
-                className={`models__chip${model === entry.id ? " is-on" : ""}`}
-                onClick={() => setModel(entry.id)}
-                aria-pressed={model === entry.id}
-              >
-                <span className="models__name">{entry.label}</span>
-                <span className="models__note">{entry.note}</span>
-              </button>
-            ))}
           </div>
         </div>
 
