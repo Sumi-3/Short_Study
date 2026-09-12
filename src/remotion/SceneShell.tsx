@@ -440,21 +440,33 @@ export const SceneShell: React.FC<{
     <AbsoluteFill
       style={{
         opacity: arrival * departure,
+
         // slide ではなく scale にする。slide は各 headline と formula line がすでに持つ entrance と競合する。
-        scale: `${isHook && !animateHookEntrance
-          ? 1
-          : clamped(frame, [0, ENTER], [0.985, 1], theme.easing)}`,
+        scale: `${
+          isHook && !animateHookEntrance
+            ? 1
+            : clamped(frame, [0, ENTER], [0.985, 1], theme.easing)
+        }`,
+
         paddingLeft: inset,
         paddingRight: inset,
+
         // poster の question box は、absolute 配置で上書きされる unit banner まで届く高さがある。完全な
         // problem は利用可能高を使うため、banner（74.4 + 18 + 5px）とその rule 下32pxを明示して予約する。
-        paddingTop: poster ? POSTER_TOP : problem?.unit
-          ? layout.safeTop + UNIT_SIZE * 1.2 + 18 + 5 + 32 : layout.safeTop,
+        paddingTop: poster
+          ? POSTER_TOP
+          : problem?.unit
+            ? layout.safeTop + UNIT_SIZE * 1.2 + 18 + 5 + 32
+            : layout.safeTop,
+
         // stage は caption band の前で止め、両者が重ならないようにする。poster に caption はなく、下端には
         // library 自身の strip だけがある。
         paddingBottom: poster ? POSTER_FOOT : layout.height - stageBottom,
+
         // question とそれに答える行は一体なので、両端へ押し分けず1 group として中央に置く。
         justifyContent: problem ? "center" : "flex-start",
+
+        translate: "-650.4px -564.9px",
       }}
     >
       {problem?.unit ? (

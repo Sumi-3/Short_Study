@@ -27,8 +27,9 @@ export const SvgLabel: React.FC<{
   opacity?: number;
   /** 背景に紛れないための縁取り。`<text>` では stroke、数式では影になる。 */
   outline?: { color: string; width: number };
-}> = ({ text, x, y, size, color, weight, fontFamily, anchor, baseline, opacity, outline }) => {
-  if (!splitMathText(text).some((part) => part.math)) {
+  background?: string;
+}> = ({ text, x, y, size, color, weight, fontFamily, anchor, baseline, opacity, outline, background }) => {
+  if (!background && !splitMathText(text).some((part) => part.math)) {
     return (
       <text
         x={x}
@@ -89,7 +90,13 @@ export const SvgLabel: React.FC<{
           textShadow: ring,
         }}
       >
-        <MathText text={text} />
+        {background ? (
+          // 数式の分数・日本語も実際の組版幅で覆い、固定幅の下地でグラフを余分に隠さない。
+          <span style={{ position: "relative", flexShrink: 0 }}>
+            <span style={{ position: "absolute", inset: "-4px -8px", backgroundColor: background, borderRadius: 4 }} />
+            <span style={{ position: "relative" }}><MathText text={text} /></span>
+          </span>
+        ) : <MathText text={text} />}
       </div>
     </foreignObject>
   );

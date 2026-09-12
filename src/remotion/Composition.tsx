@@ -28,6 +28,8 @@ export type StudyShortProps = {
   animateHookEntrance?: boolean;
   /** feed の first frame を静止画として描くときだけ、字幕帯の描画を止める。 */
   renderCaptions?: boolean;
+  /** 別の映像に埋め込む preview では、紹介側の narration と重ならないよう止める。 */
+  renderAudio?: boolean;
 };
 
 /**
@@ -118,6 +120,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({
   manifest,
   animateHookEntrance = true,
   renderCaptions = true,
+  renderAudio = true,
 }) => {
   const environment = useRemotionEnvironment();
   // Player は全速度で native media 経路を使う。Web Audio は iOS の消音スイッチに従い、
@@ -191,7 +194,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({
             durationInFrames={scene.durationInFrames}
             name={`Scene ${scene.scene_id} (${scene.visual_type})`}
           >
-            {useNativeAudio ? (
+            {renderAudio && useNativeAudio ? (
               // Html5Audio には Audio の timing props がないため、Sequence で同じ local timeline を与える。
               // playbackRate は重ねて渡さない。Html5Audio はすでに Player の context rate を掛けている。
               <Sequence
@@ -211,7 +214,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({
                   {...FALLBACK_AUDIO}
                 />
               </Sequence>
-            ) : (
+            ) : renderAudio ? (
               <Audio
                 src={assetSrc(scene.audioSrc)}
                 durationInFrames={Math.ceil(
@@ -223,7 +226,7 @@ export const StudyShort: React.FC<StudyShortProps> = ({
                 premountFor={Math.round(manifest.fps * 2)}
                 fallbackHtml5AudioProps={FALLBACK_AUDIO}
               />
-            )}
+            ) : null}
             {/* run に入ったシーンの舞台は上の FormulaRun が描いている。 */}
             {run.count === 1 ? (
             <SceneRenderer

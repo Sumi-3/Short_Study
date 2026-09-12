@@ -4,7 +4,9 @@ import { clamped } from "../clamped";
 import { useTheme, withAlpha } from "../theme";
 import { compileExpression } from "./expression";
 import { SvgLabel } from "./SvgLabel";
+import { MathText } from "../MathText";
 import { buildRegionPolygons, type PlotRegion } from "./plotRegions";
+import { parsePlotPointLabel } from "../../plotPointLabels";
 
 export type PlotCurve = {
   expr: string;
@@ -22,12 +24,14 @@ export type PlotData = {
   tRange: [number, number] | null;
   /** region 指定時は x 範囲。それ以外は最初の曲線と x 軸の間。 */
   shade: [number, number] | null;
+  /** label の先頭に [coord] で座標、[guide] で両軸への補助線。併用・単独とも可。 */
   points: { x: number; y: number; label: string }[];
 };
 
 const WIDTH = 904;
 const HEIGHT = 800;
 const PAD = 46;
+const LEGEND_BAND_HEIGHT = 76;
 const SAMPLES = 240;
 
 /** [-3, 3] のような range で0.6ではなく1刻みになる、ほどよい tick step。 */
@@ -65,9 +69,12 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
   const clipId = useId();
   // curve を scene 自身の accent と区別できるよう、その色は飛ばす。
   const curveColors = theme.accents.filter((c) => c !== accent);
+  const hasLegend = data.curves.some((curve) => curve.label.trim());
 
   const plotWidth = WIDTH - PAD * 2;
-  const plotHeight = HEIGHT - PAD * 2;
+  // 凡例は曲線と軸目盛りのどちらにも重ねない。label のない旧データには従来の描画域を残す。
+  const plotBottom = HEIGHT - PAD - (hasLegend ? LEGEND_BAND_HEIGHT : 0);
+  const plotHeight = plotBottom - PAD;
 
   /**
    * 実際に描く window。
@@ -99,7 +106,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
   }, [data.xRange, data.yRange, data.curves, plotWidth, plotHeight]);
 
   const toX = (x: number) => PAD + ((x - xMin) / (xMax - xMin)) * plotWidth;
-  const toY = (y: number) => HEIGHT - PAD - ((y - yMin) / (yMax - yMin)) * plotHeight;
+  const toY = (y: number) => plotBottom - ((y - yMin) / (yMax - yMin)) * plotHeight;
 
   const compiled = useMemo(
     () =>
@@ -125,6 +132,10 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
   );
 
   const [tMin, tMax] = data.tRange ?? [0, Math.PI * 2];
+  const legendCurves = compiled
+    .map((curve, index) => ({ curve, index }))
+    .filter(({ curve }) => Boolean(curve.label.trim()));
+  const legendCellWidth = legendCurves.length ? plotWidth / legendCurves.length : 0;
 
   const hasRegion = data.curves.some((curve) => curve.region);
   const regionPolygons = useMemo(
@@ -176,6 +187,10 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
   // 原点が window の外でも、最寄りの端に軸と名前を残して座標の意味を読めるようにする。
   const axisY = toY(Math.max(yMin, Math.min(yMax, 0)));
   const axisX = toX(Math.max(xMin, Math.min(xMax, 0)));
+  // x 軸が下端に寄ると目盛りを通常どおり下へ出すと凡例帯を使ってしまう。
+  const xAxisNearBottom = axisY > plotBottom - 48;
+  const xTickLabelY = xAxisNearBottom ? axisY - 14 : axisY + 36;
+  const xAxisLabelY = xAxisNearBottom ? axisY - 14 : axisY + 10;
 
   return (
     <div
@@ -201,7 +216,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
       {/* grid */}
       <g stroke={withAlpha(theme.ink, 0.12)} strokeWidth={1}>
         {ticks(xMin, xMax).map((x) => (
-          <line key={`gx${x}`} x1={toX(x)} y1={PAD} x2={toX(x)} y2={HEIGHT - PAD} />
+          <line key={`gx${x}`} x1={toX(x)} y1={PAD} x2={toX(x)} y2={plotBottom} />
         ))}
         {ticks(yMin, yMax).map((y) => (
           <line key={`gy${y}`} x1={PAD} y1={toY(y)} x2={WIDTH - PAD} y2={toY(y)} />
@@ -218,9 +233,9 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
         />
         <line
           x1={axisX}
-          y1={HEIGHT - PAD}
+          y1={plotBottom}
           x2={axisX}
-          y2={HEIGHT - PAD - (HEIGHT - PAD * 2) * axesProgress}
+          y2={plotBottom - plotHeight * axesProgress}
         />
       </g>
 
@@ -231,7 +246,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
           <text
             key={`tx${x}`}
             x={toX(x)}
-            y={axisY + 36}
+            y={xTickLabelY}
             fill={withAlpha(theme.ink, 0.55)}
             fontSize={28}
             fontFamily={theme.fontFamily}
@@ -261,7 +276,7 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
 
       {/* 軸名は端の外側に置き、目盛りと window 内の曲線凡例から離す。 */}
       <g fill={theme.inkDim} fontSize={32} fontWeight={700} fontFamily={theme.fontFamily} opacity={axesProgress}>
-        <text x={WIDTH - PAD + 18} y={axisY + 10}>x</text>
+        <text x={WIDTH - PAD + 18} y={xAxisLabelY}>x</text>
         <text x={axisX} y={PAD - 18} textAnchor="middle">y</text>
       </g>
 
@@ -441,10 +456,31 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
         }
         const cx = toX(point.x);
         const cy = toY(point.y);
+        const label = parsePlotPointLabel(point.label);
+        const text = label.coord
+          ? `${label.text}${label.text ? " " : ""}(${point.x}, ${point.y})`
+          : label.text;
+        const annotated = label.coord || label.guide;
+        const inWindow = Number.isFinite(cx) && Number.isFinite(cy) &&
+          point.x >= xMin && point.x <= xMax && point.y >= yMin && point.y <= yMax;
+        if (annotated && !inWindow) return null;
+        // 長くなる座標は窓の内側に寄せる。旧ラベルの配置は保存済み動画のまま保つ。
+        const left = annotated && cx > WIDTH / 2;
 
         return (
           <g key={`${point.x},${point.y}`}>
             <g clipPath={`url(#${clipId})`}>
+              {label.guide ? (
+                <g stroke={accent} strokeWidth={3} strokeDasharray="10 8" opacity={pop}>
+                  {/* 原点が窓外のときの枠線は本来の軸ではないので、そこへの射影は描かない。 */}
+                  {yMin <= 0 && yMax >= 0 && point.y !== 0 ? (
+                    <line x1={cx} y1={cy} x2={cx} y2={cy + (toY(0) - cy) * pop} />
+                  ) : null}
+                  {xMin <= 0 && xMax >= 0 && point.x !== 0 ? (
+                    <line x1={cx} y1={cy} x2={cx + (toX(0) - cx) * pop} y2={cy} />
+                  ) : null}
+                </g>
+              ) : null}
               {/* point へ縮む ring。目線をその point に着地させる。 */}
               <circle
                 cx={cx}
@@ -457,54 +493,67 @@ export const Plot: React.FC<{ data: PlotData; accent: string }> = ({
               />
               <circle cx={cx} cy={cy} r={11} fill={accent} opacity={pop} />
             </g>
-            {point.label ? (
+            {text ? (
               <SvgLabel
-                text={point.label}
-                // 右下に置く。point が y = 0 に近いと右上では x-axis とその tick label に衝突するため。
-                x={cx + 22}
-                y={cy + 44}
+                text={text}
+                // 点から離し、座標の長いラベルも右端・下端で欠けにくくする。
+                x={cx + (left ? -22 : 22)}
+                y={annotated && cy > plotBottom - 60 ? cy - 26 : cy + 44}
+                anchor={left ? "end" : "start"}
                 color={accent}
                 size={32}
                 weight={700}
                 fontFamily={theme.fontFamily}
                 opacity={pop}
-                // 着地位置を問わず読めるよう、暗い outline を置く。
-                outline={{ color: theme.bgDeep, width: 6 }}
+                background={annotated ? theme.bg : undefined}
+                outline={annotated ? undefined : { color: theme.bgDeep, width: 6 }}
               />
             ) : null}
           </g>
         );
       })}
 
-      {/* legend。 */}
-      {compiled.map((curve, index) => {
-        if (!curve.label) {
-          return null;
-        }
+      {/* 凡例は専用の帯へ置く。セル内で切れば、長い式が隣の曲線の意味まで奪わない。 */}
+      {legendCurves.map(({ curve, index }, legendIndex) => {
         const start = (1.4 + index * 0.5) * fps;
+        const cellX = PAD + legendCellWidth * legendIndex;
         return (
-          <g
+          <foreignObject
             key={`legend-${curve.expr}`}
+            x={cellX}
+            y={plotBottom}
+            width={legendCellWidth}
+            height={LEGEND_BAND_HEIGHT}
             opacity={clamped(frame, [start, start + 0.4 * fps], [0, 1])}
           >
-            <rect
-              x={PAD}
-              y={PAD + 24 + index * 40}
-              width={26}
-              height={8}
-              rx={4}
-              fill={curveColors[index % curveColors.length]}
-            />
-            <SvgLabel
-              text={curve.label}
-              x={PAD + 40}
-              y={PAD + 34 + index * 40}
-              color={theme.ink}
-              size={30}
-              weight={700}
-              fontFamily={theme.fontFamily}
-            />
-          </g>
+            <div
+              style={{
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 12,
+                overflow: "hidden",
+                color: theme.ink,
+                fontSize: legendCurves.length === 3 ? 26 : 30,
+                fontWeight: 700,
+                fontFamily: theme.fontFamily,
+                lineHeight: 1,
+                whiteSpace: "nowrap",
+              }}
+            >
+              <span
+                style={{
+                  width: 26,
+                  height: 8,
+                  borderRadius: 4,
+                  flexShrink: 0,
+                  backgroundColor: curveColors[index % curveColors.length],
+                }}
+              />
+              <span style={{ minWidth: 0, overflow: "hidden" }}><MathText text={curve.label} /></span>
+            </div>
+          </foreignObject>
         );
       })}
     </svg>

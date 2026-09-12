@@ -1,5 +1,6 @@
 import { FORMULA_MAX_LINES, COMPANION_MAX_LINES, normalizeFormulaLine } from "./formulaLines.js";
 import { normalizeMathText } from "./mathText.js";
+import { normalizePlotPointLabel } from "./plotPointLabels.js";
 import { z } from "zod/v4";
 import type { Caption } from "@remotion/captions";
 import { COURSE_IDS, type CourseId } from "./courses.js";
@@ -147,7 +148,7 @@ export const sceneVisualSchema = z.discriminatedUnion("kind", [
         /** `to` に矢印を描き、この線分をベクトルとして示す。 */
         arrow: z.boolean().default(false),
       }),
-    ).max(10),
+    ).max(12),
     angles: z.array(
       z.object({
         at: z.string(),
@@ -579,7 +580,7 @@ export const normalizeVisual = (
       // 存在しない点を指す線分は何も描けないため捨て、図の残りを保つ。
       const segments = scene.visual_segments
         .filter((s) => known.has(s.from) && known.has(s.to))
-        .slice(0, 10);
+        .slice(0, 12);
       const circles = scene.visual_circles
         .filter((c) => known.has(c.center) && c.radius > 0)
         .slice(0, 3);
@@ -673,7 +674,8 @@ export const normalizeVisualText = (scene: ApiScript["scenes"][number]): ApiScri
     visual_items: scene.visual_items.map(supportsLines ? normalizeFormulaLine : normalizeMathText),
     visual_table: scene.visual_table.map((row) => row.map(normalizeMathText)),
     visual_bars: scene.visual_bars.map(label),
-    visual_points: scene.visual_points.map(label),
+    visual_points: scene.visual_points.map((point) => scene.visual_kind === "plot"
+      ? { ...point, label: normalizePlotPointLabel(point.label) } : label(point)),
     visual_segments: scene.visual_segments.map((item) => ({ ...label(item), from: reference(item.from), to: reference(item.to) })),
     visual_angles: scene.visual_angles.map((item) => ({ ...label(item), at: reference(item.at), from: reference(item.from), to: reference(item.to) })),
     visual_circles: scene.visual_circles.map((item) => ({ ...label(item), center: reference(item.center) })),
