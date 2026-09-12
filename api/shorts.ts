@@ -4,8 +4,19 @@ import {
   listShorts,
   ProjectDeleteError,
 } from "../src/storage.js";
+import { basicAuthEnabled, checkBasicAuth } from "../src/auth.js";
 
-export async function GET(): Promise<Response> {
+const unauthorized = () =>
+  new Response(null, {
+    status: 401,
+    headers: { "www-authenticate": 'Basic realm="short_study"' },
+  });
+
+export async function GET(request: Request): Promise<Response> {
+  if (basicAuthEnabled() && !checkBasicAuth(request.headers.get("authorization") ?? undefined)) {
+    return unauthorized();
+  }
+
   try {
     return Response.json(await listShorts(), {
       headers: { "cache-control": "no-store" },
@@ -21,6 +32,10 @@ export async function GET(): Promise<Response> {
 }
 
 export async function DELETE(request: Request): Promise<Response> {
+  if (basicAuthEnabled() && !checkBasicAuth(request.headers.get("authorization") ?? undefined)) {
+    return unauthorized();
+  }
+
   const slug = new URL(request.url).searchParams.get("slug") ?? "";
   // Reject this at the HTTP boundary as well as in storage, so malformed input
   // is never mistaken for a storage outage; storage repeats the guard for any

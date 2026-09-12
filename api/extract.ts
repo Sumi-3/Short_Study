@@ -1,7 +1,15 @@
 import { isModelId } from "../src/models.js";
+import { basicAuthEnabled, checkBasicAuth } from "../src/auth.js";
 import { extractProblem, isExtractImage } from "../src/pipeline/extractProblem.js";
 
 export async function POST(request: Request): Promise<Response> {
+  if (basicAuthEnabled() && !checkBasicAuth(request.headers.get("authorization") ?? undefined)) {
+    return new Response(null, {
+      status: 401,
+      headers: { "www-authenticate": 'Basic realm="short_study"' },
+    });
+  }
+
   try {
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
     if (!isExtractImage(body.image)) {

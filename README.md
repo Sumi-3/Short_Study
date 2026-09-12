@@ -92,6 +92,8 @@ npm run server    # http://localhost:3001 で web/dist を配信
 # 3. service variables を設定する
 #      SHORT_STUDY_DATA_DIR=/data
 #      ANTHROPIC_API_KEY=...  ← 必須
+#      BASIC_AUTH_PASSWORD=...  ← 必須（アプリ全体を保護）
+#      BASIC_AUTH_USER=admin  ← 任意
 #      EDGE_VOICE / EDGE_RATE …（任意）
 # 4. 既存の Vercel Blob を初回だけ取り込む場合は、下記の BLOB_READ_WRITE_TOKEN も一時設定する
 #    railway ssh
@@ -110,8 +112,10 @@ Railway では Blob を通常の保存先に使いません。`/data/public/proj
 **Railway service は 1 インスタンスで運用してください。** replica を増やすと Volume は各 replica
 に共有で付かず、プロセス内の `serialize()` による生成の直列化も別インスタンス間では効きません。
 
-`/api/generate` にはアプリ側の認証がありません。公開 URL を使える人が `ANTHROPIC_API_KEY` を
-消費できるため、Railway 側で公開範囲を運用に合わせて制限してください。
+`BASIC_AUTH_PASSWORD` を設定すると、閲覧・音声配信・生成・削除を含むアプリ全体が HTTP Basic
+認証で保護されます。未設定では認証が無効になるため、Railway へのデプロイ時は必ず設定してください。
+Railway の healthcheck path を設定している場合は、そのリクエストも 401 になるため、認証に対応した
+監視へ切り替えるか healthcheck path を外してください。
 
 ### 旧構成: Vercel + Blob
 
@@ -230,6 +234,8 @@ npm run studio -- --props=public/projects/mock/props.json
 `.env.example` を参照。要点だけ:
 
 - `ANTHROPIC_API_KEY` — 台本生成に必須
+- `BASIC_AUTH_PASSWORD` — デプロイ時に必須。未設定では HTTP Basic 認証が無効
+- `BASIC_AUTH_USER` — HTTP Basic 認証のユーザー名（既定: `admin`）
 - `TTS_PROVIDER` — `edge`（無料・デフォルト）/ `elevenlabs`
 - `CAPTION_SOURCE` — `tts`（デフォルト）/ `whisper`
 - `EDGE_VOICE` / `EDGE_RATE` / `EDGE_PITCH` — 声質（後述）

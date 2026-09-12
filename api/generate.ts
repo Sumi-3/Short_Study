@@ -1,4 +1,5 @@
 import { isCourseId } from "../src/courses.js";
+import { basicAuthEnabled, checkBasicAuth } from "../src/auth.js";
 import { isVoiceId } from "../src/voices.js";
 import { isModelId } from "../src/models.js";
 import { runPipeline } from "../src/pipeline/run.js";
@@ -18,6 +19,13 @@ import { runPipeline } from "../src/pipeline/run.js";
  * surfacing only as an opaque FUNCTION_INVOCATION_FAILED.
  */
 export async function POST(request: Request): Promise<Response> {
+  if (basicAuthEnabled() && !checkBasicAuth(request.headers.get("authorization") ?? undefined)) {
+    return new Response(null, {
+      status: 401,
+      headers: { "www-authenticate": 'Basic realm="short_study"' },
+    });
+  }
+
   try {
     const body = (await request.json().catch(() => ({}))) as Record<
       string,

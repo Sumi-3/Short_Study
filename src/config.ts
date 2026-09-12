@@ -55,6 +55,8 @@ const num = (value: string | undefined, fallback: number) => {
 export { VIDEO } from "./config-video.js";
 
 export const config = {
+  basicAuthUser: env("BASIC_AUTH_USER") ?? "admin",
+  basicAuthPassword: env("BASIC_AUTH_PASSWORD") ?? "",
   anthropicApiKey: env("ANTHROPIC_API_KEY") ?? "",
   anthropicModel: env("ANTHROPIC_MODEL") ?? "claude-opus-5",
   /**
