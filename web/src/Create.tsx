@@ -235,6 +235,10 @@ export const Create: React.FC<{
           }
           onSubmit(topic.trim(), voice, FIXED_SCRIPT_MODEL.id);
           setTopic("");
+          // 送信後も写真と切り抜き枠が残ると、次の1本を前の問題の画像から始めることになる。
+          // 生成はもう走っていて画像を参照しないので、ここで入力前の状態へ戻す。
+          clearImage();
+          setCrop(INITIAL_CROP);
         }}
         >
         <input
@@ -269,18 +273,7 @@ export const Create: React.FC<{
         ) : (
           <section className="image-crop" aria-labelledby="crop-title">
             <div className="image-crop__heading">
-              <div>
-                <h3 id="crop-title">問題の部分を囲む</h3>
-                <p>枠をドラッグして移動し、右下で大きさを調整します。</p>
-              </div>
-              <div className="image-crop__change">
-                <button type="button" onClick={() => cameraRef.current?.click()}>
-                  撮り直す
-                </button>
-                <button type="button" onClick={() => libraryRef.current?.click()}>
-                  選び直す
-                </button>
-              </div>
+              <h3 id="crop-title">問題の部分を囲む</h3>
             </div>
             <div className="image-crop__viewport" ref={cropBoundsRef}>
               <img

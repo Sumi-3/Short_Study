@@ -668,7 +668,6 @@ body {
 }
 
 .image-entry p,
-.image-crop__heading p,
 .image-message {
   margin: 0;
   color: var(--ink-dim);
@@ -695,17 +694,10 @@ body {
 }
 
 .image-crop h3 {
-  margin: 0 0 3px;
-  font-size: 14px;
+  margin: 0;
+  font-size: 20px;
 }
 
-.image-crop__change {
-  flex: none;
-  display: flex;
-  gap: 12px;
-}
-
-.image-crop__change button,
 .image-crop__cancel,
 .image-message button {
   flex: none;
