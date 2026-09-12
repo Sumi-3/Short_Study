@@ -5,7 +5,8 @@
       "Bash(ls)",
       "FileSystemWrite(*)",
       "Bash(sed -n '/^\\\\.feed-item {/,/^}/p' web/src/styles.css)",
-      "Bash(sed -n '/^\\\\.phone {/,/^}/p' web/src/styles.css)"
+      "Bash(sed -n '/^\\\\.phone {/,/^}/p' web/src/styles.css)",
+      "Bash(perl -pi -e 's/title=\"3-1 /title=\"/; s/title=\"3-2 /title=\"/; s/title=\"3-3 /title=\"/; s/title=\"3-4 /title=\"/' src/remotion/intro/*.tsx)"
     ]
   },
   "enabledPlugins": {

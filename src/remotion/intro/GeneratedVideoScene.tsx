@@ -15,7 +15,7 @@ export const GeneratedVideoScene: React.FC<{ scene: IntroScene }> = ({ scene }) 
   const height = 740;
 
   return (
-    <SceneLayout title="3-2 生成された解説動画" narration={scene.narration} durationInFrames={scene.durationInFrames}>
+    <SceneLayout title="生成された解説動画" narration={scene.narration} durationInFrames={scene.durationInFrames}>
       <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 48 }}>
         {starts.map((start, index) => (
           <div key={start} style={{ display: "flex", alignItems: "center", gap: 48 }}>

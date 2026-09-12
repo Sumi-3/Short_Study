@@ -326,7 +326,7 @@ const SlideTwo: React.FC = () => {
 export const AnimationScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
   const { fps } = useVideoConfig();
   return (
-    <SceneLayout title="3-3 多彩なアニメーション" narration={scene.narration} durationInFrames={scene.durationInFrames}>
+    <SceneLayout title="多彩なアニメーション" narration={scene.narration} durationInFrames={scene.durationInFrames}>
       <div style={{ height: "100%", position: "relative" }}>
         <SlideOne />
         {/* 次のカード群を local frame で始め、図そのものの描画アニメーションもめくりの後に再生する。 */}

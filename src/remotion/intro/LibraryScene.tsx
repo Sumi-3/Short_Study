@@ -15,7 +15,7 @@ const taxonomy = MATH_UNITS.reduce<Record<string, string[]>>((groups, unit) => {
 export const LibraryScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
   const theme = useTheme();
   return (
-    <SceneLayout title="3-4 学習ライブラリ" narration={scene.narration} durationInFrames={scene.durationInFrames}>
+    <SceneLayout title="学習ライブラリ" narration={scene.narration} durationInFrames={scene.durationInFrames}>
       <div style={{ height: "100%", display: "grid", gridTemplateColumns: "1.3fr 0.7fr", alignItems: "center", gap: 64 }}>
         <div
           style={{
