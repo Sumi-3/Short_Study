@@ -121,7 +121,10 @@ export const Create: React.FC<{
   const [imageError, setImageError] = useState<string | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  // カメラ用と選択用で input を分ける。capture は「常に撮影」を意味し、
+  // 付いた input はスマホで写真ライブラリを開けないためである。
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const libraryRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const cropBoundsRef = useRef<HTMLDivElement>(null);
   const imageUrlRef = useRef<string | null>(null);
@@ -156,6 +159,12 @@ export const Create: React.FC<{
     setCrop(INITIAL_CROP);
     setImageError(null);
     setExtractError(null);
+  };
+
+  const pickImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    chooseImage(event.target.files?.[0]);
+    // 同じ写真を撮り直して選んでも change を発火させ、すぐ再試行できるようにする。
+    event.target.value = "";
   };
 
   const clearImage = () => {
@@ -230,24 +239,33 @@ export const Create: React.FC<{
         }}
         >
         <input
-          ref={inputRef}
+          ref={cameraRef}
           className="image-input"
           type="file"
           accept="image/*"
           capture="environment"
-          onChange={(event) => {
-            chooseImage(event.target.files?.[0]);
-            // 同じ写真を撮り直して選んでも change を発火させ、すぐ再試行できるようにする。
-            event.target.value = "";
-          }}
+          onChange={pickImage}
+        />
+        <input
+          ref={libraryRef}
+          className="image-input"
+          type="file"
+          accept="image/*"
+          onChange={pickImage}
         />
         <h2>解きたい問題は？</h2>
         {!imageSrc ? (
           <div className="image-entry">
-            <button type="button" className="image-entry__button" onClick={() => inputRef.current?.click()}>
-              <span aria-hidden>▣</span>
-              <span>写真を撮る／画像を選ぶ</span>
-            </button>
+            <div className="image-entry__choices">
+              <button type="button" className="image-entry__button" onClick={() => cameraRef.current?.click()}>
+                <span aria-hidden>▣</span>
+                <span>写真を撮る</span>
+              </button>
+              <button type="button" className="image-entry__button" onClick={() => libraryRef.current?.click()}>
+                <span aria-hidden>▤</span>
+                <span>画像を選ぶ</span>
+              </button>
+            </div>
             <p>問題の部分を切り抜いてから、文字を読み取れます。</p>
           </div>
         ) : (
@@ -257,9 +275,14 @@ export const Create: React.FC<{
                 <h3 id="crop-title">問題の部分を囲む</h3>
                 <p>枠をドラッグして移動し、右下で大きさを調整します。</p>
               </div>
-              <button type="button" className="image-crop__change" onClick={() => inputRef.current?.click()}>
-                画像を替える
-              </button>
+              <div className="image-crop__change">
+                <button type="button" onClick={() => cameraRef.current?.click()}>
+                  撮り直す
+                </button>
+                <button type="button" onClick={() => libraryRef.current?.click()}>
+                  選び直す
+                </button>
+              </div>
             </div>
             <div className="image-crop__viewport" ref={cropBoundsRef}>
               <img

@@ -639,7 +639,15 @@ body {
   gap: 8px;
 }
 
+/* 狭い画面では2つ並べても文字が折れないよう、等分して縮める。 */
+.image-entry__choices {
+  display: flex;
+  gap: 8px;
+}
+
 .image-entry__button {
+  flex: 1;
+  min-width: 0;
   min-height: 58px;
   display: flex;
   align-items: center;
@@ -691,7 +699,13 @@ body {
   font-size: 14px;
 }
 
-.image-crop__change,
+.image-crop__change {
+  flex: none;
+  display: flex;
+  gap: 12px;
+}
+
+.image-crop__change button,
 .image-crop__cancel,
 .image-message button {
   flex: none;
