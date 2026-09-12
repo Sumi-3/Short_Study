@@ -872,8 +872,8 @@ body {
 .bar__label {
   flex: none;
   padding-left: 12px;
-  width: 46px;
-  font-size: 10px;
+  width: 50px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink-dim);
 }
@@ -900,7 +900,7 @@ body {
   background: var(--control-bg);
   color: var(--ink-dim);
   font: inherit;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
