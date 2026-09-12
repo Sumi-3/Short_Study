@@ -21,8 +21,10 @@ import { prefetchManifest, type ShortSummary } from "./api";
 export const Feed: React.FC<{
   shorts: ShortSummary[];
   initialIndex: number;
+  /** シークバーを預ける tab bar 上辺の枠。そのまま Player へ渡す。 */
+  seekSlot: HTMLElement | null;
   playbackRef?: React.Ref<ShortPlayerHandle>;
-}> = ({ shorts, initialIndex, playbackRef }) => {
+}> = ({ shorts, initialIndex, seekSlot, playbackRef }) => {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [playerSwapping, setPlayerSwapping] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
@@ -123,6 +125,7 @@ export const Feed: React.FC<{
             <div className="phone">
               <ShortPlayer
                 manifestSrc={active.manifestSrc}
+                seekSlot={seekSlot}
                 playbackRef={playbackRef}
                 onSwappingChange={setPlayerSwapping}
               />

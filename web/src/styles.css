@@ -452,17 +452,22 @@ body {
 
 /* ---------- seek bar ---------- */
 
+/* `.tabs__seek` の中。動画の上ではなく、tab bar の上辺に track を重ねる。
+   bottom の -8px は padding-bottom 6px + track の半分 2px で、track の中心が
+   ちょうど上辺の線に載る。触れる高さは主に線の上側に取り、tab の icon を
+   塞ぐのは 8px までにとどめる。 */
 .scrubber {
   position: absolute;
   left: 0;
   right: 0;
-  /* 動画の下端ではなく、切り落とされた後に見えている下端。 */
-  bottom: var(--crop, 0px);
+  bottom: -8px;
   /* The visible bar is thin; the touch target is not. */
-  padding: 18px 14px 12px;
-  /* Stops the feed's vertical snap-scroll from stealing the drag. */
+  padding: 18px 14px 6px;
+  /* 縦の drag を browser の scroll / pull-to-refresh に渡さない。 */
   touch-action: none;
   cursor: pointer;
+  /* tab の button は静的なので、既定でもこちらが上に来る。意図として明示する。 */
+  z-index: 1;
 }
 
 .scrubber__track {
@@ -838,12 +843,23 @@ body {
 
 .tabs {
   flex: none;
+  /* シークバーを上辺にまたがらせるための基準。 */
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border-top: 1px solid var(--line);
   background: var(--panel);
   backdrop-filter: blur(14px);
   box-shadow: var(--tabs-shadow);
+}
+
+/* シークバーの居場所。高さを持たない、tab bar の上辺そのもの。 */
+.tabs__seek {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0;
 }
 
 .tabs__button {

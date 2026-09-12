@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { flushSync } from "react-dom";
+import { createPortal, flushSync } from "react-dom";
 import { Player, type PlayerRef } from "@remotion/player";
 import { firstSceneFrame } from "./FirstFrame";
 import { PlaybackComposition, PlaybackLayoutContext } from "./PlaybackComposition";
@@ -146,9 +146,11 @@ export type ShortPlayerHandle = { play: (event?: React.SyntheticEvent) => void }
  */
 export const ShortPlayer: React.FC<{
   manifestSrc: string;
+  /** シークバーの置き場所。tab bar の上辺（[App.tsx](./App.tsx) が渡す）。 */
+  seekSlot: HTMLElement | null;
   playbackRef?: React.Ref<ShortPlayerHandle>;
   onSwappingChange?: (swapping: boolean) => void;
-}> = ({ manifestSrc, playbackRef, onSwappingChange }) => {
+}> = ({ manifestSrc, seekSlot, playbackRef, onSwappingChange }) => {
   const player = useRef<PlayerRef>(null);
   const container = useRef<HTMLDivElement>(null);
   const wantsPlay = useRef(false);
@@ -501,7 +503,28 @@ export const ShortPlayer: React.FC<{
 
       {manifest ? (
         <>
-          <Scrubber player={player} durationInFrames={durationInFrames} fps={manifest.fps} />
+          {/*
+            * シークバーだけは動画の外、tab bar の上辺に重ねる。
+            *
+            * ここに直接置くと出せない。`.feed-item` は `container-type: size` と
+            * `overflow: hidden` を持つので、動画の枠から下へはみ出した分は clip され、
+            * `position: fixed` でも（size containment が containing block になるため）
+            * 抜けられない。したがって nav の中へ portal する。
+            *
+            * React の event はこの tree を辿るので、`.short` の onClickCapture は
+            * portal 内の tap にも届く。バーの上での再生・停止は、今までどおり
+            * `toggle` の `closest(".scrubber")` が止める。
+            */}
+          {seekSlot
+            ? createPortal(
+                <Scrubber
+                  player={player}
+                  durationInFrames={durationInFrames}
+                  fps={manifest.fps}
+                />,
+                seekSlot,
+              )
+            : null}
           <SpeedControl playbackRate={playbackRate} onChange={setPlaybackRate} />
         </>
       ) : null}

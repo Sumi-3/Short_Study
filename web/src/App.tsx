@@ -118,6 +118,13 @@ export const App: React.FC = () => {
   const [shuffleKey, setShuffleKey] = useState(0);
   /** 生成の実行ごとに増える。bar の到達点を run をまたいで持ち越さないための印。 */
   const [runId, setRunId] = useState(0);
+  /**
+   * シークバーの置き場所。tab bar の上辺に重ねるため、動画の枠から出して nav の中へ
+   * portal する（理由は [ShortPlayer.tsx](./ShortPlayer.tsx) を参照）。element を state
+   * に持つのは、nav が main より後に mount され、ref だけでは Player 側が
+   * 描き直されないためである。
+   */
+  const [seekSlot, setSeekSlot] = useState<HTMLDivElement | null>(null);
 
   const progress = useCreepingProgress(job, runId);
 
@@ -250,6 +257,7 @@ export const App: React.FC = () => {
             <Feed
               shorts={viewing.list}
               initialIndex={viewing.index}
+              seekSlot={seekSlot}
               playbackRef={viewingPlayer}
             />
           ) : (
@@ -274,6 +282,7 @@ export const App: React.FC = () => {
               key={shuffleKey}
               shorts={random}
               initialIndex={0}
+              seekSlot={seekSlot}
               playbackRef={tabPlayer}
             />
           )
@@ -291,6 +300,8 @@ export const App: React.FC = () => {
       </main>
 
       <nav className="tabs">
+        {/* 高さ 0 の目印。シークバーはこれを基準に上辺へまたがる。 */}
+        <div className="tabs__seek" ref={setSeekSlot} />
         {TABS.map((entry) => (
           <button
             key={entry.id}
