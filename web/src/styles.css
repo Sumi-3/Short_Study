@@ -1041,10 +1041,6 @@ body {
 }
 
 /* どちらのモデルで書いた台本かを、出来上がった card にも残す。 */
-.card__model {
-  margin-left: 8px;
-}
-
 .card__difficulty {
   flex: none;
   display: inline-flex;
