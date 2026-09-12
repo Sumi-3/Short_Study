@@ -345,20 +345,14 @@ export const Create: React.FC<{
                 playSample(e.target.value);
               }}
             >
-              <optgroup label="日本語ボイス">
-                {VOICES.filter((entry) => entry.native).map((entry) => (
-                  <option key={entry.id} value={entry.id}>
-                    {entry.label}
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label="多言語ボイス（日本語も話せます）">
-                {VOICES.filter((entry) => !entry.native).map((entry) => (
-                  <option key={entry.id} value={entry.id}>
-                    {entry.label}
-                  </option>
-                ))}
-              </optgroup>
+              {/* 日本語ボイスと多言語ボイスに分けない。どれも日本語を話し、選ぶ基準は
+                  声そのものであって出自ではないので、見出しは候補を絞る助けにならない。
+                  VOICES は日本語ボイスが先に並んでいるので、その順序だけを引き継ぐ。 */}
+              {VOICES.map((entry) => (
+                <option key={entry.id} value={entry.id}>
+                  {entry.label}
+                </option>
+              ))}
             </select>
             <button
               type="button"
