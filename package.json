@@ -14,6 +14,7 @@
     "web": "vite --config web/vite.config.ts",
     "dev": "node dev.mjs",
     "web:build": "vite build --config web/vite.config.ts",
+    "build": "npm run web:build",
     "studio": "remotion studio",
     "sync:blob": "node --import tsx src/syncBlob.ts",
     "import:blob": "node --import tsx src/importBlob.ts",
