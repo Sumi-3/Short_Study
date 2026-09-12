@@ -1,8 +1,13 @@
 {
   "permissions": {
-     "allow": ["Bash(npm test)", "Bash(ls)", "FileSystemWrite(*)"]
-  }
-  ,
+    "allow": [
+      "Bash(npm test)",
+      "Bash(ls)",
+      "FileSystemWrite(*)",
+      "Bash(sed -n '/^\\\\.feed-item {/,/^}/p' web/src/styles.css)",
+      "Bash(sed -n '/^\\\\.phone {/,/^}/p' web/src/styles.css)"
+    ]
+  },
   "enabledPlugins": {
     "codex@openai-codex": true
   },

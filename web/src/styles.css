@@ -93,6 +93,8 @@ body {
   align-items: center;
   justify-content: center;
   padding: env(safe-area-inset-top) 0 0;
+  /* `.phone` がこの箱の実寸から自分の大きさを決める（下の `.phone` のコメント参照）。 */
+  container-type: size;
 }
 
 /*
@@ -113,23 +115,23 @@ body {
 
 /*
  * `aspect-ratio` alone collapses here: in a column flex container the box has
- * no definite size to derive the other axis from. So the binding axis is
- * chosen explicitly — width on a phone (taller than 9:16), height on a desktop.
+ * no definite size to derive the other axis from。以前は viewport のアスペクト比を
+ * media query で見て縦横どちらを基準にするか決めていたが、動画が入るのは tab bar と
+ * safe area を除いたこの container で、viewport とは比率が違う。食い違うと幅基準の
+ * 計算高さが枠を超え、列 flex に縦へ潰されて 9:16 が崩れ、Player が左右に letterbox した。
+ * container の実寸から選べば、その取り違えが起きない。
  */
 .phone {
   aspect-ratio: 9 / 16;
-  height: 100%;
-  width: auto;
+  /* 幅と高さのどちらが先に尽きても、はみ出さず最大になる幅を1つの式で選ぶ。
+     56.25cqh は container の高さをちょうど埋める幅（9/16）。 */
+  width: min(100cqw, 56.25cqh);
+  height: auto;
+  /* 縮められると 9:16 が崩れるので、flex の伸縮から外す。 */
+  flex: none;
   min-height: 0;
   overflow: hidden;
   background: inherit;
-}
-
-@media (max-aspect-ratio: 9 / 16) {
-  .phone {
-    width: 100%;
-    height: auto;
-  }
 }
 
 /* ---------- thumbnail ---------- */
