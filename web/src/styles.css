@@ -873,7 +873,7 @@ body {
   flex: none;
   padding-left: 12px;
   width: 50px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--ink-dim);
 }
