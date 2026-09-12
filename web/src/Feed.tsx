@@ -23,9 +23,7 @@ export const Feed: React.FC<{
   shorts: ShortSummary[];
   initialIndex: number;
   playbackRef?: React.Ref<ShortPlayerHandle>;
-  /** feed が tab を満たすのでなく app の上を覆う場合に渡される。 */
-  onClose?: () => void;
-}> = ({ shorts, initialIndex, playbackRef, onClose }) => {
+}> = ({ shorts, initialIndex, playbackRef }) => {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [playerSwapping, setPlayerSwapping] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
@@ -93,13 +91,7 @@ export const Feed: React.FC<{
   const active = shorts[activeIndex];
 
   return (
-    <div className={`feed${onClose ? " feed--full" : ""}`}>
-      {onClose ? (
-        <button className="feed__close" onClick={onClose} aria-label="閉じる">
-          ✕
-        </button>
-      ) : null}
-
+    <div className="feed">
       <div className="feed-scroll" ref={scroller}>
         {shorts.map((short, index) => (
           <section

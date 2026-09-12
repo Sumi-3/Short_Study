@@ -19,7 +19,6 @@
     0 16px 40px rgba(15, 23, 42, 0.12);
   --tabs-shadow: 0 -10px 24px rgba(15, 23, 42, 0.06);
   --overlay-scrim: rgba(0, 0, 0, 0.42);
-  --overlay-scrim-strong: rgba(0, 0, 0, 0.58);
   --overlay-ink: rgba(255, 255, 255, 0.96);
   --overlay-ink-dim: rgba(255, 255, 255, 0.82);
   --overlay-panel: rgba(255, 255, 255, 0.94);
@@ -1222,28 +1221,6 @@ body {
 }
 
 /* Opened from a card: over the tab bar too, so the video really is full screen. */
-.feed--full {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  background: var(--bg);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.feed__close {
-  position: absolute;
-  top: calc(10px + env(safe-area-inset-top));
-  right: 12px;
-  z-index: 2;
-  width: 34px;
-  height: 34px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--overlay-scrim-strong);
-  color: var(--white);
-  font-size: 15px;
-  cursor: pointer;
-}
 
 /* ---------- create ---------- */
 

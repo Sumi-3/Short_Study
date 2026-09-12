@@ -193,6 +193,8 @@ export const App: React.FC = () => {
           if (index >= 0) {
             // 結果は動画そのものが示す。完了した bar を後ろに残しておく意味はない。
             setJob(null);
+            // 再生は home tab の中に出るので、create tab のままだと画面に現れない。
+            setTab("home");
             setViewing({ list, index });
           }
         }
@@ -225,6 +227,8 @@ export const App: React.FC = () => {
 
   const pickTab = (next: Tab, event: React.MouseEvent) => {
     dismissSettled();
+    // ✕ を無くしたので、再生から戻る唯一の操作が tab になる。ホームへ戻ると一覧が出る。
+    setViewing(null);
     if (next === "shorts") {
       flushSync(() => {
         setShuffleKey((key) => key + 1);
@@ -240,11 +244,21 @@ export const App: React.FC = () => {
     <div className="app">
       <main className="app__body">
         {tab === "home" ? (
-          <Home
-            shorts={shorts}
-            onOpen={openShort}
-            onDelete={removeShort}
-          />
+          /* 再生は shorts tab と同じく tab の中に出す。app を覆う overlay にすると、
+             下の bar が隠れて閉じるための ✕ が要り、shorts と操作が食い違っていた。 */
+          viewing ? (
+            <Feed
+              shorts={viewing.list}
+              initialIndex={viewing.index}
+              playbackRef={viewingPlayer}
+            />
+          ) : (
+            <Home
+              shorts={shorts}
+              onOpen={openShort}
+              onDelete={removeShort}
+            />
+          )
         ) : null}
 
         {tab === "shorts" ? (
@@ -291,14 +305,6 @@ export const App: React.FC = () => {
         ))}
       </nav>
 
-      {viewing ? (
-        <Feed
-          shorts={viewing.list}
-          initialIndex={viewing.index}
-          playbackRef={viewingPlayer}
-          onClose={() => setViewing(null)}
-        />
-      ) : null}
     </div>
   );
 };
