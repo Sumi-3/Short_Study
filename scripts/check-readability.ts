@@ -149,8 +149,8 @@ for (const outlined of [false, true]) {
   assert.ok(size > 0 && size < 56, `long poster must shrink below 56px, got ${size}`);
 }
 
-// legacy manifest に加え新しい marker markup も試す。SSR は静的な carry の可視性と文字の
-// size を確認できるが、計測に基づく縮小には依然 browser が必要である。
+// legacy manifest に加え新しい marker markup も試す。SSR は文字の size を確認できるが、
+// 計測に基づく縮小には依然 browser が必要である。
 const { Formula } = await import("../src/remotion/math/Formula.js");
 for (const [count, compact, expected] of [
   [2, false, 60], [3, false, 56], [4, false, 52], [6, false, 48], [2, true, 46],
@@ -162,12 +162,15 @@ for (const [count, compact, expected] of [
   assert.ok(html.includes(`font-size:${expected}px;line-height:1.3`));
   assert.ok(html.includes("両辺を2で割る"));
 }
+// 旧 manifest の [carry] は行ごと落とす。marker が本文へ漏れず、淡い再掲も残さない。
 const carryHtml = render(Formula, {
-  lines: ["[carry] x=2", "[box] x^2=4"], caption: "前の式を二乗", accent, durationInFrames: 300,
+  lines: ["[carry] x=2", "[box] x^2=4"], caption: "二乗する", accent, durationInFrames: 300,
 });
-assert.ok(carryHtml.includes("前の式"));
-assert.match(carryHtml, /opacity:0.68;translate:0px 0px/);
 assert.ok(!carryHtml.includes("[carry]"));
+assert.ok(!carryHtml.includes("前の式"));
+assert.ok(!carryHtml.includes("opacity:0.68"));
+// 残るのは [box] の行だけ。`katex-display` は注入した style にも出るので数式そのものを数える。
+assert.equal((carryHtml.match(/class="katex"/g) ?? []).length, 1);
 
 // incoming edge は、無関係な条件や prose を implication にせず statement/companion mode を
 // 通過しなければならない。ここでは markup だけを検査し、label の折返し後の高さと fit した
@@ -186,7 +189,7 @@ for (const compact of [false, true]) {
 }
 const label = "前に求めたx=2とy=3をそれぞれ対応する文字に代入する";
 const longLabelHtml = render(Formula, {
-  lines: ["[carry] z=x+y", `[substitute: ${label}] z=2+3`, "[text] 和を求める", "[box] z=5"],
+  lines: ["[plain] z=x+y", `[substitute: ${label}] z=2+3`, "[text] 和を求める", "[box] z=5"],
   caption: "", accent, durationInFrames: 300,
 });
 assert.ok(longLabelHtml.includes(label));

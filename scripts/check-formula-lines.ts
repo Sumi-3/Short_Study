@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import { z } from "zod/v4";
-import { assertFormulaCarry, parseFormulaLine } from "../src/formulaLines.js";
+import { parseFormulaLine, withoutCarry } from "../src/formulaLines.js";
 import { apiScriptSchema, normalizeVisual, sceneVisualSchema, type ApiScript } from "../src/types.js";
 
 // prefix は既存の string channel を共有する。両方の marker 順序と、貪欲な prefix parser
@@ -103,67 +103,15 @@ for (const fixture of fixtures) {
   if (visual?.kind === "scatter") assert.equal(visual.xLabel, "[text] x軸");
 }
 
-// scene をつなぐのは明示的に検証済みの copy だけで、空の heading だけではつながない。
+// 旧 manifest に残る [carry] は marker として読み続けるが、淡い再掲はもう作らないので描かない。
 assert.deepEqual(parseFormulaLine("[carry] x+2=5"), {
   latex: "x+2=5", annotation: "carry", text: false,
 });
-const previous = { ...base, visual_items: ["[plain] x+2=5", "[text] 両辺から2を引く"] };
-const continued = { ...base, visual_items: ["[carry] x+2=5", "[box] x=3"] };
-for (const before of ["formula", "figure", "plot"]) {
-  for (const after of ["formula", "figure", "plot"]) {
-    assert.doesNotThrow(() => assertFormulaCarry([
-      { ...previous, visual_kind: before }, { ...continued, visual_kind: after },
-    ]));
-  }
-}
-for (const invalid of [
-  [continued],
-  [{ ...previous, visual_kind: "bullets" }, continued],
-  [{ ...previous, visual_type: "summary" }, continued],
-  [previous, { ...continued, visual_type: "hook" }],
-  [previous, { ...continued, visual_content: "別の問い" }],
-  [previous, { ...continued, visual_items: ["[carry] x+2=6", "x=4"] }],
-  [previous, { ...continued, visual_items: ["[carry] x+2=5"] }],
-  [previous, { ...continued, visual_items: ["x=3", "[carry] x+2=5"] }],
-  [previous, { ...continued, visual_items: ["[text][carry] x+2=5", "x=3"] }],
-  [previous, { ...continued, visual_items: ["[carry] x+2=5", "[carry] x+2=5", "x=3"] }],
-  [{ ...previous, visual_items: ["x=3", "x+2=5"] }, continued],
-  [{ ...previous, visual_items: ["[box] x+2=5"] }, continued],
-  [{ ...previous, visual_items: ["[strike] x+2=5"] }, continued],
-  [previous, { ...continued, visual_items: [...continued.visual_items, ...Array(5).fill("x=3")] }],
-  [previous, { ...continued, visual_kind: "plot", visual_items: [...continued.visual_items, "x=3"] }],
-]) assert.throws(() => assertFormulaCarry(invalid), /\[carry\]/);
-
-// author が得られるのは message だけである。これが throw する時点で生成は失われ、
-// retry もないため、最初の一つだけでなく失敗した rule をすべて明示しなければならない。
-const carried = (items: string[], extra = {}) => ({
-  visual_kind: "formula", visual_type: "point", visual_content: "", visual_items: items, ...extra,
-});
-const carryMessage = (scenes: any[]) => {
-  try { assertFormulaCarry(scenes); return ""; } catch (error) { return (error as Error).message; }
-};
-const openChain = carried(["[plain] x+2=5", "[plain] x=3"]);
-assert.match(carryMessage([openChain, carried(["[carry] x=4", "y=x+1"])]), /直前: x=3／写し: x=4/);
-assert.match(carryMessage([carried(["x+2=5", "x=3"]), carried(["[carry] x=3", "y=1"])]), /自動で囲まれた答え/);
-assert.match(carryMessage([openChain, carried(["[carry] x=3", "y=1"], { visual_content: "続き" })]),
-  /visual_contentは空文字/);
-// ここでは複数の rule が同時に成り立つ。carry の後に何もなく、continuation scene は
-// 自身の heading を持ってはならない。
-const many = carryMessage([openChain,
-  carried(["[carry] x=3", "[text] おわり"], { visual_content: "続き" })]);
-assert.match(many, /続きとなる数式行/);
-assert.match(many, /visual_contentは空文字/);
-assert.match(many, /／/);
-assert.doesNotThrow(() => assertFormulaCarry([openChain, carried(["[carry] x=3", "y=x+1"])] as any));
-assert.doesNotThrow(() => assertFormulaCarry([
-  previous, { ...continued, visual_items: ["y=7"] },
-]));
-// substitution だけの marker は自動の答え boxing も無効にする。その未完了の結果が次の
-// scene への検証済み carry の対象であり続けるためである。
-assert.doesNotThrow(() => assertFormulaCarry([
-  { ...base, visual_items: ["y=x+3", "[substitute: x=2 を代入] y=2+3"] },
-  { ...base, visual_items: ["[carry] y=2+3", "[box] y=5"] },
-]));
+assert.deepEqual(withoutCarry(["[carry] x+2=5", "[box] x=3"]), ["[box] x=3"]);
+assert.deepEqual(
+  withoutCarry(["x+2=5", "[text] 両辺から2を引く"]),
+  ["x+2=5", "[text] 両辺から2を引く"],
+);
 
 let manifests = 0;
 for (const file of await readdir(new URL("../public/projects/", import.meta.url), { recursive: true })) {
@@ -183,4 +131,4 @@ for (const file of await readdir(new URL("../public/projects/", import.meta.url)
   }
   manifests++;
 }
-console.log(`PASS: markers, verified formula/figure/plot continuity, six/two-row limits, 19 required API fields, all 14 kinds, ${manifests} existing manifests`);
+console.log(`PASS: markers, six/two-row limits, 19 required API fields, all 14 kinds, ${manifests} existing manifests`);

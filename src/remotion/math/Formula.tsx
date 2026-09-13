@@ -15,7 +15,7 @@ import { useFitToWidth } from "../useFitToWidth";
 import { useFitToStage } from "../useFitToStage";
 import { BOLD_MATH, BoldMathStyle, MathText } from "../MathText";
 import { normalizeExprText } from "../../mathText";
-import { FORMULA_MAX_LINES, parseFormulaLine } from "../../formulaLines";
+import { FORMULA_MAX_LINES, parseFormulaLine, withoutCarry } from "../../formulaLines";
 export { parseFormulaLine } from "../../formulaLines";
 
 /**
@@ -54,9 +54,8 @@ const Line: React.FC<{
   timing: number;
   /** この行が属する segment の開始 frame。run でなければ 0。 */
   from: number;
-  carried?: boolean;
   measureRef: (el: HTMLDivElement | null) => void;
-}> = ({ latex, text, delay, color, fontSize, timing, from, carried = false, measureRef }) => {
+}> = ({ latex, text, delay, color, fontSize, timing, from, measureRef }) => {
   const frame = (useCurrentFrame() - from) / timing;
   const theme = useTheme();
 
@@ -77,8 +76,8 @@ const Line: React.FC<{
         // 測定幅を formula 自身の幅にできる。
         width: "max-content",
         textShadow: shadowOf(theme),
-        opacity: carried ? 0.68 : clamped(frame, [delay, delay + 12], [0, 1], theme.easing),
-        translate: carried ? "0px 0px" : clamped(
+        opacity: clamped(frame, [delay, delay + 12], [0, 1], theme.easing),
+        translate: clamped(
           frame,
           [delay, delay + 16],
           ["0px 20px", "0px 0px"],
@@ -272,8 +271,9 @@ export const Formula: React.FC<{
   const { fps } = useVideoConfig();
   const theme = useTheme();
 
-  // 上限は authoring/validation の責務。rendering は fit のために row を隠さない。
-  const shown = lines.map(parseFormulaLine);
+  // 上限は authoring/validation の責務。rendering は fit のために row を隠さない。旧 manifest の
+  // `[carry]` だけは、淡い再掲をやめたので行ごと落とす。
+  const shown = withoutCarry(lines).map(parseFormulaLine);
   const derivation = !compact && shown.every(
     (line) => line.annotation === null && !line.text && !line.substitution,
   );
@@ -298,25 +298,17 @@ export const Formula: React.FC<{
   let cursor = 0;
   for (const segment of segments ?? [whole]) {
     const own = shown.slice(cursor, cursor + segment.count);
-    // 先頭の [carry] は再掲であり、新しく現れる行として数えない。
-    const leadingCarry = own[0]?.annotation === "carry" ? 1 : 0;
-    const { timing } = cadence(
-      own.filter((line) => line.annotation !== "carry").length,
-      segment.durationInFrames,
-    );
+    const { timing } = cadence(own.length, segment.durationInFrames);
     own.forEach((_, local) => plan.push({
       from: segment.from,
       timing,
-      delay: (0.8 + Math.max(0, local - leadingCarry) * 0.9) * fps,
+      delay: (0.8 + local * 0.9) * fps,
     }));
     cursor += segment.count;
   }
   // caption は最後の segment の最後の行のあとに出る。
   const last = segments?.at(-1) ?? whole;
-  const ending = cadence(
-    shown.slice(shown.length - last.count).filter((line) => line.annotation !== "carry").length,
-    last.durationInFrames,
-  );
+  const ending = cadence(Math.min(last.count, shown.length), last.durationInFrames);
   const captionFrame = (frame - last.from) / ending.timing;
   const dense = shown.length >= 3;
   // 新しい script は3–4 rowにして、より大きい maths と86%サイズの reason を読めるようにする。6 rowの
@@ -381,7 +373,6 @@ export const Formula: React.FC<{
   }
 
   const rowsJsx = shown.map(({ latex, annotation, text, substitution }, index) => {
-          const carried = annotation === "carry";
           // segment の count が行数と食い違っても描画は落とさず、最後の段の時刻に寄せる。
           const { from, timing, delay } = plan[index] ?? plan.at(-1) ?? { from: 0, timing: 1, delay: 0 };
           const revealFrame = (frame - from) / timing;
@@ -398,7 +389,6 @@ export const Formula: React.FC<{
               fontSize={text ? fontSize * 0.86 : fontSize}
               timing={timing}
               from={from}
-              carried={carried}
               measureRef={register(index)}
             />
           );
@@ -411,14 +401,6 @@ export const Formula: React.FC<{
               gap={gap}
               textOffsetX={textOffsetX}
             >
-              {carried ? (
-                // 安定した label と muted ink で、繰り返す前提を新しく現れる step と区別し、
-                // mathematical ink は縮めない。
-                <div data-formula-carry style={{
-                  fontFamily: theme.fontFamily, fontSize: fontSize * 0.62,
-                  lineHeight: 1, color: theme.ink, opacity: 0.68,
-                }}>前の式</div>
-              ) : null}
               {substitution && index > 0 && !shown[index - 1].text ? (
                 // arrow は equation の中心線上に置き、reason は横に置く。幅を限った prose column なら長い
                 // label を切らずに wrap できる。全高と gap は Row 内にあるため、diagram companion を含めて

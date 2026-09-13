@@ -1,6 +1,5 @@
 import { z } from "zod/v4";
 import { COURSES, type CourseId } from "../courses.js";
-import { assertFormulaCarry } from "../formulaLines.js";
 import { normalizeMathText } from "../mathText.js";
 import { normalizeNarration } from "../mathSpeech.js";
 import { NARRATION_SEPARATOR, splitNarration } from "../narration.js";
@@ -114,7 +113,6 @@ export const normalizeApiScript = (
   });
 
   assertSolutionPlans(scenes, parsed.topic, topic);
-  assertFormulaCarry(scenes);
 
   return {
     // 同じ問題を一貫した表記にする（TOPIC_RULE 参照）。モデルが別のものを返せば、入力どおりへ戻す。
