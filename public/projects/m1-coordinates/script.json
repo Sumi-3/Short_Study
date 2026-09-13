@@ -1,0 +1,277 @@
+{
+  "topic": "座標平面上に3点 $A(-2,\\ 1)$、$B(4,\\ 1)$、$C(2,\\ 5)$ がある。三角形 $ABC$ の面積を求めよ。ただし座標の1目もりを1cmとする。",
+  "model": "handwritten",
+  "outline": [
+    "座標平面上に3点 $A(-2,\\ 1)$、$B(4,\\ 1)$、$C(2,\\ 5)$ がある。",
+    "座標の1目もりは1cmとする。",
+    "三角形 $ABC$ の面積を求めよ。"
+  ],
+  "unit": "中1 関数",
+  "difficulty": 3,
+  "subunit": "座標",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "座標平面に3つの点があります。\n$A(-2,\\ 1)$、$B(4,\\ 1)$、$C(2,\\ 5)$ の3点です。\nこの3点を結んだ三角形の面積を求めます。\n1目もりは1cmです。\n<<<TTS_READING>>>\n座標平面に3つの点があります。\nエー、マイナス2と1。ビー、4と1。シー、2と5の3点です。\nこの3点を結んだ三角形の面積を求めます。\n1目もりは1センチメートルです。",
+      "visual_type": "hook",
+      "visual_content": "軸と平行な辺を底辺に"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\nはじめに、3つの点を座標平面にとって、三角形をかきます。\n次に、$x$ 軸と平行になっている辺をさがして、底辺に決めます。\nそのあと、底辺の長さと高さを、座標の差から読み取ります。\n最後に、三角形の面積の公式にあてはめて答えを出します。\n<<<TTS_READING>>>\nまずは解く方針を確認します。\nはじめに、3つの点を座標平面にとって、三角形をかきます。\n次に、エックス軸と平行になっている辺をさがして、底辺に決めます。\nそのあと、底辺の長さと高さを、座標の差から読み取ります。\n最後に、三角形の面積の公式にあてはめて答えを出します。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①3つの点を座標平面にとり、三角形をかく",
+          "②$x$ 軸と平行な辺をさがし、底辺に決める",
+          "③底辺の長さと高さを、座標の差から読み取る",
+          "④三角形の面積の公式にあてはめて答えを出す"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "3つの点を座標平面にとります。\n$A$ は左、$B$ は右、$C$ は上にあります。\n3点を線で結ぶと三角形ができます。\n図にすると、どの辺が使いやすいかが見えてきます。\n<<<TTS_READING>>>\n3つの点を座標平面にとります。\nエーは左、ビーは右、シーは上にあります。\n3点を線で結ぶと三角形ができます。\n図にすると、どの辺が使いやすいかが見えてきます。",
+      "visual_type": "step",
+      "visual_content": "①3つの点を座標平面にとり、三角形をかく",
+      "visual": {
+        "kind": "figure",
+        "lines": [],
+        "caption": "",
+        "points": [
+          {
+            "x": -2,
+            "y": 1,
+            "label": "A"
+          },
+          {
+            "x": 4,
+            "y": 1,
+            "label": "B"
+          },
+          {
+            "x": 2,
+            "y": 5,
+            "label": "C"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "A",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [],
+        "circles": [],
+        "highlight": [],
+        "axes": true
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "底辺を決めます。\n$A$ と $B$ は、どちらも $y$ の値が1です。\nつまり辺 $AB$ は $x$ 軸と平行です。\n軸と平行な辺なら、長さを座標の差だけで出せます。\n<<<TTS_READING>>>\n底辺を決めます。\nエーとビーは、どちらもワイの値が1です。\nつまり、辺エービーはエックス軸と平行です。\n軸と平行な辺なら、長さを座標の差だけで出せます。",
+      "visual_type": "step",
+      "visual_content": "②$x$ 軸と平行な辺をさがし、底辺に決める",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] $A$ と $B$ は $y$ が同じ"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": -2,
+            "y": 1,
+            "label": "A"
+          },
+          {
+            "x": 4,
+            "y": 1,
+            "label": "B"
+          },
+          {
+            "x": 2,
+            "y": 5,
+            "label": "C"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "A",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [],
+        "circles": [],
+        "highlight": [],
+        "axes": true
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "長さを読み取ります。\n底辺 $AB$ は $x$ の差なので、$4-(-2)=6$ で6cmです。\n$C$ から $AB$ へ垂直におろした足を $H$ とします。\n高さ $CH$ は $y$ の差なので、$5-1=4$ で4cmです。\n<<<TTS_READING>>>\n長さを読み取ります。\n底辺エービーはエックスの差なので、4ひくマイナス2で6。6センチメートルです。\nシーからエービーへ垂直におろした足を、エイチとします。\n高さシーエイチはワイの差なので、5ひく1で4。4センチメートルです。",
+      "visual_type": "step",
+      "visual_content": "③底辺の長さと高さを、座標の差から読み取る",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] 底辺 $AB=6$、高さ $CH=4$"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": -2,
+            "y": 1,
+            "label": "A"
+          },
+          {
+            "x": 4,
+            "y": 1,
+            "label": "B"
+          },
+          {
+            "x": 2,
+            "y": 5,
+            "label": "C"
+          },
+          {
+            "x": 2,
+            "y": 1,
+            "label": "H"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "6cm",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "A",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "H",
+            "label": "4cm",
+            "dashed": true,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "H",
+            "from": "C",
+            "to": "B",
+            "label": "",
+            "ticks": 0
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": true
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "三角形の面積の公式を使います。\n面積は、底辺かける高さわる2です。\n底辺は6、高さは4なので、$6 \\times 4 \\div 2$ を計算します。\n答えは12平方センチメートルです。\n<<<TTS_READING>>>\n三角形の面積の公式を使います。\n面積は、底辺かける高さ、わる2です。\n底辺は6、高さは4なので、6かける4わる2を計算します。\n答えは、12平方センチメートルです。",
+      "visual_type": "step",
+      "visual_content": "④三角形の面積の公式にあてはめて答えを出す",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] S=\\text{底辺}\\times\\text{高さ}\\div 2",
+          "[substitute: 底辺は6、高さは4] S=6\\times 4\\div 2",
+          "[text] 答え",
+          "[underline] S=12\\ \\text{cm}^2"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "まとめます。\n$x$ 軸と平行な辺 $AB$ を底辺に選びました。\n底辺は6cm、高さ $CH$ は4cmです。\n三角形 $ABC$ の面積は12平方センチメートルです。\n<<<TTS_READING>>>\nまとめます。\nエックス軸と平行な辺エービーを底辺に選びました。\n底辺は6センチメートル、高さシーエイチは4センチメートルです。\n三角形エービーシーの面積は、12平方センチメートルです。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 底辺 $AB=6$、高さ $CH=4$",
+          "[box] S=12\\ \\text{cm}^2",
+          "[text] 軸と平行な辺を底辺にする"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,2726 @@
+{
+  "topic": "平行な2直線 $l$, $m$ の間に折れ線がある。$l$ 側の角が $40°$、$m$ 側の角が $55°$ のとき、折れ点の角 $x$ の大きさを求めよ。",
+  "outline": [
+    "2直線 $l$, $m$ は平行である。",
+    "$l$ 上の点と $m$ 上の点を、折れ線で結ぶ。",
+    "$l$ 側の角は $40°$、$m$ 側の角は $55°$ である。",
+    "折れ点の角 $x$ の大きさを求めよ。"
+  ],
+  "unit": "中2 図形",
+  "subunit": "平行線と角",
+  "difficulty": 3,
+  "model": "handwritten",
+  "course": "math",
+  "subject": "math",
+  "slug": "m2-parallel-angles",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "createdAt": "2026-09-11T11:55:53.163Z",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "平行な2直線 $l$ と $m$ の間に、折れ線があります。\n$l$ 側の角は $40°$、$m$ 側の角は $55°$ です。\n折れ点にできる角 $x$ の大きさを求めます。\n<<<TTS_READING>>>\n平行な2直線エルとエムの間に、折れ線があります。\nエル側の角は40度、エム側の角は55度です。\n折れ点にできる角エックスの大きさを求めます。",
+      "visual_type": "hook",
+      "visual_content": "補助線で錯角を2つ作る",
+      "audioSrc": "projects/m2-parallel-angles/scene-01.mp3",
+      "audioDurationInSeconds": 12.984,
+      "durationInFrames": 401,
+      "captions": [
+        {
+          "text": "平行",
+          "startMs": 119.458,
+          "endMs": 582.416,
+          "timestampMs": 350.937,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 594,
+          "endMs": 675,
+          "timestampMs": 634.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2",
+          "startMs": 686.583,
+          "endMs": 825.458,
+          "timestampMs": 756.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直線",
+          "startMs": 837.041,
+          "endMs": 1218.999,
+          "timestampMs": 1028.02,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $l$ ",
+          "startMs": 1230.541,
+          "endMs": 1462.041,
+          "timestampMs": 1346.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 1473.625,
+          "endMs": 1577.791,
+          "timestampMs": 1525.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $m$ ",
+          "startMs": 1589.333,
+          "endMs": 1913.4160000000002,
+          "timestampMs": 1751.3745000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1925,
+          "endMs": 2006,
+          "timestampMs": 1965.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "間",
+          "startMs": 2017.583,
+          "endMs": 2272.208,
+          "timestampMs": 2144.8955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 2283.791,
+          "endMs": 2526.8320000000003,
+          "timestampMs": 2405.3115000000003,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "折れ",
+          "startMs": 2746.75,
+          "endMs": 2943.5,
+          "timestampMs": 2845.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "線",
+          "startMs": 2955.083,
+          "endMs": 3186.583,
+          "timestampMs": 3070.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 3198.166,
+          "endMs": 3302.3320000000003,
+          "timestampMs": 3250.2490000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "あり",
+          "startMs": 3313.875,
+          "endMs": 3499.041,
+          "timestampMs": 3406.458,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 3510.666,
+          "endMs": 3834.7490000000003,
+          "timestampMs": 3672.7075000000004,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$l$ ",
+          "startMs": 4687.5,
+          "endMs": 4861.125,
+          "timestampMs": 4774.3125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "側",
+          "startMs": 4872.666,
+          "endMs": 5092.582,
+          "timestampMs": 4982.624,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 5104.166,
+          "endMs": 5219.916,
+          "timestampMs": 5162.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 5231.5,
+          "endMs": 5474.541,
+          "timestampMs": 5353.0205000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 5486.125,
+          "endMs": 5613.458,
+          "timestampMs": 5549.791499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $40°$、",
+          "startMs": 5636.583,
+          "endMs": 6273.125,
+          "timestampMs": 5954.853999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$m$ ",
+          "startMs": 6539.333,
+          "endMs": 6747.665999999999,
+          "timestampMs": 6643.4995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "側",
+          "startMs": 6759.25,
+          "endMs": 6967.583,
+          "timestampMs": 6863.416499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 6979.166,
+          "endMs": 7094.916,
+          "timestampMs": 7037.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 7106.5,
+          "endMs": 7349.541,
+          "timestampMs": 7228.0205000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 7361.125,
+          "endMs": 7476.875,
+          "timestampMs": 7419,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $55°$ ",
+          "startMs": 7488.416,
+          "endMs": 8113.416,
+          "timestampMs": 7800.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 8125,
+          "endMs": 8472.208,
+          "timestampMs": 8298.604,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "折れ",
+          "startMs": 9294,
+          "endMs": 9479.166,
+          "timestampMs": 9386.582999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点",
+          "startMs": 9490.75,
+          "endMs": 9675.916,
+          "timestampMs": 9583.332999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 9687.5,
+          "endMs": 9814.833,
+          "timestampMs": 9751.1665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "できる",
+          "startMs": 9826.375,
+          "endMs": 10185.166,
+          "timestampMs": 10005.770499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 10196.75,
+          "endMs": 10393.5,
+          "timestampMs": 10295.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $x$ ",
+          "startMs": 10405.083,
+          "endMs": 10810.166000000001,
+          "timestampMs": 10607.624500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 10821.75,
+          "endMs": 10902.75,
+          "timestampMs": 10862.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "大きさ",
+          "startMs": 10914.333,
+          "endMs": 11354.166000000001,
+          "timestampMs": 11134.249500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 11365.75,
+          "endMs": 11458.333,
+          "timestampMs": 11412.0415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "求め",
+          "startMs": 11469.916,
+          "endMs": 11817.124,
+          "timestampMs": 11643.52,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 11828.708,
+          "endMs": 12175.916000000001,
+          "timestampMs": 12002.312000000002,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\nはじめに、平行な2直線と折れ線がどこにあるかを図で押さえます。\n次に、折れ点を通り2直線に平行な補助線を引いて、錯角を作ります。\n最後に、2つの錯角をたして折れ点の角を求めます。\n<<<TTS_READING>>>\nまずは解く方針を確認します。\nはじめに、平行な2直線と折れ線がどこにあるかを図でおさえます。\n次に、折れ点を通り2直線に平行な補助線を引いて、錯角を作ります。\n最後に、2つの錯角をたして折れ点の角を求めます。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①平行な2直線と折れ線の位置を図で確かめる",
+          "②折れ点を通り2直線に平行な補助線を引いて錯角を作る",
+          "③2つの錯角をたして、折れ点の角の大きさを求める"
+        ]
+      },
+      "audioSrc": "projects/m2-parallel-angles/scene-02.mp3",
+      "audioDurationInSeconds": 19.776,
+      "durationInFrames": 604,
+      "captions": [
+        {
+          "text": "まず",
+          "startMs": 119.458,
+          "endMs": 397.249,
+          "timestampMs": 258.35350000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 408.791,
+          "endMs": 524.5409999999999,
+          "timestampMs": 466.66599999999994,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "解く",
+          "startMs": 536.125,
+          "endMs": 779.1659999999999,
+          "timestampMs": 657.6455,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "方針",
+          "startMs": 790.75,
+          "endMs": 1265.291,
+          "timestampMs": 1028.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 1276.833,
+          "endMs": 1369.4160000000002,
+          "timestampMs": 1323.1245000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "確認",
+          "startMs": 1381,
+          "endMs": 1809.25,
+          "timestampMs": 1595.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 1820.833,
+          "endMs": 1959.708,
+          "timestampMs": 1890.2705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 1971.291,
+          "endMs": 2330.082,
+          "timestampMs": 2150.6865,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "はじめ",
+          "startMs": 3148.166,
+          "endMs": 3495.3740000000003,
+          "timestampMs": 3321.7700000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 3506.958,
+          "endMs": 3738.458,
+          "timestampMs": 3622.708,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "平行",
+          "startMs": 4016.208,
+          "endMs": 4444.4580000000005,
+          "timestampMs": 4230.3330000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 4456,
+          "endMs": 4537,
+          "timestampMs": 4496.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2",
+          "startMs": 4548.625,
+          "endMs": 4687.5,
+          "timestampMs": 4618.0625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直線",
+          "startMs": 4699.083,
+          "endMs": 5150.458,
+          "timestampMs": 4924.7705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 5162.041,
+          "endMs": 5266.207,
+          "timestampMs": 5214.124,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "折れ線",
+          "startMs": 5277.791,
+          "endMs": 5763.916,
+          "timestampMs": 5520.8535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 5775.458,
+          "endMs": 5914.333,
+          "timestampMs": 5844.8955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "どこ",
+          "startMs": 5937.5,
+          "endMs": 6192.125,
+          "timestampMs": 6064.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 6203.708,
+          "endMs": 6319.458,
+          "timestampMs": 6261.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ある",
+          "startMs": 6331,
+          "endMs": 6539.333,
+          "timestampMs": 6435.166499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "か",
+          "startMs": 6550.916,
+          "endMs": 6631.916,
+          "timestampMs": 6591.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 6643.5,
+          "endMs": 6759.25,
+          "timestampMs": 6701.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "図",
+          "startMs": 6770.833,
+          "endMs": 6898.165999999999,
+          "timestampMs": 6834.4995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 6909.708,
+          "endMs": 6979.165999999999,
+          "timestampMs": 6944.437,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "押さえ",
+          "startMs": 6990.75,
+          "endMs": 7314.833,
+          "timestampMs": 7152.791499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 7326.375,
+          "endMs": 7673.583,
+          "timestampMs": 7499.978999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "次",
+          "startMs": 8495.375,
+          "endMs": 8761.583,
+          "timestampMs": 8628.479,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 8773.166,
+          "endMs": 9039.374,
+          "timestampMs": 8906.27,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "折れ",
+          "startMs": 9282.416,
+          "endMs": 9502.331999999999,
+          "timestampMs": 9392.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点",
+          "startMs": 9513.875,
+          "endMs": 9733.791,
+          "timestampMs": 9623.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 9745.375,
+          "endMs": 9849.541,
+          "timestampMs": 9797.457999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "通り",
+          "startMs": 9861.125,
+          "endMs": 10196.791,
+          "timestampMs": 10028.957999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2",
+          "startMs": 10208.333,
+          "endMs": 10324.083,
+          "timestampMs": 10266.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直線",
+          "startMs": 10335.666,
+          "endMs": 10752.331999999999,
+          "timestampMs": 10543.999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 10763.875,
+          "endMs": 10891.208,
+          "timestampMs": 10827.5415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "平行",
+          "startMs": 10902.791,
+          "endMs": 11365.749,
+          "timestampMs": 11134.27,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 11377.333,
+          "endMs": 11469.916000000001,
+          "timestampMs": 11423.624500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "補助線",
+          "startMs": 11481.5,
+          "endMs": 11944.458,
+          "timestampMs": 11712.979,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 11956,
+          "endMs": 12025.458,
+          "timestampMs": 11990.729,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "引い",
+          "startMs": 12037.041,
+          "endMs": 12314.831999999999,
+          "timestampMs": 12175.9365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て、",
+          "startMs": 12326.375,
+          "endMs": 12569.416,
+          "timestampMs": 12447.895499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "錯角",
+          "startMs": 12824.083,
+          "endMs": 13263.916000000001,
+          "timestampMs": 13043.999500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 13275.458,
+          "endMs": 13368.041000000001,
+          "timestampMs": 13321.749500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "作り",
+          "startMs": 13379.625,
+          "endMs": 13692.125,
+          "timestampMs": 13535.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 13703.708,
+          "endMs": 14050.916000000001,
+          "timestampMs": 13877.312000000002,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "最後",
+          "startMs": 14872.666,
+          "endMs": 15254.624,
+          "timestampMs": 15063.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 15266.208,
+          "endMs": 15497.708,
+          "timestampMs": 15381.958,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "2つ",
+          "startMs": 15740.75,
+          "endMs": 16064.833,
+          "timestampMs": 15902.7915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 16076.375,
+          "endMs": 16168.958,
+          "timestampMs": 16122.6665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "錯角",
+          "startMs": 16180.541,
+          "endMs": 16631.915999999997,
+          "timestampMs": 16406.228499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 16643.5,
+          "endMs": 16759.25,
+          "timestampMs": 16701.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "たし",
+          "startMs": 16770.833,
+          "endMs": 17025.458,
+          "timestampMs": 16898.1455,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 17037.041,
+          "endMs": 17187.499,
+          "timestampMs": 17112.27,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "折れ",
+          "startMs": 17256.958,
+          "endMs": 17534.749,
+          "timestampMs": 17395.853499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点",
+          "startMs": 17546.291,
+          "endMs": 17743.041,
+          "timestampMs": 17644.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 17754.625,
+          "endMs": 17870.375,
+          "timestampMs": 17812.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 17881.958,
+          "endMs": 18136.583,
+          "timestampMs": 18009.2705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 18148.166,
+          "endMs": 18229.166,
+          "timestampMs": 18188.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "求め",
+          "startMs": 18240.75,
+          "endMs": 18576.416,
+          "timestampMs": 18408.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 18587.958,
+          "endMs": 18958.333,
+          "timestampMs": 18773.1455,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "narration": "図をかきます。\n上の直線 $l$ 上の点 $Q$ から、折れ点 $P$ を通って、下の直線 $m$ 上の点 $R$ へ折れ線が進みます。\n$Q$ のところの角が $40°$、$R$ のところの角が $55°$ です。\n求めたいのは、折れ点 $P$ の角 $x$ です。\n<<<TTS_READING>>>\n図をかきます。\n上の直線エル上の点キューから、折れ点ピーを通って、下の直線エム上の点アールへ折れ線が進みます。\nキューのところの角が40度、アールのところの角が55度です。\n求めたいのは、折れ点ピーの角エックスです。",
+      "visual_type": "step",
+      "visual_content": "①平行な2直線と折れ線の位置を図で確かめる",
+      "visual": {
+        "kind": "figure",
+        "lines": [],
+        "caption": "2直線は平行",
+        "points": [
+          {
+            "x": -1.5,
+            "y": 3.6,
+            "label": "A"
+          },
+          {
+            "x": 4.5,
+            "y": 3.6,
+            "label": "B"
+          },
+          {
+            "x": -1.5,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 4.5,
+            "y": 0,
+            "label": "D"
+          },
+          {
+            "x": 1.9068,
+            "y": 3.6,
+            "label": "Q"
+          },
+          {
+            "x": 1.4004,
+            "y": 0,
+            "label": "R"
+          },
+          {
+            "x": 0,
+            "y": 2,
+            "label": "P"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "D",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "Q",
+            "to": "P",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "P",
+            "to": "R",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "Q",
+            "from": "A",
+            "to": "P",
+            "label": "40°",
+            "ticks": 0
+          },
+          {
+            "at": "R",
+            "from": "C",
+            "to": "P",
+            "label": "55°",
+            "ticks": 0
+          },
+          {
+            "at": "P",
+            "from": "Q",
+            "to": "R",
+            "label": "x",
+            "ticks": 0
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      },
+      "audioSrc": "projects/m2-parallel-angles/scene-03.mp3",
+      "audioDurationInSeconds": 19.032,
+      "durationInFrames": 582,
+      "captions": [
+        {
+          "text": "図",
+          "startMs": 119.458,
+          "endMs": 258.33299999999997,
+          "timestampMs": 188.89549999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 269.916,
+          "endMs": 385.666,
+          "timestampMs": 327.791,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かき",
+          "startMs": 397.208,
+          "endMs": 651.8330000000001,
+          "timestampMs": 524.5205000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 663.416,
+          "endMs": 1010.624,
+          "timestampMs": 837.02,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "上",
+          "startMs": 1863.416,
+          "endMs": 2060.166,
+          "timestampMs": 1961.7910000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 2071.75,
+          "endMs": 2175.916,
+          "timestampMs": 2123.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直線",
+          "startMs": 2187.5,
+          "endMs": 2604.166,
+          "timestampMs": 2395.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $l$ ",
+          "startMs": 2615.75,
+          "endMs": 2847.25,
+          "timestampMs": 2731.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "上",
+          "startMs": 2858.791,
+          "endMs": 3055.541,
+          "timestampMs": 2957.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 3067.125,
+          "endMs": 3171.291,
+          "timestampMs": 3119.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点",
+          "startMs": 3182.875,
+          "endMs": 3402.791,
+          "timestampMs": 3292.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $Q$ ",
+          "startMs": 3414.333,
+          "endMs": 3622.666,
+          "timestampMs": 3518.4995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から、",
+          "startMs": 3634.25,
+          "endMs": 3900.458,
+          "timestampMs": 3767.3540000000003,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "折れ",
+          "startMs": 4166.666,
+          "endMs": 4432.874,
+          "timestampMs": 4299.77,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点 $P$ ",
+          "startMs": 4444.458,
+          "endMs": 4884.290999999999,
+          "timestampMs": 4664.3745,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 4895.833,
+          "endMs": 4999.999,
+          "timestampMs": 4947.915999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "通っ",
+          "startMs": 5011.583,
+          "endMs": 5324.083,
+          "timestampMs": 5167.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て、",
+          "startMs": 5335.666,
+          "endMs": 5555.582,
+          "timestampMs": 5445.624,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "下",
+          "startMs": 5729.166,
+          "endMs": 5995.374,
+          "timestampMs": 5862.27,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 6006.958,
+          "endMs": 6122.708,
+          "timestampMs": 6064.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直線",
+          "startMs": 6134.25,
+          "endMs": 6585.625,
+          "timestampMs": 6359.9375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $m$ ",
+          "startMs": 6597.208,
+          "endMs": 6851.833,
+          "timestampMs": 6724.5205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "上",
+          "startMs": 6863.416,
+          "endMs": 7060.166,
+          "timestampMs": 6961.791,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 7071.75,
+          "endMs": 7199.083,
+          "timestampMs": 7135.416499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点",
+          "startMs": 7210.666,
+          "endMs": 7395.832,
+          "timestampMs": 7303.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $R$ ",
+          "startMs": 7407.416,
+          "endMs": 7719.916,
+          "timestampMs": 7563.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "へ",
+          "startMs": 7731.5,
+          "endMs": 7858.833,
+          "timestampMs": 7795.166499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "折れ",
+          "startMs": 7881.958,
+          "endMs": 8124.999,
+          "timestampMs": 8003.478499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "線",
+          "startMs": 8136.583,
+          "endMs": 8344.916,
+          "timestampMs": 8240.7495,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 8356.5,
+          "endMs": 8460.666,
+          "timestampMs": 8408.582999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "進み",
+          "startMs": 8472.208,
+          "endMs": 8830.999,
+          "timestampMs": 8651.603500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 8842.583,
+          "endMs": 9178.249,
+          "timestampMs": 9010.416000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$Q$ ",
+          "startMs": 10034.708,
+          "endMs": 10219.874,
+          "timestampMs": 10127.291000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 10231.5,
+          "endMs": 10335.666,
+          "timestampMs": 10283.582999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ところ",
+          "startMs": 10347.208,
+          "endMs": 10659.708,
+          "timestampMs": 10503.458,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 10671.291,
+          "endMs": 10787.041,
+          "timestampMs": 10729.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 10798.625,
+          "endMs": 11041.666,
+          "timestampMs": 10920.145499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 11053.25,
+          "endMs": 11134.25,
+          "timestampMs": 11093.75,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $40°$、",
+          "startMs": 11145.833,
+          "endMs": 11747.708,
+          "timestampMs": 11446.7705,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$R$ ",
+          "startMs": 11990.75,
+          "endMs": 12372.708,
+          "timestampMs": 12181.729,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 12384.25,
+          "endMs": 12488.416,
+          "timestampMs": 12436.332999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ところ",
+          "startMs": 12500,
+          "endMs": 12812.5,
+          "timestampMs": 12656.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 12824.083,
+          "endMs": 12939.833,
+          "timestampMs": 12881.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 12951.375,
+          "endMs": 13194.416,
+          "timestampMs": 13072.895499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 13206,
+          "endMs": 13344.875,
+          "timestampMs": 13275.4375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $55°$ ",
+          "startMs": 13356.5,
+          "endMs": 13946.749,
+          "timestampMs": 13651.6245,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 13958.333,
+          "endMs": 14293.999,
+          "timestampMs": 14126.166000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "求め",
+          "startMs": 15115.75,
+          "endMs": 15486.125,
+          "timestampMs": 15300.9375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "たい",
+          "startMs": 15497.666,
+          "endMs": 15717.581999999999,
+          "timestampMs": 15607.624,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 15729.166,
+          "endMs": 15833.331999999999,
+          "timestampMs": 15781.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は、",
+          "startMs": 15844.916,
+          "endMs": 16087.956999999999,
+          "timestampMs": 15966.4365,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "折れ",
+          "startMs": 16365.75,
+          "endMs": 16631.958,
+          "timestampMs": 16498.854,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点 $P$ ",
+          "startMs": 16643.5,
+          "endMs": 17094.875,
+          "timestampMs": 16869.1875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 17106.5,
+          "endMs": 17210.666,
+          "timestampMs": 17158.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 17222.208,
+          "endMs": 17453.708,
+          "timestampMs": 17337.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $x$ ",
+          "startMs": 17465.291,
+          "endMs": 17893.541,
+          "timestampMs": 17679.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。",
+          "startMs": 17905.083,
+          "endMs": 18217.583,
+          "timestampMs": 18061.333,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "narration": "折れ点 $P$ を通り、2直線に平行な補助線を引きます。\nこの補助線と直線 $l$ は平行なので、$40°$ の角と錯角の関係になります。\n同じように、補助線と直線 $m$ が平行なので、$55°$ の角も錯角で移ります。\nどちらも $P$ のところに集まります。\n<<<TTS_READING>>>\n折れ点ピーを通り、2直線に平行な補助線を引きます。\nこの補助線と直線エルは平行なので、40度の角と錯角の関係になります。\n同じように、補助線と直線エムが平行なので、55度の角も錯角で移ります。\nどちらもピーのところに集まります。",
+      "visual_type": "step",
+      "visual_content": "②折れ点を通り2直線に平行な補助線を引いて錯角を作る",
+      "visual": {
+        "kind": "figure",
+        "lines": [],
+        "caption": "錯角が2つ移る",
+        "points": [
+          {
+            "x": -1.5,
+            "y": 3.6,
+            "label": "A"
+          },
+          {
+            "x": 4.5,
+            "y": 3.6,
+            "label": "B"
+          },
+          {
+            "x": -1.5,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 4.5,
+            "y": 0,
+            "label": "D"
+          },
+          {
+            "x": 1.9068,
+            "y": 3.6,
+            "label": "Q"
+          },
+          {
+            "x": 1.4004,
+            "y": 0,
+            "label": "R"
+          },
+          {
+            "x": 0,
+            "y": 2,
+            "label": "P"
+          },
+          {
+            "x": 4.5,
+            "y": 2,
+            "label": "H"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "D",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "Q",
+            "to": "P",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "P",
+            "to": "R",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "P",
+            "to": "H",
+            "label": "",
+            "dashed": true,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "P",
+            "from": "H",
+            "to": "Q",
+            "label": "40°",
+            "ticks": 1
+          },
+          {
+            "at": "P",
+            "from": "H",
+            "to": "R",
+            "label": "55°",
+            "ticks": 2
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      },
+      "audioSrc": "projects/m2-parallel-angles/scene-04.mp3",
+      "audioDurationInSeconds": 21.168,
+      "durationInFrames": 646,
+      "captions": [
+        {
+          "text": "折れ",
+          "startMs": 154.166,
+          "endMs": 316.207,
+          "timestampMs": 235.1865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点 $P$ ",
+          "startMs": 327.791,
+          "endMs": 756.0409999999999,
+          "timestampMs": 541.9159999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 767.583,
+          "endMs": 883.333,
+          "timestampMs": 825.458,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "通り、",
+          "startMs": 894.916,
+          "endMs": 1299.999,
+          "timestampMs": 1097.4575,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "2",
+          "startMs": 1624.083,
+          "endMs": 1728.249,
+          "timestampMs": 1676.1660000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直線",
+          "startMs": 1739.833,
+          "endMs": 2156.4990000000003,
+          "timestampMs": 1948.1660000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 2168.041,
+          "endMs": 2295.3740000000003,
+          "timestampMs": 2231.7075000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "平行",
+          "startMs": 2306.958,
+          "endMs": 2746.791,
+          "timestampMs": 2526.8745,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 2758.333,
+          "endMs": 2850.916,
+          "timestampMs": 2804.6245,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "補助線",
+          "startMs": 2862.5,
+          "endMs": 3337.041,
+          "timestampMs": 3099.7705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 3348.625,
+          "endMs": 3418.083,
+          "timestampMs": 3383.3540000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "引き",
+          "startMs": 3429.625,
+          "endMs": 3672.666,
+          "timestampMs": 3551.1455,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 3684.25,
+          "endMs": 4008.333,
+          "timestampMs": 3846.2915000000003,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "この",
+          "startMs": 4861.125,
+          "endMs": 5057.875,
+          "timestampMs": 4959.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "補助線",
+          "startMs": 5069.458,
+          "endMs": 5543.999,
+          "timestampMs": 5306.728499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 5555.541,
+          "endMs": 5682.874,
+          "timestampMs": 5619.2075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直線",
+          "startMs": 5717.583,
+          "endMs": 6134.249,
+          "timestampMs": 5925.915999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $l$ ",
+          "startMs": 6145.833,
+          "endMs": 6377.333,
+          "timestampMs": 6261.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 6388.875,
+          "endMs": 6481.458,
+          "timestampMs": 6435.166499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "平行",
+          "startMs": 6493.041,
+          "endMs": 6967.582,
+          "timestampMs": 6730.3115,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 6979.166,
+          "endMs": 7071.749,
+          "timestampMs": 7025.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 7083.333,
+          "endMs": 7187.499,
+          "timestampMs": 7135.415999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で、",
+          "startMs": 7199.083,
+          "endMs": 7418.999,
+          "timestampMs": 7309.040999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$40°$ ",
+          "startMs": 7708.333,
+          "endMs": 8240.707999999999,
+          "timestampMs": 7974.520499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 8252.333,
+          "endMs": 8356.499,
+          "timestampMs": 8304.416000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 8368.041,
+          "endMs": 8599.541,
+          "timestampMs": 8483.791,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 8611.125,
+          "endMs": 8796.291,
+          "timestampMs": 8703.707999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "錯角",
+          "startMs": 8854.166,
+          "endMs": 9305.541,
+          "timestampMs": 9079.8535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 9317.125,
+          "endMs": 9421.291,
+          "timestampMs": 9369.207999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "関係",
+          "startMs": 9432.875,
+          "endMs": 9849.541,
+          "timestampMs": 9641.207999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 9861.125,
+          "endMs": 9953.708,
+          "timestampMs": 9907.4165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 9965.291,
+          "endMs": 10150.456999999999,
+          "timestampMs": 10057.874,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 10162.041,
+          "endMs": 10486.124,
+          "timestampMs": 10324.0825,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "同じ",
+          "startMs": 11342.583,
+          "endMs": 11666.666000000001,
+          "timestampMs": 11504.624500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "よう",
+          "startMs": 11678.25,
+          "endMs": 11851.875,
+          "timestampMs": 11765.0625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 11863.416,
+          "endMs": 12060.166,
+          "timestampMs": 11961.791,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "補助線",
+          "startMs": 12361.125,
+          "endMs": 12824.083,
+          "timestampMs": 12592.604,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 12835.666,
+          "endMs": 12939.831999999999,
+          "timestampMs": 12887.749,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直線",
+          "startMs": 12951.375,
+          "endMs": 13402.75,
+          "timestampMs": 13177.0625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $m$ ",
+          "startMs": 13414.333,
+          "endMs": 13657.374,
+          "timestampMs": 13535.853500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 13669,
+          "endMs": 13761.583,
+          "timestampMs": 13715.2915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "平行",
+          "startMs": 13773.166,
+          "endMs": 14236.124,
+          "timestampMs": 14004.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 14247.666,
+          "endMs": 14340.249,
+          "timestampMs": 14293.9575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 14351.833,
+          "endMs": 14455.999,
+          "timestampMs": 14403.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で、",
+          "startMs": 14467.583,
+          "endMs": 14664.333,
+          "timestampMs": 14565.958,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$55°$ ",
+          "startMs": 14976.833,
+          "endMs": 15578.708,
+          "timestampMs": 15277.7705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 15590.291,
+          "endMs": 15706.041,
+          "timestampMs": 15648.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 15717.583,
+          "endMs": 15949.083,
+          "timestampMs": 15833.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "も",
+          "startMs": 15960.666,
+          "endMs": 16122.706999999999,
+          "timestampMs": 16041.6865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "錯角",
+          "startMs": 16157.416,
+          "endMs": 16631.957,
+          "timestampMs": 16394.6865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 16643.5,
+          "endMs": 16724.5,
+          "timestampMs": 16684,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "移り",
+          "startMs": 16736.125,
+          "endMs": 17071.791,
+          "timestampMs": 16903.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 17083.333,
+          "endMs": 17407.415999999997,
+          "timestampMs": 17245.374499999998,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "どちら",
+          "startMs": 18229.166,
+          "endMs": 18611.124,
+          "timestampMs": 18420.145,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "も",
+          "startMs": 18622.666,
+          "endMs": 18784.707000000002,
+          "timestampMs": 18703.686500000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $P$ ",
+          "startMs": 18796.291,
+          "endMs": 19027.791,
+          "timestampMs": 18912.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 19039.333,
+          "endMs": 19143.499,
+          "timestampMs": 19091.415999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ところ",
+          "startMs": 19155.083,
+          "endMs": 19467.583,
+          "timestampMs": 19311.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 19479.166,
+          "endMs": 19594.916,
+          "timestampMs": 19537.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "集まり",
+          "startMs": 19606.5,
+          "endMs": 20023.166,
+          "timestampMs": 19814.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 20034.708,
+          "endMs": 20358.790999999997,
+          "timestampMs": 20196.749499999998,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 5,
+      "narration": "2つの錯角をたします。\n補助線の上側に $40°$、下側に $55°$ が並んでいます。\nこの2つで折れ点の角がちょうど埋まるので、$x$ は $40°$ たす $55°$ です。\nよって $x$ は $95°$ です。\n<<<TTS_READING>>>\n2つの錯角をたします。\n補助線の上側に40度、下側に55度が並んでいます。\nこの2つで折れ点の角がちょうど埋まるので、エックスは40度たす55度です。\nよってエックスは95度です。",
+      "visual_type": "step",
+      "visual_content": "③2つの錯角をたして、折れ点の角の大きさを求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 補助線の上下でたす",
+          "x = 40° + 55°",
+          "[text] 答え",
+          "[underline] x = 95°"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/m2-parallel-angles/scene-05.mp3",
+      "audioDurationInSeconds": 16.968,
+      "durationInFrames": 520,
+      "captions": [
+        {
+          "text": "2つ",
+          "startMs": 119.458,
+          "endMs": 478.249,
+          "timestampMs": 298.85350000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 489.833,
+          "endMs": 593.999,
+          "timestampMs": 541.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "錯角",
+          "startMs": 605.541,
+          "endMs": 1068.499,
+          "timestampMs": 837.02,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 1080.083,
+          "endMs": 1172.6660000000002,
+          "timestampMs": 1126.3745000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "たし",
+          "startMs": 1184.25,
+          "endMs": 1450.458,
+          "timestampMs": 1317.354,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 1462.041,
+          "endMs": 1809.249,
+          "timestampMs": 1635.645,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "補助線",
+          "startMs": 2627.333,
+          "endMs": 3124.9990000000003,
+          "timestampMs": 2876.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 3136.583,
+          "endMs": 3240.7490000000003,
+          "timestampMs": 3188.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "上側",
+          "startMs": 3252.333,
+          "endMs": 3645.833,
+          "timestampMs": 3449.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 3657.416,
+          "endMs": 3819.4570000000003,
+          "timestampMs": 3738.4365000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $40°$、",
+          "startMs": 3831,
+          "endMs": 4444.458,
+          "timestampMs": 4137.728999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "下側",
+          "startMs": 4710.666,
+          "endMs": 5115.749,
+          "timestampMs": 4913.2075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 5127.333,
+          "endMs": 5277.790999999999,
+          "timestampMs": 5202.562,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $55°$ ",
+          "startMs": 5300.916,
+          "endMs": 5879.624,
+          "timestampMs": 5590.27,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 5891.208,
+          "endMs": 5995.374,
+          "timestampMs": 5943.290999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "並ん",
+          "startMs": 6006.958,
+          "endMs": 6307.874,
+          "timestampMs": 6157.415999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 6319.458,
+          "endMs": 6388.915999999999,
+          "timestampMs": 6354.187,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "い",
+          "startMs": 6400.458,
+          "endMs": 6493.040999999999,
+          "timestampMs": 6446.7495,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 6504.625,
+          "endMs": 6851.833,
+          "timestampMs": 6678.228999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "この",
+          "startMs": 7708.333,
+          "endMs": 7905.083,
+          "timestampMs": 7806.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2つ",
+          "startMs": 7916.666,
+          "endMs": 8263.9159,
+          "timestampMs": 8090.2909500000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 8275.458,
+          "endMs": 8344.916000000001,
+          "timestampMs": 8310.187000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "折れ",
+          "startMs": 8356.5,
+          "endMs": 8599.541,
+          "timestampMs": 8478.020499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点",
+          "startMs": 8611.125,
+          "endMs": 8796.291,
+          "timestampMs": 8703.707999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 8807.875,
+          "endMs": 8923.625,
+          "timestampMs": 8865.75,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 8935.166,
+          "endMs": 9178.206999999999,
+          "timestampMs": 9056.6865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 9189.833,
+          "endMs": 9374.999,
+          "timestampMs": 9282.416000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ちょうど",
+          "startMs": 9421.291,
+          "endMs": 9803.249,
+          "timestampMs": 9612.27,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "埋まる",
+          "startMs": 9814.833,
+          "endMs": 10104.166000000001,
+          "timestampMs": 9959.499500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 10115.75,
+          "endMs": 10208.333,
+          "timestampMs": 10162.0415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で、",
+          "startMs": 10219.916,
+          "endMs": 10428.249,
+          "timestampMs": 10324.0825,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$x$ ",
+          "startMs": 10717.583,
+          "endMs": 11134.249,
+          "timestampMs": 10925.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 11145.833,
+          "endMs": 11307.874,
+          "timestampMs": 11226.853500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $40°$ ",
+          "startMs": 11354.166,
+          "endMs": 11921.291000000001,
+          "timestampMs": 11637.728500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "たす",
+          "startMs": 11932.875,
+          "endMs": 12199.083,
+          "timestampMs": 12065.979,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $55°$ ",
+          "startMs": 12210.666,
+          "endMs": 12800.916,
+          "timestampMs": 12505.791,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 12812.5,
+          "endMs": 13159.708,
+          "timestampMs": 12986.104,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "よっ",
+          "startMs": 13981.5,
+          "endMs": 14224.541,
+          "timestampMs": 14103.020499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 14236.125,
+          "endMs": 14363.458,
+          "timestampMs": 14299.7915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $x$ ",
+          "startMs": 14409.708,
+          "endMs": 14884.249,
+          "timestampMs": 14646.978500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 14895.833,
+          "endMs": 15046.291000000001,
+          "timestampMs": 14971.062000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $95°$ ",
+          "startMs": 15069.458,
+          "endMs": 15775.456999999999,
+          "timestampMs": 15422.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。",
+          "startMs": 15787.041,
+          "endMs": 16145.831999999999,
+          "timestampMs": 15966.4365,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 6,
+      "narration": "まとめます。\n折れ点を通る平行な補助線を引くと、両側の角が錯角で移ってきます。\n折れ点の角は、上下の角の和になります。\n答えは $x = 95°$ です。\n<<<TTS_READING>>>\nまとめます。\n折れ点を通る平行な補助線を引くと、両側の角が錯角で移ってきます。\n折れ点の角は、上下の角の和になります。\n答えは、エックスイコール95度です。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 平行な補助線で錯角を作った",
+          "[box] x = 95°",
+          "[text] 折れ点の角は上下の和"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/m2-parallel-angles/scene-06.mp3",
+      "audioDurationInSeconds": 15.336,
+      "durationInFrames": 471,
+      "captions": [
+        {
+          "text": "まとめ",
+          "startMs": 119.458,
+          "endMs": 512.958,
+          "timestampMs": 316.20799999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 524.541,
+          "endMs": 894.916,
+          "timestampMs": 709.7285,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "折れ",
+          "startMs": 1747.666,
+          "endMs": 1932.8319999999999,
+          "timestampMs": 1840.2489999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点",
+          "startMs": 1944.458,
+          "endMs": 2152.791,
+          "timestampMs": 2048.6245,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 2164.333,
+          "endMs": 2268.4990000000003,
+          "timestampMs": 2216.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "通る",
+          "startMs": 2280.083,
+          "endMs": 2592.583,
+          "timestampMs": 2436.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "平行",
+          "startMs": 2604.166,
+          "endMs": 3067.1240000000003,
+          "timestampMs": 2835.6450000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 3078.708,
+          "endMs": 3171.291,
+          "timestampMs": 3124.9995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "補助線",
+          "startMs": 3182.875,
+          "endMs": 3669,
+          "timestampMs": 3425.9375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 3680.541,
+          "endMs": 3749.9990000000003,
+          "timestampMs": 3715.2700000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "引く",
+          "startMs": 3761.583,
+          "endMs": 3993.083,
+          "timestampMs": 3877.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と、",
+          "startMs": 4004.625,
+          "endMs": 4178.25,
+          "timestampMs": 4091.4375,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "両側",
+          "startMs": 4525.458,
+          "endMs": 4953.708,
+          "timestampMs": 4739.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 4965.291,
+          "endMs": 5092.624,
+          "timestampMs": 5028.9575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 5104.166,
+          "endMs": 5347.207,
+          "timestampMs": 5225.6865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 5358.791,
+          "endMs": 5543.957,
+          "timestampMs": 5451.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "錯角",
+          "startMs": 5625,
+          "endMs": 6087.958,
+          "timestampMs": 5856.478999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 6099.541,
+          "endMs": 6180.541,
+          "timestampMs": 6140.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "移っ",
+          "startMs": 6192.125,
+          "endMs": 6469.916,
+          "timestampMs": 6331.0205000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 6481.5,
+          "endMs": 6562.5,
+          "timestampMs": 6522,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "き",
+          "startMs": 6574.083,
+          "endMs": 6689.833,
+          "timestampMs": 6631.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 6701.375,
+          "endMs": 7037.041,
+          "timestampMs": 6869.2080000000005,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "折れ",
+          "startMs": 7893.5,
+          "endMs": 8078.666,
+          "timestampMs": 7986.0830000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点",
+          "startMs": 8090.291,
+          "endMs": 8298.624,
+          "timestampMs": 8194.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 8310.166,
+          "endMs": 8425.916,
+          "timestampMs": 8368.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 8437.5,
+          "endMs": 8669,
+          "timestampMs": 8553.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は、",
+          "startMs": 8680.541,
+          "endMs": 8912.041,
+          "timestampMs": 8796.291,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "上下",
+          "startMs": 9201.375,
+          "endMs": 9548.583,
+          "timestampMs": 9374.979,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 9560.166,
+          "endMs": 9675.916,
+          "timestampMs": 9618.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 9687.5,
+          "endMs": 9930.541,
+          "timestampMs": 9809.020499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 9942.125,
+          "endMs": 10046.291,
+          "timestampMs": 9994.207999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "和",
+          "startMs": 10057.875,
+          "endMs": 10162.041,
+          "timestampMs": 10109.957999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 10173.625,
+          "endMs": 10289.375,
+          "timestampMs": 10231.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 10300.916,
+          "endMs": 10497.666,
+          "timestampMs": 10399.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 10509.25,
+          "endMs": 10856.458,
+          "timestampMs": 10682.854,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "答え",
+          "startMs": 11724.541,
+          "endMs": 12060.206999999999,
+          "timestampMs": 11892.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 12071.75,
+          "endMs": 12326.375,
+          "timestampMs": 12199.0625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": " $x = 95°$ ",
+          "startMs": 12615.75,
+          "endMs": 14143.499,
+          "timestampMs": 13379.6245,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。",
+          "startMs": 14155.083,
+          "endMs": 14513.874,
+          "timestampMs": 14334.478500000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    }
+  ]
+}

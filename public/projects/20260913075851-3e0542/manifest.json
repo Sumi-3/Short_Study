@@ -1,0 +1,957 @@
+{
+  "topic": "2点 $A(0,\\ 0)$、$B(6,\\ 0)$ に対して、$AP:BP=1:2$ を満たす点 $P$ の軌跡を求めよ。",
+  "outline": [],
+  "unit": "数II 図形と方程式",
+  "subunit": "軌跡と方程式",
+  "difficulty": 3,
+  "model": "claude-opus-5",
+  "course": "math",
+  "subject": "math",
+  "slug": "20260913075851-3e0542",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "createdAt": "2026-09-13T08:00:23.545Z",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "2点 $A(0,\\ 0)$、$B(6,\\ 0)$ があります。$AP:BP=1:2$ を満たす点 $P$ の軌跡を求めます。動く点$P$ が描く図形は何になるでしょうか。\n<<<TTS_READING>>>\n2テン エー、ゼロ、ゼロ、ビー、ロク、ゼロ ガ アリマス。エーピー タイ ビーピー ガ 1タイ2 ヲ ミタス テン ピー ノ キセキ ヲ モトメマス。ウゴク テン ピー ガ エガク ズケイ ワ ナニ ニ ナルデショウカ。",
+      "visual_type": "hook",
+      "visual_content": "点Pを$(x,\\ y)$とおく",
+      "audioSrc": "projects/20260913075851-3e0542/scene-01.mp3",
+      "audioDurationInSeconds": 13.56,
+      "durationInFrames": 418,
+      "captions": [
+        {
+          "text": "2",
+          "startMs": 119.458,
+          "endMs": 293.08299999999997,
+          "timestampMs": 206.27049999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "点 ",
+          "startMs": 304.625,
+          "endMs": 443.5,
+          "timestampMs": 374.0625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A(0,\\ 0)$、",
+          "startMs": 455.083,
+          "endMs": 779.166,
+          "timestampMs": 617.1245,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$B(6,\\ 0)$ ",
+          "startMs": 1010.666,
+          "endMs": 3441.2070000000003,
+          "timestampMs": 2225.9365000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "があります。$AP:BP=1:2$ ",
+          "startMs": 3452.791,
+          "endMs": 3568.541,
+          "timestampMs": 3510.666,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "を満たす点 $P$ の軌跡を求めます。",
+          "startMs": 3580.083,
+          "endMs": 4124.0830000000005,
+          "timestampMs": 3852.0830000000005,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "動く点$P$ ",
+          "startMs": 4942.125,
+          "endMs": 5393.5,
+          "timestampMs": 5167.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が描く図形は何になるでしょうか。",
+          "startMs": 5405.083,
+          "endMs": 9074.081999999999,
+          "timestampMs": 7239.582499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。軌跡の問題は、動く点の座標を文字でおくのが出発点です。次に、与えられた比の条件を長さの等式に直します。そのあと両辺を2乗して、座標だけの式にします。最後に整理して平方完成すれば、図形の正体が見えます。\n<<<TTS_READING>>>\nマズワ トク ホウシン ヲ カクニン シマス。キセキ ノ モンダイ ワ、ウゴク テン ノ ザヒョウ ヲ モジ デ オク ノ ガ シュッパツテン デス。ツギ ニ、アタエラレタ ヒ ノ ジョウケン ヲ ナガサ ノ トウシキ ニ ナオシマス。ソノアト リョウヘン ヲ 2ジョウ シテ、ザヒョウ ダケ ノ シキ ニ シマス。サイゴ ニ セイリ シテ ヘイホウカンセイ スレバ、ズケイ ノ ショウタイ ガ ミエマス。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①求める点Pの座標を $(x,\\ y)$ とおく",
+          "②$AP:BP=1:2$ を $2AP=BP$ の形に直す",
+          "③両辺を2乗し、距離の公式で座標の式にする",
+          "④式を整理して平方完成し、円の方程式にする",
+          "⑤中心と半径を読み取り、軌跡を答える"
+        ]
+      },
+      "audioSrc": "projects/20260913075851-3e0542/scene-02.mp3",
+      "audioDurationInSeconds": 22.992,
+      "durationInFrames": 701,
+      "captions": [
+        {
+          "text": "まずは解く方針を確認します。",
+          "startMs": 119.458,
+          "endMs": 2341.666,
+          "timestampMs": 1230.5620000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "軌跡の問題は、",
+          "startMs": 3194.458,
+          "endMs": 4294,
+          "timestampMs": 3744.2290000000003,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "動く点の座標を文字でおくのが出発点です。",
+          "startMs": 4594.916,
+          "endMs": 7557.874,
+          "timestampMs": 6076.395,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "次に、",
+          "startMs": 8379.625,
+          "endMs": 8912.041,
+          "timestampMs": 8645.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "与えられた比の条件を長さの等式に直します。",
+          "startMs": 9178.25,
+          "endMs": 12465.291,
+          "timestampMs": 10821.770499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "そのあと両辺を",
+          "startMs": 13287.041,
+          "endMs": 14351.833,
+          "timestampMs": 13819.437,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2",
+          "startMs": 14363.416,
+          "endMs": 14513.874,
+          "timestampMs": 14438.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "乗して、",
+          "startMs": 14525.458,
+          "endMs": 15057.874,
+          "timestampMs": 14791.666000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "座標だけの式にします。",
+          "startMs": 15347.208,
+          "endMs": 16921.291,
+          "timestampMs": 16134.249500000002,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "最後に整理して平方完成すれば、",
+          "startMs": 17743.041,
+          "endMs": 20173.583,
+          "timestampMs": 18958.311999999998,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "図形の正体が見えます。",
+          "startMs": 20474.541,
+          "endMs": 22187.499,
+          "timestampMs": 21331.02,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "narration": "まず、求める点$P$ の座標を $(x,\\ y)$ とおきます。$A$ は原点、$B$ は $x$ 軸上の点なので、$AP$ と $BP$ の長さはどちらも $x$ と $y$ で表せます。\n<<<TTS_READING>>>\nマズ、モトメル テン ピー ノ ザヒョウ ヲ エックス、ワイ ト オキマス。エー ワ ゲンテン、ビー ワ エックスジク ジョウ ノ テン ナノデ、エーピー ト ビーピー ノ ナガサ ワ ドチラモ エックス ト ワイ デ アラワセマス。",
+      "visual_type": "step",
+      "visual_content": "①求める点Pの座標を $(x,\\ y)$ とおく",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] $P(x,\\ y)$ とおく"
+        ],
+        "caption": "距離を文字で表す",
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "label": "A"
+          },
+          {
+            "x": 6,
+            "y": 0,
+            "label": "B"
+          },
+          {
+            "x": -2,
+            "y": 4,
+            "label": "P"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "P",
+            "label": "$AP$",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "P",
+            "label": "$BP$",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "6",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [],
+        "circles": [],
+        "highlight": [],
+        "axes": true
+      },
+      "audioSrc": "projects/20260913075851-3e0542/scene-03.mp3",
+      "audioDurationInSeconds": 12.792,
+      "durationInFrames": 395,
+      "captions": [
+        {
+          "text": "まず、",
+          "startMs": 119.458,
+          "endMs": 501.41600000000005,
+          "timestampMs": 310.437,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "求める点$P$ ",
+          "startMs": 779.166,
+          "endMs": 1242.124,
+          "timestampMs": 1010.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の座標を ",
+          "startMs": 1253.708,
+          "endMs": 1450.458,
+          "timestampMs": 1352.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$(x,\\ y)$ ",
+          "startMs": 1462.041,
+          "endMs": 1658.791,
+          "timestampMs": 1560.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "とおきます。$A$ ",
+          "startMs": 1670.375,
+          "endMs": 1762.958,
+          "timestampMs": 1716.6665,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "は原点、$B$ ",
+          "startMs": 1774.541,
+          "endMs": 2133.332,
+          "timestampMs": 1953.9364999999998,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "は ",
+          "startMs": 2144.916,
+          "endMs": 2202.791,
+          "timestampMs": 2173.8535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$x$ 軸上の点なので、",
+          "startMs": 2214.333,
+          "endMs": 2735.166,
+          "timestampMs": 2474.7495,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$AP$ ",
+          "startMs": 3012.958,
+          "endMs": 3209.708,
+          "timestampMs": 3111.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 3221.291,
+          "endMs": 3313.8740000000003,
+          "timestampMs": 3267.5825000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$BP$ の長さはどちらも $x$ と $y$ で表せます。",
+          "startMs": 3325.458,
+          "endMs": 3973.6240000000003,
+          "timestampMs": 3649.541,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "narration": "次に、比の条件を等式に直します。$AP:BP=1:2$ は、$BP$ が $AP$ の2倍という意味です。つまり $2AP=BP$ です。比のままでは計算できないので、この形にします。\n<<<TTS_READING>>>\nツギ ニ、ヒ ノ ジョウケン ヲ トウシキ ニ ナオシマス。エーピー タイ ビーピー ガ 1タイ2 ワ、ビーピー ガ エーピー ノ 2バイ ト イウ イミ デス。ツマリ 2 カケル エーピー ワ ビーピー デス。ヒ ノ ママ デワ ケイサン デキナイ ノデ、コノ カタチ ニ シマス。",
+      "visual_type": "step",
+      "visual_content": "②$AP:BP=1:2$ を $2AP=BP$ の形に直す",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "AP:BP=1:2",
+          "[text] 内項の積と外項の積は等しい",
+          "[underline] 2AP=BP"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913075851-3e0542/scene-04.mp3",
+      "audioDurationInSeconds": 16.728,
+      "durationInFrames": 513,
+      "captions": [
+        {
+          "text": "次に、比の条件を等式に直します。$AP:BP=1:2$ ",
+          "startMs": 119.458,
+          "endMs": 385.66600000000005,
+          "timestampMs": 252.56200000000004,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "は、",
+          "startMs": 397.208,
+          "endMs": 582.374,
+          "timestampMs": 489.79100000000005,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$BP$ ",
+          "startMs": 825.458,
+          "endMs": 964.333,
+          "timestampMs": 894.8955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 975.916,
+          "endMs": 1091.6660000000002,
+          "timestampMs": 1033.7910000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$AP$ ",
+          "startMs": 1103.25,
+          "endMs": 1531.5,
+          "timestampMs": 1317.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の2倍という意味です。つまり ",
+          "startMs": 1543.041,
+          "endMs": 1647.2069999999999,
+          "timestampMs": 1595.1239999999998,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$2AP=BP$ ",
+          "startMs": 1658.791,
+          "endMs": 2098.624,
+          "timestampMs": 1878.7075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。",
+          "startMs": 2110.166,
+          "endMs": 2955.083,
+          "timestampMs": 2532.6245,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "比のままでは計算できないので、",
+          "startMs": 3807.875,
+          "endMs": 5844.915999999999,
+          "timestampMs": 4826.3955,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "この形にします。",
+          "startMs": 6134.25,
+          "endMs": 8587.958,
+          "timestampMs": 7361.104,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 5,
+      "narration": "距離の公式で $AP$ と $BP$ を書きます。根号があると扱いにくいので、両辺を2乗します。長さはどちらも0以上なので、2乗しても同値です。\n<<<TTS_READING>>>\nキョリ ノ コウシキ デ エーピー ト ビーピー ヲ カキマス。コンゴウ ガ アルト アツカイニクイ ノデ、リョウヘン ヲ 2ジョウ シマス。ナガサ ワ ドチラモ ゼロ イジョウ ナノデ、2ジョウ シテモ ドウチ デス。",
+      "visual_type": "step",
+      "visual_content": "③両辺を2乗し、距離の公式で座標の式にする",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "AP=\\sqrt{x^2+y^2}",
+          "BP=\\sqrt{(x-6)^2+y^2}",
+          "[text] $2AP=BP$ の両辺を2乗する",
+          "4(x^2+y^2)=(x-6)^2+y^2"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913075851-3e0542/scene-05.mp3",
+      "audioDurationInSeconds": 12.672,
+      "durationInFrames": 391,
+      "captions": [
+        {
+          "text": "距離の公式で ",
+          "startMs": 154.166,
+          "endMs": 362.499,
+          "timestampMs": 258.3325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$AP$ ",
+          "startMs": 374.083,
+          "endMs": 489.833,
+          "timestampMs": 431.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 501.375,
+          "endMs": 941.2080000000001,
+          "timestampMs": 721.2915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$BP$ ",
+          "startMs": 952.791,
+          "endMs": 1022.249,
+          "timestampMs": 987.52,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を書きます。",
+          "startMs": 1033.791,
+          "endMs": 2781.4990000000003,
+          "timestampMs": 1907.645,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "根号があると扱いにくいので、",
+          "startMs": 3634.25,
+          "endMs": 5497.665999999999,
+          "timestampMs": 4565.958,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "両辺を",
+          "startMs": 5821.75,
+          "endMs": 6354.165999999999,
+          "timestampMs": 6087.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2",
+          "startMs": 6365.75,
+          "endMs": 6527.791,
+          "timestampMs": 6446.7705000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "乗します。",
+          "startMs": 6539.333,
+          "endMs": 7291.665999999999,
+          "timestampMs": 6915.4995,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "長さはどちらも0以上なので、",
+          "startMs": 8113.416,
+          "endMs": 10127.291000000001,
+          "timestampMs": 9120.353500000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "2",
+          "startMs": 10428.25,
+          "endMs": 10555.583,
+          "timestampMs": 10491.9165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "乗しても同値です。",
+          "startMs": 10567.125,
+          "endMs": 11863.456999999999,
+          "timestampMs": 11215.291,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 6,
+      "narration": "式を整理します。右辺を展開すると $x^2-12x+36+y^2$ です。すべて左辺に集めると $3x^2+3y^2+12x-36=0$ となり、3で割れます。\n<<<TTS_READING>>>\nシキ ヲ セイリ シマス。ウヘン ヲ テンカイ スルト エックス ノ 2ジョウ マイナス 12エックス タス 36 タス ワイ ノ 2ジョウ デス。スベテ サヘン ニ アツメルト、3エックス ノ 2ジョウ タス 3ワイ ノ 2ジョウ タス 12エックス マイナス 36 ワ ゼロ トナリ、3 デ ワレマス。",
+      "visual_type": "step",
+      "visual_content": "④式を整理して平方完成し、円の方程式にする",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "4x^2+4y^2=x^2-12x+36+y^2",
+          "3x^2+3y^2+12x-36=0",
+          "[text] 両辺を3で割る",
+          "x^2+y^2+4x-12=0"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913075851-3e0542/scene-06.mp3",
+      "audioDurationInSeconds": 18.384,
+      "durationInFrames": 563,
+      "captions": [
+        {
+          "text": "式を整理します。右辺を展開すると ",
+          "startMs": 119.458,
+          "endMs": 385.66600000000005,
+          "timestampMs": 252.56200000000004,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$x^2-12x+36+y^2$ ",
+          "startMs": 397.208,
+          "endMs": 512.9580000000001,
+          "timestampMs": 455.0830000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。すべて左辺に集めると ",
+          "startMs": 524.541,
+          "endMs": 883.3320000000001,
+          "timestampMs": 703.9365,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$3x^2+3y^2+12x-36=0$ ",
+          "startMs": 894.916,
+          "endMs": 2604.166,
+          "timestampMs": 1749.5410000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "となり、",
+          "startMs": 2615.75,
+          "endMs": 10671.291,
+          "timestampMs": 6643.5205,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "3",
+          "startMs": 10844.916,
+          "endMs": 11053.249,
+          "timestampMs": 10949.0825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で割れます。",
+          "startMs": 11064.833,
+          "endMs": 17581,
+          "timestampMs": 14322.9165,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 7,
+      "narration": "$x$ について平方完成します。$x^2+4x$ は $(x+2)^2-4$ です。定数をまとめると $(x+2)^2+y^2=16$ となり、円の方程式の形になりました。\n<<<TTS_READING>>>\nエックス ニ ツイテ ヘイホウカンセイ シマス。エックス ノ 2ジョウ タス 4エックス ワ、カッコ エックス タス 2 カッコトジ ノ 2ジョウ マイナス 4 デス。テイスウ ヲ マトメルト、カッコ エックス タス 2 カッコトジ ノ 2ジョウ タス ワイ ノ 2ジョウ ワ 16 トナリ、エン ノ ホウテイシキ ノ カタチ ニ ナリマシタ。",
+      "visual_type": "step",
+      "visual_content": "④式を整理して平方完成し、円の方程式にする",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "x^2+4x+y^2-12=0",
+          "[text] $x$ について平方完成する",
+          "(x+2)^2-4+y^2-12=0",
+          "[underline] (x+2)^2+y^2=16"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913075851-3e0542/scene-07.mp3",
+      "audioDurationInSeconds": 19.2,
+      "durationInFrames": 587,
+      "captions": [
+        {
+          "text": "$x$ ",
+          "startMs": 119.458,
+          "endMs": 582.416,
+          "timestampMs": 350.937,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "について平方完成します。$x^2+4x$ ",
+          "startMs": 594,
+          "endMs": 721.333,
+          "timestampMs": 657.6665,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "は ",
+          "startMs": 732.875,
+          "endMs": 1114.833,
+          "timestampMs": 923.854,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$(x+2)^2-4$ ",
+          "startMs": 1126.375,
+          "endMs": 2063.8740000000003,
+          "timestampMs": 1595.1245000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。",
+          "startMs": 2075.458,
+          "endMs": 2573.1240000000003,
+          "timestampMs": 2324.291,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "定数をまとめると ",
+          "startMs": 3391.208,
+          "endMs": 3819.458,
+          "timestampMs": 3605.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$(x+2)^2+y^2=16$ ",
+          "startMs": 3831,
+          "endMs": 3923.583,
+          "timestampMs": 3877.2915000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "となり、",
+          "startMs": 3935.166,
+          "endMs": 5486.083,
+          "timestampMs": 4710.6245,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "円の方程式の形になりました。",
+          "startMs": 5821.75,
+          "endMs": 9224.541,
+          "timestampMs": 7523.1455,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "narration": "この式は、中心 $(-2,\\ 0)$、半径4の円を表します。逆に、この円上の点はすべて条件を満たします。よって軌跡は中心 $(-2,\\ 0)$、半径4の円です。\n<<<TTS_READING>>>\nコノ シキ ワ、チュウシン マイナス2、ゼロ、ハンケイ 4 ノ エン ヲ アラワシマス。ギャク ニ、コノ エンジョウ ノ テン ワ スベテ ジョウケン ヲ ミタシマス。ヨッテ キセキ ワ チュウシン マイナス2、ゼロ、ハンケイ 4 ノ エン デス。",
+      "visual_type": "step",
+      "visual_content": "⑤中心と半径を読み取り、軌跡を答える",
+      "visual": {
+        "kind": "plot",
+        "lines": [
+          "[text] 答え",
+          "[underline] \\text{中心}(-2,\\ 0),\\ \\text{半径}4\\text{の円}"
+        ],
+        "caption": "アポロニウスの円",
+        "xRange": [
+          -9,
+          9
+        ],
+        "yRange": [
+          -9,
+          9
+        ],
+        "curves": [
+          {
+            "expr": "-2+4*cos(t)",
+            "exprY": "4*sin(t)",
+            "label": "$(x+2)^2+y^2=16$",
+            "region": null
+          }
+        ],
+        "tRange": null,
+        "shade": null,
+        "points": [
+          {
+            "x": -2,
+            "y": 0,
+            "label": "[coord]中心"
+          },
+          {
+            "x": 6,
+            "y": 0,
+            "label": "[coord]B"
+          }
+        ]
+      },
+      "audioSrc": "projects/20260913075851-3e0542/scene-08.mp3",
+      "audioDurationInSeconds": 15.696,
+      "durationInFrames": 482,
+      "captions": [
+        {
+          "text": "この式は、中心 ",
+          "startMs": 154.166,
+          "endMs": 350.916,
+          "timestampMs": 252.541,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$(-2,\\ 0)$、半径4の円を表します。逆に、この円上の点はすべて条件を満たします。よって軌跡は中心 ",
+          "startMs": 362.5,
+          "endMs": 605.5409999999999,
+          "timestampMs": 484.02049999999997,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$(-2,\\ 0)$、",
+          "startMs": 617.125,
+          "endMs": 860.1659999999999,
+          "timestampMs": 738.6455,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "半径",
+          "startMs": 1091.666,
+          "endMs": 3637.9990000000003,
+          "timestampMs": 2364.8325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "4",
+          "startMs": 3649.541,
+          "endMs": 3834.7070000000003,
+          "timestampMs": 3742.1240000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の円です。",
+          "startMs": 3857.875,
+          "endMs": 5165.749,
+          "timestampMs": 4511.812,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 9,
+      "narration": "まとめます。点$P$ を $(x,\\ y)$ とおき、$2AP=BP$ を2乗して整理すると $(x+2)^2+y^2=16$ でした。答えは中心 $(-2,\\ 0)$、半径4の円です。距離の比が一定の点の軌跡は円になり、アポロニウスの円と呼ばれます。\n<<<TTS_READING>>>\nマトメマス。テン ピー ヲ エックス、ワイ ト オキ、2 カケル エーピー ワ ビーピー ヲ 2ジョウ シテ セイリ スルト、カッコ エックス タス 2 カッコトジ ノ 2ジョウ タス ワイ ノ 2ジョウ ワ 16 デシタ。コタエ ワ チュウシン マイナス2、ゼロ、ハンケイ 4 ノ エン デス。キョリ ノ ヒ ガ イッテイ ノ テン ノ キセキ ワ エン ニ ナリ、アポロニウス ノ エン ト ヨバレマス。",
+      "visual_type": "summary",
+      "visual_content": "距離の比が一定なら円",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] $2AP=BP$ を2乗して整理",
+          "(x+2)^2+y^2=16",
+          "[text] 答えは中心 $(-2,\\ 0)$、半径4の円"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913075851-3e0542/scene-09.mp3",
+      "audioDurationInSeconds": 23.064,
+      "durationInFrames": 703,
+      "captions": [
+        {
+          "text": "まとめます。",
+          "startMs": 119.458,
+          "endMs": 941.208,
+          "timestampMs": 530.333,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "点$P$ ",
+          "startMs": 1759.25,
+          "endMs": 1956,
+          "timestampMs": 1857.625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を ",
+          "startMs": 1967.583,
+          "endMs": 2199.083,
+          "timestampMs": 2083.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$(x,\\ y)$ ",
+          "startMs": 2210.666,
+          "endMs": 2291.666,
+          "timestampMs": 2251.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "とおき、",
+          "startMs": 2303.25,
+          "endMs": 2847.25,
+          "timestampMs": 2575.25,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$2AP=BP$ ",
+          "startMs": 3171.291,
+          "endMs": 3368.041,
+          "timestampMs": 3269.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を2乗して整理すると ",
+          "startMs": 3379.625,
+          "endMs": 3472.208,
+          "timestampMs": 3425.9165000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$(x+2)^2+y^2=16$ でした。答えは中心 $(-2,\\ 0)$、",
+          "startMs": 3483.791,
+          "endMs": 3796.291,
+          "timestampMs": 3640.041,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "半径4の円です。",
+          "startMs": 4120.375,
+          "endMs": 11770.833,
+          "timestampMs": 7945.604,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "距離の比が一定の点の軌跡は円になり、",
+          "startMs": 12627.333,
+          "endMs": 20034.708,
+          "timestampMs": 16331.020499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "アポロニウス",
+          "startMs": 20300.916,
+          "endMs": 21041.666,
+          "timestampMs": 20671.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の円と呼ばれます。",
+          "startMs": 21053.25,
+          "endMs": 22256.958,
+          "timestampMs": 21655.104,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    }
+  ]
+}

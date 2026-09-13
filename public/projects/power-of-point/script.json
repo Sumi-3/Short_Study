@@ -1,0 +1,180 @@
+{
+  "topic": "円の外部の点Pから円に接線を引き、接点をTとする。\nまたPを通る直線が円と2点A, Bで交わり、$PA=4$, $AB=5$ である。\n(1) 接線の長さ $PT$ を求めよ。",
+  "model": "handwritten",
+  "outline": [
+    "円の外部に点Pがある。",
+    "Pから円に引いた接線の接点をTとする。",
+    "Pを通る直線が円と2点A, Bで交わり、$PA=4$, $AB=5$ である。",
+    "(1) 接線の長さ $PT$ を求めよ。"
+  ],
+  "unit": "数A 図形の性質",
+  "difficulty": 2,
+  "subunit": "平面図形（三角形・円の性質）",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "円の外の点Pから、接線PTを引きます。\nPを通る別の直線が、円と2点A、Bで交わります。\n$PA=4$、$AB=5$ のとき、接線の長さ $PT$ を求めます。\n<<<TTS_READING>>>\n円の外の点Pから、接線PTを引きます。\nPを通る別の直線が、円と2点A、Bで交わります。\nPAが4、ABが5のとき、接線の長さPTを求めます。",
+      "visual_type": "hook",
+      "visual_content": "接線の長さは方べきで"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\nはじめに、接線と割線がどこにあるかを図で押さえます。\n次に、方べきの定理で $PT$ の2乗を2つの長さの積に置き換えます。\n最後に、分かっている長さを入れて $PT$ を求めます。\n<<<TTS_READING>>>\nまずは解く方針を確認します。\nはじめに、接線と割線がどこにあるかを図でおさえます。\n次に、方べきの定理でPTのにじょうを、2つの長さの積に置きかえます。\n最後に、分かっている長さを入れてPTを求めます。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①円の外の点Pから引いた接線PTと、割線PABを図で確かめる",
+          "②方べきの定理を使い、PTの2乗をPAとPBの積で表す",
+          "③PA=4とPB=9を代入して、接線の長さPTを求める"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "図をかきます。\n点Tは接点なので、半径OTと接線PTは垂直に交わります。\nPからの直線は円を点A、Bの2点で切っています。\nこの直線を割線といいます。\n$PB$ は $PA$ と $AB$ をつないだ長さなので、4たす5で9です。\n<<<TTS_READING>>>\n図をかきます。\n点Tは接点なので、半径OTと接線PTは垂直に交わります。\nPからの直線は、円を点A、Bの2点で切っています。\nこの直線を割線といいます。\nPBはPAとABをつないだ長さなので、4たす5で9です。",
+      "visual_type": "step",
+      "visual_content": "①円の外の点Pから引いた接線PTと、割線PABを図で確かめる",
+      "visual": {
+        "kind": "figure",
+        "lines": [],
+        "caption": "Tは接点",
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "label": "P"
+          },
+          {
+            "x": 4,
+            "y": 0,
+            "label": "A"
+          },
+          {
+            "x": 9,
+            "y": 0,
+            "label": "B"
+          },
+          {
+            "x": 5.8633,
+            "y": 1.2734,
+            "label": "T"
+          },
+          {
+            "x": 6.5,
+            "y": -1.6583,
+            "label": "O"
+          }
+        ],
+        "segments": [
+          {
+            "from": "P",
+            "to": "A",
+            "label": "4",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "5",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "P",
+            "to": "T",
+            "label": "?",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "T",
+            "label": "",
+            "dashed": true,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "T",
+            "from": "P",
+            "to": "O",
+            "label": "",
+            "ticks": 0
+          }
+        ],
+        "circles": [
+          {
+            "center": "O",
+            "radius": 3,
+            "label": "",
+            "dashed": false,
+            "fromAngle": 0,
+            "toAngle": 0,
+            "sector": false
+          }
+        ],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "方べきの定理を使います。\n円の外の点から接線と割線を引くと、接線の長さの2乗が、割線の2つの長さの積に等しくなります。\n接線は、割線の2つの交点が1点に重なった場合だと見ると、同じ形の式になります。\n<<<TTS_READING>>>\n方べきの定理を使います。\n円の外の点から接線と割線を引くと、接線の長さのにじょうが、割線の2つの長さの積に等しくなります。\n接線は、割線の2つの交点が1点に重なった場合だと見ると、同じ形の式になります。",
+      "visual_type": "step",
+      "visual_content": "②方べきの定理を使い、PTの2乗をPAとPBの積で表す",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 接点は交点が重なった形",
+          "[highlight] PT^2 = PA \\cdot PB"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "値を入れます。\n$PA=4$、$PB=9$ なので、$PT$ の2乗は4かける9で36です。\n$PT$ は長さなので正の値だけを取ります。\nよって $PT=6$ です。\n<<<TTS_READING>>>\n値を入れます。\nPAが4、PBが9なので、PTのにじょうは4かける9で36です。\nPTは長さなので、正の値だけを取ります。\nよってPTは6です。",
+      "visual_type": "step",
+      "visual_content": "③PA=4とPB=9を代入して、接線の長さPTを求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[carry] PT^2 = PA \\cdot PB",
+          "[substitute: PA=4, PB=9 を代入] PT^2 = 4 \\times 9 = 36",
+          "[text] 長さなので $PT>0$",
+          "[underline] PT = 6"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "まとめます。\n接線の長さの2乗は、割線の2つの長さの積に等しくなります。\n$PB$ は $PA$ と $AB$ の和で9でした。\n接線の長さ $PT$ は6です。\n<<<TTS_READING>>>\nまとめます。\n接線の長さのにじょうは、割線の2つの長さの積に等しくなります。\nPBはPAとABの和で9でした。\n接線の長さPTは6です。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 方べきの定理を使った",
+          "[box] PT = 6",
+          "[text] $PB=PA+AB=9$ を忘れない"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}

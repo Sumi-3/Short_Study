@@ -8,8 +8,7 @@ dist
 out
 
 whisper.cpp
-public/projects/*
-!public/projects/mock
+# 生成済みの動画はリポジトリに同梱する。clone した時点で再生できる状態にするため。
 web/dist
 build
 

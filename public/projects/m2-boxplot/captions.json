@@ -1,0 +1,2354 @@
+[
+  [
+    {
+      "text": "11人",
+      "startMs": 119.458,
+      "endMs": 756.0409999999999,
+      "timestampMs": 437.7495,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 767.583,
+      "endMs": 883.333,
+      "timestampMs": 825.458,
+      "confidence": 1
+    },
+    {
+      "text": "得点",
+      "startMs": 894.916,
+      "endMs": 1288.4160000000002,
+      "timestampMs": 1091.6660000000002,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 1300,
+      "endMs": 1473.625,
+      "timestampMs": 1386.8125,
+      "confidence": 1
+    },
+    {
+      "text": "小さい",
+      "startMs": 1554.625,
+      "endMs": 2052.291,
+      "timestampMs": 1803.458,
+      "confidence": 1
+    },
+    {
+      "text": "順",
+      "startMs": 2063.875,
+      "endMs": 2225.916,
+      "timestampMs": 2144.8955,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 2237.5,
+      "endMs": 2353.25,
+      "timestampMs": 2295.375,
+      "confidence": 1
+    },
+    {
+      "text": "並ん",
+      "startMs": 2364.833,
+      "endMs": 2642.6240000000003,
+      "timestampMs": 2503.7285,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 2654.166,
+      "endMs": 2723.6240000000003,
+      "timestampMs": 2688.8950000000004,
+      "confidence": 1
+    },
+    {
+      "text": "い",
+      "startMs": 2735.166,
+      "endMs": 2827.7490000000003,
+      "timestampMs": 2781.4575000000004,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 2839.333,
+      "endMs": 3174.9990000000003,
+      "timestampMs": 3007.166,
+      "confidence": 1
+    },
+    {
+      "text": "3",
+      "startMs": 3993.041,
+      "endMs": 4293.957,
+      "timestampMs": 4143.499,
+      "confidence": 1
+    },
+    {
+      "text": "5",
+      "startMs": 4386.583,
+      "endMs": 4513.915999999999,
+      "timestampMs": 4450.2495,
+      "confidence": 1
+    },
+    {
+      "text": "6",
+      "startMs": 4722.208,
+      "endMs": 5080.999,
+      "timestampMs": 4901.603499999999,
+      "confidence": 1
+    },
+    {
+      "text": "8",
+      "startMs": 5381.958,
+      "endMs": 5752.333,
+      "timestampMs": 5567.1455,
+      "confidence": 1
+    },
+    {
+      "text": "9",
+      "startMs": 6018.5,
+      "endMs": 6319.416,
+      "timestampMs": 6168.9580000000005,
+      "confidence": 1
+    },
+    {
+      "text": "11",
+      "startMs": 6527.791,
+      "endMs": 7071.7489000000005,
+      "timestampMs": 6799.76995,
+      "confidence": 1
+    },
+    {
+      "text": "12",
+      "startMs": 7199.083,
+      "endMs": 7627.290999999999,
+      "timestampMs": 7413.187,
+      "confidence": 1
+    },
+    {
+      "text": "14",
+      "startMs": 7719.916,
+      "endMs": 8229.166000000001,
+      "timestampMs": 7974.541000000001,
+      "confidence": 1
+    },
+    {
+      "text": "15",
+      "startMs": 8344.916,
+      "endMs": 8749.999,
+      "timestampMs": 8547.4575,
+      "confidence": 1
+    },
+    {
+      "text": "18",
+      "startMs": 8946.75,
+      "endMs": 9502.3319,
+      "timestampMs": 9224.540949999999,
+      "confidence": 1
+    },
+    {
+      "text": "20",
+      "startMs": 9699.083,
+      "endMs": 10034.706900000001,
+      "timestampMs": 9866.894950000002,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 10046.291,
+      "endMs": 10381.956999999999,
+      "timestampMs": 10214.124,
+      "confidence": 1
+    },
+    {
+      "text": "この",
+      "startMs": 11238.416,
+      "endMs": 11446.749,
+      "timestampMs": 11342.5825,
+      "confidence": 1
+    },
+    {
+      "text": "データ",
+      "startMs": 11458.333,
+      "endMs": 11759.249,
+      "timestampMs": 11608.791000000001,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 11770.833,
+      "endMs": 11874.999,
+      "timestampMs": 11822.916000000001,
+      "confidence": 1
+    },
+    {
+      "text": "しぶんい",
+      "startMs": 11886.583,
+      "endMs": 12349.541000000001,
+      "timestampMs": 12118.062000000002,
+      "confidence": 1
+    },
+    {
+      "text": "はんい",
+      "startMs": 12361.125,
+      "endMs": 12731.5,
+      "timestampMs": 12546.3125,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 12743.041,
+      "endMs": 12835.624,
+      "timestampMs": 12789.3325,
+      "confidence": 1
+    },
+    {
+      "text": "求め",
+      "startMs": 12847.208,
+      "endMs": 13171.291000000001,
+      "timestampMs": 13009.249500000002,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 13182.875,
+      "endMs": 13541.666,
+      "timestampMs": 13362.270499999999,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "まず",
+      "startMs": 119.458,
+      "endMs": 397.249,
+      "timestampMs": 258.35350000000005,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 408.791,
+      "endMs": 524.5409999999999,
+      "timestampMs": 466.66599999999994,
+      "confidence": 1
+    },
+    {
+      "text": "解く",
+      "startMs": 536.125,
+      "endMs": 779.1659999999999,
+      "timestampMs": 657.6455,
+      "confidence": 1
+    },
+    {
+      "text": "方針",
+      "startMs": 790.75,
+      "endMs": 1265.291,
+      "timestampMs": 1028.0205,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 1276.833,
+      "endMs": 1369.4160000000002,
+      "timestampMs": 1323.1245000000001,
+      "confidence": 1
+    },
+    {
+      "text": "確認",
+      "startMs": 1381,
+      "endMs": 1809.25,
+      "timestampMs": 1595.125,
+      "confidence": 1
+    },
+    {
+      "text": "し",
+      "startMs": 1820.833,
+      "endMs": 1959.708,
+      "timestampMs": 1890.2705,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 1971.291,
+      "endMs": 2330.082,
+      "timestampMs": 2150.6865,
+      "confidence": 1
+    },
+    {
+      "text": "はじめ",
+      "startMs": 3148.166,
+      "endMs": 3483.8320000000003,
+      "timestampMs": 3315.9990000000003,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 3495.375,
+      "endMs": 3750,
+      "timestampMs": 3622.6875,
+      "confidence": 1
+    },
+    {
+      "text": "データ",
+      "startMs": 4097.208,
+      "endMs": 4374.999,
+      "timestampMs": 4236.103499999999,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 4386.583,
+      "endMs": 4479.165999999999,
+      "timestampMs": 4432.8745,
+      "confidence": 1
+    },
+    {
+      "text": "小さい",
+      "startMs": 4490.75,
+      "endMs": 5011.583,
+      "timestampMs": 4751.166499999999,
+      "confidence": 1
+    },
+    {
+      "text": "順",
+      "startMs": 5023.166,
+      "endMs": 5208.332,
+      "timestampMs": 5115.749,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 5219.916,
+      "endMs": 5347.249,
+      "timestampMs": 5283.5825,
+      "confidence": 1
+    },
+    {
+      "text": "見",
+      "startMs": 5358.791,
+      "endMs": 5474.541,
+      "timestampMs": 5416.666,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 5486.125,
+      "endMs": 5717.625,
+      "timestampMs": 5601.875,
+      "confidence": 1
+    },
+    {
+      "text": "最小",
+      "startMs": 6030.083,
+      "endMs": 6493.040999999999,
+      "timestampMs": 6261.562,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 6504.625,
+      "endMs": 6620.375,
+      "timestampMs": 6562.5,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 6631.958,
+      "endMs": 6724.540999999999,
+      "timestampMs": 6678.2495,
+      "confidence": 1
+    },
+    {
+      "text": "最大値",
+      "startMs": 6736.125,
+      "endMs": 7314.833,
+      "timestampMs": 7025.478999999999,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 7326.375,
+      "endMs": 7430.541,
+      "timestampMs": 7378.4580000000005,
+      "confidence": 1
+    },
+    {
+      "text": "読み取り",
+      "startMs": 7442.125,
+      "endMs": 7916.666,
+      "timestampMs": 7679.3955000000005,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 7928.25,
+      "endMs": 8275.458,
+      "timestampMs": 8101.854,
+      "confidence": 1
+    },
+    {
+      "text": "次",
+      "startMs": 9143.5,
+      "endMs": 9351.833,
+      "timestampMs": 9247.6665,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 9363.416,
+      "endMs": 9594.916,
+      "timestampMs": 9479.166,
+      "confidence": 1
+    },
+    {
+      "text": "中央",
+      "startMs": 9814.833,
+      "endMs": 10266.208,
+      "timestampMs": 10040.5205,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 10277.791,
+      "endMs": 10405.124,
+      "timestampMs": 10341.4575,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 10416.666,
+      "endMs": 10509.249,
+      "timestampMs": 10462.9575,
+      "confidence": 1
+    },
+    {
+      "text": "決め",
+      "startMs": 10520.833,
+      "endMs": 10902.791000000001,
+      "timestampMs": 10711.812000000002,
+      "confidence": 1
+    },
+    {
+      "text": "その",
+      "startMs": 11169,
+      "endMs": 11423.625,
+      "timestampMs": 11296.3125,
+      "confidence": 1
+    },
+    {
+      "text": "前後",
+      "startMs": 11435.166,
+      "endMs": 11770.831999999999,
+      "timestampMs": 11602.999,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 11782.416,
+      "endMs": 11886.581999999999,
+      "timestampMs": 11834.499,
+      "confidence": 1
+    },
+    {
+      "text": "半分",
+      "startMs": 11898.166,
+      "endMs": 12326.416,
+      "timestampMs": 12112.291,
+      "confidence": 1
+    },
+    {
+      "text": "ずつ",
+      "startMs": 12337.958,
+      "endMs": 12592.583,
+      "timestampMs": 12465.2705,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 12604.166,
+      "endMs": 12777.791,
+      "timestampMs": 12690.9785,
+      "confidence": 1
+    },
+    {
+      "text": "だいいち",
+      "startMs": 13067.125,
+      "endMs": 13518.5,
+      "timestampMs": 13292.8125,
+      "confidence": 1
+    },
+    {
+      "text": "しぶん",
+      "startMs": 13530.083,
+      "endMs": 13888.874,
+      "timestampMs": 13709.478500000001,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 13900.458,
+      "endMs": 14247.666000000001,
+      "timestampMs": 14074.062000000002,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 14259.25,
+      "endMs": 14456,
+      "timestampMs": 14357.625,
+      "confidence": 1
+    },
+    {
+      "text": "だいさん",
+      "startMs": 14629.625,
+      "endMs": 15104.166,
+      "timestampMs": 14866.895499999999,
+      "confidence": 1
+    },
+    {
+      "text": "しぶん",
+      "startMs": 15115.75,
+      "endMs": 15486.125,
+      "timestampMs": 15300.9375,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 15497.666,
+      "endMs": 15821.749,
+      "timestampMs": 15659.7075,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 15833.333,
+      "endMs": 15937.499,
+      "timestampMs": 15885.416000000001,
+      "confidence": 1
+    },
+    {
+      "text": "求め",
+      "startMs": 15949.083,
+      "endMs": 16284.749,
+      "timestampMs": 16116.916000000001,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 16296.291,
+      "endMs": 16643.499,
+      "timestampMs": 16469.895,
+      "confidence": 1
+    },
+    {
+      "text": "最後",
+      "startMs": 17465.291,
+      "endMs": 17847.249,
+      "timestampMs": 17656.27,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 17858.791,
+      "endMs": 18090.291,
+      "timestampMs": 17974.541,
+      "confidence": 1
+    },
+    {
+      "text": "だいさん",
+      "startMs": 18368.041,
+      "endMs": 18796.291,
+      "timestampMs": 18582.166,
+      "confidence": 1
+    },
+    {
+      "text": "しぶんいすう",
+      "startMs": 18807.875,
+      "endMs": 19490.75,
+      "timestampMs": 19149.3125,
+      "confidence": 1
+    },
+    {
+      "text": "から",
+      "startMs": 19502.333,
+      "endMs": 19756.958,
+      "timestampMs": 19629.6455,
+      "confidence": 1
+    },
+    {
+      "text": "だいいち",
+      "startMs": 20092.583,
+      "endMs": 20555.540999999997,
+      "timestampMs": 20324.061999999998,
+      "confidence": 1
+    },
+    {
+      "text": "しぶん",
+      "startMs": 20567.125,
+      "endMs": 20925.916,
+      "timestampMs": 20746.5205,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 20937.5,
+      "endMs": 21261.583,
+      "timestampMs": 21099.5415,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 21273.166,
+      "endMs": 21365.749,
+      "timestampMs": 21319.4575,
+      "confidence": 1
+    },
+    {
+      "text": "ひい",
+      "startMs": 21377.333,
+      "endMs": 21655.124,
+      "timestampMs": 21516.228499999997,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 21666.666,
+      "endMs": 21921.291,
+      "timestampMs": 21793.9785,
+      "confidence": 1
+    },
+    {
+      "text": "しぶんい",
+      "startMs": 22256.958,
+      "endMs": 22731.499,
+      "timestampMs": 22494.228499999997,
+      "confidence": 1
+    },
+    {
+      "text": "はんい",
+      "startMs": 22743.041,
+      "endMs": 23101.832000000002,
+      "timestampMs": 22922.436500000003,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 23113.416,
+      "endMs": 23205.999,
+      "timestampMs": 23159.7075,
+      "confidence": 1
+    },
+    {
+      "text": "求め",
+      "startMs": 23217.583,
+      "endMs": 23553.249,
+      "timestampMs": 23385.415999999997,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 23564.833,
+      "endMs": 23935.208,
+      "timestampMs": 23750.0205,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "データ",
+      "startMs": 119.458,
+      "endMs": 443.54100000000005,
+      "timestampMs": 281.4995,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 455.083,
+      "endMs": 582.416,
+      "timestampMs": 518.7495,
+      "confidence": 1
+    },
+    {
+      "text": "点",
+      "startMs": 594,
+      "endMs": 802.333,
+      "timestampMs": 698.1665,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 813.875,
+      "endMs": 918.0409999999999,
+      "timestampMs": 865.958,
+      "confidence": 1
+    },
+    {
+      "text": "並べ",
+      "startMs": 929.625,
+      "endMs": 1265.291,
+      "timestampMs": 1097.458,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 1276.833,
+      "endMs": 1369.4160000000002,
+      "timestampMs": 1323.1245000000001,
+      "confidence": 1
+    },
+    {
+      "text": "み",
+      "startMs": 1381,
+      "endMs": 1496.75,
+      "timestampMs": 1438.875,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 1508.333,
+      "endMs": 1843.999,
+      "timestampMs": 1676.1660000000002,
+      "confidence": 1
+    },
+    {
+      "text": "11個",
+      "startMs": 2662.041,
+      "endMs": 3194.4579000000003,
+      "timestampMs": 2928.2494500000003,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 3206,
+      "endMs": 3298.583,
+      "timestampMs": 3252.2915000000003,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 3310.166,
+      "endMs": 3622.666,
+      "timestampMs": 3466.416,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 3634.25,
+      "endMs": 3865.75,
+      "timestampMs": 3750,
+      "confidence": 1
+    },
+    {
+      "text": "3から20",
+      "startMs": 4143.5,
+      "endMs": 5011.5829,
+      "timestampMs": 4577.541450000001,
+      "confidence": 1
+    },
+    {
+      "text": "まで",
+      "startMs": 5023.166,
+      "endMs": 5208.332,
+      "timestampMs": 5115.749,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 5219.916,
+      "endMs": 5335.666,
+      "timestampMs": 5277.791,
+      "confidence": 1
+    },
+    {
+      "text": "散らばっ",
+      "startMs": 5347.208,
+      "endMs": 5775.458,
+      "timestampMs": 5561.333,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 5787.041,
+      "endMs": 5856.499,
+      "timestampMs": 5821.77,
+      "confidence": 1
+    },
+    {
+      "text": "い",
+      "startMs": 5868.041,
+      "endMs": 5972.207,
+      "timestampMs": 5920.124,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 5983.791,
+      "endMs": 6342.582,
+      "timestampMs": 6163.1865,
+      "confidence": 1
+    },
+    {
+      "text": "最小値",
+      "startMs": 7164.333,
+      "endMs": 7789.333,
+      "timestampMs": 7476.833,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 7800.916,
+      "endMs": 7905.082,
+      "timestampMs": 7852.999,
+      "confidence": 1
+    },
+    {
+      "text": "3",
+      "startMs": 7916.666,
+      "endMs": 8182.874,
+      "timestampMs": 8049.77,
+      "confidence": 1
+    },
+    {
+      "text": "最大値",
+      "startMs": 8402.791,
+      "endMs": 8946.791,
+      "timestampMs": 8674.791,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 8958.333,
+      "endMs": 9050.916000000001,
+      "timestampMs": 9004.624500000002,
+      "confidence": 1
+    },
+    {
+      "text": "20",
+      "startMs": 9062.5,
+      "endMs": 9444.4579,
+      "timestampMs": 9253.47895,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 9456,
+      "endMs": 9814.791,
+      "timestampMs": 9635.395499999999,
+      "confidence": 1
+    },
+    {
+      "text": "個数",
+      "startMs": 10671.291,
+      "endMs": 11018.499,
+      "timestampMs": 10844.895,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 11030.083,
+      "endMs": 11157.416000000001,
+      "timestampMs": 11093.749500000002,
+      "confidence": 1
+    },
+    {
+      "text": "11個",
+      "startMs": 11169,
+      "endMs": 11678.249,
+      "timestampMs": 11423.6245,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 11689.833,
+      "endMs": 11793.999,
+      "timestampMs": 11741.916000000001,
+      "confidence": 1
+    },
+    {
+      "text": "奇数",
+      "startMs": 11805.541,
+      "endMs": 12152.749,
+      "timestampMs": 11979.145,
+      "confidence": 1
+    },
+    {
+      "text": "な",
+      "startMs": 12164.333,
+      "endMs": 12256.916000000001,
+      "timestampMs": 12210.624500000002,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 12268.5,
+      "endMs": 12372.666,
+      "timestampMs": 12320.582999999999,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 12384.25,
+      "endMs": 12569.416,
+      "timestampMs": 12476.832999999999,
+      "confidence": 1
+    },
+    {
+      "text": "真ん中",
+      "startMs": 12928.25,
+      "endMs": 13344.916,
+      "timestampMs": 13136.582999999999,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 13356.5,
+      "endMs": 13564.833,
+      "timestampMs": 13460.6665,
+      "confidence": 1
+    },
+    {
+      "text": "ちょうど",
+      "startMs": 13657.416,
+      "endMs": 14027.791,
+      "timestampMs": 13842.6035,
+      "confidence": 1
+    },
+    {
+      "text": "6番目",
+      "startMs": 14039.333,
+      "endMs": 14571.7909,
+      "timestampMs": 14305.56195,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 14583.333,
+      "endMs": 14664.333,
+      "timestampMs": 14623.833,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 14675.916,
+      "endMs": 14999.999,
+      "timestampMs": 14837.9575,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 15011.583,
+      "endMs": 15104.166000000001,
+      "timestampMs": 15057.874500000002,
+      "confidence": 1
+    },
+    {
+      "text": "なり",
+      "startMs": 15115.75,
+      "endMs": 15300.916,
+      "timestampMs": 15208.332999999999,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 15312.5,
+      "endMs": 15625,
+      "timestampMs": 15468.75,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "しぶんいすう",
+      "startMs": 119.458,
+      "endMs": 871.7909999999999,
+      "timestampMs": 495.6245,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 883.333,
+      "endMs": 987.499,
+      "timestampMs": 935.4159999999999,
+      "confidence": 1
+    },
+    {
+      "text": "求め",
+      "startMs": 999.083,
+      "endMs": 1346.291,
+      "timestampMs": 1172.687,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 1357.875,
+      "endMs": 1728.25,
+      "timestampMs": 1543.0625,
+      "confidence": 1
+    },
+    {
+      "text": "11個",
+      "startMs": 2546.291,
+      "endMs": 3067.1239,
+      "timestampMs": 2806.70745,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 3078.708,
+      "endMs": 3182.8740000000003,
+      "timestampMs": 3130.791,
+      "confidence": 1
+    },
+    {
+      "text": "6番目",
+      "startMs": 3194.458,
+      "endMs": 3749.9989,
+      "timestampMs": 3472.22845,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 3761.583,
+      "endMs": 3923.6240000000003,
+      "timestampMs": 3842.6035,
+      "confidence": 1
+    },
+    {
+      "text": "11",
+      "startMs": 3946.75,
+      "endMs": 4386.5829,
+      "timestampMs": 4166.666450000001,
+      "confidence": 1
+    },
+    {
+      "text": "な",
+      "startMs": 4398.166,
+      "endMs": 4490.749,
+      "timestampMs": 4444.4575,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 4502.333,
+      "endMs": 4606.499,
+      "timestampMs": 4554.415999999999,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 4618.041,
+      "endMs": 4837.957,
+      "timestampMs": 4727.999,
+      "confidence": 1
+    },
+    {
+      "text": "中央",
+      "startMs": 5115.75,
+      "endMs": 5567.125,
+      "timestampMs": 5341.4375,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 5578.708,
+      "endMs": 5717.583,
+      "timestampMs": 5648.1455,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 5729.166,
+      "endMs": 5868.041,
+      "timestampMs": 5798.6035,
+      "confidence": 1
+    },
+    {
+      "text": "11",
+      "startMs": 5879.625,
+      "endMs": 6365.707,
+      "timestampMs": 6122.666,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 6377.333,
+      "endMs": 6689.833,
+      "timestampMs": 6533.583,
+      "confidence": 1
+    },
+    {
+      "text": "中央",
+      "startMs": 7546.291,
+      "endMs": 7962.957,
+      "timestampMs": 7754.624,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 7974.541,
+      "endMs": 8101.874,
+      "timestampMs": 8038.2075,
+      "confidence": 1
+    },
+    {
+      "text": "より",
+      "startMs": 8113.416,
+      "endMs": 8344.916000000001,
+      "timestampMs": 8229.166000000001,
+      "confidence": 1
+    },
+    {
+      "text": "小さい",
+      "startMs": 8356.5,
+      "endMs": 8796.333,
+      "timestampMs": 8576.4165,
+      "confidence": 1
+    },
+    {
+      "text": "5個",
+      "startMs": 8807.875,
+      "endMs": 9062.5,
+      "timestampMs": 8935.1875,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 9074.083,
+      "endMs": 9340.291000000001,
+      "timestampMs": 9207.187000000002,
+      "confidence": 1
+    },
+    {
+      "text": "3",
+      "startMs": 9583.333,
+      "endMs": 9826.374,
+      "timestampMs": 9704.853500000001,
+      "confidence": 1
+    },
+    {
+      "text": "5",
+      "startMs": 10000,
+      "endMs": 10115.75,
+      "timestampMs": 10057.875,
+      "confidence": 1
+    },
+    {
+      "text": "6",
+      "startMs": 10277.791,
+      "endMs": 10648.166,
+      "timestampMs": 10462.9785,
+      "confidence": 1
+    },
+    {
+      "text": "8",
+      "startMs": 10902.791,
+      "endMs": 11249.999,
+      "timestampMs": 11076.395,
+      "confidence": 1
+    },
+    {
+      "text": "9",
+      "startMs": 11377.333,
+      "endMs": 11608.833,
+      "timestampMs": 11493.083,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 11620.375,
+      "endMs": 11794,
+      "timestampMs": 11707.1875,
+      "confidence": 1
+    },
+    {
+      "text": "その",
+      "startMs": 11990.75,
+      "endMs": 12245.375,
+      "timestampMs": 12118.0625,
+      "confidence": 1
+    },
+    {
+      "text": "真ん中",
+      "startMs": 12256.958,
+      "endMs": 12673.624,
+      "timestampMs": 12465.291000000001,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 12685.166,
+      "endMs": 12789.331999999999,
+      "timestampMs": 12737.249,
+      "confidence": 1
+    },
+    {
+      "text": "6",
+      "startMs": 12800.916,
+      "endMs": 13055.541,
+      "timestampMs": 12928.2285,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 13067.125,
+      "endMs": 13275.458,
+      "timestampMs": 13171.2915,
+      "confidence": 1
+    },
+    {
+      "text": "だいいちしぶん",
+      "startMs": 13449.083,
+      "endMs": 14212.958,
+      "timestampMs": 13831.0205,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 14224.541,
+      "endMs": 14560.206999999999,
+      "timestampMs": 14392.374,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 14571.75,
+      "endMs": 14918.958,
+      "timestampMs": 14745.354,
+      "confidence": 1
+    },
+    {
+      "text": "中央",
+      "startMs": 15740.75,
+      "endMs": 16192.125,
+      "timestampMs": 15966.4375,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 16203.708,
+      "endMs": 16331.041000000001,
+      "timestampMs": 16267.374500000002,
+      "confidence": 1
+    },
+    {
+      "text": "より",
+      "startMs": 16342.583,
+      "endMs": 16585.624,
+      "timestampMs": 16464.1035,
+      "confidence": 1
+    },
+    {
+      "text": "大きい",
+      "startMs": 16631.958,
+      "endMs": 17037.040999999997,
+      "timestampMs": 16834.499499999998,
+      "confidence": 1
+    },
+    {
+      "text": "5個",
+      "startMs": 17048.625,
+      "endMs": 17303.25,
+      "timestampMs": 17175.9375,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 17314.833,
+      "endMs": 17557.874,
+      "timestampMs": 17436.353499999997,
+      "confidence": 1
+    },
+    {
+      "text": "12",
+      "startMs": 17812.5,
+      "endMs": 18263.8739,
+      "timestampMs": 18038.18695,
+      "confidence": 1
+    },
+    {
+      "text": "14",
+      "startMs": 18379.625,
+      "endMs": 18865.707,
+      "timestampMs": 18622.665999999997,
+      "confidence": 1
+    },
+    {
+      "text": "15",
+      "startMs": 18993.041,
+      "endMs": 19444.416,
+      "timestampMs": 19218.7285,
+      "confidence": 1
+    },
+    {
+      "text": "18",
+      "startMs": 19652.791,
+      "endMs": 20219.9159,
+      "timestampMs": 19936.353450000002,
+      "confidence": 1
+    },
+    {
+      "text": "20",
+      "startMs": 20324.083,
+      "endMs": 20682.874,
+      "timestampMs": 20503.478499999997,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 20694.458,
+      "endMs": 20891.208,
+      "timestampMs": 20792.833,
+      "confidence": 1
+    },
+    {
+      "text": "その",
+      "startMs": 21064.833,
+      "endMs": 21365.749,
+      "timestampMs": 21215.290999999997,
+      "confidence": 1
+    },
+    {
+      "text": "真ん中",
+      "startMs": 21377.333,
+      "endMs": 21793.999,
+      "timestampMs": 21585.665999999997,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 21805.541,
+      "endMs": 21932.874,
+      "timestampMs": 21869.2075,
+      "confidence": 1
+    },
+    {
+      "text": "15",
+      "startMs": 21944.458,
+      "endMs": 22280.083,
+      "timestampMs": 22112.2705,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 22291.666,
+      "endMs": 22499.999,
+      "timestampMs": 22395.8325,
+      "confidence": 1
+    },
+    {
+      "text": "だいさん",
+      "startMs": 22789.333,
+      "endMs": 23240.708,
+      "timestampMs": 23015.0205,
+      "confidence": 1
+    },
+    {
+      "text": "しぶん",
+      "startMs": 23252.333,
+      "endMs": 23622.708,
+      "timestampMs": 23437.5205,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 23634.25,
+      "endMs": 23958.333,
+      "timestampMs": 23796.2915,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 23969.916,
+      "endMs": 24282.416,
+      "timestampMs": 24126.166,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "箱",
+      "startMs": 119.458,
+      "endMs": 362.499,
+      "timestampMs": 240.9785,
+      "confidence": 1
+    },
+    {
+      "text": "ひげ",
+      "startMs": 374.083,
+      "endMs": 640.291,
+      "timestampMs": 507.187,
+      "confidence": 1
+    },
+    {
+      "text": "図",
+      "startMs": 651.833,
+      "endMs": 744.4159999999999,
+      "timestampMs": 698.1244999999999,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 756,
+      "endMs": 860.1659999999999,
+      "timestampMs": 808.083,
+      "confidence": 1
+    },
+    {
+      "text": "表し",
+      "startMs": 871.75,
+      "endMs": 1323.125,
+      "timestampMs": 1097.4375,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 1334.708,
+      "endMs": 1670.374,
+      "timestampMs": 1502.5410000000002,
+      "confidence": 1
+    },
+    {
+      "text": "箱",
+      "startMs": 2488.416,
+      "endMs": 2731.4570000000003,
+      "timestampMs": 2609.9365000000003,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 2743.041,
+      "endMs": 2835.6240000000003,
+      "timestampMs": 2789.3325000000004,
+      "confidence": 1
+    },
+    {
+      "text": "左端",
+      "startMs": 2847.208,
+      "endMs": 3449.041,
+      "timestampMs": 3148.1245,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 3460.666,
+      "endMs": 3657.416,
+      "timestampMs": 3559.041,
+      "confidence": 1
+    },
+    {
+      "text": "だいいち",
+      "startMs": 3958.333,
+      "endMs": 4444.4580000000005,
+      "timestampMs": 4201.3955000000005,
+      "confidence": 1
+    },
+    {
+      "text": "しぶん",
+      "startMs": 4456,
+      "endMs": 4803.208,
+      "timestampMs": 4629.603999999999,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 4814.833,
+      "endMs": 5162.040999999999,
+      "timestampMs": 4988.437,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 5173.625,
+      "endMs": 5266.208,
+      "timestampMs": 5219.916499999999,
+      "confidence": 1
+    },
+    {
+      "text": "6",
+      "startMs": 5277.791,
+      "endMs": 5601.874,
+      "timestampMs": 5439.8325,
+      "confidence": 1
+    },
+    {
+      "text": "中",
+      "startMs": 5914.333,
+      "endMs": 6134.249,
+      "timestampMs": 6024.290999999999,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 6145.833,
+      "endMs": 6249.999,
+      "timestampMs": 6197.915999999999,
+      "confidence": 1
+    },
+    {
+      "text": "線",
+      "startMs": 6261.583,
+      "endMs": 6481.499,
+      "timestampMs": 6371.540999999999,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 6493.041,
+      "endMs": 6712.957,
+      "timestampMs": 6602.999,
+      "confidence": 1
+    },
+    {
+      "text": "中央",
+      "startMs": 6840.291,
+      "endMs": 7303.249,
+      "timestampMs": 7071.77,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 7314.833,
+      "endMs": 7442.165999999999,
+      "timestampMs": 7378.4995,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 7453.708,
+      "endMs": 7581.040999999999,
+      "timestampMs": 7517.3745,
+      "confidence": 1
+    },
+    {
+      "text": "11",
+      "startMs": 7592.583,
+      "endMs": 8090.290999999999,
+      "timestampMs": 7841.437,
+      "confidence": 1
+    },
+    {
+      "text": "右端",
+      "startMs": 8182.875,
+      "endMs": 8680.541,
+      "timestampMs": 8431.707999999999,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 8692.125,
+      "endMs": 8912.041,
+      "timestampMs": 8802.082999999999,
+      "confidence": 1
+    },
+    {
+      "text": "だいさん",
+      "startMs": 9085.666,
+      "endMs": 9560.206999999999,
+      "timestampMs": 9322.9365,
+      "confidence": 1
+    },
+    {
+      "text": "しぶん",
+      "startMs": 9571.75,
+      "endMs": 9942.125,
+      "timestampMs": 9756.9375,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 9953.708,
+      "endMs": 10312.499,
+      "timestampMs": 10133.103500000001,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 10324.083,
+      "endMs": 10451.416000000001,
+      "timestampMs": 10387.749500000002,
+      "confidence": 1
+    },
+    {
+      "text": "15",
+      "startMs": 10462.958,
+      "endMs": 10810.1659,
+      "timestampMs": 10636.56195,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 10821.75,
+      "endMs": 11168.958,
+      "timestampMs": 10995.354,
+      "confidence": 1
+    },
+    {
+      "text": "左",
+      "startMs": 11990.75,
+      "endMs": 12349.541,
+      "timestampMs": 12170.145499999999,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 12361.125,
+      "endMs": 12442.125,
+      "timestampMs": 12401.625,
+      "confidence": 1
+    },
+    {
+      "text": "ひげ",
+      "startMs": 12453.708,
+      "endMs": 12708.333,
+      "timestampMs": 12581.0205,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 12719.916,
+      "endMs": 12812.499,
+      "timestampMs": 12766.2075,
+      "confidence": 1
+    },
+    {
+      "text": "先",
+      "startMs": 12824.083,
+      "endMs": 13078.708,
+      "timestampMs": 12951.3955,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 13090.291,
+      "endMs": 13229.166,
+      "timestampMs": 13159.7285,
+      "confidence": 1
+    },
+    {
+      "text": "最小値",
+      "startMs": 13252.333,
+      "endMs": 13831.041000000001,
+      "timestampMs": 13541.687000000002,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 13842.583,
+      "endMs": 13946.749,
+      "timestampMs": 13894.666000000001,
+      "confidence": 1
+    },
+    {
+      "text": "3",
+      "startMs": 13958.333,
+      "endMs": 14189.833,
+      "timestampMs": 14074.083,
+      "confidence": 1
+    },
+    {
+      "text": "右",
+      "startMs": 14525.458,
+      "endMs": 14768.499,
+      "timestampMs": 14646.978500000001,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 14780.083,
+      "endMs": 14861.083,
+      "timestampMs": 14820.583,
+      "confidence": 1
+    },
+    {
+      "text": "ひげ",
+      "startMs": 14872.666,
+      "endMs": 15138.874,
+      "timestampMs": 15005.77,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 15150.458,
+      "endMs": 15243.041000000001,
+      "timestampMs": 15196.749500000002,
+      "confidence": 1
+    },
+    {
+      "text": "先",
+      "startMs": 15254.625,
+      "endMs": 15509.25,
+      "timestampMs": 15381.9375,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 15520.833,
+      "endMs": 15648.166000000001,
+      "timestampMs": 15584.499500000002,
+      "confidence": 1
+    },
+    {
+      "text": "最大値",
+      "startMs": 15682.875,
+      "endMs": 16250,
+      "timestampMs": 15966.4375,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 16261.583,
+      "endMs": 16342.583,
+      "timestampMs": 16302.083,
+      "confidence": 1
+    },
+    {
+      "text": "20",
+      "startMs": 16354.166,
+      "endMs": 16736.124,
+      "timestampMs": 16545.145,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 16747.666,
+      "endMs": 17060.166,
+      "timestampMs": 16903.916,
+      "confidence": 1
+    },
+    {
+      "text": "箱",
+      "startMs": 17881.958,
+      "endMs": 18148.165999999997,
+      "timestampMs": 18015.061999999998,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 18159.708,
+      "endMs": 18263.874,
+      "timestampMs": 18211.790999999997,
+      "confidence": 1
+    },
+    {
+      "text": "横幅",
+      "startMs": 18275.458,
+      "endMs": 18761.583,
+      "timestampMs": 18518.5205,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 18773.166,
+      "endMs": 19016.207000000002,
+      "timestampMs": 18894.686500000003,
+      "confidence": 1
+    },
+    {
+      "text": "その",
+      "startMs": 19259.25,
+      "endMs": 19513.875,
+      "timestampMs": 19386.5625,
+      "confidence": 1
+    },
+    {
+      "text": "まま",
+      "startMs": 19525.458,
+      "endMs": 19803.249,
+      "timestampMs": 19664.353499999997,
+      "confidence": 1
+    },
+    {
+      "text": "しぶんい",
+      "startMs": 20046.291,
+      "endMs": 20509.249,
+      "timestampMs": 20277.77,
+      "confidence": 1
+    },
+    {
+      "text": "はんい",
+      "startMs": 20520.833,
+      "endMs": 20891.208,
+      "timestampMs": 20706.0205,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 20902.791,
+      "endMs": 20983.791,
+      "timestampMs": 20943.291,
+      "confidence": 1
+    },
+    {
+      "text": "表し",
+      "startMs": 20995.375,
+      "endMs": 21504.625,
+      "timestampMs": 21250,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 21516.208,
+      "endMs": 21574.083,
+      "timestampMs": 21545.1455,
+      "confidence": 1
+    },
+    {
+      "text": "い",
+      "startMs": 21585.666,
+      "endMs": 21678.249,
+      "timestampMs": 21631.9575,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 21689.833,
+      "endMs": 22037.040999999997,
+      "timestampMs": 21863.436999999998,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "しぶんい",
+      "startMs": 119.458,
+      "endMs": 628.708,
+      "timestampMs": 374.08299999999997,
+      "confidence": 1
+    },
+    {
+      "text": "はんい",
+      "startMs": 640.291,
+      "endMs": 987.499,
+      "timestampMs": 813.895,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 999.083,
+      "endMs": 1114.833,
+      "timestampMs": 1056.958,
+      "confidence": 1
+    },
+    {
+      "text": "計算",
+      "startMs": 1126.375,
+      "endMs": 1589.333,
+      "timestampMs": 1357.854,
+      "confidence": 1
+    },
+    {
+      "text": "し",
+      "startMs": 1600.916,
+      "endMs": 1739.791,
+      "timestampMs": 1670.3535,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 1751.375,
+      "endMs": 2075.458,
+      "timestampMs": 1913.4165,
+      "confidence": 1
+    },
+    {
+      "text": "だいさん",
+      "startMs": 2893.5,
+      "endMs": 3368.041,
+      "timestampMs": 3130.7705,
+      "confidence": 1
+    },
+    {
+      "text": "しぶん",
+      "startMs": 3379.625,
+      "endMs": 3750,
+      "timestampMs": 3564.8125,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 3761.583,
+      "endMs": 4108.791,
+      "timestampMs": 3935.187,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 4120.375,
+      "endMs": 4247.708,
+      "timestampMs": 4184.041499999999,
+      "confidence": 1
+    },
+    {
+      "text": "15",
+      "startMs": 4259.25,
+      "endMs": 4618.0829,
+      "timestampMs": 4438.666450000001,
+      "confidence": 1
+    },
+    {
+      "text": "から",
+      "startMs": 4629.625,
+      "endMs": 4907.416,
+      "timestampMs": 4768.5205000000005,
+      "confidence": 1
+    },
+    {
+      "text": "だいいち",
+      "startMs": 5231.5,
+      "endMs": 5706.041,
+      "timestampMs": 5468.7705000000005,
+      "confidence": 1
+    },
+    {
+      "text": "しぶん",
+      "startMs": 5717.583,
+      "endMs": 6053.249,
+      "timestampMs": 5885.415999999999,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 6064.833,
+      "endMs": 6400.499,
+      "timestampMs": 6232.665999999999,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 6412.041,
+      "endMs": 6504.624,
+      "timestampMs": 6458.3325,
+      "confidence": 1
+    },
+    {
+      "text": "6",
+      "startMs": 6516.208,
+      "endMs": 6759.249,
+      "timestampMs": 6637.728499999999,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 6770.833,
+      "endMs": 6851.833,
+      "timestampMs": 6811.333,
+      "confidence": 1
+    },
+    {
+      "text": "ひき",
+      "startMs": 6863.416,
+      "endMs": 7118.041,
+      "timestampMs": 6990.7285,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 7129.625,
+      "endMs": 7465.291,
+      "timestampMs": 7297.4580000000005,
+      "confidence": 1
+    },
+    {
+      "text": "15",
+      "startMs": 8287.041,
+      "endMs": 8645.831999999999,
+      "timestampMs": 8466.4365,
+      "confidence": 1
+    },
+    {
+      "text": "ひく",
+      "startMs": 8657.416,
+      "endMs": 8935.206999999999,
+      "timestampMs": 8796.3115,
+      "confidence": 1
+    },
+    {
+      "text": "6",
+      "startMs": 8946.75,
+      "endMs": 9178.25,
+      "timestampMs": 9062.5,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 9189.833,
+      "endMs": 9293.999,
+      "timestampMs": 9241.916000000001,
+      "confidence": 1
+    },
+    {
+      "text": "9",
+      "startMs": 9305.541,
+      "endMs": 9571.749,
+      "timestampMs": 9438.645,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 9583.333,
+      "endMs": 9930.541000000001,
+      "timestampMs": 9756.937000000002,
+      "confidence": 1
+    },
+    {
+      "text": "よっ",
+      "startMs": 10752.333,
+      "endMs": 10995.374,
+      "timestampMs": 10873.853500000001,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 11006.958,
+      "endMs": 11261.583,
+      "timestampMs": 11134.2705,
+      "confidence": 1
+    },
+    {
+      "text": "しぶんい",
+      "startMs": 11597.208,
+      "endMs": 12071.749,
+      "timestampMs": 11834.478500000001,
+      "confidence": 1
+    },
+    {
+      "text": "はんい",
+      "startMs": 12083.333,
+      "endMs": 12395.833,
+      "timestampMs": 12239.583,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 12407.416,
+      "endMs": 12523.166,
+      "timestampMs": 12465.291,
+      "confidence": 1
+    },
+    {
+      "text": "9点",
+      "startMs": 12534.708,
+      "endMs": 13020.831900000001,
+      "timestampMs": 12777.769950000002,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 13032.416,
+      "endMs": 13379.624,
+      "timestampMs": 13206.02,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "まとめ",
+      "startMs": 119.458,
+      "endMs": 512.958,
+      "timestampMs": 316.20799999999997,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 524.541,
+      "endMs": 894.916,
+      "timestampMs": 709.7285,
+      "confidence": 1
+    },
+    {
+      "text": "中央",
+      "startMs": 1712.958,
+      "endMs": 2175.916,
+      "timestampMs": 1944.4370000000001,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 2187.5,
+      "endMs": 2326.375,
+      "timestampMs": 2256.9375,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 2337.958,
+      "endMs": 2476.833,
+      "timestampMs": 2407.3955,
+      "confidence": 1
+    },
+    {
+      "text": "11",
+      "startMs": 2488.416,
+      "endMs": 3043.9999000000003,
+      "timestampMs": 2766.20795,
+      "confidence": 1
+    },
+    {
+      "text": "だいいちしぶん",
+      "startMs": 3321.75,
+      "endMs": 4050.916,
+      "timestampMs": 3686.333,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 4062.5,
+      "endMs": 4421.291,
+      "timestampMs": 4241.8955000000005,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 4432.875,
+      "endMs": 4560.208,
+      "timestampMs": 4496.541499999999,
+      "confidence": 1
+    },
+    {
+      "text": "6",
+      "startMs": 4571.75,
+      "endMs": 4895.833,
+      "timestampMs": 4733.791499999999,
+      "confidence": 1
+    },
+    {
+      "text": "だいさん",
+      "startMs": 5208.333,
+      "endMs": 5636.583,
+      "timestampMs": 5422.458,
+      "confidence": 1
+    },
+    {
+      "text": "しぶん",
+      "startMs": 5648.166,
+      "endMs": 5995.374,
+      "timestampMs": 5821.77,
+      "confidence": 1
+    },
+    {
+      "text": "いすう",
+      "startMs": 6006.958,
+      "endMs": 6354.165999999999,
+      "timestampMs": 6180.562,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 6365.75,
+      "endMs": 6504.625,
+      "timestampMs": 6435.1875,
+      "confidence": 1
+    },
+    {
+      "text": "15",
+      "startMs": 6516.208,
+      "endMs": 6863.415999999999,
+      "timestampMs": 6689.812,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 6875,
+      "endMs": 6967.583,
+      "timestampMs": 6921.291499999999,
+      "confidence": 1
+    },
+    {
+      "text": "し",
+      "startMs": 6979.166,
+      "endMs": 7106.499,
+      "timestampMs": 7042.8325,
+      "confidence": 1
+    },
+    {
+      "text": "た",
+      "startMs": 7118.041,
+      "endMs": 7337.957,
+      "timestampMs": 7227.999,
+      "confidence": 1
+    },
+    {
+      "text": "しぶんい",
+      "startMs": 8159.708,
+      "endMs": 8645.832999999999,
+      "timestampMs": 8402.770499999999,
+      "confidence": 1
+    },
+    {
+      "text": "はんい",
+      "startMs": 8657.416,
+      "endMs": 9004.624,
+      "timestampMs": 8831.02,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 9016.208,
+      "endMs": 9270.833,
+      "timestampMs": 9143.5205,
+      "confidence": 1
+    },
+    {
+      "text": "15",
+      "startMs": 9525.458,
+      "endMs": 9861.082900000001,
+      "timestampMs": 9693.27045,
+      "confidence": 1
+    },
+    {
+      "text": "ひく",
+      "startMs": 9872.666,
+      "endMs": 10127.291,
+      "timestampMs": 9999.9785,
+      "confidence": 1
+    },
+    {
+      "text": "6",
+      "startMs": 10138.875,
+      "endMs": 10370.375,
+      "timestampMs": 10254.625,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 10381.958,
+      "endMs": 10509.291000000001,
+      "timestampMs": 10445.624500000002,
+      "confidence": 1
+    },
+    {
+      "text": "9点",
+      "startMs": 10520.833,
+      "endMs": 10995.331900000001,
+      "timestampMs": 10758.082450000002,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 11006.958,
+      "endMs": 11342.624,
+      "timestampMs": 11174.791000000001,
+      "confidence": 1
+    },
+    {
+      "text": "箱",
+      "startMs": 12164.333,
+      "endMs": 12395.833,
+      "timestampMs": 12280.083,
+      "confidence": 1
+    },
+    {
+      "text": "ひげ",
+      "startMs": 12407.416,
+      "endMs": 12638.916,
+      "timestampMs": 12523.166,
+      "confidence": 1
+    },
+    {
+      "text": "図",
+      "startMs": 12650.458,
+      "endMs": 12754.624,
+      "timestampMs": 12702.541000000001,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 12766.208,
+      "endMs": 12847.208,
+      "timestampMs": 12806.708,
+      "confidence": 1
+    },
+    {
+      "text": "箱",
+      "startMs": 12858.791,
+      "endMs": 13101.831999999999,
+      "timestampMs": 12980.3115,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 13113.416,
+      "endMs": 13217.581999999999,
+      "timestampMs": 13165.499,
+      "confidence": 1
+    },
+    {
+      "text": "幅",
+      "startMs": 13229.166,
+      "endMs": 13460.666,
+      "timestampMs": 13344.916,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 13472.208,
+      "endMs": 13576.374,
+      "timestampMs": 13524.291000000001,
+      "confidence": 1
+    },
+    {
+      "text": "読め",
+      "startMs": 13587.958,
+      "endMs": 13842.583,
+      "timestampMs": 13715.2705,
+      "confidence": 1
+    },
+    {
+      "text": "ば",
+      "startMs": 13854.166,
+      "endMs": 14004.624,
+      "timestampMs": 13929.395,
+      "confidence": 1
+    },
+    {
+      "text": "同じ",
+      "startMs": 14294,
+      "endMs": 14687.5,
+      "timestampMs": 14490.75,
+      "confidence": 1
+    },
+    {
+      "text": "値",
+      "startMs": 14699.083,
+      "endMs": 14999.999,
+      "timestampMs": 14849.541000000001,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 15011.583,
+      "endMs": 15115.749,
+      "timestampMs": 15063.666000000001,
+      "confidence": 1
+    },
+    {
+      "text": "図",
+      "startMs": 15127.333,
+      "endMs": 15243.083,
+      "timestampMs": 15185.208,
+      "confidence": 1
+    },
+    {
+      "text": "から",
+      "startMs": 15254.625,
+      "endMs": 15451.375,
+      "timestampMs": 15353,
+      "confidence": 1
+    },
+    {
+      "text": "分かり",
+      "startMs": 15462.958,
+      "endMs": 15787.041000000001,
+      "timestampMs": 15624.999500000002,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 15798.625,
+      "endMs": 16122.708,
+      "timestampMs": 15960.6665,
+      "confidence": 1
+    }
+  ]
+]

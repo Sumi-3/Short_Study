@@ -1,0 +1,304 @@
+{
+  "topic": "円 $O$ の周上に3点 $A$, $B$, $C$ があり、$\\angle OBC = 25^\\circ$ である。$\\angle BAC$ の大きさを求めよ。",
+  "model": "handwritten",
+  "outline": [
+    "円 $O$ の周上に3点 $A$, $B$, $C$ がある。",
+    "$\\angle OBC = 25^\\circ$ である。",
+    "$\\angle BAC$ の大きさを求めよ。"
+  ],
+  "unit": "中3 図形",
+  "difficulty": 3,
+  "subunit": "円の性質（円周角の定理）",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "円 $O$ の周上に3点 $A$、$B$、$C$ があります。\n中心 $O$ と $B$ を結んだとき、角 $OBC$ が $25^\\circ$ です。\nこのとき、円周上の角 $BAC$ の大きさを求めます。\n<<<TTS_READING>>>\n円オーの周上に3点エー、ビー、シーがあります。\n中心オーとビーを結んだとき、角オービーシーが25度です。\nこのとき、円周上の角ビーエーシーの大きさを求めます。",
+      "visual_type": "hook",
+      "visual_content": "半径2本で二等辺三角形"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\nはじめに、$OB$ と $OC$ がどちらも半径で等しいことから、三角形 $OBC$ の形を見ます。\n次に、二等辺三角形の底角と内角の和を使って、中心角 $BOC$ を求めます。\n最後に、円周角の定理を使い、中心角の半分として角 $BAC$ を求めます。\n<<<TTS_READING>>>\nまずは解く方針を確認します。\nはじめに、オービーとオーシーがどちらも半径で等しいことから、三角形オービーシーの形を見ます。\n次に、二等辺三角形の底角と内角の和を使って、中心角ビーオーシーを求めます。\n最後に、円周角の定理を使い、中心角の半分として、角ビーエーシーを求めます。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①$OB$ と $OC$ が半径で等しいことを図で確かめる",
+          "②二等辺三角形の底角と内角の和から中心角 $BOC$ を求める",
+          "③円周角の定理を使い、中心角の半分として $\\angle BAC$ を求める"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "図をかきます。\n$O$ から $B$、$O$ から $C$ に引いた線は、どちらも円の半径です。\n長さが等しいので、三角形 $OBC$ は $OB = OC$ の二等辺三角形です。\n等しい辺にはさまれていない2つの角、つまり底角が等しくなります。\n<<<TTS_READING>>>\n図をかきます。\nオーからビー、オーからシーに引いた線は、どちらも円の半径です。\n長さが等しいので、三角形オービーシーは、オービーイコールオーシーの二等辺三角形です。\n等しい辺にはさまれていない2つの角、つまり底角が等しくなります。",
+      "visual_type": "step",
+      "visual_content": "①$OB$ と $OC$ が半径で等しいことを図で確かめる",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] 半径なので $OB = OC$"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "label": "O"
+          },
+          {
+            "x": 0,
+            "y": 3,
+            "label": "A"
+          },
+          {
+            "x": -2.7189,
+            "y": -1.2679,
+            "label": "B"
+          },
+          {
+            "x": 2.7189,
+            "y": -1.2679,
+            "label": "C"
+          }
+        ],
+        "segments": [
+          {
+            "from": "O",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 1,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 1,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "B",
+            "from": "O",
+            "to": "C",
+            "label": "$25^\\circ$",
+            "ticks": 1
+          },
+          {
+            "at": "C",
+            "from": "O",
+            "to": "B",
+            "label": "",
+            "ticks": 1
+          }
+        ],
+        "circles": [
+          {
+            "center": "O",
+            "radius": 3,
+            "label": "",
+            "dashed": false,
+            "fromAngle": 0,
+            "toAngle": 0,
+            "sector": false
+          }
+        ],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "中心角を求めます。\n底角が等しいので、角 $OCB$ も $25^\\circ$ です。\n三角形の内角の和は $180^\\circ$ なので、$180$ から $25$ を2つ分ひきます。\n$180 - 50$ で、中心角 $BOC$ は $130^\\circ$ です。\n<<<TTS_READING>>>\n中心角を求めます。\n底角が等しいので、角オーシービーも25度です。\n三角形の内角の和は180度なので、180から25を2つ分ひきます。\n180ひく50で、中心角ビーオーシーは130度です。",
+      "visual_type": "step",
+      "visual_content": "②二等辺三角形の底角と内角の和から中心角 $BOC$ を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 底角が等しいので $\\angle OCB = 25^\\circ$",
+          "\\angle BOC = 180^\\circ - 25^\\circ \\times 2",
+          "[underline] \\angle BOC = 130^\\circ"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "求めた中心角を図に入れます。\n弧 $BC$ に対する中心角が $130^\\circ$ です。\n同じ弧 $BC$ を、円周上の点 $A$ から見た角が、求める角 $BAC$ です。\nこの2つの角が円周角の定理で結びつきます。\n<<<TTS_READING>>>\n求めた中心角を図に入れます。\n弧ビーシーに対する中心角が130度です。\n同じ弧ビーシーを、円周上の点エーから見た角が、求める角ビーエーシーです。\nこの2つの角が、円周角の定理で結びつきます。",
+      "visual_type": "step",
+      "visual_content": "③円周角の定理を使い、中心角の半分として $\\angle BAC$ を求める",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] どちらも弧 $BC$ に対する角"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "label": "O"
+          },
+          {
+            "x": 0,
+            "y": 3,
+            "label": "A"
+          },
+          {
+            "x": -2.7189,
+            "y": -1.2679,
+            "label": "B"
+          },
+          {
+            "x": 2.7189,
+            "y": -1.2679,
+            "label": "C"
+          }
+        ],
+        "segments": [
+          {
+            "from": "O",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 1,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 1,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "O",
+            "from": "B",
+            "to": "C",
+            "label": "$130^\\circ$",
+            "ticks": 0
+          },
+          {
+            "at": "A",
+            "from": "B",
+            "to": "C",
+            "label": "$?$",
+            "ticks": 0
+          }
+        ],
+        "circles": [
+          {
+            "center": "O",
+            "radius": 3,
+            "label": "",
+            "dashed": false,
+            "fromAngle": 0,
+            "toAngle": 0,
+            "sector": false
+          }
+        ],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "円周角の定理を使います。\n1つの弧に対する円周角は、その弧に対する中心角の半分になります。\n中心角が $130^\\circ$ なので、円周角はその半分です。\n$130$ わる $2$ で、角 $BAC$ は $65^\\circ$ です。\n<<<TTS_READING>>>\n円周角の定理を使います。\n1つの弧に対する円周角は、その弧に対する中心角の半分になります。\n中心角が130度なので、円周角はその半分です。\n130わる2で、角ビーエーシーは65度です。",
+      "visual_type": "step",
+      "visual_content": "③円周角の定理を使い、中心角の半分として $\\angle BAC$ を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] \\angle BAC = \\frac{1}{2} \\angle BOC",
+          "[substitute: 中心角は 130 度] \\angle BAC = \\frac{130^\\circ}{2}",
+          "[text] 答え",
+          "[underline] \\angle BAC = 65^\\circ"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "まとめます。\n半径が2本あれば二等辺三角形ができ、底角から中心角が出せます。\n中心角 $BOC$ は $130^\\circ$ でした。\n円周角はその半分なので、角 $BAC$ は $65^\\circ$ です。\n<<<TTS_READING>>>\nまとめます。\n半径が2本あれば二等辺三角形ができ、底角から中心角が出せます。\n中心角ビーオーシーは130度でした。\n円周角はその半分なので、角ビーエーシーは65度です。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 中心角は $130^\\circ$",
+          "[box] \\angle BAC = 65^\\circ",
+          "[text] 半径が出たら二等辺三角形を疑う"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}

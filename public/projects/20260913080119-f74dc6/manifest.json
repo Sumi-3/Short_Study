@@ -1,0 +1,2584 @@
+{
+  "topic": "$0 \\leq \\theta < 2\\pi$ のとき、$y=\\sin\\theta+\\sqrt{3}\\cos\\theta$ の最大値と、そのときの $\\theta$ の値を求めよ。",
+  "outline": [],
+  "unit": "数II 三角関数",
+  "subunit": "加法定理とその応用",
+  "difficulty": 3,
+  "model": "claude-opus-5",
+  "course": "math",
+  "subject": "math",
+  "slug": "20260913080119-f74dc6",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "createdAt": "2026-09-13T08:02:30.256Z",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "$0 \\leq \\theta < 2\\pi$ のとき、$y=\\sin\\theta+\\sqrt{3}\\cos\\theta$ の最大値を求めます。\nそのときの $\\theta$ の値も答えます。\nサインとコサインが混ざったままでは最大値が見えません。\n三角関数の合成で1つにまとめます。\n<<<TTS_READING>>>\nゼロ 以上 2パイ 未満 の シータ に ついて、y イコール サイン シータ プラス ルート3 コサイン シータ の 最大値 を 求めます。\nその ときの シータ の 値 も 答えます。\nサイン と コサイン が 混ざった ままでは 最大値 が 見えません。\n三角関数 の 合成 で 1つ に まとめます。",
+      "visual_type": "hook",
+      "visual_content": "$\\sin\\theta+\\sqrt{3}\\cos\\theta$ を1つに",
+      "audioSrc": "projects/20260913080119-f74dc6/scene-01.mp3",
+      "audioDurationInSeconds": 19.608,
+      "durationInFrames": 599,
+      "captions": [
+        {
+          "text": "$0 \\leq \\theta < 2\\pi$ ",
+          "startMs": 119.458,
+          "endMs": 1450.458,
+          "timestampMs": 784.9580000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1462.041,
+          "endMs": 1566.2069999999999,
+          "timestampMs": 1514.1239999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "とき、",
+          "startMs": 1577.791,
+          "endMs": 2584.7490000000003,
+          "timestampMs": 2081.27,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$y=\\sin\\theta+\\sqrt{3}\\cos\\theta$ ",
+          "startMs": 2754.625,
+          "endMs": 5960.624,
+          "timestampMs": 4357.6245,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 5972.208,
+          "endMs": 6145.833,
+          "timestampMs": 6059.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "最大値",
+          "startMs": 6192.125,
+          "endMs": 6747.666,
+          "timestampMs": 6469.8955000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 6759.25,
+          "endMs": 6851.833,
+          "timestampMs": 6805.541499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "求め",
+          "startMs": 6863.416,
+          "endMs": 7199.082,
+          "timestampMs": 7031.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 7210.666,
+          "endMs": 7546.332,
+          "timestampMs": 7378.499,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "その",
+          "startMs": 8368.041,
+          "endMs": 8645.831999999999,
+          "timestampMs": 8506.9365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "とき",
+          "startMs": 8657.416,
+          "endMs": 8888.916,
+          "timestampMs": 8773.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の ",
+          "startMs": 8900.458,
+          "endMs": 9004.624,
+          "timestampMs": 8952.541000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\theta$ ",
+          "startMs": 9016.208,
+          "endMs": 9386.583,
+          "timestampMs": 9201.3955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 9398.166,
+          "endMs": 9479.166,
+          "timestampMs": 9438.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "値",
+          "startMs": 9490.75,
+          "endMs": 9803.25,
+          "timestampMs": 9647,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "も",
+          "startMs": 9814.833,
+          "endMs": 9918.999,
+          "timestampMs": 9866.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "答え",
+          "startMs": 9930.541,
+          "endMs": 10254.624,
+          "timestampMs": 10092.5825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 10266.208,
+          "endMs": 10601.874,
+          "timestampMs": 10434.041000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "サイン",
+          "startMs": 11423.625,
+          "endMs": 11805.583,
+          "timestampMs": 11614.604,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 11817.125,
+          "endMs": 11979.166,
+          "timestampMs": 11898.145499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "コサイン",
+          "startMs": 11990.75,
+          "endMs": 12442.125,
+          "timestampMs": 12216.4375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 12453.708,
+          "endMs": 12557.874,
+          "timestampMs": 12505.791000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "混ざっ",
+          "startMs": 12569.458,
+          "endMs": 12893.541000000001,
+          "timestampMs": 12731.499500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た",
+          "startMs": 12905.083,
+          "endMs": 12997.666000000001,
+          "timestampMs": 12951.374500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ままで",
+          "startMs": 13009.25,
+          "endMs": 13333.333,
+          "timestampMs": 13171.2915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 13344.916,
+          "endMs": 13541.666,
+          "timestampMs": 13443.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "最大値",
+          "startMs": 13611.125,
+          "endMs": 14155.125,
+          "timestampMs": 13883.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 14166.666,
+          "endMs": 14259.249,
+          "timestampMs": 14212.9575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "見え",
+          "startMs": 14270.833,
+          "endMs": 14467.583,
+          "timestampMs": 14369.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ませ",
+          "startMs": 14479.166,
+          "endMs": 14745.374,
+          "timestampMs": 14612.27,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ん。\n",
+          "startMs": 14756.958,
+          "endMs": 14918.999,
+          "timestampMs": 14837.978500000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "三角関数",
+          "startMs": 15740.75,
+          "endMs": 16701.416,
+          "timestampMs": 16221.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 16712.958,
+          "endMs": 16817.124,
+          "timestampMs": 16765.040999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "合成",
+          "startMs": 16828.708,
+          "endMs": 17268.540999999997,
+          "timestampMs": 17048.624499999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 17280.083,
+          "endMs": 17511.583,
+          "timestampMs": 17395.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "1つ",
+          "startMs": 17546.291,
+          "endMs": 17928.2079,
+          "timestampMs": 17737.249450000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 17939.833,
+          "endMs": 18055.583,
+          "timestampMs": 17997.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "まとめ",
+          "startMs": 18067.125,
+          "endMs": 18402.791,
+          "timestampMs": 18234.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 18414.333,
+          "endMs": 18784.708,
+          "timestampMs": 18599.5205,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\n1つ目に、三角関数の合成の公式の形を確認します。\n2つ目に、係数から $r=\\sqrt{a^2+b^2}$ を計算します。\n3つ目に、$\\cos\\alpha$ と $\\sin\\alpha$ の値から角 $\\alpha$ を決めて合成します。\n最後に、$\\theta$ の範囲から中身の角の範囲を調べ、最大値と $\\theta$ を確定します。\n<<<TTS_READING>>>\nまずは 解く 方針 を 確認します。\n1つ目 に、三角関数 の 合成 の 公式 の 形 を 確認します。\n2つ目 に、係数 から r イコール ルート エー2乗 プラス ビー2乗 を 計算します。\n3つ目 に、コサイン アルファ と サイン アルファ の 値 から 角 アルファ を 決めて 合成します。\n最後 に、シータ の 範囲 から 中身 の 角 の 範囲 を 調べ、最大値 と シータ を 確定します。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①三角関数の合成の公式の形を確認し、$a=1$、$b=\\sqrt{3}$ とみる",
+          "②$r=\\sqrt{a^2+b^2}$ を計算して振幅を求める",
+          "③$\\cos\\alpha$ と $\\sin\\alpha$ の値から $\\alpha$ を決めて合成する",
+          "④$\\theta$ の範囲から中身の角の範囲を調べ、最大値とそのときの $\\theta$ を確定する"
+        ]
+      },
+      "audioSrc": "projects/20260913080119-f74dc6/scene-02.mp3",
+      "audioDurationInSeconds": 28.344,
+      "durationInFrames": 861,
+      "captions": [
+        {
+          "text": "まず",
+          "startMs": 119.458,
+          "endMs": 397.249,
+          "timestampMs": 258.35350000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 408.791,
+          "endMs": 524.5409999999999,
+          "timestampMs": 466.66599999999994,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "解く",
+          "startMs": 536.125,
+          "endMs": 779.1659999999999,
+          "timestampMs": 657.6455,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "方針",
+          "startMs": 790.75,
+          "endMs": 1265.291,
+          "timestampMs": 1028.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 1276.833,
+          "endMs": 1369.4160000000002,
+          "timestampMs": 1323.1245000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "確認",
+          "startMs": 1381,
+          "endMs": 1809.25,
+          "timestampMs": 1595.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 1820.833,
+          "endMs": 1959.708,
+          "timestampMs": 1890.2705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 1971.291,
+          "endMs": 2330.082,
+          "timestampMs": 2150.6865,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "1つ目",
+          "startMs": 3148.166,
+          "endMs": 3634.2490000000003,
+          "timestampMs": 3391.2075000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 3645.833,
+          "endMs": 3900.458,
+          "timestampMs": 3773.1455,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "三角関数",
+          "startMs": 4189.833,
+          "endMs": 5127.333,
+          "timestampMs": 4658.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 5138.875,
+          "endMs": 5243.041,
+          "timestampMs": 5190.9580000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "合成",
+          "startMs": 5254.625,
+          "endMs": 5682.875,
+          "timestampMs": 5468.75,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 5694.458,
+          "endMs": 5833.333,
+          "timestampMs": 5763.8955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "公式",
+          "startMs": 5844.916,
+          "endMs": 6284.749,
+          "timestampMs": 6064.8325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 6296.291,
+          "endMs": 6400.457,
+          "timestampMs": 6348.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "形",
+          "startMs": 6412.041,
+          "endMs": 6770.832,
+          "timestampMs": 6591.4365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 6782.416,
+          "endMs": 6886.582,
+          "timestampMs": 6834.499,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "確認",
+          "startMs": 6898.166,
+          "endMs": 7337.999,
+          "timestampMs": 7118.0825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 7349.541,
+          "endMs": 7488.416,
+          "timestampMs": 7418.9785,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 7500,
+          "endMs": 7824.083,
+          "timestampMs": 7662.041499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "2つ目",
+          "startMs": 8645.833,
+          "endMs": 9120.374,
+          "timestampMs": 8883.103500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 9131.958,
+          "endMs": 9398.166000000001,
+          "timestampMs": 9265.062000000002,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "係数",
+          "startMs": 9618.041,
+          "endMs": 10092.581999999999,
+          "timestampMs": 9855.3115,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から ",
+          "startMs": 10104.166,
+          "endMs": 10312.499,
+          "timestampMs": 10208.3325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$r=\\sqrt{a^2+b^2}$ ",
+          "startMs": 10324.083,
+          "endMs": 13159.749,
+          "timestampMs": 11741.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 13171.291,
+          "endMs": 13275.456999999999,
+          "timestampMs": 13223.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "計算",
+          "startMs": 13287.041,
+          "endMs": 13726.874,
+          "timestampMs": 13506.9575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 13738.416,
+          "endMs": 13877.291,
+          "timestampMs": 13807.8535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 13888.875,
+          "endMs": 14236.083,
+          "timestampMs": 14062.479,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "3つ目",
+          "startMs": 15057.875,
+          "endMs": 15509.249,
+          "timestampMs": 15283.562,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 15520.833,
+          "endMs": 15798.624,
+          "timestampMs": 15659.728500000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$\\cos\\alpha$ ",
+          "startMs": 16076.375,
+          "endMs": 16874.999,
+          "timestampMs": 16475.686999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 16886.583,
+          "endMs": 17025.458,
+          "timestampMs": 16956.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\sin\\alpha$ ",
+          "startMs": 17037.041,
+          "endMs": 17754.666,
+          "timestampMs": 17395.8535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 17766.208,
+          "endMs": 17847.208,
+          "timestampMs": 17806.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "値",
+          "startMs": 17858.791,
+          "endMs": 18182.874,
+          "timestampMs": 18020.8325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から",
+          "startMs": 18194.458,
+          "endMs": 18449.083,
+          "timestampMs": 18321.7705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角 ",
+          "startMs": 18506.958,
+          "endMs": 18761.583,
+          "timestampMs": 18634.2705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\alpha$ ",
+          "startMs": 18773.166,
+          "endMs": 19120.374,
+          "timestampMs": 18946.77,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 19131.958,
+          "endMs": 19236.124,
+          "timestampMs": 19184.040999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "決め",
+          "startMs": 19247.666,
+          "endMs": 19513.874,
+          "timestampMs": 19380.77,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 19525.458,
+          "endMs": 19687.499,
+          "timestampMs": 19606.478499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "合成",
+          "startMs": 19710.666,
+          "endMs": 20150.499,
+          "timestampMs": 19930.5825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 20162.041,
+          "endMs": 20289.374,
+          "timestampMs": 20225.7075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 20300.916,
+          "endMs": 20624.999,
+          "timestampMs": 20462.9575,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "最後",
+          "startMs": 21446.75,
+          "endMs": 21817.125,
+          "timestampMs": 21631.9375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 21828.708,
+          "endMs": 22071.749,
+          "timestampMs": 21950.228499999997,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$\\theta$ ",
+          "startMs": 22337.958,
+          "endMs": 22673.624,
+          "timestampMs": 22505.790999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 22685.166,
+          "endMs": 22800.916,
+          "timestampMs": 22743.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "範囲",
+          "startMs": 22812.5,
+          "endMs": 23159.708,
+          "timestampMs": 22986.104,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から",
+          "startMs": 23171.291,
+          "endMs": 23379.624,
+          "timestampMs": 23275.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "中身",
+          "startMs": 23391.208,
+          "endMs": 23749.999,
+          "timestampMs": 23570.603499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 23761.583,
+          "endMs": 23865.749,
+          "timestampMs": 23813.665999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 23877.333,
+          "endMs": 24120.374,
+          "timestampMs": 23998.853499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 24131.958,
+          "endMs": 24236.124,
+          "timestampMs": 24184.040999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "範囲",
+          "startMs": 24247.666,
+          "endMs": 24594.874,
+          "timestampMs": 24421.27,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 24606.5,
+          "endMs": 24687.5,
+          "timestampMs": 24647,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "調べ、",
+          "startMs": 24699.083,
+          "endMs": 25150.458,
+          "timestampMs": 24924.7705,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "最大値",
+          "startMs": 25439.833,
+          "endMs": 25995.374,
+          "timestampMs": 25717.603499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 26006.958,
+          "endMs": 26111.124,
+          "timestampMs": 26059.040999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\theta$ ",
+          "startMs": 26122.666,
+          "endMs": 26481.457000000002,
+          "timestampMs": 26302.061500000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 26493.041,
+          "endMs": 26597.207000000002,
+          "timestampMs": 26545.124000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "確定",
+          "startMs": 26608.791,
+          "endMs": 27037.041,
+          "timestampMs": 26822.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 27048.625,
+          "endMs": 27175.958,
+          "timestampMs": 27112.2915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 27187.5,
+          "endMs": 27546.291,
+          "timestampMs": 27366.8955,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "narration": "三角関数の合成の公式です。\n$a\\sin\\theta+b\\cos\\theta$ は $r\\sin(\\theta+\\alpha)$ の形に直せます。\n今回は $\\sin\\theta$ の係数が $1$、$\\cos\\theta$ の係数が $\\sqrt{3}$ です。\nつまり $a=1$、$b=\\sqrt{3}$ とみます。\n<<<TTS_READING>>>\n三角関数 の 合成 の 公式 です。\nエー サイン シータ プラス ビー コサイン シータ は アール サイン かっこ シータ プラス アルファ の 形 に 直せます。\n今回 は サイン シータ の 係数 が 1、コサイン シータ の 係数 が ルート3 です。\nつまり エー イコール 1、ビー イコール ルート3 と みます。",
+      "visual_type": "step",
+      "visual_content": "①三角関数の合成の公式の形を確認し、$a=1$、$b=\\sqrt{3}$ とみる",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] a\\sin\\theta+b\\cos\\theta=r\\sin(\\theta+\\alpha)",
+          "[text] $r=\\sqrt{a^2+b^2}$ とおく",
+          "[underline] a=1,\\quad b=\\sqrt{3}"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913080119-f74dc6/scene-03.mp3",
+      "audioDurationInSeconds": 21,
+      "durationInFrames": 641,
+      "captions": [
+        {
+          "text": "三角関数",
+          "startMs": 119.458,
+          "endMs": 1091.666,
+          "timestampMs": 605.562,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1103.25,
+          "endMs": 1219,
+          "timestampMs": 1161.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "合成",
+          "startMs": 1230.541,
+          "endMs": 1670.374,
+          "timestampMs": 1450.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1681.958,
+          "endMs": 1797.708,
+          "timestampMs": 1739.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "公式",
+          "startMs": 1809.25,
+          "endMs": 2260.625,
+          "timestampMs": 2034.9375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 2272.208,
+          "endMs": 2630.9990000000003,
+          "timestampMs": 2451.6035,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$a\\sin\\theta+b\\cos\\theta$ ",
+          "startMs": 3449.083,
+          "endMs": 5844.916,
+          "timestampMs": 4646.9995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 5856.5,
+          "endMs": 6053.25,
+          "timestampMs": 5954.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$r\\sin(\\theta+\\alpha)$ ",
+          "startMs": 6169,
+          "endMs": 8344.916,
+          "timestampMs": 7256.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 8356.5,
+          "endMs": 8472.25,
+          "timestampMs": 8414.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "形",
+          "startMs": 8483.791,
+          "endMs": 8854.166,
+          "timestampMs": 8668.9785,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 8865.75,
+          "endMs": 8993.083,
+          "timestampMs": 8929.4165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直",
+          "startMs": 9016.208,
+          "endMs": 9189.833,
+          "timestampMs": 9103.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "せ",
+          "startMs": 9201.375,
+          "endMs": 9340.25,
+          "timestampMs": 9270.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 9351.833,
+          "endMs": 9699.041000000001,
+          "timestampMs": 9525.437000000002,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "今回",
+          "startMs": 10555.541,
+          "endMs": 10914.331999999999,
+          "timestampMs": 10734.9365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 10925.916,
+          "endMs": 11122.666,
+          "timestampMs": 11024.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\sin\\theta$ ",
+          "startMs": 11192.125,
+          "endMs": 11898.166,
+          "timestampMs": 11545.145499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 11909.708,
+          "endMs": 12037.041000000001,
+          "timestampMs": 11973.374500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "係数",
+          "startMs": 12048.625,
+          "endMs": 12523.166,
+          "timestampMs": 12285.895499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 12534.708,
+          "endMs": 12627.291000000001,
+          "timestampMs": 12580.999500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$1$、",
+          "startMs": 12638.875,
+          "endMs": 13032.375,
+          "timestampMs": 12835.625,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$\\cos\\theta$ ",
+          "startMs": 13333.333,
+          "endMs": 14143.541,
+          "timestampMs": 13738.437,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 14155.083,
+          "endMs": 14282.416000000001,
+          "timestampMs": 14218.749500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "係数",
+          "startMs": 14294,
+          "endMs": 14756.958,
+          "timestampMs": 14525.479,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 14768.5,
+          "endMs": 14884.25,
+          "timestampMs": 14826.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\sqrt{3}$ ",
+          "startMs": 14895.833,
+          "endMs": 15462.956999999999,
+          "timestampMs": 15179.395,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 15474.541,
+          "endMs": 15798.624,
+          "timestampMs": 15636.5825,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "つまり ",
+          "startMs": 16620.375,
+          "endMs": 17048.625,
+          "timestampMs": 16834.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$a=1$、",
+          "startMs": 17094.916,
+          "endMs": 18067.124,
+          "timestampMs": 17581.02,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$b=\\sqrt{3}$ ",
+          "startMs": 18402.791,
+          "endMs": 19594.915999999997,
+          "timestampMs": 18998.853499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 19606.5,
+          "endMs": 19710.666,
+          "timestampMs": 19658.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "み",
+          "startMs": 19722.208,
+          "endMs": 19837.958,
+          "timestampMs": 19780.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 19849.541,
+          "endMs": 20185.207000000002,
+          "timestampMs": 20017.374000000003,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "narration": "次に振幅 $r$ を計算します。\n$r=\\sqrt{a^2+b^2}$ に $a=1$、$b=\\sqrt{3}$ を入れます。\n$1+3=4$ なので $r=2$ です。\nこの $2$ が、波の高さの上限になります。\n<<<TTS_READING>>>\n次 に 振幅 アール を 計算します。\nアール イコール ルート エー2乗 プラス ビー2乗 に エー イコール 1、ビー イコール ルート3 を 入れます。\n1 プラス 3 は 4 なので アール は 2 です。\nこの 2 が、波 の 高さ の 上限 に なります。",
+      "visual_type": "step",
+      "visual_content": "②$r=\\sqrt{a^2+b^2}$ を計算して振幅を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "r=\\sqrt{a^2+b^2}",
+          "[substitute: $a=1,b=\\sqrt{3}$ を代入] r=\\sqrt{1^2+(\\sqrt{3})^2}",
+          "[underline] r=\\sqrt{4}=2"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913080119-f74dc6/scene-04.mp3",
+      "audioDurationInSeconds": 17.328,
+      "durationInFrames": 531,
+      "captions": [
+        {
+          "text": "次",
+          "startMs": 119.458,
+          "endMs": 397.249,
+          "timestampMs": 258.35350000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 408.791,
+          "endMs": 559.249,
+          "timestampMs": 484.02,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "振幅 ",
+          "startMs": 570.833,
+          "endMs": 1056.958,
+          "timestampMs": 813.8955000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$r$ ",
+          "startMs": 1068.5,
+          "endMs": 1427.291,
+          "timestampMs": 1247.8955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 1438.875,
+          "endMs": 1554.625,
+          "timestampMs": 1496.75,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "計算",
+          "startMs": 1566.208,
+          "endMs": 1994.458,
+          "timestampMs": 1780.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 2006,
+          "endMs": 2144.875,
+          "timestampMs": 2075.4375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 2156.5,
+          "endMs": 2515.291,
+          "timestampMs": 2335.8955,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$r=\\sqrt{a^2+b^2}$ ",
+          "startMs": 3333.333,
+          "endMs": 6134.249,
+          "timestampMs": 4733.791,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に ",
+          "startMs": 6145.833,
+          "endMs": 6354.165999999999,
+          "timestampMs": 6249.9995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$a=1$、",
+          "startMs": 6458.333,
+          "endMs": 7395.832,
+          "timestampMs": 6927.0825,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$b=\\sqrt{3}$ ",
+          "startMs": 7731.5,
+          "endMs": 8865.75,
+          "timestampMs": 8298.625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 8877.333,
+          "endMs": 8969.916000000001,
+          "timestampMs": 8923.624500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "入れ",
+          "startMs": 8981.5,
+          "endMs": 9166.666,
+          "timestampMs": 9074.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 9178.25,
+          "endMs": 9525.458,
+          "timestampMs": 9351.854,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$1+3=4$ ",
+          "startMs": 10347.208,
+          "endMs": 11481.499,
+          "timestampMs": 10914.353500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 11504.625,
+          "endMs": 11585.625,
+          "timestampMs": 11545.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 11597.208,
+          "endMs": 11701.374,
+          "timestampMs": 11649.291000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で ",
+          "startMs": 11712.958,
+          "endMs": 11851.833,
+          "timestampMs": 11782.3955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$r=2$ ",
+          "startMs": 11875,
+          "endMs": 12569.458,
+          "timestampMs": 12222.229,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 12581,
+          "endMs": 12893.5,
+          "timestampMs": 12737.25,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "この ",
+          "startMs": 13761.583,
+          "endMs": 13935.208,
+          "timestampMs": 13848.3955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$ ",
+          "startMs": 13946.75,
+          "endMs": 14085.625,
+          "timestampMs": 14016.1875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が、",
+          "startMs": 14097.208,
+          "endMs": 14282.374,
+          "timestampMs": 14189.791000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "波",
+          "startMs": 14583.333,
+          "endMs": 14814.833,
+          "timestampMs": 14699.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 14826.375,
+          "endMs": 14942.125,
+          "timestampMs": 14884.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "高さ",
+          "startMs": 14953.708,
+          "endMs": 15300.916000000001,
+          "timestampMs": 15127.312000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 15312.5,
+          "endMs": 15428.25,
+          "timestampMs": 15370.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "上限",
+          "startMs": 15439.833,
+          "endMs": 15821.791000000001,
+          "timestampMs": 15630.812000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 15833.333,
+          "endMs": 15949.083,
+          "timestampMs": 15891.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 15960.666,
+          "endMs": 16157.416,
+          "timestampMs": 16059.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 16169,
+          "endMs": 16516.208,
+          "timestampMs": 16342.604,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 5,
+      "narration": "角 $\\alpha$ は $\\cos\\alpha=\\frac{a}{r}$、$\\sin\\alpha=\\frac{b}{r}$ で決まります。\n$\\cos\\alpha=\\frac{1}{2}$、$\\sin\\alpha=\\frac{\\sqrt{3}}{2}$ です。\nどちらも正で、この値を満たす角は $\\frac{\\pi}{3}$ です。\nよって $y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)$ と合成できます。\n<<<TTS_READING>>>\n角 アルファ は コサイン アルファ イコール アール ぶんの エー、サイン アルファ イコール アール ぶんの ビー で 決まります。\nコサイン アルファ は 2ぶんの1、サイン アルファ は 2ぶんの ルート3 です。\nどちら も 正 で、この 値 を 満たす 角 は 3ぶんの パイ です。\nよって y イコール 2 サイン かっこ シータ プラス 3ぶんの パイ、と 合成 できます。",
+      "visual_type": "step",
+      "visual_content": "③$\\cos\\alpha$ と $\\sin\\alpha$ の値から $\\alpha$ を決めて合成する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "\\cos\\alpha=\\frac{1}{2},\\quad \\sin\\alpha=\\frac{\\sqrt{3}}{2}",
+          "[text] この2つを満たす角は $\\frac{\\pi}{3}$",
+          "[box] y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913080119-f74dc6/scene-05.mp3",
+      "audioDurationInSeconds": 22.92,
+      "durationInFrames": 699,
+      "captions": [
+        {
+          "text": "角 ",
+          "startMs": 154.166,
+          "endMs": 339.332,
+          "timestampMs": 246.749,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\alpha$ ",
+          "startMs": 350.916,
+          "endMs": 709.707,
+          "timestampMs": 530.3115,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 721.291,
+          "endMs": 918.041,
+          "timestampMs": 819.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\cos\\alpha=\\frac{a}{r}$、",
+          "startMs": 975.916,
+          "endMs": 3255.9990000000003,
+          "timestampMs": 2115.9575,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$\\sin\\alpha=\\frac{b}{r}$ ",
+          "startMs": 3568.5,
+          "endMs": 5617.124,
+          "timestampMs": 4592.812,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 5628.708,
+          "endMs": 5709.708,
+          "timestampMs": 5669.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "決まり",
+          "startMs": 5721.291,
+          "endMs": 6045.374,
+          "timestampMs": 5883.3325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 6056.958,
+          "endMs": 6381.040999999999,
+          "timestampMs": 6218.9995,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$\\cos\\alpha=\\frac{1}{2}$、",
+          "startMs": 7233.791,
+          "endMs": 8958.333,
+          "timestampMs": 8096.062,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$\\sin\\alpha=\\frac{\\sqrt{3}}{2}$ ",
+          "startMs": 9247.666,
+          "endMs": 11215.249,
+          "timestampMs": 10231.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 11226.833,
+          "endMs": 11562.499,
+          "timestampMs": 11394.666000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "どちら",
+          "startMs": 12384.25,
+          "endMs": 12777.75,
+          "timestampMs": 12581,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "も",
+          "startMs": 12789.333,
+          "endMs": 12905.083,
+          "timestampMs": 12847.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "正",
+          "startMs": 12916.666,
+          "endMs": 13171.291,
+          "timestampMs": 13043.9785,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で、",
+          "startMs": 13182.875,
+          "endMs": 13379.625,
+          "timestampMs": 13281.25,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "この",
+          "startMs": 13645.833,
+          "endMs": 13877.333,
+          "timestampMs": 13761.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "値",
+          "startMs": 13888.875,
+          "endMs": 14224.541,
+          "timestampMs": 14056.707999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 14236.125,
+          "endMs": 14328.708,
+          "timestampMs": 14282.4165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "満たす",
+          "startMs": 14340.291,
+          "endMs": 14675.956999999999,
+          "timestampMs": 14508.124,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 14687.5,
+          "endMs": 14907.416,
+          "timestampMs": 14797.457999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 14919,
+          "endMs": 15092.625,
+          "timestampMs": 15005.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\frac{\\pi}{3}$ ",
+          "startMs": 15150.458,
+          "endMs": 15949.083,
+          "timestampMs": 15549.7705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 15960.666,
+          "endMs": 16296.331999999999,
+          "timestampMs": 16128.499,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "よっ",
+          "startMs": 17118.041,
+          "endMs": 17349.541,
+          "timestampMs": 17233.791,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て ",
+          "startMs": 17361.125,
+          "endMs": 17500,
+          "timestampMs": 17430.5625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)$ ",
+          "startMs": 17511.583,
+          "endMs": 17754.624,
+          "timestampMs": 17633.103499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 20949.083,
+          "endMs": 21087.958,
+          "timestampMs": 21018.5205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "合成",
+          "startMs": 21111.125,
+          "endMs": 21562.5,
+          "timestampMs": 21336.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "でき",
+          "startMs": 21574.083,
+          "endMs": 21782.415999999997,
+          "timestampMs": 21678.249499999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 21794,
+          "endMs": 22106.5,
+          "timestampMs": 21950.25,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 6,
+      "narration": "最後に中身の角の範囲を調べます。\n$0 \\leq \\theta < 2\\pi$ の各辺に $\\frac{\\pi}{3}$ を足します。\nすると $\\frac{\\pi}{3} \\leq \\theta+\\frac{\\pi}{3} < \\frac{7\\pi}{3}$ です。\nこの範囲には $\\frac{\\pi}{2}$ が含まれます。\n<<<TTS_READING>>>\n最後 に 中身 の 角 の 範囲 を 調べます。\nゼロ 以上 2パイ 未満 の 各辺 に 3ぶんの パイ を 足します。\nすると 3ぶんの パイ 以上、シータ プラス 3ぶんの パイ は 3ぶんの 7パイ 未満 です。\nこの 範囲 には 2ぶんの パイ が 含まれます。",
+      "visual_type": "step",
+      "visual_content": "④$\\theta$ の範囲から中身の角の範囲を調べ、最大値とそのときの $\\theta$ を確定する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "0 \\leq \\theta < 2\\pi",
+          "[substitute: 各辺に $\\frac{\\pi}{3}$ を足す] \\frac{\\pi}{3} \\leq \\theta+\\frac{\\pi}{3} < \\frac{7\\pi}{3}",
+          "[text][underline] この範囲に $\\frac{\\pi}{2}$ は含まれる"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913080119-f74dc6/scene-06.mp3",
+      "audioDurationInSeconds": 17.808,
+      "durationInFrames": 545,
+      "captions": [
+        {
+          "text": "最後",
+          "startMs": 119.458,
+          "endMs": 489.83299999999997,
+          "timestampMs": 304.64549999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 501.375,
+          "endMs": 640.25,
+          "timestampMs": 570.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "中身",
+          "startMs": 651.833,
+          "endMs": 987.499,
+          "timestampMs": 819.6659999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 999.083,
+          "endMs": 1103.249,
+          "timestampMs": 1051.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 1114.833,
+          "endMs": 1357.874,
+          "timestampMs": 1236.3535000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1369.458,
+          "endMs": 1473.624,
+          "timestampMs": 1421.5410000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "範囲",
+          "startMs": 1485.166,
+          "endMs": 1855.541,
+          "timestampMs": 1670.3535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 1867.125,
+          "endMs": 1948.125,
+          "timestampMs": 1907.625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "調べ",
+          "startMs": 1959.708,
+          "endMs": 2295.3740000000003,
+          "timestampMs": 2127.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 2306.958,
+          "endMs": 2665.7490000000003,
+          "timestampMs": 2486.3535,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$0 \\leq \\theta < 2\\pi$ ",
+          "startMs": 3483.791,
+          "endMs": 4861.125,
+          "timestampMs": 4172.4580000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 4872.666,
+          "endMs": 5023.124,
+          "timestampMs": 4947.895,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "各辺",
+          "startMs": 5057.875,
+          "endMs": 5509.25,
+          "timestampMs": 5283.5625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に ",
+          "startMs": 5520.833,
+          "endMs": 5717.583,
+          "timestampMs": 5619.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\frac{\\pi}{3}$ ",
+          "startMs": 5775.458,
+          "endMs": 6574.083,
+          "timestampMs": 6174.7705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 6585.666,
+          "endMs": 6689.832,
+          "timestampMs": 6637.749,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "足",
+          "startMs": 6701.375,
+          "endMs": 6817.125,
+          "timestampMs": 6759.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 6828.708,
+          "endMs": 6967.583,
+          "timestampMs": 6898.1455,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 6979.166,
+          "endMs": 7314.832,
+          "timestampMs": 7146.999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "する",
+          "startMs": 8136.583,
+          "endMs": 8414.374,
+          "timestampMs": 8275.4785,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 8425.916,
+          "endMs": 8530.081999999999,
+          "timestampMs": 8477.999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\frac{\\pi}{3} \\leq \\theta+\\frac{\\pi}{3} < \\frac{7\\pi}{3}$ ",
+          "startMs": 8541.666,
+          "endMs": 13333.333,
+          "timestampMs": 10937.4995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 13344.916,
+          "endMs": 13680.581999999999,
+          "timestampMs": 13512.749,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "この",
+          "startMs": 14537.041,
+          "endMs": 14733.791,
+          "timestampMs": 14635.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "範囲",
+          "startMs": 14745.375,
+          "endMs": 15092.583,
+          "timestampMs": 14918.979,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 15104.166,
+          "endMs": 15196.749,
+          "timestampMs": 15150.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 15208.333,
+          "endMs": 15358.791000000001,
+          "timestampMs": 15283.562000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\frac{\\pi}{2}$ ",
+          "startMs": 15416.666,
+          "endMs": 16087.958,
+          "timestampMs": 15752.312,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 16099.541,
+          "endMs": 16192.124,
+          "timestampMs": 16145.8325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "含ま",
+          "startMs": 16203.708,
+          "endMs": 16539.374,
+          "timestampMs": 16371.541000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "れ",
+          "startMs": 16550.916,
+          "endMs": 16643.499,
+          "timestampMs": 16597.2075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 16655.083,
+          "endMs": 16990.749,
+          "timestampMs": 16822.915999999997,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 7,
+      "narration": "サインは角が $\\frac{\\pi}{2}$ のとき最大の $1$ になります。\nこのとき $y=2 \\times 1=2$ です。\n$\\theta+\\frac{\\pi}{3}=\\frac{\\pi}{2}$ を解くと $\\theta=\\frac{\\pi}{6}$ です。\nグラフでも $\\theta=\\frac{\\pi}{6}$ で山の頂点になっています。\n<<<TTS_READING>>>\nサイン は 角 が 2ぶんの パイ の とき 最大 の 1 に なります。\nこの とき y は 2 かける 1 で 2 です。\nシータ プラス 3ぶんの パイ イコール 2ぶんの パイ を 解く と、シータ は 6ぶんの パイ です。\nグラフ でも シータ が 6ぶんの パイ で 山 の 頂点 に なって います。",
+      "visual_type": "step",
+      "visual_content": "④$\\theta$ の範囲から中身の角の範囲を調べ、最大値とそのときの $\\theta$ を確定する",
+      "visual": {
+        "kind": "plot",
+        "lines": [
+          "[text] $\\sin$ が最大 $1$ になるのは角が $\\frac{\\pi}{2}$",
+          "[box] \\theta=\\frac{\\pi}{6},\\quad y=2"
+        ],
+        "caption": "山の頂点が最大値",
+        "xRange": [
+          0,
+          6.28
+        ],
+        "yRange": [
+          -2.5,
+          2.5
+        ],
+        "curves": [
+          {
+            "expr": "2*sin(x+pi/3)",
+            "exprY": null,
+            "label": "$y=2\\sin(\\theta+\\frac{\\pi}{3})$",
+            "region": null
+          }
+        ],
+        "tRange": null,
+        "shade": null,
+        "points": [
+          {
+            "x": 0.5236,
+            "y": 2,
+            "label": "[guide]最大"
+          }
+        ]
+      },
+      "audioSrc": "projects/20260913080119-f74dc6/scene-07.mp3",
+      "audioDurationInSeconds": 17.904,
+      "durationInFrames": 548,
+      "captions": [
+        {
+          "text": "サイン",
+          "startMs": 119.458,
+          "endMs": 512.958,
+          "timestampMs": 316.20799999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 524.541,
+          "endMs": 674.999,
+          "timestampMs": 599.77,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "角",
+          "startMs": 698.166,
+          "endMs": 941.2070000000001,
+          "timestampMs": 819.6865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 952.791,
+          "endMs": 1068.5410000000002,
+          "timestampMs": 1010.6660000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\frac{\\pi}{2}$ のとき最大",
+          "startMs": 1080.083,
+          "endMs": 1415.75,
+          "timestampMs": 1247.9165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の ",
+          "startMs": 1427.333,
+          "endMs": 1531.499,
+          "timestampMs": 1479.4160000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$1$ ",
+          "startMs": 1543.041,
+          "endMs": 2908.791,
+          "timestampMs": 2225.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 2920.375,
+          "endMs": 3024.541,
+          "timestampMs": 2972.458,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 3036.125,
+          "endMs": 3232.875,
+          "timestampMs": 3134.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 3244.458,
+          "endMs": 3580.1240000000003,
+          "timestampMs": 3412.291,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "この",
+          "startMs": 4432.875,
+          "endMs": 4641.208,
+          "timestampMs": 4537.041499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "とき ",
+          "startMs": 4652.791,
+          "endMs": 4907.416,
+          "timestampMs": 4780.1035,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$y=2 \\times 1=2$ ",
+          "startMs": 4919,
+          "endMs": 6250,
+          "timestampMs": 5584.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 6261.583,
+          "endMs": 6608.790999999999,
+          "timestampMs": 6435.187,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$\\theta+\\frac{\\pi}{3}=\\frac{\\pi}{2}$ ",
+          "startMs": 7430.541,
+          "endMs": 10081.041,
+          "timestampMs": 8755.791,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 10092.583,
+          "endMs": 10185.166000000001,
+          "timestampMs": 10138.874500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "解くと ",
+          "startMs": 10196.75,
+          "endMs": 10439.791,
+          "timestampMs": 10318.270499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\theta=\\frac{\\pi}{6}$ ",
+          "startMs": 10451.375,
+          "endMs": 12280.125,
+          "timestampMs": 11365.75,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 12291.666,
+          "endMs": 12604.166,
+          "timestampMs": 12447.916,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "グラフ",
+          "startMs": 13425.916,
+          "endMs": 13773.124,
+          "timestampMs": 13599.52,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 13784.708,
+          "endMs": 13865.708,
+          "timestampMs": 13825.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "も ",
+          "startMs": 13877.333,
+          "endMs": 14004.666000000001,
+          "timestampMs": 13940.999500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\theta=\\frac{\\pi}{6}$ ",
+          "startMs": 14016.208,
+          "endMs": 15312.5,
+          "timestampMs": 14664.354,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 15324.083,
+          "endMs": 15416.666000000001,
+          "timestampMs": 15370.374500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "山",
+          "startMs": 15428.25,
+          "endMs": 15682.875,
+          "timestampMs": 15555.5625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 15694.458,
+          "endMs": 15787.041000000001,
+          "timestampMs": 15740.749500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "頂点",
+          "startMs": 15798.625,
+          "endMs": 16238.458,
+          "timestampMs": 16018.5415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 16250,
+          "endMs": 16365.75,
+          "timestampMs": 16307.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なっ",
+          "startMs": 16377.333,
+          "endMs": 16562.499,
+          "timestampMs": 16469.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 16574.083,
+          "endMs": 16643.540999999997,
+          "timestampMs": 16608.811999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "います。",
+          "startMs": 16655.083,
+          "endMs": 17094.915999999997,
+          "timestampMs": 16874.999499999998,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "narration": "まとめます。\n合成すると $y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)$ でした。\n最大値は $2$、そのときの $\\theta$ は $\\frac{\\pi}{6}$ です。\n係数から $r$ と $\\alpha$ を求めて1つの波に直すのが要点です。\n<<<TTS_READING>>>\nまとめます。\n合成 すると y イコール 2 サイン かっこ シータ プラス 3ぶんの パイ、でした。\n最大値 は 2、その ときの シータ は 6ぶんの パイ です。\n係数 から アール と アルファ を 求めて 1つ の 波 に 直す の が 要点 です。",
+      "visual_type": "summary",
+      "visual_content": "答え",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)",
+          "[text] 答え",
+          "[underline] \\text{最大値}\\ 2\\quad(\\theta=\\frac{\\pi}{6})"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/20260913080119-f74dc6/scene-08.mp3",
+      "audioDurationInSeconds": 16.896,
+      "durationInFrames": 518,
+      "captions": [
+        {
+          "text": "まとめ",
+          "startMs": 119.458,
+          "endMs": 512.958,
+          "timestampMs": 316.20799999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 524.541,
+          "endMs": 894.916,
+          "timestampMs": 709.7285,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "合成",
+          "startMs": 1712.958,
+          "endMs": 2152.791,
+          "timestampMs": 1932.8745000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "する",
+          "startMs": 2164.333,
+          "endMs": 2395.833,
+          "timestampMs": 2280.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 2407.416,
+          "endMs": 2511.5820000000003,
+          "timestampMs": 2459.4990000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)$ ",
+          "startMs": 2523.166,
+          "endMs": 2766.2070000000003,
+          "timestampMs": 2644.6865000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "でし",
+          "startMs": 5949.083,
+          "endMs": 6157.415999999999,
+          "timestampMs": 6053.2495,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た。\n",
+          "startMs": 6169,
+          "endMs": 6377.333,
+          "timestampMs": 6273.166499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "最大値",
+          "startMs": 7199.083,
+          "endMs": 7789.374,
+          "timestampMs": 7494.228499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 7800.916,
+          "endMs": 7893.499,
+          "timestampMs": 7847.2075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$、",
+          "startMs": 7905.083,
+          "endMs": 8171.290999999999,
+          "timestampMs": 8038.187,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "その",
+          "startMs": 8356.5,
+          "endMs": 8611.125,
+          "timestampMs": 8483.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "とき",
+          "startMs": 8622.666,
+          "endMs": 8854.166,
+          "timestampMs": 8738.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の ",
+          "startMs": 8865.75,
+          "endMs": 8969.916,
+          "timestampMs": 8917.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\theta$ ",
+          "startMs": 8981.5,
+          "endMs": 9351.875,
+          "timestampMs": 9166.6875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 9363.416,
+          "endMs": 9513.874,
+          "timestampMs": 9438.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\frac{\\pi}{6}$ ",
+          "startMs": 9537.041,
+          "endMs": 10347.25,
+          "timestampMs": 9942.145499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 10358.791,
+          "endMs": 10682.874,
+          "timestampMs": 10520.8325,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "係数",
+          "startMs": 11539.333,
+          "endMs": 11967.583,
+          "timestampMs": 11753.458,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から ",
+          "startMs": 11979.166,
+          "endMs": 12187.499,
+          "timestampMs": 12083.3325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$r$ ",
+          "startMs": 12199.083,
+          "endMs": 12592.583,
+          "timestampMs": 12395.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 12604.166,
+          "endMs": 12673.624,
+          "timestampMs": 12638.895,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\alpha$ ",
+          "startMs": 12685.166,
+          "endMs": 13148.124,
+          "timestampMs": 12916.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 13159.708,
+          "endMs": 13252.291000000001,
+          "timestampMs": 13205.999500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "求め",
+          "startMs": 13263.875,
+          "endMs": 13622.666,
+          "timestampMs": 13443.270499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 13634.25,
+          "endMs": 13819.416,
+          "timestampMs": 13726.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "1つ",
+          "startMs": 13842.583,
+          "endMs": 14189.833,
+          "timestampMs": 14016.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 14201.375,
+          "endMs": 14293.958,
+          "timestampMs": 14247.6665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "波",
+          "startMs": 14305.541,
+          "endMs": 14548.581999999999,
+          "timestampMs": 14427.0615,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 14560.166,
+          "endMs": 14710.624,
+          "timestampMs": 14635.395,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直す",
+          "startMs": 14733.791,
+          "endMs": 15069.456999999999,
+          "timestampMs": 14901.624,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 15081,
+          "endMs": 15162,
+          "timestampMs": 15121.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 15173.625,
+          "endMs": 15266.208,
+          "timestampMs": 15219.9165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "要点",
+          "startMs": 15277.791,
+          "endMs": 15729.166,
+          "timestampMs": 15503.4785,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。",
+          "startMs": 15740.75,
+          "endMs": 16099.541,
+          "timestampMs": 15920.145499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    }
+  ]
+}

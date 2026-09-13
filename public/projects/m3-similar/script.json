@@ -1,0 +1,199 @@
+{
+  "topic": "$\\triangle ABC$ の辺 $BC$ 上に点 $D$ をとり、$\\angle BAD = \\angle BCA$ とする。$AB = 6$、$BC = 9$ のとき、線分 $BD$ の長さを求めよ。",
+  "model": "handwritten",
+  "outline": [
+    "$\\triangle ABC$ の辺 $BC$ 上に点 $D$ をとる。",
+    "$\\angle BAD = \\angle BCA$ である。",
+    "$AB = 6$、$BC = 9$ のとき、線分 $BD$ の長さを求めよ。"
+  ],
+  "unit": "中3 図形",
+  "difficulty": 3,
+  "subunit": "相似な図形",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "$\\triangle ABC$ の辺 $BC$ 上に点 $D$ があります。\n角 $BAD$ と角 $BCA$ が等しいという条件がついています。\n$AB$ が $6$、$BC$ が $9$ のとき、$BD$ の長さを求めます。\n<<<TTS_READING>>>\n三角形エービーシーの辺ビーシー上に点ディーがあります。\n角ビーエーディーと角ビーシーエーが等しいという条件がついています。\nエービーが6、ビーシーが9のとき、ビーディーの長さを求めます。",
+      "visual_type": "hook",
+      "visual_content": "重なった2つの三角形を分ける"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\nはじめに、重なり合った2つの三角形 $ABD$ と $CBA$ を図の上で見分けます。\n次に、その2つで等しい角が2組あることを確かめて、相似を示します。\n最後に、相似な図形の対応する辺の比から、$BD$ の長さを求めます。\n<<<TTS_READING>>>\nまずは解く方針を確認します。\nはじめに、重なり合った2つの三角形エービーディーと、シービーエーを図の上で見分けます。\n次に、その2つで等しい角が2組あることを確かめて、相似を示します。\n最後に、相似な図形の対応する辺の比から、ビーディーの長さを求めます。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①図をかき、重なった2つの三角形 $ABD$ と $CBA$ を見分ける",
+          "②等しい角が2組あることから、2つの三角形の相似を示す",
+          "③対応する辺の比の式を立てて、$BD$ の長さを求める"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "図をかきます。\n$D$ は辺 $BC$ 上にあるので、$BD$ と $DC$ を合わせると $9$ になります。\n$A$ と $D$ を結ぶと、三角形 $ABD$ が三角形 $ABC$ の中にできます。\n同じ印の角が、条件で等しいとされた角 $BAD$ と角 $BCA$ です。\n<<<TTS_READING>>>\n図をかきます。\nディーは辺ビーシー上にあるので、ビーディーとディーシーを合わせると9になります。\nエーとディーを結ぶと、三角形エービーディーが、三角形エービーシーの中にできます。\n同じ印の角が、条件で等しいとされた角ビーエーディーと、角ビーシーエーです。",
+      "visual_type": "step",
+      "visual_content": "①図をかき、重なった2つの三角形 $ABD$ と $CBA$ を見分ける",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] $BD + DC = 9$"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": 3.8567,
+            "y": 4.5963,
+            "label": "A"
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "label": "B"
+          },
+          {
+            "x": 9,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 4,
+            "y": 0,
+            "label": "D"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "$6$",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "D",
+            "label": "$?$",
+            "dashed": false,
+            "emphasis": 4,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "D",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "A",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "D",
+            "label": "",
+            "dashed": false,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "A",
+            "from": "B",
+            "to": "D",
+            "label": "",
+            "ticks": 1
+          },
+          {
+            "at": "C",
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "ticks": 1
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "2つの三角形で等しい角を確かめます。\n三角形 $ABD$ と三角形 $CBA$ は、どちらも頂点 $B$ の角を共有しています。\nこれが1組目です。\n2組目は条件そのままで、角 $BAD$ と角 $BCA$ が等しいことです。\n2組の角がそれぞれ等しいので、この2つの三角形は相似です。\n<<<TTS_READING>>>\n2つの三角形で等しい角を確かめます。\n三角形エービーディーと三角形シービーエーは、どちらも頂点ビーの角を共有しています。\nこれが1組目です。\n2組目は条件そのままで、角ビーエーディーと角ビーシーエーが等しいことです。\n2組の角がそれぞれ等しいので、この2つの三角形は相似です。",
+      "visual_type": "step",
+      "visual_content": "②等しい角が2組あることから、2つの三角形の相似を示す",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 角 $B$ は共通",
+          "[underline] \\angle BAD = \\angle BCA",
+          "[text] 2組の角が等しい",
+          "[underline] \\triangle ABD \\sim \\triangle CBA"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "対応する辺の比を書きます。\n相似の式の順番どおりに、$A$ と $C$、$B$ と $B$、$D$ と $A$ が対応します。\nよって $AB$ と $CB$ の比が、$BD$ と $BA$ の比に等しくなります。\n数を入れると、$6$ 対 $9$ が $BD$ 対 $6$ に等しいという式です。\n<<<TTS_READING>>>\n対応する辺の比を書きます。\n相似の式の順番どおりに、エーとシー、ビーとビー、ディーとエーが対応します。\nよって、エービーとシービーの比が、ビーディーとビーエーの比に等しくなります。\n数を入れると、6たい9が、ビーディーたい6に等しいという式です。",
+      "visual_type": "step",
+      "visual_content": "③対応する辺の比の式を立てて、$BD$ の長さを求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 対応する辺の比は等しい",
+          "AB : CB = BD : BA",
+          "[substitute: AB=6, CB=9, BA=6] 6 : 9 = BD : 6"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "比の式を解きます。\n比の式では、内側どうしの積と外側どうしの積が等しくなります。\n$9$ かける $BD$ が、$6$ かける $6$ の $36$ に等しいです。\n両辺を $9$ でわって、$BD$ は $4$ です。\n<<<TTS_READING>>>\n比の式を解きます。\n比の式では、内側どうしの積と、外側どうしの積が等しくなります。\n9かけるビーディーが、6かける6の36に等しいです。\n両辺を9でわって、ビーディーは4です。",
+      "visual_type": "step",
+      "visual_content": "③対応する辺の比の式を立てて、$BD$ の長さを求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 内側の積と外側の積は等しい",
+          "9 \\times BD = 6 \\times 6",
+          "[text] 答え",
+          "[underline] BD = 4"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "まとめます。\n共通の角 $B$ と条件の角で、2組の角が等しいことがいえました。\nそこから三角形 $ABD$ と三角形 $CBA$ が相似になりました。\n対応する辺の比を解いて、$BD$ は $4$ です。\n<<<TTS_READING>>>\nまとめます。\n共通の角ビーと条件の角で、2組の角が等しいことがいえました。\nそこから三角形エービーディーと三角形シービーエーが相似になりました。\n対応する辺の比を解いて、ビーディーは4です。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] $\\triangle ABD \\sim \\triangle CBA$",
+          "[box] BD = 4",
+          "[text] 共通の角を1組目に数える"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}

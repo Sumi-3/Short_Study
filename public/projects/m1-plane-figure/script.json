@@ -1,0 +1,332 @@
+{
+  "topic": "$\\angle AOB = 68^\\circ$ である。\n$\\angle AOB$ の二等分線を $OC$、$\\angle AOC$ の二等分線を $OD$ とする。\n$\\angle DOB$ の大きさを求めよ。",
+  "model": "handwritten",
+  "outline": [
+    "$\\angle AOB = 68^\\circ$ である。",
+    "$\\angle AOB$ の二等分線を $OC$、$\\angle AOC$ の二等分線を $OD$ とする。",
+    "$\\angle DOB$ の大きさを求めよ。"
+  ],
+  "unit": "中1 図形",
+  "difficulty": 2,
+  "subunit": "平面図形（直線・角・対称・作図）",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "$\\angle AOB = 68^\\circ$ です。\nこの角の二等分線を $OC$ とします。\nさらに $\\angle AOC$ の二等分線を $OD$ とします。\n$\\angle DOB$ の大きさを求めます。\n<<<TTS_READING>>>\n角エーオービーは68度です。\nこの角の二等分線をオーシーとします。\nさらに、角エーオーシーの二等分線をオーディーとします。\n角ディーオービーの大きさを求めます。",
+      "visual_type": "hook",
+      "visual_content": "二等分を2回くり返す"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\nはじめに、$\\angle AOB$ と二等分線 $OC$ を図で確かめます。\n次に、二等分線が角を半分に分けることから $\\angle AOC$ を求めます。\nさらに $\\angle AOC$ を二等分して $\\angle DOC$ を出します。\n最後に、2つの角をたして $\\angle DOB$ を求めます。\n<<<TTS_READING>>>\nまずは解く方針を確認します。\nはじめに、角エーオービーと二等分線オーシーを図で確かめます。\n次に、二等分線が角を半分に分けることから、角エーオーシーを求めます。\nさらに、角エーオーシーを二等分して、角ディーオーシーを出します。\n最後に、2つの角をたして、角ディーオービーを求めます。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①$\\angle AOB$ とその二等分線 $OC$ を図で確かめる",
+          "②二等分線の性質を使って $\\angle AOC$ の大きさを求める",
+          "③$\\angle AOC$ の二等分線 $OD$ を引き、$\\angle DOC$ を求める",
+          "④$\\angle DOC$ と $\\angle COB$ をたして $\\angle DOB$ を求める"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "図で確かめます。\n点 $O$ から3本の半直線が出ています。\n$\\angle AOB$ が $68^\\circ$ で、$OC$ がその二等分線です。\n二等分線は、角をぴったり重ねて折る線でもあります。\n<<<TTS_READING>>>\n図で確かめます。\n点オーから3本の半直線が出ています。\n角エーオービーが68度で、オーシーがその二等分線です。\n二等分線は、角をぴったり重ねて折る線でもあります。",
+      "visual_type": "step",
+      "visual_content": "①$\\angle AOB$ とその二等分線 $OC$ を図で確かめる",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] $OC$ は $\\angle AOB$ の二等分線"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "label": "O"
+          },
+          {
+            "x": 4.9742,
+            "y": -3.3552,
+            "label": "A"
+          },
+          {
+            "x": 4.9742,
+            "y": 3.3552,
+            "label": "B"
+          },
+          {
+            "x": 6,
+            "y": 0,
+            "label": "C"
+          }
+        ],
+        "segments": [
+          {
+            "from": "O",
+            "to": "A",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "O",
+            "from": "A",
+            "to": "B",
+            "label": "68°",
+            "ticks": 0
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "二等分線は角を半分に分けます。\nだから $\\angle AOC$ と $\\angle COB$ は等しくなります。\n$68^\\circ$ を2でわって、どちらも $34^\\circ$ です。\n<<<TTS_READING>>>\n二等分線は角を半分に分けます。\nだから、角エーオーシーと角シーオービーは等しくなります。\n68度を2でわって、どちらも34度です。",
+      "visual_type": "step",
+      "visual_content": "②二等分線の性質を使って $\\angle AOC$ の大きさを求める",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "\\angle AOC = 68^\\circ \\div 2 = 34^\\circ"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "label": "O"
+          },
+          {
+            "x": 4.9742,
+            "y": -3.3552,
+            "label": "A"
+          },
+          {
+            "x": 4.9742,
+            "y": 3.3552,
+            "label": "B"
+          },
+          {
+            "x": 6,
+            "y": 0,
+            "label": "C"
+          }
+        ],
+        "segments": [
+          {
+            "from": "O",
+            "to": "A",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "O",
+            "from": "A",
+            "to": "C",
+            "label": "34°",
+            "ticks": 1
+          },
+          {
+            "at": "O",
+            "from": "C",
+            "to": "B",
+            "label": "34°",
+            "ticks": 1
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "次に $\\angle AOC$ を二等分します。\n二等分線 $OD$ を引くと、$\\angle AOD$ と $\\angle DOC$ が等しくなります。\n$34^\\circ$ を2でわって、どちらも $17^\\circ$ です。\n<<<TTS_READING>>>\n次に、角エーオーシーを二等分します。\n二等分線オーディーを引くと、角エーオーディーと角ディーオーシーが等しくなります。\n34度を2でわって、どちらも17度です。",
+      "visual_type": "step",
+      "visual_content": "③$\\angle AOC$ の二等分線 $OD$ を引き、$\\angle DOC$ を求める",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "\\angle DOC = 34^\\circ \\div 2 = 17^\\circ"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "label": "O"
+          },
+          {
+            "x": 4.9742,
+            "y": -3.3552,
+            "label": "A"
+          },
+          {
+            "x": 4.9742,
+            "y": 3.3552,
+            "label": "B"
+          },
+          {
+            "x": 6,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 5.7378,
+            "y": -1.7542,
+            "label": "D"
+          }
+        ],
+        "segments": [
+          {
+            "from": "O",
+            "to": "A",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "O",
+            "to": "D",
+            "label": "",
+            "dashed": false,
+            "emphasis": 4,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "O",
+            "from": "A",
+            "to": "D",
+            "label": "17°",
+            "ticks": 2
+          },
+          {
+            "at": "O",
+            "from": "D",
+            "to": "C",
+            "label": "17°",
+            "ticks": 2
+          },
+          {
+            "at": "O",
+            "from": "C",
+            "to": "B",
+            "label": "34°",
+            "ticks": 1
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "求める $\\angle DOB$ を分けて見ます。\n半直線 $OC$ で区切ると、$\\angle DOC$ と $\\angle COB$ の2つになります。\n$17^\\circ$ と $34^\\circ$ をたして、答えは $51^\\circ$ です。\n<<<TTS_READING>>>\n求める角ディーオービーを分けて見ます。\n半直線オーシーで区切ると、角ディーオーシーと角シーオービーの2つになります。\n17度と34度をたして、答えは51度です。",
+      "visual_type": "step",
+      "visual_content": "④$\\angle DOC$ と $\\angle COB$ をたして $\\angle DOB$ を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] $OC$ で2つの角に区切る",
+          "\\angle DOB = \\angle DOC + \\angle COB",
+          "[substitute: 17°と34°を代入] \\angle DOB = 17^\\circ + 34^\\circ",
+          "[text] 答え",
+          "[underline] \\angle DOB = 51^\\circ"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "まとめます。\n二等分線は角を半分にするので、$\\angle AOC$ は $34^\\circ$、$\\angle DOC$ は $17^\\circ$ です。\n$\\angle DOB$ は $\\angle DOC$ と $\\angle COB$ の和で、$51^\\circ$ になります。\n<<<TTS_READING>>>\nまとめます。\n二等分線は角を半分にするので、角エーオーシーは34度、角ディーオーシーは17度です。\n角ディーオービーは、角ディーオーシーと角シーオービーの和で、51度になります。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 二等分線は角を半分に分ける",
+          "[text] $\\angle AOC = 34^\\circ$、$\\angle DOC = 17^\\circ$",
+          "[box] \\angle DOB = 51^\\circ"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}

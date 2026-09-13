@@ -1,0 +1,395 @@
+{
+  "topic": "$\\triangle ABC$ において $AB=8$, $BC=7$, $CA=5$ とする。$\\angle A$ の二等分線と辺 $BC$ の交点を $D$、$\\triangle ABC$ の内心を $I$ とするとき、$AI:ID$ を求めよ。",
+  "model": "claude-opus-5",
+  "outline": [],
+  "unit": "数A 図形の性質",
+  "difficulty": 3,
+  "subunit": "平面図形（三角形・円の性質）",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "三角形ABCで、$AB=8$、$BC=7$、$CA=5$ です。\n角Aの二等分線と辺BCの交点をD、三角形ABCの内心をIとします。\nこのとき $AI:ID$ を求めます。\n<<<TTS_READING>>>\nサンカクケイABCで、ABは8、BCは7、CAは5です。カクAのニトウブンセンとヘンBCのコウテンをD、サンカクケイABCのナイシンをIとします。このとき、AIタイIDをモトメマス。",
+      "visual_type": "hook",
+      "visual_content": "内心は二等分線の交点"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\nはじめに、角の二等分線の性質で $BD:DC$ を出し、BDの長さを求めます。\n次に、内心Iが角Bの二等分線上にあることを確かめます。\nそして三角形ABDの中で、BIが角ABDの二等分線になっていることを使います。\n最後に比を整理して答えを確定します。\n<<<TTS_READING>>>\nまずは解くホウシンをカクニンします。はじめに、カクのニトウブンセンのセイシツでBDタイDCを出し、BDのナガサをモトメマス。ツギに、ナイシンIがカクBのニトウブンセンジョウにあることをタシカメマス。そしてサンカクケイABDのナカで、BIがカクABDのニトウブンセンになっていることを使います。サイゴにヒをセイリしてコタエをカクテイします。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①角の二等分線の性質から $BD:DC$ を求め、BDの長さを出す",
+          "②内心Iが角Bの二等分線上にあることを確認する",
+          "③三角形ABDでBIが角ABDの二等分線であることから $AI:ID=AB:BD$ を使う",
+          "④比を整理して $AI:ID$ を確定する"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "まず図を描きます。\nADは角Aを二等分する線なので、角BADと角DACは等しいです。\n角の二等分線は、向かい合う辺を隣り合う2辺の比に分けます。\nつまり $BD:DC=AB:AC$ となります。\n<<<TTS_READING>>>\nまずズをカキマス。ADはカクAをニトウブンする線なので、カクBADとカクDACはヒトシイです。カクのニトウブンセンは、ムカイアウヘンをトナリアウ2ヘンのヒにワケマス。つまり、BDタイDCイコールABタイACとなります。",
+      "visual_type": "step",
+      "visual_content": "①角の二等分線の性質から $BD:DC$ を求め、BDの長さを出す",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[highlight] BD:DC = AB:AC"
+        ],
+        "caption": "ADは角Aの二等分線",
+        "points": [
+          {
+            "x": 6.29,
+            "y": 4.95,
+            "label": "A"
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "label": "B"
+          },
+          {
+            "x": 7,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 4.31,
+            "y": 0,
+            "label": "D"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "8",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "C",
+            "label": "5",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "D",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "D",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "D",
+            "label": "",
+            "dashed": true,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "A",
+            "from": "B",
+            "to": "D",
+            "label": "",
+            "ticks": 1
+          },
+          {
+            "at": "A",
+            "from": "D",
+            "to": "C",
+            "label": "",
+            "ticks": 1
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "$AB=8$、$AC=5$ なので $BD:DC=8:5$ です。\nBDは辺BCを13等分したうちの8つ分にあたります。\n$BC=7$ ですから、$BD=7 \\times \\frac{8}{13}$ です。\n計算して $BD=\\frac{56}{13}$ となります。\n<<<TTS_READING>>>\nABは8、ACは5なので、BDタイDCは8タイ5です。BDはヘンBCを13トウブンしたうちの8つブンにあたります。BCは7ですから、BDは7かける13ブンの8です。ケイサンして、BDは13ブンの56となります。",
+      "visual_type": "step",
+      "visual_content": "①角の二等分線の性質から $BD:DC$ を求め、BDの長さを出す",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "BD:DC = 8:5",
+          "[substitute: BCを13等分する] BD = 7 \\times \\frac{8}{13}",
+          "[underline] BD = \\frac{56}{13}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "次に内心Iです。\n内心は3つの角の二等分線が集まる点です。\nですからIはADの上にあり、同時に角Bの二等分線BIの上にもあります。\nこの2つ目の性質が、今回の決め手になります。\n<<<TTS_READING>>>\nツギにナイシンIです。ナイシンは3つのカクのニトウブンセンがアツマルテンです。ですからIはADのウエにあり、ドウジにカクBのニトウブンセン、BIのウエにもあります。この2つメのセイシツが、コンカイのキメテになります。",
+      "visual_type": "step",
+      "visual_content": "②内心Iが角Bの二等分線上にあることを確認する",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] Iは角Bの二等分線上にもある"
+        ],
+        "caption": "内心は二等分線の交点",
+        "points": [
+          {
+            "x": 6.29,
+            "y": 4.95,
+            "label": "A"
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "label": "B"
+          },
+          {
+            "x": 7,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 4.31,
+            "y": 0,
+            "label": "D"
+          },
+          {
+            "x": 5,
+            "y": 1.73,
+            "label": "I"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "8",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "C",
+            "label": "5",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "7",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "D",
+            "label": "",
+            "dashed": true,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "I",
+            "label": "",
+            "dashed": true,
+            "emphasis": 4,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "A",
+            "from": "B",
+            "to": "D",
+            "label": "",
+            "ticks": 1
+          },
+          {
+            "at": "A",
+            "from": "D",
+            "to": "C",
+            "label": "",
+            "ticks": 1
+          },
+          {
+            "at": "B",
+            "from": "A",
+            "to": "I",
+            "label": "",
+            "ticks": 2
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "ここで三角形ABDだけを見ます。\nBIは角ABDを二等分し、向かい合う辺ADと点Iで交わっています。\nですから、もう一度、角の二等分線の性質が使えます。\n$AI:ID=BA:BD$ です。\n<<<TTS_READING>>>\nここでサンカクケイABDだけをミマス。BIはカクABDをニトウブンし、ムカイアウヘンADとテンIでマジワッテイマス。ですから、もういちど、カクのニトウブンセンのセイシツが使えます。AIタイIDイコールBAタイBDです。",
+      "visual_type": "step",
+      "visual_content": "③三角形ABDでBIが角ABDの二等分線であることから $AI:ID=AB:BD$ を使う",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[highlight] AI:ID = BA:BD"
+        ],
+        "caption": "三角形ABDで考える",
+        "points": [
+          {
+            "x": 6.29,
+            "y": 4.95,
+            "label": "A"
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "label": "B"
+          },
+          {
+            "x": 4.31,
+            "y": 0,
+            "label": "D"
+          },
+          {
+            "x": 5,
+            "y": 1.73,
+            "label": "I"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "8",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "D",
+            "label": "$\\frac{56}{13}$",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "I",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "I",
+            "to": "D",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "I",
+            "label": "",
+            "dashed": true,
+            "emphasis": 4,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "B",
+            "from": "A",
+            "to": "I",
+            "label": "",
+            "ticks": 2
+          },
+          {
+            "at": "B",
+            "from": "I",
+            "to": "D",
+            "label": "",
+            "ticks": 2
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "$BA=8$、$BD=\\frac{56}{13}$ を代入します。\n$AI:ID=8:\\frac{56}{13}$ です。\n比は両方を同じ数でかけても変わらないので、13倍します。\n$104:56$ となり、8で割って $13:7$ です。\n<<<TTS_READING>>>\nBAは8、BDは13ブンの56をダイニュウします。AIタイIDは、8タイ13ブンの56です。ヒはリョウホウをオナジカズでかけてもカワラナイので、13バイします。104タイ56となり、8でワッテ、13タイ7です。",
+      "visual_type": "step",
+      "visual_content": "④比を整理して $AI:ID$ を確定する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "AI:ID = BA:BD",
+          "[substitute: BA=8, BD=56/13 を代入] AI:ID = 8 : \\frac{56}{13}",
+          "[text] 両方を13倍する",
+          "104:56 = 13:7",
+          "[text][underline] 答えは $AI:ID=13:7$"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "答えは $AI:ID=13:7$ です。\n角の二等分線の性質を、三角形ABCと三角形ABDで2回使うのが要点でした。\n一般に $AI:ID=(AB+AC):BC$ となり、$13:7$ と一致します。\n<<<TTS_READING>>>\nコタエは、AIタイIDイコール13タイ7です。カクのニトウブンセンのセイシツを、サンカクケイABCとサンカクケイABDで2カイ使うのがヨウテンでした。イッパンに、AIタイIDはカッコABプラスACカッコトジ、タイBCとなり、13タイ7とイッチします。",
+      "visual_type": "summary",
+      "visual_content": "答え",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 二等分線の性質を2回使う",
+          "AI:ID = (AB+AC):BC = 13:7",
+          "[box] AI:ID = 13:7"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}

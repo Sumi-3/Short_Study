@@ -1,0 +1,147 @@
+{
+  "topic": "$0 \\leq \\theta < 2\\pi$ のとき、$y=\\sin\\theta+\\sqrt{3}\\cos\\theta$ の最大値と、そのときの $\\theta$ の値を求めよ。",
+  "model": "claude-opus-5",
+  "outline": [],
+  "unit": "数II 三角関数",
+  "difficulty": 3,
+  "subunit": "加法定理とその応用",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "$0 \\leq \\theta < 2\\pi$ のとき、$y=\\sin\\theta+\\sqrt{3}\\cos\\theta$ の最大値を求めます。\nそのときの $\\theta$ の値も答えます。\nサインとコサインが混ざったままでは最大値が見えません。\n三角関数の合成で1つにまとめます。\n<<<TTS_READING>>>\nゼロ 以上 2パイ 未満 の シータ に ついて、y イコール サイン シータ プラス ルート3 コサイン シータ の 最大値 を 求めます。\nその ときの シータ の 値 も 答えます。\nサイン と コサイン が 混ざった ままでは 最大値 が 見えません。\n三角関数 の 合成 で 1つ に まとめます。",
+      "visual_type": "hook",
+      "visual_content": "$\\sin\\theta+\\sqrt{3}\\cos\\theta$ を1つに"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\n1つ目に、三角関数の合成の公式の形を確認します。\n2つ目に、係数から $r=\\sqrt{a^2+b^2}$ を計算します。\n3つ目に、$\\cos\\alpha$ と $\\sin\\alpha$ の値から角 $\\alpha$ を決めて合成します。\n最後に、$\\theta$ の範囲から中身の角の範囲を調べ、最大値と $\\theta$ を確定します。\n<<<TTS_READING>>>\nまずは 解く 方針 を 確認します。\n1つ目 に、三角関数 の 合成 の 公式 の 形 を 確認します。\n2つ目 に、係数 から r イコール ルート エー2乗 プラス ビー2乗 を 計算します。\n3つ目 に、コサイン アルファ と サイン アルファ の 値 から 角 アルファ を 決めて 合成します。\n最後 に、シータ の 範囲 から 中身 の 角 の 範囲 を 調べ、最大値 と シータ を 確定します。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①三角関数の合成の公式の形を確認し、$a=1$、$b=\\sqrt{3}$ とみる",
+          "②$r=\\sqrt{a^2+b^2}$ を計算して振幅を求める",
+          "③$\\cos\\alpha$ と $\\sin\\alpha$ の値から $\\alpha$ を決めて合成する",
+          "④$\\theta$ の範囲から中身の角の範囲を調べ、最大値とそのときの $\\theta$ を確定する"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "三角関数の合成の公式です。\n$a\\sin\\theta+b\\cos\\theta$ は $r\\sin(\\theta+\\alpha)$ の形に直せます。\n今回は $\\sin\\theta$ の係数が $1$、$\\cos\\theta$ の係数が $\\sqrt{3}$ です。\nつまり $a=1$、$b=\\sqrt{3}$ とみます。\n<<<TTS_READING>>>\n三角関数 の 合成 の 公式 です。\nエー サイン シータ プラス ビー コサイン シータ は アール サイン かっこ シータ プラス アルファ の 形 に 直せます。\n今回 は サイン シータ の 係数 が 1、コサイン シータ の 係数 が ルート3 です。\nつまり エー イコール 1、ビー イコール ルート3 と みます。",
+      "visual_type": "step",
+      "visual_content": "①三角関数の合成の公式の形を確認し、$a=1$、$b=\\sqrt{3}$ とみる",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] a\\sin\\theta+b\\cos\\theta=r\\sin(\\theta+\\alpha)",
+          "[text] $r=\\sqrt{a^2+b^2}$ とおく",
+          "[underline] a=1,\\quad b=\\sqrt{3}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "次に振幅 $r$ を計算します。\n$r=\\sqrt{a^2+b^2}$ に $a=1$、$b=\\sqrt{3}$ を入れます。\n$1+3=4$ なので $r=2$ です。\nこの $2$ が、波の高さの上限になります。\n<<<TTS_READING>>>\n次 に 振幅 アール を 計算します。\nアール イコール ルート エー2乗 プラス ビー2乗 に エー イコール 1、ビー イコール ルート3 を 入れます。\n1 プラス 3 は 4 なので アール は 2 です。\nこの 2 が、波 の 高さ の 上限 に なります。",
+      "visual_type": "step",
+      "visual_content": "②$r=\\sqrt{a^2+b^2}$ を計算して振幅を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "r=\\sqrt{a^2+b^2}",
+          "[substitute: $a=1,b=\\sqrt{3}$ を代入] r=\\sqrt{1^2+(\\sqrt{3})^2}",
+          "[underline] r=\\sqrt{4}=2"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "角 $\\alpha$ は $\\cos\\alpha=\\frac{a}{r}$、$\\sin\\alpha=\\frac{b}{r}$ で決まります。\n$\\cos\\alpha=\\frac{1}{2}$、$\\sin\\alpha=\\frac{\\sqrt{3}}{2}$ です。\nどちらも正で、この値を満たす角は $\\frac{\\pi}{3}$ です。\nよって $y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)$ と合成できます。\n<<<TTS_READING>>>\n角 アルファ は コサイン アルファ イコール アール ぶんの エー、サイン アルファ イコール アール ぶんの ビー で 決まります。\nコサイン アルファ は 2ぶんの1、サイン アルファ は 2ぶんの ルート3 です。\nどちら も 正 で、この 値 を 満たす 角 は 3ぶんの パイ です。\nよって y イコール 2 サイン かっこ シータ プラス 3ぶんの パイ、と 合成 できます。",
+      "visual_type": "step",
+      "visual_content": "③$\\cos\\alpha$ と $\\sin\\alpha$ の値から $\\alpha$ を決めて合成する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "\\cos\\alpha=\\frac{1}{2},\\quad \\sin\\alpha=\\frac{\\sqrt{3}}{2}",
+          "[text] この2つを満たす角は $\\frac{\\pi}{3}$",
+          "[box] y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "最後に中身の角の範囲を調べます。\n$0 \\leq \\theta < 2\\pi$ の各辺に $\\frac{\\pi}{3}$ を足します。\nすると $\\frac{\\pi}{3} \\leq \\theta+\\frac{\\pi}{3} < \\frac{7\\pi}{3}$ です。\nこの範囲には $\\frac{\\pi}{2}$ が含まれます。\n<<<TTS_READING>>>\n最後 に 中身 の 角 の 範囲 を 調べます。\nゼロ 以上 2パイ 未満 の 各辺 に 3ぶんの パイ を 足します。\nすると 3ぶんの パイ 以上、シータ プラス 3ぶんの パイ は 3ぶんの 7パイ 未満 です。\nこの 範囲 には 2ぶんの パイ が 含まれます。",
+      "visual_type": "step",
+      "visual_content": "④$\\theta$ の範囲から中身の角の範囲を調べ、最大値とそのときの $\\theta$ を確定する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "0 \\leq \\theta < 2\\pi",
+          "[substitute: 各辺に $\\frac{\\pi}{3}$ を足す] \\frac{\\pi}{3} \\leq \\theta+\\frac{\\pi}{3} < \\frac{7\\pi}{3}",
+          "[text][underline] この範囲に $\\frac{\\pi}{2}$ は含まれる"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "サインは角が $\\frac{\\pi}{2}$ のとき最大の $1$ になります。\nこのとき $y=2 \\times 1=2$ です。\n$\\theta+\\frac{\\pi}{3}=\\frac{\\pi}{2}$ を解くと $\\theta=\\frac{\\pi}{6}$ です。\nグラフでも $\\theta=\\frac{\\pi}{6}$ で山の頂点になっています。\n<<<TTS_READING>>>\nサイン は 角 が 2ぶんの パイ の とき 最大 の 1 に なります。\nこの とき y は 2 かける 1 で 2 です。\nシータ プラス 3ぶんの パイ イコール 2ぶんの パイ を 解く と、シータ は 6ぶんの パイ です。\nグラフ でも シータ が 6ぶんの パイ で 山 の 頂点 に なって います。",
+      "visual_type": "step",
+      "visual_content": "④$\\theta$ の範囲から中身の角の範囲を調べ、最大値とそのときの $\\theta$ を確定する",
+      "visual": {
+        "kind": "plot",
+        "lines": [
+          "[text] $\\sin$ が最大 $1$ になるのは角が $\\frac{\\pi}{2}$",
+          "[box] \\theta=\\frac{\\pi}{6},\\quad y=2"
+        ],
+        "caption": "山の頂点が最大値",
+        "xRange": [
+          0,
+          6.28
+        ],
+        "yRange": [
+          -2.5,
+          2.5
+        ],
+        "curves": [
+          {
+            "expr": "2*sin(x+pi/3)",
+            "exprY": null,
+            "label": "$y=2\\sin(\\theta+\\frac{\\pi}{3})$",
+            "region": null
+          }
+        ],
+        "tRange": null,
+        "shade": null,
+        "points": [
+          {
+            "x": 0.5236,
+            "y": 2,
+            "label": "[guide]最大"
+          }
+        ]
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "まとめます。\n合成すると $y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)$ でした。\n最大値は $2$、そのときの $\\theta$ は $\\frac{\\pi}{6}$ です。\n係数から $r$ と $\\alpha$ を求めて1つの波に直すのが要点です。\n<<<TTS_READING>>>\nまとめます。\n合成 すると y イコール 2 サイン かっこ シータ プラス 3ぶんの パイ、でした。\n最大値 は 2、その ときの シータ は 6ぶんの パイ です。\n係数 から アール と アルファ を 求めて 1つ の 波 に 直す の が 要点 です。",
+      "visual_type": "summary",
+      "visual_content": "答え",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "y=2\\sin\\left(\\theta+\\frac{\\pi}{3}\\right)",
+          "[text] 答え",
+          "[underline] \\text{最大値}\\ 2\\quad(\\theta=\\frac{\\pi}{6})"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}

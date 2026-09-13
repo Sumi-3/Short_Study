@@ -1,0 +1,354 @@
+{
+  "topic": "1辺の長さが $6$ cm の正四面体 $ABCD$ について、次の問いに答えよ。\n(1) 底面を $\\triangle BCD$ としたときの高さを求めよ。\n(2) 体積を求めよ。",
+  "model": "handwritten",
+  "outline": [
+    "1辺の長さが $6$ cm の正四面体 $ABCD$ がある。",
+    "(1) 底面を $\\triangle BCD$ としたときの高さを求めよ。",
+    "(2) 体積を求めよ。"
+  ],
+  "unit": "中3 図形",
+  "difficulty": 5,
+  "subunit": "三平方の定理",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "1辺の長さが $6$ cm の正四面体 $ABCD$ について考えます。\nかっこ1では、底面を三角形 $BCD$ としたときの高さを求めます。\nかっこ2では、体積を求めます。\n番号の順に解いていきます。\n<<<TTS_READING>>>\n1辺の長さが6センチメートルの正四面体エービーシーディーについて考えます。\nかっこ1では、底面を三角形ビーシーディーとしたときの高さを求めます。\nかっこ2では、体積を求めます。\n番号の順に解いていきます。",
+      "visual_type": "hook",
+      "visual_content": "垂線の足は底面の重心"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずはかっこ1の問題から解説します。\nはじめに、底面の正三角形 $BCD$ だけを取り出して、中線の長さと重心までの距離を求めます。\n次に、頂点 $A$ から底面へ下ろした垂線を辺として、直角三角形をつくります。\nその直角三角形に三平方の定理を使えば、高さが出ます。\n<<<TTS_READING>>>\nまずはかっこ1の問題から解説します。\nはじめに、底面の正三角形ビーシーディーだけを取り出して、中線の長さと重心までの距離を求めます。\n次に、頂点エーから底面へおろした垂線を辺として、直角三角形をつくります。\nその直角三角形に三平方の定理を使えば、高さが出ます。",
+      "visual_type": "step",
+      "visual_content": "(1)の方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①底面の正三角形 $BCD$ を取り出し、中線の長さを求める",
+          "②重心が中線を $2:1$ に分けることから、頂点までの距離を求める",
+          "③直角三角形 $ABH$ に三平方の定理を使い、高さ $AH$ を求める"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "底面の正三角形 $BCD$ を、真上から見た形で取り出します。\n辺 $BC$ の中点を $M$ とすると、$DM$ が中線です。\n正三角形では中線が底辺に垂直なので、三角形 $BMD$ は直角三角形になります。\n$BM$ は $BC$ の半分の $3$、$BD$ は $6$ です。\n<<<TTS_READING>>>\n底面の正三角形ビーシーディーを、真上から見た形で取り出します。\n辺ビーシーの中点をエムとすると、ディーエムが中線です。\n正三角形では中線が底辺に垂直なので、三角形ビーエムディーは直角三角形になります。\nビーエムはビーシーの半分の3、ビーディーは6です。",
+      "visual_type": "step",
+      "visual_content": "①底面の正三角形 $BCD$ を取り出し、中線の長さを求める",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] $BM = 3$、$BD = 6$"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": -3,
+            "y": 0,
+            "label": "B"
+          },
+          {
+            "x": 3,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 0,
+            "y": 5.1962,
+            "label": "D"
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "label": "M"
+          }
+        ],
+        "segments": [
+          {
+            "from": "B",
+            "to": "M",
+            "label": "$3$",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "M",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "D",
+            "label": "$6$",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "D",
+            "to": "B",
+            "label": "$6$",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "D",
+            "to": "M",
+            "label": "$?$",
+            "dashed": true,
+            "emphasis": 4,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "M",
+            "from": "D",
+            "to": "C",
+            "label": "",
+            "ticks": 0
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "直角三角形 $BMD$ に三平方の定理を使います。\n斜辺の $BD$ が $6$、直角をはさむ $BM$ が $3$ なので、$DM$ の2乗は $36$ ひく $9$ です。\n$27$ になるので、$DM$ は $\\sqrt{27}$、つまり $3\\sqrt{3}$ です。\nこれが底面の正三角形の中線の長さです。\n<<<TTS_READING>>>\n直角三角形ビーエムディーに三平方の定理を使います。\n斜辺のビーディーが6、直角をはさむビーエムが3なので、ディーエムの2乗は、36ひく9です。\n27になるので、ディーエムはルート27、つまり3ルート3です。\nこれが底面の正三角形の中線の長さです。",
+      "visual_type": "step",
+      "visual_content": "①底面の正三角形 $BCD$ を取り出し、中線の長さを求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] DM^2 = BD^2 - BM^2",
+          "[substitute: BD=6, BM=3 を代入] DM^2 = 36 - 9 = 27",
+          "[underline] DM = 3\\sqrt{3}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "垂線の足を $H$ とします。\n正四面体では、$H$ は底面の正三角形の重心になります。\n重心は中線を頂点から $2$ 対 $1$ に分ける点です。\n中線の長さはどれも $3\\sqrt{3}$ なので、$BH$ はその3分の2で $2\\sqrt{3}$ です。\n<<<TTS_READING>>>\n垂線の足をエイチとします。\n正四面体では、エイチは底面の正三角形の重心になります。\n重心は中線を、頂点から2たい1に分ける点です。\n中線の長さはどれも3ルート3なので、ビーエイチはその3分の2で、2ルート3です。",
+      "visual_type": "step",
+      "visual_content": "②重心が中線を $2:1$ に分けることから、頂点までの距離を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 重心は中線を $2:1$ に分ける",
+          "BH = \\frac{2}{3} \\times 3\\sqrt{3}",
+          "[underline] BH = 2\\sqrt{3}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "立体の見取り図で、使う直角三角形を確かめます。\n頂点 $A$ から底面に下ろした垂線 $AH$ が、求める高さです。\n$AH$ は底面に垂直なので、三角形 $ABH$ は $H$ が直角の直角三角形です。\n斜辺が $AB$ の $6$、底辺が $BH$ の $2\\sqrt{3}$ です。\n<<<TTS_READING>>>\n立体の見取り図で、使う直角三角形を確かめます。\n頂点エーから底面におろした垂線エーエイチが、求める高さです。\nエーエイチは底面に垂直なので、三角形エービーエイチは、エイチが直角の直角三角形です。\n斜辺がエービーの6、底辺がビーエイチの2ルート3です。",
+      "visual_type": "step",
+      "visual_content": "③直角三角形 $ABH$ に三平方の定理を使い、高さ $AH$ を求める",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] $AH$ は底面に垂直"
+        ],
+        "caption": "",
+        "points": [
+          {
+            "x": 0.2,
+            "y": 5.6,
+            "label": "A"
+          },
+          {
+            "x": -3,
+            "y": 0,
+            "label": "B"
+          },
+          {
+            "x": 3,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 0.6,
+            "y": 1.7,
+            "label": "D"
+          },
+          {
+            "x": 0.2,
+            "y": 0.5667,
+            "label": "H"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "$6$",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "D",
+            "label": "",
+            "dashed": true,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "",
+            "dashed": false,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "D",
+            "label": "",
+            "dashed": true,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "D",
+            "to": "B",
+            "label": "",
+            "dashed": true,
+            "emphasis": 0,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "H",
+            "label": "$?$",
+            "dashed": true,
+            "emphasis": 4,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "H",
+            "label": "$2\\sqrt{3}$",
+            "dashed": true,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "三平方の定理で高さを求めます。\n$AH$ の2乗は、$AB$ の2乗ひく $BH$ の2乗です。\n$AB$ の2乗は $36$、$BH$ の2乗は $2\\sqrt{3}$ の2乗で $12$ です。\n$36$ ひく $12$ は $24$ なので、$AH$ は $\\sqrt{24}$、つまり $2\\sqrt{6}$ cm です。\n<<<TTS_READING>>>\n三平方の定理で高さを求めます。\nエーエイチの2乗は、エービーの2乗ひくビーエイチの2乗です。\nエービーの2乗は36、ビーエイチの2乗は、2ルート3の2乗で12です。\n36ひく12は24なので、エーエイチはルート24、つまり2ルート6センチメートルです。",
+      "visual_type": "step",
+      "visual_content": "③直角三角形 $ABH$ に三平方の定理を使い、高さ $AH$ を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] AH^2 = AB^2 - BH^2",
+          "[substitute: 長さを代入する] AH^2 = 36 - 12 = 24",
+          "[text] (1)の答え",
+          "[underline] AH = 2\\sqrt{6} \\,\\text{cm}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "次はかっこ2を解説します。\nはじめに、底面の正三角形 $BCD$ の面積を求めます。\nかっこ1で中線の長さが分かっているので、それが正三角形の高さとして使えます。\n最後に、角錐の体積の公式に、底面積とかっこ1で求めた高さを入れます。\n<<<TTS_READING>>>\n次はかっこ2を解説します。\nはじめに、底面の正三角形ビーシーディーの面積を求めます。\nかっこ1で中線の長さが分かっているので、それが正三角形の高さとして使えます。\n最後に、角錐の体積の公式に、底面積とかっこ1で求めた高さを入れます。",
+      "visual_type": "step",
+      "visual_content": "(2)の方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①(1)で求めた中線を高さとして、底面 $\\triangle BCD$ の面積を求める",
+          "②角錐の体積の公式に底面積と(1)の高さを入れて、体積を求める"
+        ]
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "底面積を求めます。\n中線 $DM$ は底辺 $BC$ に垂直なので、$DM$ がそのまま正三角形の高さです。\n底辺が $6$、高さが $3\\sqrt{3}$ なので、面積は2分の1かける $6$ かける $3\\sqrt{3}$ です。\n$3$ かける $3\\sqrt{3}$ で、$9\\sqrt{3}$ になります。\n<<<TTS_READING>>>\n底面積を求めます。\n中線ディーエムは底辺ビーシーに垂直なので、ディーエムがそのまま正三角形の高さです。\n底辺が6、高さが3ルート3なので、面積は、2分の1かける6かける3ルート3です。\n3かける3ルート3で、9ルート3になります。",
+      "visual_type": "step",
+      "visual_content": "①(1)で求めた中線を高さとして、底面 $\\triangle BCD$ の面積を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 中線 $DM$ が正三角形の高さ",
+          "S = \\frac{1}{2} \\times 6 \\times 3\\sqrt{3}",
+          "[underline] S = 9\\sqrt{3}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "体積を求めます。\n角錐の体積は、3分の1かける底面積かける高さです。\n底面積が $9\\sqrt{3}$、高さが $2\\sqrt{6}$ なので、3分の1かける $9\\sqrt{3}$ かける $2\\sqrt{6}$ です。\n根号の中をかけると $\\sqrt{18}$ で $3\\sqrt{2}$ になるので、体積は $18\\sqrt{2}$ 立方センチメートルです。\n<<<TTS_READING>>>\n体積を求めます。\n角錐の体積は、3分の1かける底面積かける高さです。\n底面積が9ルート3、高さが2ルート6なので、3分の1かける9ルート3かける2ルート6です。\n根号の中をかけるとルート18で、3ルート2になるので、体積は18ルート2立方センチメートルです。",
+      "visual_type": "step",
+      "visual_content": "②角錐の体積の公式に底面積と(1)の高さを入れて、体積を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] V = \\frac{1}{3} S h",
+          "[substitute: 底面積と高さを代入] V = \\frac{1}{3} \\times 9\\sqrt{3} \\times 2\\sqrt{6}",
+          "[text] (2)の答え",
+          "[underline] V = 18\\sqrt{2} \\,\\text{cm}^3"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 11,
+      "narration": "まとめます。\n底面の中線が $3\\sqrt{3}$、重心までの距離が $2\\sqrt{3}$ でした。\nかっこ1の高さは $2\\sqrt{6}$ cm です。\n底面積 $9\\sqrt{3}$ と合わせて、かっこ2の体積は $18\\sqrt{2}$ 立方センチメートルです。\n<<<TTS_READING>>>\nまとめます。\n底面の中線が3ルート3、重心までの距離が2ルート3でした。\nかっこ1の高さは、2ルート6センチメートルです。\n底面積9ルート3と合わせて、かっこ2の体積は、18ルート2立方センチメートルです。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] (1)の答え",
+          "[box] AH = 2\\sqrt{6} \\,\\text{cm}",
+          "[text] (2)の答え",
+          "[box] V = 18\\sqrt{2} \\,\\text{cm}^3"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}

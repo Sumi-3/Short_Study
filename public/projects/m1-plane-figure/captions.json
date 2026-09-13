@@ -1,0 +1,2081 @@
+[
+  [
+    {
+      "text": "角",
+      "startMs": 119.458,
+      "endMs": 339.374,
+      "timestampMs": 229.416,
+      "confidence": 1
+    },
+    {
+      "text": "エー",
+      "startMs": 350.916,
+      "endMs": 547.6659999999999,
+      "timestampMs": 449.29099999999994,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 559.25,
+      "endMs": 975.9159999999999,
+      "timestampMs": 767.583,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 987.5,
+      "endMs": 1207.416,
+      "timestampMs": 1097.458,
+      "confidence": 1
+    },
+    {
+      "text": "68",
+      "startMs": 1323.166,
+      "endMs": 2040.7489999999998,
+      "timestampMs": 1681.9575,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 2052.333,
+      "endMs": 2144.916,
+      "timestampMs": 2098.6245,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 2156.5,
+      "endMs": 2515.291,
+      "timestampMs": 2335.8955,
+      "confidence": 1
+    },
+    {
+      "text": "この",
+      "startMs": 3379.625,
+      "endMs": 3576.375,
+      "timestampMs": 3478,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 3587.958,
+      "endMs": 3819.458,
+      "timestampMs": 3703.708,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 3831,
+      "endMs": 3935.166,
+      "timestampMs": 3883.083,
+      "confidence": 1
+    },
+    {
+      "text": "二等分線",
+      "startMs": 3946.75,
+      "endMs": 4722.208,
+      "timestampMs": 4334.478999999999,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 4733.791,
+      "endMs": 4837.957,
+      "timestampMs": 4785.874,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 4849.541,
+      "endMs": 5393.541,
+      "timestampMs": 5121.541,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 5405.083,
+      "endMs": 5474.540999999999,
+      "timestampMs": 5439.812,
+      "confidence": 1
+    },
+    {
+      "text": "し",
+      "startMs": 5486.125,
+      "endMs": 5625,
+      "timestampMs": 5555.5625,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 5636.583,
+      "endMs": 5983.790999999999,
+      "timestampMs": 5810.187,
+      "confidence": 1
+    },
+    {
+      "text": "さら",
+      "startMs": 6805.541,
+      "endMs": 7060.166,
+      "timestampMs": 6932.8535,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 7071.75,
+      "endMs": 7361.083,
+      "timestampMs": 7216.416499999999,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 7638.875,
+      "endMs": 7893.5,
+      "timestampMs": 7766.1875,
+      "confidence": 1
+    },
+    {
+      "text": "エー",
+      "startMs": 7905.083,
+      "endMs": 8136.583,
+      "timestampMs": 8020.833,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 8148.166,
+      "endMs": 8622.707,
+      "timestampMs": 8385.4365,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 8634.25,
+      "endMs": 8738.416,
+      "timestampMs": 8686.332999999999,
+      "confidence": 1
+    },
+    {
+      "text": "二等分線",
+      "startMs": 8750,
+      "endMs": 9548.625,
+      "timestampMs": 9149.3125,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 9560.166,
+      "endMs": 9652.749,
+      "timestampMs": 9606.4575,
+      "confidence": 1
+    },
+    {
+      "text": "オーディー",
+      "startMs": 9664.333,
+      "endMs": 10161.999,
+      "timestampMs": 9913.166000000001,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 10173.625,
+      "endMs": 10254.625,
+      "timestampMs": 10214.125,
+      "confidence": 1
+    },
+    {
+      "text": "し",
+      "startMs": 10266.208,
+      "endMs": 10393.541000000001,
+      "timestampMs": 10329.874500000002,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 10405.083,
+      "endMs": 10763.874,
+      "timestampMs": 10584.478500000001,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 11585.666,
+      "endMs": 11851.874,
+      "timestampMs": 11718.77,
+      "confidence": 1
+    },
+    {
+      "text": "ディー",
+      "startMs": 11863.416,
+      "endMs": 12048.581999999999,
+      "timestampMs": 11955.999,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 12060.166,
+      "endMs": 12476.831999999999,
+      "timestampMs": 12268.499,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 12488.416,
+      "endMs": 12580.999,
+      "timestampMs": 12534.7075,
+      "confidence": 1
+    },
+    {
+      "text": "大きさ",
+      "startMs": 12592.583,
+      "endMs": 13009.249,
+      "timestampMs": 12800.916000000001,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 13020.833,
+      "endMs": 13113.416000000001,
+      "timestampMs": 13067.124500000002,
+      "confidence": 1
+    },
+    {
+      "text": "求め",
+      "startMs": 13125,
+      "endMs": 13472.208,
+      "timestampMs": 13298.604,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 13483.791,
+      "endMs": 13819.456999999999,
+      "timestampMs": 13651.624,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "まず",
+      "startMs": 119.458,
+      "endMs": 397.249,
+      "timestampMs": 258.35350000000005,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 408.791,
+      "endMs": 524.5409999999999,
+      "timestampMs": 466.66599999999994,
+      "confidence": 1
+    },
+    {
+      "text": "解く",
+      "startMs": 536.125,
+      "endMs": 779.1659999999999,
+      "timestampMs": 657.6455,
+      "confidence": 1
+    },
+    {
+      "text": "方針",
+      "startMs": 790.75,
+      "endMs": 1265.291,
+      "timestampMs": 1028.0205,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 1276.833,
+      "endMs": 1369.4160000000002,
+      "timestampMs": 1323.1245000000001,
+      "confidence": 1
+    },
+    {
+      "text": "確認",
+      "startMs": 1381,
+      "endMs": 1809.25,
+      "timestampMs": 1595.125,
+      "confidence": 1
+    },
+    {
+      "text": "し",
+      "startMs": 1820.833,
+      "endMs": 1959.708,
+      "timestampMs": 1890.2705,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 1971.291,
+      "endMs": 2330.082,
+      "timestampMs": 2150.6865,
+      "confidence": 1
+    },
+    {
+      "text": "はじめ",
+      "startMs": 3148.166,
+      "endMs": 3483.8320000000003,
+      "timestampMs": 3315.9990000000003,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 3495.375,
+      "endMs": 3761.583,
+      "timestampMs": 3628.4790000000003,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 4016.208,
+      "endMs": 4270.8330000000005,
+      "timestampMs": 4143.5205000000005,
+      "confidence": 1
+    },
+    {
+      "text": "エー",
+      "startMs": 4282.416,
+      "endMs": 4490.749,
+      "timestampMs": 4386.5825,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 4502.333,
+      "endMs": 4907.415999999999,
+      "timestampMs": 4704.8745,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 4919,
+      "endMs": 5057.875,
+      "timestampMs": 4988.4375,
+      "confidence": 1
+    },
+    {
+      "text": "二等分線",
+      "startMs": 5092.583,
+      "endMs": 5879.624,
+      "timestampMs": 5486.103499999999,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 5891.208,
+      "endMs": 6342.583,
+      "timestampMs": 6116.8955,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 6354.166,
+      "endMs": 6446.749,
+      "timestampMs": 6400.4575,
+      "confidence": 1
+    },
+    {
+      "text": "図",
+      "startMs": 6458.333,
+      "endMs": 6574.083,
+      "timestampMs": 6516.208,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 6585.666,
+      "endMs": 6689.832,
+      "timestampMs": 6637.749,
+      "confidence": 1
+    },
+    {
+      "text": "確かめ",
+      "startMs": 6701.375,
+      "endMs": 7164.333,
+      "timestampMs": 6932.853999999999,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 7175.916,
+      "endMs": 7523.124,
+      "timestampMs": 7349.52,
+      "confidence": 1
+    },
+    {
+      "text": "次",
+      "startMs": 8344.916,
+      "endMs": 8622.706999999999,
+      "timestampMs": 8483.8115,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 8634.25,
+      "endMs": 8831,
+      "timestampMs": 8732.625,
+      "confidence": 1
+    },
+    {
+      "text": "二等分線",
+      "startMs": 9166.666,
+      "endMs": 9930.541,
+      "timestampMs": 9548.6035,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 9942.125,
+      "endMs": 10092.583,
+      "timestampMs": 10017.354,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 10115.75,
+      "endMs": 10381.958,
+      "timestampMs": 10248.854,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 10393.5,
+      "endMs": 10486.083,
+      "timestampMs": 10439.7915,
+      "confidence": 1
+    },
+    {
+      "text": "半分",
+      "startMs": 10497.666,
+      "endMs": 10914.331999999999,
+      "timestampMs": 10705.999,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 10925.916,
+      "endMs": 11030.081999999999,
+      "timestampMs": 10977.999,
+      "confidence": 1
+    },
+    {
+      "text": "分ける",
+      "startMs": 11041.666,
+      "endMs": 11377.331999999999,
+      "timestampMs": 11209.499,
+      "confidence": 1
+    },
+    {
+      "text": "こと",
+      "startMs": 11388.875,
+      "endMs": 11608.791,
+      "timestampMs": 11498.832999999999,
+      "confidence": 1
+    },
+    {
+      "text": "から",
+      "startMs": 11620.375,
+      "endMs": 11932.875,
+      "timestampMs": 11776.625,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 12233.791,
+      "endMs": 12465.291,
+      "timestampMs": 12349.541,
+      "confidence": 1
+    },
+    {
+      "text": "エー",
+      "startMs": 12476.833,
+      "endMs": 12673.583,
+      "timestampMs": 12575.208,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 12685.166,
+      "endMs": 13171.291,
+      "timestampMs": 12928.2285,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 13182.875,
+      "endMs": 13275.458,
+      "timestampMs": 13229.1665,
+      "confidence": 1
+    },
+    {
+      "text": "求め",
+      "startMs": 13287.041,
+      "endMs": 13622.706999999999,
+      "timestampMs": 13454.874,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 13634.25,
+      "endMs": 14004.625,
+      "timestampMs": 13819.4375,
+      "confidence": 1
+    },
+    {
+      "text": "さら",
+      "startMs": 14826.375,
+      "endMs": 15092.583,
+      "timestampMs": 14959.479,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 15104.166,
+      "endMs": 15393.499,
+      "timestampMs": 15248.8325,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 15682.875,
+      "endMs": 15937.5,
+      "timestampMs": 15810.1875,
+      "confidence": 1
+    },
+    {
+      "text": "エー",
+      "startMs": 15949.083,
+      "endMs": 16157.416000000001,
+      "timestampMs": 16053.249500000002,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 16169,
+      "endMs": 16620.375,
+      "timestampMs": 16394.6875,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 16631.958,
+      "endMs": 16724.540999999997,
+      "timestampMs": 16678.249499999998,
+      "confidence": 1
+    },
+    {
+      "text": "二等分",
+      "startMs": 16736.125,
+      "endMs": 17256.958,
+      "timestampMs": 16996.5415,
+      "confidence": 1
+    },
+    {
+      "text": "し",
+      "startMs": 17268.5,
+      "endMs": 17395.833,
+      "timestampMs": 17332.1665,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 17407.416,
+      "endMs": 17604.166,
+      "timestampMs": 17505.791,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 17905.083,
+      "endMs": 18182.874,
+      "timestampMs": 18043.978499999997,
+      "confidence": 1
+    },
+    {
+      "text": "ディー",
+      "startMs": 18194.458,
+      "endMs": 18368.083,
+      "timestampMs": 18281.2705,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 18379.625,
+      "endMs": 18819.458,
+      "timestampMs": 18599.5415,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 18831,
+      "endMs": 18935.166,
+      "timestampMs": 18883.083,
+      "confidence": 1
+    },
+    {
+      "text": "出し",
+      "startMs": 18946.75,
+      "endMs": 19201.375,
+      "timestampMs": 19074.0625,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 19212.958,
+      "endMs": 19560.165999999997,
+      "timestampMs": 19386.561999999998,
+      "confidence": 1
+    },
+    {
+      "text": "最後",
+      "startMs": 20381.958,
+      "endMs": 20752.333,
+      "timestampMs": 20567.1455,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 20763.875,
+      "endMs": 20995.375,
+      "timestampMs": 20879.625,
+      "confidence": 1
+    },
+    {
+      "text": "2つ",
+      "startMs": 21226.833,
+      "endMs": 21550.915999999997,
+      "timestampMs": 21388.874499999998,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 21562.5,
+      "endMs": 21678.25,
+      "timestampMs": 21620.375,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 21689.833,
+      "endMs": 21921.333,
+      "timestampMs": 21805.583,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 21932.875,
+      "endMs": 22013.875,
+      "timestampMs": 21973.375,
+      "confidence": 1
+    },
+    {
+      "text": "たし",
+      "startMs": 22025.458,
+      "endMs": 22280.083,
+      "timestampMs": 22152.7705,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 22291.666,
+      "endMs": 22476.832000000002,
+      "timestampMs": 22384.249000000003,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 22731.5,
+      "endMs": 23009.291,
+      "timestampMs": 22870.3955,
+      "confidence": 1
+    },
+    {
+      "text": "ディー",
+      "startMs": 23020.833,
+      "endMs": 23205.999,
+      "timestampMs": 23113.415999999997,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 23217.583,
+      "endMs": 23622.665999999997,
+      "timestampMs": 23420.124499999998,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 23634.25,
+      "endMs": 23726.833,
+      "timestampMs": 23680.5415,
+      "confidence": 1
+    },
+    {
+      "text": "求め",
+      "startMs": 23738.416,
+      "endMs": 24074.082000000002,
+      "timestampMs": 23906.249000000003,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 24085.666,
+      "endMs": 24444.457000000002,
+      "timestampMs": 24265.061500000003,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "図",
+      "startMs": 119.458,
+      "endMs": 258.33299999999997,
+      "timestampMs": 188.89549999999997,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 269.916,
+      "endMs": 385.666,
+      "timestampMs": 327.791,
+      "confidence": 1
+    },
+    {
+      "text": "確かめ",
+      "startMs": 397.208,
+      "endMs": 860.166,
+      "timestampMs": 628.687,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 871.75,
+      "endMs": 1218.958,
+      "timestampMs": 1045.354,
+      "confidence": 1
+    },
+    {
+      "text": "点",
+      "startMs": 2071.75,
+      "endMs": 2233.791,
+      "timestampMs": 2152.7705,
+      "confidence": 1
+    },
+    {
+      "text": "オー",
+      "startMs": 2245.375,
+      "endMs": 2419,
+      "timestampMs": 2332.1875,
+      "confidence": 1
+    },
+    {
+      "text": "から",
+      "startMs": 2430.541,
+      "endMs": 2673.5820000000003,
+      "timestampMs": 2552.0615000000003,
+      "confidence": 1
+    },
+    {
+      "text": "3本",
+      "startMs": 2685.166,
+      "endMs": 3159.7079000000003,
+      "timestampMs": 2922.4369500000003,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 3171.291,
+      "endMs": 3275.4570000000003,
+      "timestampMs": 3223.3740000000003,
+      "confidence": 1
+    },
+    {
+      "text": "半",
+      "startMs": 3287.041,
+      "endMs": 3483.791,
+      "timestampMs": 3385.416,
+      "confidence": 1
+    },
+    {
+      "text": "直線",
+      "startMs": 3495.375,
+      "endMs": 3923.625,
+      "timestampMs": 3709.5,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 3935.166,
+      "endMs": 4039.3320000000003,
+      "timestampMs": 3987.2490000000003,
+      "confidence": 1
+    },
+    {
+      "text": "出",
+      "startMs": 4050.916,
+      "endMs": 4155.082,
+      "timestampMs": 4102.999,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 4166.666,
+      "endMs": 4247.666,
+      "timestampMs": 4207.166,
+      "confidence": 1
+    },
+    {
+      "text": "い",
+      "startMs": 4259.25,
+      "endMs": 4363.416,
+      "timestampMs": 4311.3330000000005,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 4375,
+      "endMs": 4699.083,
+      "timestampMs": 4537.041499999999,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 5555.541,
+      "endMs": 5740.707,
+      "timestampMs": 5648.124,
+      "confidence": 1
+    },
+    {
+      "text": "エー",
+      "startMs": 5752.333,
+      "endMs": 5949.083,
+      "timestampMs": 5850.708,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 5960.666,
+      "endMs": 6377.332,
+      "timestampMs": 6168.999,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 6388.875,
+      "endMs": 6516.208,
+      "timestampMs": 6452.541499999999,
+      "confidence": 1
+    },
+    {
+      "text": "68",
+      "startMs": 6527.791,
+      "endMs": 7210.6249,
+      "timestampMs": 6869.20795,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 7222.208,
+      "endMs": 7314.790999999999,
+      "timestampMs": 7268.4995,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 7326.375,
+      "endMs": 7523.125,
+      "timestampMs": 7424.75,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 7824.083,
+      "endMs": 8321.749,
+      "timestampMs": 8072.915999999999,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 8333.333,
+      "endMs": 8460.666000000001,
+      "timestampMs": 8396.999500000002,
+      "confidence": 1
+    },
+    {
+      "text": "その",
+      "startMs": 8483.791,
+      "endMs": 8738.416,
+      "timestampMs": 8611.1035,
+      "confidence": 1
+    },
+    {
+      "text": "二等分線",
+      "startMs": 8750,
+      "endMs": 9583.333,
+      "timestampMs": 9166.6665,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 9594.916,
+      "endMs": 9930.581999999999,
+      "timestampMs": 9762.749,
+      "confidence": 1
+    },
+    {
+      "text": "二等分線",
+      "startMs": 10752.333,
+      "endMs": 11585.666000000001,
+      "timestampMs": 11168.999500000002,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 11597.208,
+      "endMs": 11828.708,
+      "timestampMs": 11712.958,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 12118.041,
+      "endMs": 12384.249,
+      "timestampMs": 12251.145,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 12395.833,
+      "endMs": 12476.833,
+      "timestampMs": 12436.333,
+      "confidence": 1
+    },
+    {
+      "text": "ぴったり",
+      "startMs": 12488.416,
+      "endMs": 12951.374,
+      "timestampMs": 12719.895,
+      "confidence": 1
+    },
+    {
+      "text": "重ね",
+      "startMs": 12962.958,
+      "endMs": 13321.749,
+      "timestampMs": 13142.353500000001,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 13333.333,
+      "endMs": 13425.916000000001,
+      "timestampMs": 13379.624500000002,
+      "confidence": 1
+    },
+    {
+      "text": "折る",
+      "startMs": 13437.5,
+      "endMs": 13657.416,
+      "timestampMs": 13547.457999999999,
+      "confidence": 1
+    },
+    {
+      "text": "線",
+      "startMs": 13669,
+      "endMs": 13888.916,
+      "timestampMs": 13778.957999999999,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 13900.458,
+      "endMs": 13981.458,
+      "timestampMs": 13940.958,
+      "confidence": 1
+    },
+    {
+      "text": "も",
+      "startMs": 13993.041,
+      "endMs": 14085.624,
+      "timestampMs": 14039.3325,
+      "confidence": 1
+    },
+    {
+      "text": "あり",
+      "startMs": 14097.208,
+      "endMs": 14293.958,
+      "timestampMs": 14195.583,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 14305.541,
+      "endMs": 14664.331999999999,
+      "timestampMs": 14484.9365,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "二等分線",
+      "startMs": 119.458,
+      "endMs": 918.083,
+      "timestampMs": 518.7705,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 929.625,
+      "endMs": 1114.791,
+      "timestampMs": 1022.208,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 1149.541,
+      "endMs": 1404.166,
+      "timestampMs": 1276.8535,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 1415.75,
+      "endMs": 1508.333,
+      "timestampMs": 1462.0415,
+      "confidence": 1
+    },
+    {
+      "text": "半分",
+      "startMs": 1519.916,
+      "endMs": 1948.166,
+      "timestampMs": 1734.041,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 1959.708,
+      "endMs": 2075.458,
+      "timestampMs": 2017.583,
+      "confidence": 1
+    },
+    {
+      "text": "分け",
+      "startMs": 2087.041,
+      "endMs": 2318.541,
+      "timestampMs": 2202.791,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 2330.083,
+      "endMs": 2665.7490000000003,
+      "timestampMs": 2497.916,
+      "confidence": 1
+    },
+    {
+      "text": "だ",
+      "startMs": 3483.791,
+      "endMs": 3611.1240000000003,
+      "timestampMs": 3547.4575000000004,
+      "confidence": 1
+    },
+    {
+      "text": "から",
+      "startMs": 3622.666,
+      "endMs": 3958.3320000000003,
+      "timestampMs": 3790.4990000000003,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 4259.25,
+      "endMs": 4502.291,
+      "timestampMs": 4380.7705000000005,
+      "confidence": 1
+    },
+    {
+      "text": "エー",
+      "startMs": 4513.875,
+      "endMs": 4722.208,
+      "timestampMs": 4618.041499999999,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 4733.791,
+      "endMs": 5185.166,
+      "timestampMs": 4959.4785,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 5196.75,
+      "endMs": 5347.208,
+      "timestampMs": 5271.978999999999,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 5370.375,
+      "endMs": 5613.416,
+      "timestampMs": 5491.8955000000005,
+      "confidence": 1
+    },
+    {
+      "text": "シー",
+      "startMs": 5625,
+      "endMs": 5856.5,
+      "timestampMs": 5740.75,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 5868.041,
+      "endMs": 6238.416,
+      "timestampMs": 6053.2285,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 6250,
+      "endMs": 6446.75,
+      "timestampMs": 6348.375,
+      "confidence": 1
+    },
+    {
+      "text": "等しく",
+      "startMs": 6469.916,
+      "endMs": 6944.457,
+      "timestampMs": 6707.1865,
+      "confidence": 1
+    },
+    {
+      "text": "なり",
+      "startMs": 6956,
+      "endMs": 7141.166,
+      "timestampMs": 7048.5830000000005,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 7152.791,
+      "endMs": 7488.457,
+      "timestampMs": 7320.624,
+      "confidence": 1
+    },
+    {
+      "text": "68",
+      "startMs": 8310.166,
+      "endMs": 9050.916,
+      "timestampMs": 8680.541,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 9074.083,
+      "endMs": 9166.666000000001,
+      "timestampMs": 9120.374500000002,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 9178.25,
+      "endMs": 9247.708,
+      "timestampMs": 9212.979,
+      "confidence": 1
+    },
+    {
+      "text": "2",
+      "startMs": 9259.25,
+      "endMs": 9386.583,
+      "timestampMs": 9322.9165,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 9398.166,
+      "endMs": 9490.749,
+      "timestampMs": 9444.4575,
+      "confidence": 1
+    },
+    {
+      "text": "わっ",
+      "startMs": 9502.333,
+      "endMs": 9710.666000000001,
+      "timestampMs": 9606.499500000002,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 9722.208,
+      "endMs": 9918.958,
+      "timestampMs": 9820.583,
+      "confidence": 1
+    },
+    {
+      "text": "どちら",
+      "startMs": 10208.333,
+      "endMs": 10555.541000000001,
+      "timestampMs": 10381.937000000002,
+      "confidence": 1
+    },
+    {
+      "text": "も",
+      "startMs": 10567.125,
+      "endMs": 10682.875,
+      "timestampMs": 10625,
+      "confidence": 1
+    },
+    {
+      "text": "34",
+      "startMs": 10694.458,
+      "endMs": 11377.2909,
+      "timestampMs": 11035.87445,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 11388.875,
+      "endMs": 11469.875,
+      "timestampMs": 11429.375,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 11481.5,
+      "endMs": 11817.166,
+      "timestampMs": 11649.332999999999,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "次",
+      "startMs": 119.458,
+      "endMs": 408.79100000000005,
+      "timestampMs": 264.1245,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 420.375,
+      "endMs": 675,
+      "timestampMs": 547.6875,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 975.916,
+      "endMs": 1207.4160000000002,
+      "timestampMs": 1091.6660000000002,
+      "confidence": 1
+    },
+    {
+      "text": "エー",
+      "startMs": 1219,
+      "endMs": 1450.5,
+      "timestampMs": 1334.75,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 1462.041,
+      "endMs": 1948.166,
+      "timestampMs": 1705.1035,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 1959.708,
+      "endMs": 2052.291,
+      "timestampMs": 2005.9995000000001,
+      "confidence": 1
+    },
+    {
+      "text": "二等分",
+      "startMs": 2063.875,
+      "endMs": 2584.708,
+      "timestampMs": 2324.2915000000003,
+      "confidence": 1
+    },
+    {
+      "text": "し",
+      "startMs": 2596.291,
+      "endMs": 2735.166,
+      "timestampMs": 2665.7285,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 2746.75,
+      "endMs": 3093.958,
+      "timestampMs": 2920.3540000000003,
+      "confidence": 1
+    },
+    {
+      "text": "二等分線",
+      "startMs": 3912.041,
+      "endMs": 4710.666,
+      "timestampMs": 4311.3535,
+      "confidence": 1
+    },
+    {
+      "text": "オーディー",
+      "startMs": 4722.208,
+      "endMs": 5162.040999999999,
+      "timestampMs": 4942.1245,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 5173.625,
+      "endMs": 5254.625,
+      "timestampMs": 5214.125,
+      "confidence": 1
+    },
+    {
+      "text": "引く",
+      "startMs": 5266.208,
+      "endMs": 5509.249,
+      "timestampMs": 5387.728499999999,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 5520.833,
+      "endMs": 5717.583,
+      "timestampMs": 5619.208,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 6053.25,
+      "endMs": 6284.75,
+      "timestampMs": 6169,
+      "confidence": 1
+    },
+    {
+      "text": "エーオーディー",
+      "startMs": 6296.291,
+      "endMs": 6932.874,
+      "timestampMs": 6614.5825,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 6944.458,
+      "endMs": 7129.624,
+      "timestampMs": 7037.040999999999,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 7233.791,
+      "endMs": 7499.999,
+      "timestampMs": 7366.895,
+      "confidence": 1
+    },
+    {
+      "text": "ディー",
+      "startMs": 7511.583,
+      "endMs": 7696.749,
+      "timestampMs": 7604.165999999999,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 7708.333,
+      "endMs": 8124.999,
+      "timestampMs": 7916.665999999999,
+      "confidence": 1
+    },
+    {
+      "text": "が",
+      "startMs": 8136.583,
+      "endMs": 8229.166,
+      "timestampMs": 8182.8745,
+      "confidence": 1
+    },
+    {
+      "text": "等しく",
+      "startMs": 8240.75,
+      "endMs": 8692.125,
+      "timestampMs": 8466.4375,
+      "confidence": 1
+    },
+    {
+      "text": "なり",
+      "startMs": 8703.708,
+      "endMs": 8888.874,
+      "timestampMs": 8796.291000000001,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 8900.458,
+      "endMs": 9236.124,
+      "timestampMs": 9068.291000000001,
+      "confidence": 1
+    },
+    {
+      "text": "34",
+      "startMs": 10057.875,
+      "endMs": 10798.625,
+      "timestampMs": 10428.25,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 10821.75,
+      "endMs": 10925.916,
+      "timestampMs": 10873.832999999999,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 10937.5,
+      "endMs": 11006.958,
+      "timestampMs": 10972.229,
+      "confidence": 1
+    },
+    {
+      "text": "2",
+      "startMs": 11018.5,
+      "endMs": 11157.375,
+      "timestampMs": 11087.9375,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 11169,
+      "endMs": 11261.583,
+      "timestampMs": 11215.2915,
+      "confidence": 1
+    },
+    {
+      "text": "わっ",
+      "startMs": 11273.166,
+      "endMs": 11493.081999999999,
+      "timestampMs": 11383.124,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 11504.625,
+      "endMs": 11712.958,
+      "timestampMs": 11608.7915,
+      "confidence": 1
+    },
+    {
+      "text": "どちら",
+      "startMs": 12013.875,
+      "endMs": 12372.666,
+      "timestampMs": 12193.270499999999,
+      "confidence": 1
+    },
+    {
+      "text": "も",
+      "startMs": 12384.25,
+      "endMs": 12511.583,
+      "timestampMs": 12447.9165,
+      "confidence": 1
+    },
+    {
+      "text": "17",
+      "startMs": 12523.166,
+      "endMs": 12962.957999999999,
+      "timestampMs": 12743.061999999998,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 12974.541,
+      "endMs": 13067.124,
+      "timestampMs": 13020.8325,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 13078.708,
+      "endMs": 13414.374,
+      "timestampMs": 13246.541000000001,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "求める",
+      "startMs": 119.458,
+      "endMs": 605.583,
+      "timestampMs": 362.52049999999997,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 617.125,
+      "endMs": 848.625,
+      "timestampMs": 732.875,
+      "confidence": 1
+    },
+    {
+      "text": "ディー",
+      "startMs": 860.166,
+      "endMs": 1056.9160000000002,
+      "timestampMs": 958.5410000000002,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 1068.5,
+      "endMs": 1508.333,
+      "timestampMs": 1288.4165,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 1519.916,
+      "endMs": 1612.499,
+      "timestampMs": 1566.2075,
+      "confidence": 1
+    },
+    {
+      "text": "分け",
+      "startMs": 1624.083,
+      "endMs": 1855.583,
+      "timestampMs": 1739.833,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 1867.125,
+      "endMs": 1959.708,
+      "timestampMs": 1913.4165,
+      "confidence": 1
+    },
+    {
+      "text": "見",
+      "startMs": 1971.291,
+      "endMs": 2087.041,
+      "timestampMs": 2029.1660000000002,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 2098.625,
+      "endMs": 2445.833,
+      "timestampMs": 2272.2290000000003,
+      "confidence": 1
+    },
+    {
+      "text": "半",
+      "startMs": 3263.875,
+      "endMs": 3449.041,
+      "timestampMs": 3356.458,
+      "confidence": 1
+    },
+    {
+      "text": "直線",
+      "startMs": 3460.666,
+      "endMs": 3946.791,
+      "timestampMs": 3703.7285,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 3958.333,
+      "endMs": 4409.7080000000005,
+      "timestampMs": 4184.0205000000005,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 4421.291,
+      "endMs": 4490.749,
+      "timestampMs": 4456.02,
+      "confidence": 1
+    },
+    {
+      "text": "区切る",
+      "startMs": 4502.333,
+      "endMs": 4872.708,
+      "timestampMs": 4687.5205,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 4884.25,
+      "endMs": 5092.583,
+      "timestampMs": 4988.416499999999,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 5405.083,
+      "endMs": 5694.415999999999,
+      "timestampMs": 5549.7495,
+      "confidence": 1
+    },
+    {
+      "text": "ディー",
+      "startMs": 5706,
+      "endMs": 5891.166,
+      "timestampMs": 5798.5830000000005,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 5902.791,
+      "endMs": 6342.624,
+      "timestampMs": 6122.7075,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 6354.166,
+      "endMs": 6550.916,
+      "timestampMs": 6452.541,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 6643.5,
+      "endMs": 6898.125,
+      "timestampMs": 6770.8125,
+      "confidence": 1
+    },
+    {
+      "text": "シー",
+      "startMs": 6909.708,
+      "endMs": 7129.624,
+      "timestampMs": 7019.665999999999,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 7141.208,
+      "endMs": 7511.583,
+      "timestampMs": 7326.3955,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 7523.166,
+      "endMs": 7615.749,
+      "timestampMs": 7569.4575,
+      "confidence": 1
+    },
+    {
+      "text": "2つ",
+      "startMs": 7627.333,
+      "endMs": 7962.958,
+      "timestampMs": 7795.1455,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 7974.541,
+      "endMs": 8090.291,
+      "timestampMs": 8032.416,
+      "confidence": 1
+    },
+    {
+      "text": "なり",
+      "startMs": 8101.833,
+      "endMs": 8286.999,
+      "timestampMs": 8194.416,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 8298.625,
+      "endMs": 8645.833,
+      "timestampMs": 8472.229,
+      "confidence": 1
+    },
+    {
+      "text": "17",
+      "startMs": 9467.583,
+      "endMs": 9942.1239,
+      "timestampMs": 9704.85345,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 9953.708,
+      "endMs": 10057.874,
+      "timestampMs": 10005.791000000001,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 10069.458,
+      "endMs": 10185.208,
+      "timestampMs": 10127.333,
+      "confidence": 1
+    },
+    {
+      "text": "34",
+      "startMs": 10196.75,
+      "endMs": 10914.374,
+      "timestampMs": 10555.562,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 10925.916,
+      "endMs": 11018.499,
+      "timestampMs": 10972.2075,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 11030.083,
+      "endMs": 11111.083,
+      "timestampMs": 11070.583,
+      "confidence": 1
+    },
+    {
+      "text": "たし",
+      "startMs": 11122.666,
+      "endMs": 11377.291,
+      "timestampMs": 11249.9785,
+      "confidence": 1
+    },
+    {
+      "text": "て",
+      "startMs": 11388.875,
+      "endMs": 11585.625,
+      "timestampMs": 11487.25,
+      "confidence": 1
+    },
+    {
+      "text": "答え",
+      "startMs": 11875,
+      "endMs": 12245.375,
+      "timestampMs": 12060.1875,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 12256.958,
+      "endMs": 12384.291000000001,
+      "timestampMs": 12320.624500000002,
+      "confidence": 1
+    },
+    {
+      "text": "51",
+      "startMs": 12395.833,
+      "endMs": 13009.2489,
+      "timestampMs": 12702.54095,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 13020.833,
+      "endMs": 13101.833,
+      "timestampMs": 13061.333,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 13113.416,
+      "endMs": 13449.081999999999,
+      "timestampMs": 13281.249,
+      "confidence": 1
+    }
+  ],
+  [
+    {
+      "text": "まとめ",
+      "startMs": 119.458,
+      "endMs": 512.958,
+      "timestampMs": 316.20799999999997,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 524.541,
+      "endMs": 894.916,
+      "timestampMs": 709.7285,
+      "confidence": 1
+    },
+    {
+      "text": "二等分線",
+      "startMs": 1712.958,
+      "endMs": 2534.708,
+      "timestampMs": 2123.833,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 2546.291,
+      "endMs": 2754.6240000000003,
+      "timestampMs": 2650.4575000000004,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 2800.916,
+      "endMs": 3067.1240000000003,
+      "timestampMs": 2934.0200000000004,
+      "confidence": 1
+    },
+    {
+      "text": "を",
+      "startMs": 3078.708,
+      "endMs": 3171.291,
+      "timestampMs": 3124.9995,
+      "confidence": 1
+    },
+    {
+      "text": "半分",
+      "startMs": 3182.875,
+      "endMs": 3611.125,
+      "timestampMs": 3397,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 3622.666,
+      "endMs": 3738.416,
+      "timestampMs": 3680.541,
+      "confidence": 1
+    },
+    {
+      "text": "する",
+      "startMs": 3750,
+      "endMs": 3993.041,
+      "timestampMs": 3871.5205,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 4004.625,
+      "endMs": 4097.208,
+      "timestampMs": 4050.9165,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 4108.791,
+      "endMs": 4317.124,
+      "timestampMs": 4212.9575,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 4618.041,
+      "endMs": 4861.082,
+      "timestampMs": 4739.5615,
+      "confidence": 1
+    },
+    {
+      "text": "エーオーシー",
+      "startMs": 4872.666,
+      "endMs": 5462.957,
+      "timestampMs": 5167.8115,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 5474.541,
+      "endMs": 5659.707,
+      "timestampMs": 5567.124,
+      "confidence": 1
+    },
+    {
+      "text": "34",
+      "startMs": 5694.458,
+      "endMs": 6388.874,
+      "timestampMs": 6041.665999999999,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 6400.458,
+      "endMs": 6620.374,
+      "timestampMs": 6510.415999999999,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 6828.708,
+      "endMs": 7060.208,
+      "timestampMs": 6944.458,
+      "confidence": 1
+    },
+    {
+      "text": "ディー",
+      "startMs": 7071.75,
+      "endMs": 7245.375,
+      "timestampMs": 7158.5625,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 7256.958,
+      "endMs": 7662.040999999999,
+      "timestampMs": 7459.4995,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 7673.625,
+      "endMs": 7881.958,
+      "timestampMs": 7777.791499999999,
+      "confidence": 1
+    },
+    {
+      "text": "17",
+      "startMs": 7951.375,
+      "endMs": 8425.916,
+      "timestampMs": 8188.6455,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 8437.5,
+      "endMs": 8530.083,
+      "timestampMs": 8483.7915,
+      "confidence": 1
+    },
+    {
+      "text": "です",
+      "startMs": 8541.666,
+      "endMs": 8912.041,
+      "timestampMs": 8726.8535,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 9768.5,
+      "endMs": 10000,
+      "timestampMs": 9884.25,
+      "confidence": 1
+    },
+    {
+      "text": "ディー",
+      "startMs": 10011.583,
+      "endMs": 10196.749,
+      "timestampMs": 10104.166000000001,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 10208.333,
+      "endMs": 10613.416000000001,
+      "timestampMs": 10410.874500000002,
+      "confidence": 1
+    },
+    {
+      "text": "は",
+      "startMs": 10625,
+      "endMs": 10868.041,
+      "timestampMs": 10746.520499999999,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 11192.125,
+      "endMs": 11469.916,
+      "timestampMs": 11331.020499999999,
+      "confidence": 1
+    },
+    {
+      "text": "ディー",
+      "startMs": 11481.5,
+      "endMs": 11666.666,
+      "timestampMs": 11574.082999999999,
+      "confidence": 1
+    },
+    {
+      "text": "オーシー",
+      "startMs": 11678.25,
+      "endMs": 12141.208,
+      "timestampMs": 11909.729,
+      "confidence": 1
+    },
+    {
+      "text": "と",
+      "startMs": 12152.791,
+      "endMs": 12303.249,
+      "timestampMs": 12228.02,
+      "confidence": 1
+    },
+    {
+      "text": "角",
+      "startMs": 12326.375,
+      "endMs": 12581,
+      "timestampMs": 12453.6875,
+      "confidence": 1
+    },
+    {
+      "text": "シー",
+      "startMs": 12592.583,
+      "endMs": 12812.499,
+      "timestampMs": 12702.541000000001,
+      "confidence": 1
+    },
+    {
+      "text": "オービー",
+      "startMs": 12824.083,
+      "endMs": 13206.041000000001,
+      "timestampMs": 13015.062000000002,
+      "confidence": 1
+    },
+    {
+      "text": "の",
+      "startMs": 13217.583,
+      "endMs": 13310.166000000001,
+      "timestampMs": 13263.874500000002,
+      "confidence": 1
+    },
+    {
+      "text": "和",
+      "startMs": 13321.75,
+      "endMs": 13425.916,
+      "timestampMs": 13373.832999999999,
+      "confidence": 1
+    },
+    {
+      "text": "で",
+      "startMs": 13437.5,
+      "endMs": 13622.666,
+      "timestampMs": 13530.082999999999,
+      "confidence": 1
+    },
+    {
+      "text": "51",
+      "startMs": 13888.875,
+      "endMs": 14456,
+      "timestampMs": 14172.4375,
+      "confidence": 1
+    },
+    {
+      "text": "度",
+      "startMs": 14467.583,
+      "endMs": 14537.041000000001,
+      "timestampMs": 14502.312000000002,
+      "confidence": 1
+    },
+    {
+      "text": "に",
+      "startMs": 14548.625,
+      "endMs": 14675.958,
+      "timestampMs": 14612.2915,
+      "confidence": 1
+    },
+    {
+      "text": "なり",
+      "startMs": 14687.5,
+      "endMs": 14884.25,
+      "timestampMs": 14785.875,
+      "confidence": 1
+    },
+    {
+      "text": "ます",
+      "startMs": 14895.833,
+      "endMs": 15243.041000000001,
+      "timestampMs": 15069.437000000002,
+      "confidence": 1
+    }
+  ]
+]

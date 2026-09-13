@@ -1,0 +1,196 @@
+{
+  "topic": "$AB=7$, $BC=5$, $CA=3$ の三角形ABCについて、$\\cos A$ の値と面積を求める。",
+  "model": "claude-opus-5",
+  "outline": [],
+  "unit": "数I 図形と計量",
+  "difficulty": 2,
+  "subunit": "正弦定理と余弦定理",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "三角形ABCがあります。$AB=7$, $BC=5$, $CA=3$ です。この三角形について $\\cos A$ の値と面積を求めます。角Aの大きさは分かっていません。3辺の長さだけが手がかりです。\n<<<TTS_READING>>>\n三角形ABCがあります。エービーは7、ビーシーは5、シーエーは3です。この三角形について、コサインAの値と面積を求めます。角Aの大きさは分かっていません。3つの辺の長さだけが手がかりです。",
+      "visual_type": "hook",
+      "visual_content": "3辺だけから余弦定理で $\\cos A$"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。はじめに図をかいて3辺を整理します。次に、角Aをはさむ2辺と、その向かい合う辺BCに余弦定理を使い $\\cos A$ を出します。さらに相互関係の式から $\\sin A$ を求めます。最後に面積の公式に代入します。\n<<<TTS_READING>>>\nまずは解く方針を確認します。はじめに図をかいて、3つの辺を整理します。次に、角Aをはさむ2つの辺と、その向かい合う辺ビーシーに余弦定理を使い、コサインAを出します。さらに、相互関係の式からサインAを求めます。最後に、面積の公式に代入します。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①三角形ABCの図をかき、3辺の長さを確認する",
+          "②角Aをはさむ2辺と対辺BCに余弦定理を使い $\\cos A$ を求める",
+          "③$\\sin^2A+\\cos^2A=1$ と $\\sin A>0$ から $\\sin A$ を求める",
+          "④面積公式 $S=\\frac{1}{2}\\cdot AB\\cdot CA\\cdot\\sin A$ に代入して面積を求める"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "図をかきます。角Aをはさむ2辺は $AB=7$ と $CA=3$ です。その角Aと向かい合う辺が $BC=5$ です。この対応が余弦定理を使うときの要になります。\n<<<TTS_READING>>>\n図をかきます。角Aをはさむ2つの辺は、エービーが7、シーエーが3です。そして、その角Aと向かい合う辺がビーシーで、長さは5です。この対応が、余弦定理を使うときの要になります。",
+      "visual_type": "step",
+      "visual_content": "①三角形ABCの図をかき、3辺の長さを確認する",
+      "visual": {
+        "kind": "figure",
+        "lines": [
+          "[text] 角Aをはさむ辺は $AB$ と $CA$"
+        ],
+        "caption": "角Aの対辺が $BC$",
+        "points": [
+          {
+            "x": 0,
+            "y": 0,
+            "label": "A"
+          },
+          {
+            "x": 7,
+            "y": 0,
+            "label": "B"
+          },
+          {
+            "x": 2.357,
+            "y": 1.856,
+            "label": "C"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "7",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "A",
+            "to": "C",
+            "label": "3",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "5",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "A",
+            "from": "B",
+            "to": "C",
+            "label": "$A$",
+            "ticks": 0
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "余弦定理を書きます。$BC^2=AB^2+CA^2-2\\cdot AB\\cdot CA\\cos A$ です。ここに $AB=7$, $CA=3$, $BC=5$ を代入します。\n<<<TTS_READING>>>\n余弦定理を書きます。ビーシーの2乗は、エービーの2乗たすシーエーの2乗ひく、2かけるエービーかけるシーエーかけるコサインA、です。ここに、エービーは7、シーエーは3、ビーシーは5を代入します。",
+      "visual_type": "step",
+      "visual_content": "②角Aをはさむ2辺と対辺BCに余弦定理を使い $\\cos A$ を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] BC^2=AB^2+CA^2-2\\cdot AB\\cdot CA\\cos A",
+          "[substitute: AB=7, CA=3, BC=5 を代入] 5^2=7^2+3^2-2\\cdot 7\\cdot 3\\cos A"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "右辺を計算します。$7^2+3^2=58$、$2\\cdot7\\cdot3=42$ です。$25=58-42\\cos A$ となり、$42\\cos A=33$ です。両辺を42で割り、3で約分すると $\\cos A=\\frac{11}{14}$ です。\n<<<TTS_READING>>>\n右辺を計算します。7の2乗たす3の2乗は58、2かける7かける3は42です。よって、25イコール58ひく42コサインAとなり、42コサインAは33です。両辺を42でわり、3で約分すると、コサインAは14ぶんの11です。",
+      "visual_type": "step",
+      "visual_content": "②角Aをはさむ2辺と対辺BCに余弦定理を使い $\\cos A$ を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[carry] 5^2=7^2+3^2-2\\cdot 7\\cdot 3\\cos A",
+          "25=58-42\\cos A",
+          "42\\cos A=33",
+          "[text] $\\cos A$ の答え",
+          "[underline] \\cos A=\\frac{11}{14}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "面積には $\\sin A$ が必要です。相互関係 $\\sin^2A+\\cos^2A=1$ を使います。$\\sin^2A=1-\\frac{121}{196}=\\frac{75}{196}$ です。三角形の内角なので $\\sin A>0$ となり、$\\sin A=\\frac{5\\sqrt{3}}{14}$ です。\n<<<TTS_READING>>>\n面積にはサインAが必要です。相互関係、サインAの2乗たすコサインAの2乗イコール1を使います。サインAの2乗は、1ひく196ぶんの121で、196ぶんの75です。三角形の内角なのでサインAは正となり、サインAは14ぶんの5ルート3です。",
+      "visual_type": "step",
+      "visual_content": "③$\\sin^2A+\\cos^2A=1$ と $\\sin A>0$ から $\\sin A$ を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] \\sin^2A=1-\\cos^2A",
+          "[substitute: cos A=11/14 を代入] \\sin^2A=1-\\frac{121}{196}=\\frac{75}{196}",
+          "[text] $0^\\circ<A<180^\\circ$ なので $\\sin A>0$",
+          "[underline] \\sin A=\\frac{5\\sqrt{3}}{14}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "面積の公式は $S=\\frac{1}{2}\\cdot AB\\cdot CA\\cdot\\sin A$ です。角Aをはさむ2辺と、その角のサインを使います。$AB=7$, $CA=3$ を代入します。\n<<<TTS_READING>>>\n面積の公式は、エスイコール2ぶんの1かけるエービーかけるシーエーかけるサインAです。角Aをはさむ2つの辺と、その角のサインを使います。エービーは7、シーエーは3を代入します。",
+      "visual_type": "step",
+      "visual_content": "④面積公式 $S=\\frac{1}{2}\\cdot AB\\cdot CA\\cdot\\sin A$ に代入して面積を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] S=\\frac{1}{2}\\cdot AB\\cdot CA\\cdot\\sin A",
+          "[substitute: AB=7, CA=3 を代入] S=\\frac{1}{2}\\cdot 7\\cdot 3\\cdot\\frac{5\\sqrt{3}}{14}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "計算します。分子は $7\\cdot3\\cdot5\\sqrt{3}=105\\sqrt{3}$、分母は $2\\cdot14=28$ です。$\\frac{105\\sqrt{3}}{28}$ を7で約分して $\\frac{15\\sqrt{3}}{4}$ です。これが面積です。\n<<<TTS_READING>>>\n計算します。分子は、7かける3かける5ルート3で105ルート3、分母は2かける14で28です。28ぶんの105ルート3を7で約分して、4ぶんの15ルート3です。これが面積です。",
+      "visual_type": "step",
+      "visual_content": "④面積公式 $S=\\frac{1}{2}\\cdot AB\\cdot CA\\cdot\\sin A$ に代入して面積を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[carry] S=\\frac{1}{2}\\cdot 7\\cdot 3\\cdot\\frac{5\\sqrt{3}}{14}",
+          "S=\\frac{105\\sqrt{3}}{28}",
+          "[text] 面積の答え",
+          "[underline] S=\\frac{15\\sqrt{3}}{4}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "まとめます。$\\cos A=\\frac{11}{14}$、面積は $\\frac{15\\sqrt{3}}{4}$ です。3辺が分かれば、余弦定理でコサイン、相互関係でサイン、そして面積まで一直線に進めます。\n<<<TTS_READING>>>\nまとめます。コサインAは14ぶんの11、面積は4ぶんの15ルート3です。3つの辺が分かれば、余弦定理でコサイン、相互関係でサイン、そして面積まで一直線に進めます。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[underline] \\cos A=\\frac{11}{14}",
+          "[underline] S=\\frac{15\\sqrt{3}}{4}",
+          "[text] 3辺から余弦定理で $\\cos A$"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}

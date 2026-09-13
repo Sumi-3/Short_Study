@@ -1,0 +1,299 @@
+{
+  "topic": "平行な2直線 $l$, $m$ の間に折れ線がある。$l$ 側の角が $40°$、$m$ 側の角が $55°$ のとき、折れ点の角 $x$ の大きさを求めよ。",
+  "model": "handwritten",
+  "outline": [
+    "2直線 $l$, $m$ は平行である。",
+    "$l$ 上の点と $m$ 上の点を、折れ線で結ぶ。",
+    "$l$ 側の角は $40°$、$m$ 側の角は $55°$ である。",
+    "折れ点の角 $x$ の大きさを求めよ。"
+  ],
+  "unit": "中2 図形",
+  "difficulty": 3,
+  "subunit": "平行線と角",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "平行な2直線 $l$ と $m$ の間に、折れ線があります。\n$l$ 側の角は $40°$、$m$ 側の角は $55°$ です。\n折れ点にできる角 $x$ の大きさを求めます。\n<<<TTS_READING>>>\n平行な2直線エルとエムの間に、折れ線があります。\nエル側の角は40度、エム側の角は55度です。\n折れ点にできる角エックスの大きさを求めます。",
+      "visual_type": "hook",
+      "visual_content": "補助線で錯角を2つ作る"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\nはじめに、平行な2直線と折れ線がどこにあるかを図で押さえます。\n次に、折れ点を通り2直線に平行な補助線を引いて、錯角を作ります。\n最後に、2つの錯角をたして折れ点の角を求めます。\n<<<TTS_READING>>>\nまずは解く方針を確認します。\nはじめに、平行な2直線と折れ線がどこにあるかを図でおさえます。\n次に、折れ点を通り2直線に平行な補助線を引いて、錯角を作ります。\n最後に、2つの錯角をたして折れ点の角を求めます。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①平行な2直線と折れ線の位置を図で確かめる",
+          "②折れ点を通り2直線に平行な補助線を引いて錯角を作る",
+          "③2つの錯角をたして、折れ点の角の大きさを求める"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "図をかきます。\n上の直線 $l$ 上の点 $Q$ から、折れ点 $P$ を通って、下の直線 $m$ 上の点 $R$ へ折れ線が進みます。\n$Q$ のところの角が $40°$、$R$ のところの角が $55°$ です。\n求めたいのは、折れ点 $P$ の角 $x$ です。\n<<<TTS_READING>>>\n図をかきます。\n上の直線エル上の点キューから、折れ点ピーを通って、下の直線エム上の点アールへ折れ線が進みます。\nキューのところの角が40度、アールのところの角が55度です。\n求めたいのは、折れ点ピーの角エックスです。",
+      "visual_type": "step",
+      "visual_content": "①平行な2直線と折れ線の位置を図で確かめる",
+      "visual": {
+        "kind": "figure",
+        "lines": [],
+        "caption": "2直線は平行",
+        "points": [
+          {
+            "x": -1.5,
+            "y": 3.6,
+            "label": "A"
+          },
+          {
+            "x": 4.5,
+            "y": 3.6,
+            "label": "B"
+          },
+          {
+            "x": -1.5,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 4.5,
+            "y": 0,
+            "label": "D"
+          },
+          {
+            "x": 1.9068,
+            "y": 3.6,
+            "label": "Q"
+          },
+          {
+            "x": 1.4004,
+            "y": 0,
+            "label": "R"
+          },
+          {
+            "x": 0,
+            "y": 2,
+            "label": "P"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "D",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "Q",
+            "to": "P",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "P",
+            "to": "R",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "Q",
+            "from": "A",
+            "to": "P",
+            "label": "40°",
+            "ticks": 0
+          },
+          {
+            "at": "R",
+            "from": "C",
+            "to": "P",
+            "label": "55°",
+            "ticks": 0
+          },
+          {
+            "at": "P",
+            "from": "Q",
+            "to": "R",
+            "label": "x",
+            "ticks": 0
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "折れ点 $P$ を通り、2直線に平行な補助線を引きます。\nこの補助線と直線 $l$ は平行なので、$40°$ の角と錯角の関係になります。\n同じように、補助線と直線 $m$ が平行なので、$55°$ の角も錯角で移ります。\nどちらも $P$ のところに集まります。\n<<<TTS_READING>>>\n折れ点ピーを通り、2直線に平行な補助線を引きます。\nこの補助線と直線エルは平行なので、40度の角と錯角の関係になります。\n同じように、補助線と直線エムが平行なので、55度の角も錯角で移ります。\nどちらもピーのところに集まります。",
+      "visual_type": "step",
+      "visual_content": "②折れ点を通り2直線に平行な補助線を引いて錯角を作る",
+      "visual": {
+        "kind": "figure",
+        "lines": [],
+        "caption": "錯角が2つ移る",
+        "points": [
+          {
+            "x": -1.5,
+            "y": 3.6,
+            "label": "A"
+          },
+          {
+            "x": 4.5,
+            "y": 3.6,
+            "label": "B"
+          },
+          {
+            "x": -1.5,
+            "y": 0,
+            "label": "C"
+          },
+          {
+            "x": 4.5,
+            "y": 0,
+            "label": "D"
+          },
+          {
+            "x": 1.9068,
+            "y": 3.6,
+            "label": "Q"
+          },
+          {
+            "x": 1.4004,
+            "y": 0,
+            "label": "R"
+          },
+          {
+            "x": 0,
+            "y": 2,
+            "label": "P"
+          },
+          {
+            "x": 4.5,
+            "y": 2,
+            "label": "H"
+          }
+        ],
+        "segments": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "C",
+            "to": "D",
+            "label": "",
+            "dashed": false,
+            "emphasis": 1,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "Q",
+            "to": "P",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "P",
+            "to": "R",
+            "label": "",
+            "dashed": false,
+            "emphasis": 2,
+            "ticks": 0,
+            "arrow": false
+          },
+          {
+            "from": "P",
+            "to": "H",
+            "label": "",
+            "dashed": true,
+            "emphasis": 3,
+            "ticks": 0,
+            "arrow": false
+          }
+        ],
+        "angles": [
+          {
+            "at": "P",
+            "from": "H",
+            "to": "Q",
+            "label": "40°",
+            "ticks": 1
+          },
+          {
+            "at": "P",
+            "from": "H",
+            "to": "R",
+            "label": "55°",
+            "ticks": 2
+          }
+        ],
+        "circles": [],
+        "highlight": [],
+        "axes": false
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "2つの錯角をたします。\n補助線の上側に $40°$、下側に $55°$ が並んでいます。\nこの2つで折れ点の角がちょうど埋まるので、$x$ は $40°$ たす $55°$ です。\nよって $x$ は $95°$ です。\n<<<TTS_READING>>>\n2つの錯角をたします。\n補助線の上側に40度、下側に55度が並んでいます。\nこの2つで折れ点の角がちょうど埋まるので、エックスは40度たす55度です。\nよってエックスは95度です。",
+      "visual_type": "step",
+      "visual_content": "③2つの錯角をたして、折れ点の角の大きさを求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 補助線の上下でたす",
+          "x = 40° + 55°",
+          "[text] 答え",
+          "[underline] x = 95°"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "まとめます。\n折れ点を通る平行な補助線を引くと、両側の角が錯角で移ってきます。\n折れ点の角は、上下の角の和になります。\n答えは $x = 95°$ です。\n<<<TTS_READING>>>\nまとめます。\n折れ点を通る平行な補助線を引くと、両側の角が錯角で移ってきます。\n折れ点の角は、上下の角の和になります。\n答えは、エックスイコール95度です。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 平行な補助線で錯角を作った",
+          "[box] x = 95°",
+          "[text] 折れ点の角は上下の和"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}
