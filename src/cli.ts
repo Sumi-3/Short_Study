@@ -99,13 +99,13 @@ const main = async () => {
     console.warn(`   ⚠︎ ${warning}`);
   }
 
-  step(2, totalSteps, `ナレーション生成 (TTS: ${config.ttsProvider})`);
+  step(2, totalSteps, "ナレーション生成");
   const sceneAudios = await generateAudio({ scenes: script.scenes, slug });
   const totalSeconds = sceneAudios.reduce((sum, a) => sum + a.durationInSeconds, 0);
   console.log(`   ${sceneAudios.length} clips / ${totalSeconds.toFixed(1)}s`);
 
-  step(3, totalSteps, `字幕タイミング取得 (${config.captionSource})`);
-  const captionsPerScene = await generateCaptions({ sceneAudios, slug, scenes: script.scenes });
+  step(3, totalSteps, "字幕タイミング取得");
+  const captionsPerScene = await generateCaptions({ sceneAudios, slug });
   console.log(`   ${captionsPerScene.reduce((sum, c) => sum + c.length, 0)} tokens`);
 
   step(4, totalSteps, "manifest 書き出し");

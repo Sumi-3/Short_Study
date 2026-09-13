@@ -7,7 +7,7 @@
  * 必要で、`getVoices()` が返す日本語音声は 2 種だけである。
  *
  * multilingual 音声はこの制限を越える方法である。課金 locale は別でも日本語を話し、推測でなく
- * 実測で、`CAPTION_SOURCE=tts` が字幕の元にする同じ word boundary を返す。
+ * 実測で、字幕の元にしている word boundary を同じように返す。
  */
 export type Voice = {
   /** `setMetadata` へそのまま渡す EdgeTTS `ShortName`。 */

@@ -75,7 +75,7 @@ export async function* runPipeline({
     });
 
     yield at(2);
-    const captionsPerScene = await generateCaptions({ sceneAudios, slug, scenes: script.scenes });
+    const captionsPerScene = await generateCaptions({ sceneAudios, slug });
 
     yield at(3);
     const manifest = buildManifest({

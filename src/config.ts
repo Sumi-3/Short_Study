@@ -94,16 +94,12 @@ export const config = {
   extractTimeoutMs: num(env("EXTRACT_TIMEOUT_MS"), 60_000),
   /** 1 シーン分の音声合成の上限。EdgeTTS の WebSocket が黙って切れても止まらないため。 */
   ttsTimeoutMs: num(env("TTS_TIMEOUT_MS"), 90_000),
-  /** whisper 1 本の上限。CAPTION_SOURCE=whisper のときだけ使う。 */
-  whisperTimeoutMs: num(env("WHISPER_TIMEOUT_MS"), 5 * 60_000),
   /**
    * API 側の再試行回数。SDK の既定 2 回は、上の締め切りに毎回掛かる。
    * 一度の失敗は生成全体をやり直させるより、早く伝えたほうがよい。
    */
   anthropicMaxRetries: num(env("ANTHROPIC_MAX_RETRIES"), 1),
 
-  /** "edge"（無料・既定値）| "elevenlabs" */
-  ttsProvider: (env("TTS_PROVIDER") ?? "edge") as "edge" | "elevenlabs",
   /** EdgeTTS が提供する日本語音声は NanamiNeural（女性）と KeitaNeural（男性）の 2 つだけ。 */
   edgeVoice: env("EDGE_VOICE") ?? "ja-JP-NanamiNeural",
   /** 例: ナレーションを速くする "+10%"。 */
@@ -112,19 +108,7 @@ export const config = {
   edgePitch: env("EDGE_PITCH") ?? "+0%",
   /** 相対値。"+0%" は synthesiser 本来の音量。 */
   edgeVolume: env("EDGE_VOLUME") ?? "+0%",
-  elevenLabsApiKey: env("ELEVENLABS_API_KEY") ?? "",
-  elevenLabsVoiceId: env("ELEVENLABS_VOICE_ID") ?? "21m00Tcm4TlvDq8ikWAM",
-  elevenLabsModel: env("ELEVENLABS_MODEL") ?? "eleven_multilingual_v2",
 
-  /**
-   * "tts" は EdgeTTS の word boundary を再利用するため、台本の文字もタイミングも正確で
-   * ダウンロードが不要。"whisper" は代わりに @remotion/install-whisper-cpp を動かす。
-   * TTS_PROVIDER=elevenlabs では必要だが、whisper.cpp の token-level JSON は日本語文字を
-   * token をまたいで分割する点に注意（generateCaptions.ts 参照）。
-   */
-  captionSource: (env("CAPTION_SOURCE") ?? "tts") as "whisper" | "tts",
-  whisperModel: env("WHISPER_MODEL") ?? "medium",
-  whisperVersion: env("WHISPER_VERSION") ?? "1.5.5",
   language: "ja" as const,
 
   // TARGET_SECONDS は参照しない。再生時間は全シーンの音声実長と余白の合計で決める。
@@ -149,7 +133,6 @@ export const paths = {
   root: process.cwd(),
   dataRoot,
   projects: path.join(dataRoot, "public", "projects"),
-  whisper: path.join(dataRoot, "whisper.cpp"),
   out: path.join(dataRoot, "out"),
   projectDir: (slug: string) => path.join(dataRoot, "public", "projects", slug),
   /** 同じ場所を `staticFile()` 用に `public/` からの相対パスで表す。 */

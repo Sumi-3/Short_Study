@@ -21,10 +21,10 @@ export type SceneAudio = {
   audioSrc: string;
   durationInSeconds: number;
   /**
-   * これを報告するのは EdgeTTS だけ。synthesiser は各単語を置いた位置を知っているので正確であり、
-   * CAPTION_SOURCE=tts が Whisper を完全に省ける理由でもある。
+   * synthesiser は各単語を置いた位置を知っているので正確で、字幕はこれだけを元にする。
+   * 音声認識は使わない。
    */
-  wordBoundaries: WordBoundary[] | null;
+  wordBoundaries: WordBoundary[];
 };
 
 /** EdgeTTS は時間を 100 nanosecond tick で返す。 */
@@ -181,43 +181,6 @@ const synthesizeWithEdge = async (
   }
 };
 
-const synthesizeWithElevenLabs = async (texts: string[]): Promise<Buffer[]> => {
-  if (!config.elevenLabsApiKey) {
-    throw new Error(
-      "TTS_PROVIDER=elevenlabs but ELEVENLABS_API_KEY is not set.",
-    );
-  }
-
-  const buffers: Buffer[] = [];
-  for (const text of texts) {
-    const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${config.elevenLabsVoiceId}?output_format=mp3_44100_128`,
-      {
-        method: "POST",
-        headers: {
-          "xi-api-key": config.elevenLabsApiKey,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          text,
-          model_id: config.elevenLabsModel,
-          voice_settings: { stability: 0.4, similarity_boost: 0.75 },
-        }),
-        // fetch に既定の締め切りは無い。応答本文の読み取りまでこの signal が覆う。
-        signal: AbortSignal.timeout(config.ttsTimeoutMs),
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `ElevenLabs returned ${response.status}: ${await response.text()}`,
-      );
-    }
-    buffers.push(Buffer.from(await response.arrayBuffer()));
-  }
-  return buffers;
-};
-
 export const generateAudio = async ({
   scenes,
   slug,
@@ -233,13 +196,7 @@ export const generateAudio = async ({
   const dir = paths.projectDir(slug);
   fs.mkdirSync(dir, { recursive: true });
 
-  const synthesized =
-    config.ttsProvider === "elevenlabs"
-      ? (await synthesizeWithElevenLabs(texts)).map((audio) => ({
-          audio,
-          boundaries: null,
-        }))
-      : await synthesizeWithEdge(texts, voice);
+  const synthesized = await synthesizeWithEdge(texts, voice);
 
   const result: SceneAudio[] = [];
   for (const [index, scene] of scenes.entries()) {
