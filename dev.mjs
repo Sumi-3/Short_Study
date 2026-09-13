@@ -5,14 +5,20 @@ import { spawn } from "node:child_process";
  * `a & b` in a shell script — takes both down when either one exits or when
  * you hit Ctrl-C, so a stale server never holds port 3001.
  */
+/**
+ * Windows の npx は `npx.cmd` で、`.cmd` は実行ファイルではなくシェルが解釈する。
+ * `spawn("npx")` のままだと ENOENT で即座に落ちるため、拡張子を明示する。
+ */
+const npx = process.platform === "win32" ? "npx.cmd" : "npx";
+
 const processes = [
   // API only: Vite owns the single URL you open, so a stale web/dist cannot
   // become a second playable copy of the app on :3001.
-  spawn("npx", ["tsx", "src/server/index.ts"], {
+  spawn(npx, ["tsx", "src/server/index.ts"], {
     stdio: "inherit",
     env: { ...process.env, SHORT_STUDY_API_ONLY: "1" },
   }),
-  spawn("npx", ["vite", "--config", "web/vite.config.ts"], { stdio: "inherit" }),
+  spawn(npx, ["vite", "--config", "web/vite.config.ts"], { stdio: "inherit" }),
 ];
 
 setTimeout(() => {
