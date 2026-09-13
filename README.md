@@ -117,6 +117,28 @@ Railway では Blob を通常の保存先に使いません。`/data/public/proj
 Railway の healthcheck path を設定している場合は、そのリクエストも 401 になるため、認証に対応した
 監視へ切り替えるか healthcheck path を外してください。
 
+### ローカル生成物を push 時に同期する
+
+`public/projects/` は Git 管理しないため、ローカルで作った動画は pre-push で Railway Volume の
+`/data/public/projects/` へ送る。最初に一度だけフックを有効化し、ローカルの SSH config に Railway
+コンテナを指す alias を作る。既定の alias は `short-study` で、別名は `.env` の `RAILWAY_SSH_HOST` で指定する。
+
+```bash
+railway ssh config --alias short-study --identity-file <key>
+npm run hooks:install
+npm run sync:railway                         # 手動同期
+npm run sync:railway -- --dry-run            # 送信対象だけ確認
+npm run sync:railway -- --force <slug>       # 意図して削除済み動画を戻す
+```
+
+アプリ上で削除した動画はローカルに残る。そのため「Volume に無いものをすべて送る」差分同期では、削除した
+動画が次の push で復活してしまう。`.railway-synced.json`（Git 管理外）に一度送った slug と既に Volume
+にある slug を記録し、台帳にある slug は Volume から消えていても自動では再送しない。意図して戻す場合だけ
+`--force <slug>` を使う。`mock` は同梱サンプルなので対象外である。
+
+project ごとに `tar | ssh` で独立して送信し、送信後は全ファイルの実バイト数を照合する。接続・転送・照合の
+失敗は目立つ警告と手動再実行コマンドを出すが、pre-push によって Git push を止めない。
+
 ### 旧構成: Vercel + Blob
 
 `vercel.json` と Blob の同期コードは、既存の完成品を Railway へ移すためにも残しています。
@@ -179,21 +201,20 @@ node -e "import('/tmp/probe/api/generate.js')"
 なお **Blob の URL 自体は公開**です。Vercel Authentication はアプリを保護しますが、
 音声と manifest の URL を知っている人は直接取得できます。
 
-#### ローカル生成物を push 時に同期する
+#### ローカル生成物を Blob へ同期する（旧構成）
 
-`public/projects/` は Git 管理しないため、ローカルで作った動画は pre-push で Blob へ補完する。
-最初に一度だけフックを有効化し、Vercel Storage で発行した長期 token をローカル `.env` の
-`BLOB_READ_WRITE_TOKEN` に設定する（`BLOB_STORE_ID` の OIDC は Vercel 内だけで使える）。
+Blob が利用可能だった時期の `sync:blob` と `import:blob` は、移行や復活時のために残している。
+Vercel Storage で発行した長期 token をローカル `.env` の `BLOB_READ_WRITE_TOKEN` に設定する
+（`BLOB_STORE_ID` の OIDC は Vercel 内だけで使える）。
 
 ```bash
-npm run hooks:install
 npm run sync:blob                 # 手動同期
 npm run sync:blob -- --dry-run    # token がなくても初回 upload 対象を確認
 ```
 
 Blob に既にある `manifest.json` と scene mp3 は pathname ごとに飛ばし、未アップロード分だけを送る。
 `mock` も Blob の feed がローカルの一覧と一致するよう同期対象に含める。失敗した project があっても
-他を続けるが、最後に非ゼロで終了して push は止める。token がない通常時は何もせず成功終了する。
+他を続けるが、最後に非ゼロで終了して push は止める。現在の pre-push はこの旧同期を呼ばない。
 
 ## パイプライン
 

@@ -216,7 +216,7 @@ export const Venn: React.FC<{ data: Data; accent: string }> = ({
           <SvgLabel
             text={data.caption}
             x={CX}
-            y={HEIGHT - 8}
+            y={HEIGHT - 28}
             color={accent}
             size={36}
             weight={700}

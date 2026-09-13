@@ -1,7 +1,7 @@
 import { MATH_UNITS, splitUnit } from "../../curriculum";
-import { PHONE_HEIGHT, PhoneFrame } from "./PhoneFrame";
+import { PHONE_HEIGHT } from "./PhoneFrame";
 import { SceneLayout } from "./SceneLayout";
-import { ScreenVideo } from "./ScreenVideo";
+import { ScreenPhoneFrame } from "./ScreenVideo";
 import type { IntroScene } from "./script";
 import { useTheme, withAlpha } from "../theme";
 
@@ -15,7 +15,7 @@ const taxonomy = MATH_UNITS.reduce<Record<string, string[]>>((groups, unit) => {
 export const LibraryScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
   const theme = useTheme();
   return (
-    <SceneLayout title="学習ライブラリ" narration={scene.narration} durationInFrames={scene.durationInFrames}>
+    <SceneLayout title="動画ライブラリ" narration={scene.narration} durationInFrames={scene.durationInFrames}>
       <div style={{ height: "100%", display: "grid", gridTemplateColumns: "1.3fr 0.7fr", alignItems: "center", gap: 64 }}>
         <div
           style={{
@@ -60,9 +60,7 @@ export const LibraryScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <PhoneFrame height={PHONE_HEIGHT}>
-            <ScreenVideo src="intro/library.mp4" placeholder="ここに ライブラリの録画（ホーム・フィルター） が入る" />
-          </PhoneFrame>
+          <ScreenPhoneFrame height={PHONE_HEIGHT} src="intro/library.mp4" placeholder="ここに ライブラリの録画（ホーム・フィルター） が入る" />
         </div>
       </div>
     </SceneLayout>

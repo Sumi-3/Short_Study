@@ -2,6 +2,7 @@ node_modules
 dist
 .DS_Store
 .env
+.railway-synced.json
 
 # Ignore the output video from Git but not videos you import into src/.
 out
@@ -14,4 +15,4 @@ build
 
 # Vercel CLI
 .vercel
-public/intro/input.mp4
+public/intro/*

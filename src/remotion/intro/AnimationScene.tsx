@@ -16,9 +16,9 @@ import type { IntroScene } from "./script";
 const venn: Extract<SceneVisual, { kind: "venn" }> = {
   kind: "venn",
   sets: ["数学", "動画"],
-  counts: [4, 7, 3, 1],
+  counts: [4, 5, 3, 1],
   highlight: ["AB"],
-  caption: "理解が重なる場所",
+  caption: "両方好きな人",
 };
 
 const tree: Extract<SceneVisual, { kind: "tree" }> = {
@@ -61,7 +61,7 @@ const formula: ManifestScene = {
   scene_id: 1,
   narration: "",
   visual_type: "step",
-  visual_content: "式を順に変形",
+  visual_content: "",
   visual: {
     kind: "formula",
     lines: ["x^2 - 5x + 6 = 0", "(x - 2)(x - 3) = 0", "[box]x = 2, 3"],
@@ -203,7 +203,7 @@ const VisualCard: React.FC<{ label: string; index: number; children: ReactNode }
           left: 16,
           color: theme.accents[index % theme.accents.length],
           fontFamily: theme.fontFamily,
-          fontSize: 17,
+          fontSize: 24,
           fontWeight: 900,
           letterSpacing: 1,
         }}
@@ -285,12 +285,12 @@ const SlideOne: React.FC = () => {
         translate: interpolate(frame, [turnAt, turnEnd], ["0px 0px", "0px -38px"], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: theme.easing }),
       }}
     >
-      <VisualCard label="ベン図" index={0}><Venn data={venn} accent={theme.accents[0]} /></VisualCard>
-      <VisualCard label="樹形図" index={1}><Tree data={tree} accent={theme.accents[2]} /></VisualCard>
-      <VisualCard label="表" index={2}><Stage><Table data={table} accent={theme.accents[3]} /></Stage></VisualCard>
-      <VisualCard label="ヒストグラム" index={3}><Histogram data={histogram} accent={theme.accents[1]} /></VisualCard>
-      <VisualCard label="散布図" index={4}><Scatter data={scatter} accent={theme.accents[4]} /></VisualCard>
-      <VisualCard label="数式" index={5}><FormulaPreview /></VisualCard>
+      <VisualCard label="数式" index={0}><FormulaPreview /></VisualCard>
+      <VisualCard label="ベン図" index={1}><Venn data={venn} accent={theme.accents[0]} /></VisualCard>
+      <VisualCard label="樹形図" index={2}><Tree data={tree} accent={theme.accents[2]} /></VisualCard>
+      <VisualCard label="表" index={3}><Stage><Table data={table} accent={theme.accents[3]} /></Stage></VisualCard>
+      <VisualCard label="ヒストグラム" index={4}><Histogram data={histogram} accent={theme.accents[1]} /></VisualCard>
+      <VisualCard label="散布図" index={5}><Scatter data={scatter} accent={theme.accents[4]} /></VisualCard>
     </div>
   );
 };
@@ -326,7 +326,7 @@ const SlideTwo: React.FC = () => {
 export const AnimationScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
   const { fps } = useVideoConfig();
   return (
-    <SceneLayout title="多彩なアニメーション" narration={scene.narration} durationInFrames={scene.durationInFrames}>
+    <SceneLayout title="多彩なアニメーション（実際の描画形式）" narration={scene.narration} durationInFrames={scene.durationInFrames}>
       <div style={{ height: "100%", position: "relative" }}>
         <SlideOne />
         {/* 次のカード群を local frame で始め、図そのものの描画アニメーションもめくりの後に再生する。 */}

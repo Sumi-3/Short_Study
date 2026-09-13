@@ -10,6 +10,7 @@
   "type": "module",
   "scripts": {
     "generate": "tsx src/cli.ts",
+    "intro:audio": "node --import tsx src/pipeline/generateIntroAudio.ts",
     "server": "tsx src/server/index.ts",
     "web": "vite --config web/vite.config.ts",
     "dev": "node dev.mjs",
@@ -17,6 +18,7 @@
     "build": "npm run web:build",
     "studio": "remotion studio",
     "sync:blob": "node --import tsx src/syncBlob.ts",
+    "sync:railway": "node --import tsx src/syncRailway.ts",
     "import:blob": "node --import tsx src/importBlob.ts",
     "start": "npm run server",
     "hooks:install": "git config core.hooksPath .githooks",
@@ -29,6 +31,7 @@
     "@remotion/install-whisper-cpp": "4.0.518",
     "@remotion/media": "4.0.518",
     "@remotion/media-parser": "4.0.518",
+    "@remotion/media-utils": "4.0.518",
     "@remotion/player": "^4.0.518",
     "@remotion/rough-notation": "^4.0.518",
     "@remotion/shapes": "4.0.518",

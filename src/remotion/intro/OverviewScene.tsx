@@ -1,8 +1,7 @@
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { LiveShort } from "./LiveShort";
-import { PHONE_HEIGHT, PhoneFrame } from "./PhoneFrame";
+import { PHONE_HEIGHT } from "./PhoneFrame";
 import { SceneLayout } from "./SceneLayout";
-import { ScreenVideo } from "./ScreenVideo";
+import { ScreenPhoneFrame } from "./ScreenVideo";
 import type { IntroScene } from "./script";
 
 export const OverviewScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
@@ -24,14 +23,10 @@ export const OverviewScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
     <SceneLayout title="数学をショート動画に" narration={scene.narration} durationInFrames={scene.durationInFrames}>
       <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 120 }}>
         <div style={enter(0)}>
-          <PhoneFrame height={height}>
-            <ScreenVideo src="intro/feed.mp4" placeholder="ここに 概要・左のフィード録画 が入る" />
-          </PhoneFrame>
+          <ScreenPhoneFrame height={height} src="intro/feed.mp4" placeholder="ここに 概要・左のフィード録画 が入る" />
         </div>
         <div style={enter(1)}>
-          <PhoneFrame height={height}>
-            <LiveShort height={height} />
-          </PhoneFrame>
+          <ScreenPhoneFrame height={height} src="intro/play.mp4" placeholder="ここに 解説動画の再生 が入る" />
         </div>
       </div>
     </SceneLayout>

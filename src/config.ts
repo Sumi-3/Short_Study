@@ -57,6 +57,8 @@ export { VIDEO } from "./config-video.js";
 export const config = {
   basicAuthUser: env("BASIC_AUTH_USER") ?? "admin",
   basicAuthPassword: env("BASIC_AUTH_PASSWORD") ?? "",
+  // SSH config の Host alias なら鍵・接続先を CLI 側へ散らさず、端末ごとの差分も .env に閉じられる。
+  railwaySshHost: env("RAILWAY_SSH_HOST") ?? "short-study",
   anthropicApiKey: env("ANTHROPIC_API_KEY") ?? "",
   anthropicModel: env("ANTHROPIC_MODEL") ?? "claude-opus-5",
   /**

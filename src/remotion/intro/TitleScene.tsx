@@ -15,7 +15,7 @@ export const TitleScene: React.FC = () => {
           height: 620,
           borderRadius: 310,
           backgroundColor: withAlpha(theme.accents[0], 0.16),
-          scale: interpolate(frame, [0, fps * 1.7], [0.45, 1], {
+          scale: interpolate(frame, [0, fps * 1], [0.45, 1], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: theme.easing,
@@ -31,12 +31,12 @@ export const TitleScene: React.FC = () => {
           fontWeight: 900,
           letterSpacing: -8,
           color: theme.ink,
-          opacity: interpolate(frame, [0, fps * 0.8], [0, 1], {
+          opacity: interpolate(frame, [0, fps * 0.45], [0, 1], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: theme.easing,
           }),
-          scale: interpolate(frame, [0, fps * 1], [0.72, 1], {
+          scale: interpolate(frame, [0, fps * 0.6], [0.72, 1], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: theme.easing,
@@ -56,7 +56,7 @@ export const TitleScene: React.FC = () => {
           letterSpacing: 2,
           fontWeight: 700,
           color: theme.inkDim,
-          opacity: interpolate(frame, [fps * 0.7, fps * 1.4], [0, 1], {
+          opacity: interpolate(frame, [fps * 0.4, fps * 0.85], [0, 1], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
             easing: theme.easing,

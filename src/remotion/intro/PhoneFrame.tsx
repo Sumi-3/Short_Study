@@ -10,10 +10,12 @@ export const PHONE_HEIGHT = 750;
 /** `height` は画面の高さで、ベゼルはその外側に付く。 */
 export const PhoneFrame: React.FC<{
   height: number;
+  /** 画面の横幅 ÷ 高さ。縦型 short 以外は録画の実寸を渡す。 */
+  aspectRatio?: number;
   children: ReactNode;
-}> = ({ height, children }) => {
+}> = ({ height, aspectRatio = 9 / 16, children }) => {
   const theme = useTheme();
-  const width = height * (9 / 16);
+  const width = height * aspectRatio;
   // ベゼルを内側の padding で作ると画面が 9:16 より縦長になり、等倍で流し込んだ short が
   // 横にはみ出して切れる。画面の寸法を先に決め、枠はその外へ足す。
   const bezel = Math.max(10, height * 0.025);
@@ -41,19 +43,6 @@ export const PhoneFrame: React.FC<{
           position: "relative",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            zIndex: 2,
-            top: height * 0.018,
-            left: "50%",
-            width: height * 0.2,
-            height: height * 0.024,
-            borderRadius: height * 0.02,
-            backgroundColor: theme.ink,
-            translate: "-50% 0px",
-          }}
-        />
         {children}
       </div>
     </div>
