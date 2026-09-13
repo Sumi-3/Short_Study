@@ -11,21 +11,59 @@ Claude が台本を書き、TTS がナレーションを吹き込み、Remotion 
 
 | | |
 |---|---|
-| **Node.js 22 以上** | 24 でも動作を確認しています |
+| **Node.js** | 22 / 24 / 26 で動作を確認しています |
+| **Git** | リポジトリの取得に使います。入れたくない場合は下の「Git を使わない場合」へ |
 | **Anthropic の API キー** | **動画を新しく作るときだけ** 必要です。視聴するだけなら不要 |
 
-Node.js が入っているかは、ターミナルで確認できます。
-
-```
-node -v
-```
-
-`v22.x.x` 以上が表示されれば大丈夫です。「コマンドが見つかりません」と出る場合は
-[nodejs.org](https://nodejs.org/) から LTS 版を入れてください。
+下の手順は、どちらも何も入っていない状態から順に実行できます。
+すでに入っている場合は確認コマンドだけ通れば次へ進んでください。
 
 ---
 
 ## macOS
+
+### 1. Node.js と Git を入れる
+
+まず入っているか確認します。
+
+```bash
+node -v
+git --version
+```
+
+`node -v` が `v22` 以上を返し、`git --version` も表示されれば **手順2へ進んでください。**
+
+**Node.js が無い場合。** Homebrew で入れます。Homebrew 自体が無ければ先にこれを実行します
+（途中でパスワードを聞かれます）。
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Apple シリコン（M1 以降）では、続けて次の2行も実行してください。これを忘れると
+`brew` コマンドが見つかりません。Intel Mac では不要です。
+
+```bash
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+Homebrew が使えるようになったら、Node.js を入れます。
+
+```bash
+brew install node
+```
+
+**Git が無い場合。** 次を実行すると、インストールを促すダイアログが出ます。
+
+```bash
+xcode-select --install
+```
+
+> Homebrew を使いたくない場合は、[nodejs.org/ja/download](https://nodejs.org/ja/download) から
+> macOS 用のインストーラ（`.pkg`）を落として実行しても同じです。
+
+### 2. 起動する
 
 ```bash
 git clone https://github.com/Sumi-3/Short_Study.git
@@ -41,7 +79,34 @@ npm run dev
 ## Windows
 
 「ターミナル」を開いて実行します（コマンドプロンプトでも同じです）。
-コマンドは macOS と変わりません。
+
+### 1. Node.js と Git を入れる
+
+まず入っているか確認します。
+
+```
+node -v
+git --version
+```
+
+`node -v` が `v22` 以上を返し、`git --version` も表示されれば **手順2へ進んでください。**
+
+無い場合は、Windows 標準の `winget` で入ります。
+
+```
+winget install OpenJS.NodeJS.LTS
+winget install Git.Git
+```
+
+**インストール後、ターミナルを一度閉じて開き直してください。** PATH が反映されず
+`node` が見つからないままになります。開き直したら `node -v` で確認します。
+
+> `winget` が見つからない場合（Windows 10 の古い版など）は、
+> [nodejs.org/ja/download](https://nodejs.org/ja/download) と
+> [git-scm.com/download/win](https://git-scm.com/download/win) から
+> インストーラを落として実行してください。
+
+### 2. 起動する
 
 ```
 git clone https://github.com/Sumi-3/Short_Study.git
@@ -51,6 +116,22 @@ npm run dev
 ```
 
 ブラウザで **http://localhost:5173/** を開きます。
+
+> **PowerShell を使っていて**、`npm : このシステムではスクリプトの実行が無効になっているため…`
+> と出た場合は、実行ポリシーが原因です。一度だけ次を実行してください（管理者権限は不要）。
+>
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+> ```
+>
+> コマンドプロンプトではこの問題は起きません。
+
+---
+
+## Git を使わない場合
+
+GitHub のページ右上の緑の **Code** ボタン → **Download ZIP** で丸ごと落とせます。
+展開したフォルダへ `cd` して、`npm install` から始めてください。
 
 ---
 
@@ -75,7 +156,9 @@ npm run dev
 
 ## 動画を新しく作る
 
-Anthropic の API キーが要ります。
+Anthropic の API キーが要ります。持っていない場合は
+[console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) で
+アカウントを作り、**Create Key** から発行してください（`sk-ant-` で始まる文字列です）。
 
 **1. `.env` を用意する**
 
@@ -92,6 +175,22 @@ copy .env.example .env
 ```
 
 **2. `.env` を開いて、1行目のキーを書き換える**
+
+`.env` は先頭がドットなので Finder やエクスプローラでは見えません。次で開けます。
+
+macOS:
+
+```bash
+open -e .env
+```
+
+Windows:
+
+```
+notepad .env
+```
+
+1行目を、発行したキーに書き換えて保存します。
 
 ```
 ANTHROPIC_API_KEY=sk-ant-...
