@@ -117,21 +117,12 @@ npm run dev
 
 ブラウザで **http://localhost:5173/** を開きます。
 
-> **PowerShell を使っていて**、`npm : このシステムではスクリプトの実行が無効になっているため…`
-> と出た場合は、実行ポリシーが原因です。一度だけ次を実行してください（管理者権限は不要）。
->
-> ```powershell
-> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-> ```
->
-> コマンドプロンプトではこの問題は起きません。
-
 ---
 
 ## Git を使わない場合
 
 GitHub のページ右上の緑の **Code** ボタン → **Download ZIP** で丸ごと落とせます。
-展開したフォルダへ `cd` して、`npm install` から始めてください。
+展開したフォルダへ移動して、`npm install` から始めてください。
 
 ---
 

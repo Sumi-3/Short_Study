@@ -974,6 +974,21 @@ body {
   padding: 12px 12px 24px;
 }
 
+/*
+ * パソコンでだけ二段組にする。card は 9:16 の poster ではなく問題文の塊なので、
+ * 半分の幅でも文字は縮まない。半分になるのは 1 行の長さの方で、desktop の 1400px を
+ * 横断する行よりむしろ読みやすい。
+ *
+ * `any-pointer: fine` を併せるのは、幅だけだと横向きの phone（Pro Max で 932px）まで
+ * 二段になるため。trackpad や mouse を持つ機械＝パソコン、という線引きである。
+ */
+@media (min-width: 900px) and (any-pointer: fine) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
 .grid__cell {
   display: block;
   width: 100%;
