@@ -15,4 +15,3 @@ build
 
 # Vercel CLI
 .vercel
-public/intro/*

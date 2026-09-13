@@ -10,7 +10,6 @@
   "type": "module",
   "scripts": {
     "generate": "tsx src/cli.ts",
-    "intro:audio": "node --import tsx src/pipeline/generateIntroAudio.ts",
     "server": "tsx src/server/index.ts",
     "web": "vite --config web/vite.config.ts",
     "dev": "node dev.mjs",
