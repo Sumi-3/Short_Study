@@ -24,7 +24,7 @@ export const SceneLayout: React.FC<{
           borderBottom: `2px solid ${withAlpha(theme.ink, 0.14)}`,
           fontFamily: theme.fontFamily,
           fontSize: 48,
-          fontWeight: 900,
+          fontWeight: 800,
           lineHeight: 1.2,
           color: theme.ink,
           opacity: interpolate(frame, [0, fps * 0.4], [0, 1], {

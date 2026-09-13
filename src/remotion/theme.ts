@@ -14,6 +14,12 @@ const stack = (...system: string[]) =>
  * 字幕がにじんだ。Hiragino Sans は各要求に実在する master を返す（W2/W3/W4/W5/W6/W8 を
  * 実測）ので、ウェイトの階層を保てる。iOSでは複数ウェイトを持つ丸ゴがないため、丸みは
  * ウェイトとの引き換えになる。
+ *
+ * **900 を要求しないこと。** 一番太い master は W8 までで、900 に相当する実体は無い。実 Chrome
+ * （Studio のプレビューと web アプリ）は 900 を W8 で打ち止めにするので見た目が変わらず、
+ * 一見問題が無いように読める。しかし `remotion render` が使う Chrome Headless Shell は、その
+ * W8 へさらに synthetic bold を重ねる。同じフレームのロゴで濃い画素が 37.8%→42.5% に増え、
+ * 字面が潰れて 'o' の白場が塞がった。プレビューでは再現しないので、800 を上限として扱う。
  */
 const ROUNDED = stack("Hiragino Sans", "Noto Sans CJK JP");
 

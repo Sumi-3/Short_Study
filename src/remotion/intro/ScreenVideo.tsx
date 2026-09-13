@@ -99,7 +99,7 @@ export const ScreenVideo: React.FC<{
         backgroundColor: withAlpha(theme.accents[0], 0.1),
         color: theme.ink,
         fontFamily: theme.fontFamily,
-        fontWeight: 900,
+        fontWeight: 800,
         fontSize: 26,
         lineHeight: 1.45,
         textAlign: "center",

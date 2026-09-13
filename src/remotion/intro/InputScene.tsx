@@ -2,7 +2,8 @@ import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { PHONE_HEIGHT } from "./PhoneFrame";
 import { SceneLayout } from "./SceneLayout";
 import { ScreenPhoneFrame } from "./ScreenVideo";
-import type { IntroScene } from "./script";
+import { introDurationInFrames, type IntroScene } from "./script";
+import { activeSentenceIndex, sentenceWindows } from "./sentenceWindows";
 import { useTheme, withAlpha } from "../theme";
 
 /**
@@ -19,6 +20,16 @@ export const InputScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
+
+  /*
+   * ナレーションは「画像を入力します」「テキストの抽出が行われます」「動画の生成を行います」と
+   * 工程順に進むので、塗りつぶしもその文に合わせて送る。文は工程より多く、最後の文
+   * （動画は1、2分で生成されます）も最終工程の話なので、超えたぶんは末尾に留める。
+   */
+  const windows = sentenceWindows(scene.narration, introDurationInFrames(scene, fps), fps);
+  const spokenStep = windows.length > 0
+    ? Math.min(activeSentenceIndex(windows, frame), STEPS.length - 1)
+    : STEPS.length - 1;
 
   const enter = (delay: number) => ({
     opacity: interpolate(frame, [delay * fps, (delay + 0.5) * fps], [0, 1], {
@@ -38,22 +49,24 @@ export const InputScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
       <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 96 }}>
         <ScreenPhoneFrame height={PHONE_HEIGHT} src="intro/input.mp4" placeholder="ここに 入力の録画（撮影・切り抜き・テキスト抽出・音声選択） が入る" />
 
-        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 14 }}>
+        {/* 中身は短い一行なので、余白を埋めるためにブロックを伸ばさない。幅を中身に
+            見合う値で決め、余ったぶんは端末ごと中央へ寄せる。 */}
+        <div style={{ width: 760, flexShrink: 0, display: "flex", flexDirection: "column", gap: 14 }}>
           {STEPS.map((step, index) => (
             <div key={step.label}>
               <div
                 style={{
                   ...enter(index * 0.55),
-                  padding: "22px 26px",
+                  padding: "26px 30px",
                   borderRadius: theme.radius,
-                  backgroundColor: index === STEPS.length - 1 ? withAlpha(theme.accents[0], 0.12) : theme.plate,
-                  border: `3px solid ${withAlpha(theme.accents[0], index === STEPS.length - 1 ? 0.4 : 0.16)}`,
+                  backgroundColor: index === spokenStep ? withAlpha(theme.accents[0], 0.12) : theme.plate,
+                  border: `3px solid ${withAlpha(theme.accents[0], index === spokenStep ? 0.4 : 0.16)}`,
                 }}
               >
-                <div style={{ color: theme.accents[0], fontFamily: theme.fontFamily, fontSize: 30, fontWeight: 900 }}>
+                <div style={{ color: theme.accents[0], fontFamily: theme.fontFamily, fontSize: 40, fontWeight: 800 }}>
                   {step.label}
                 </div>
-                <div style={{ marginTop: 8, color: theme.ink, fontFamily: theme.fontFamily, fontSize: 24, fontWeight: 700, lineHeight: 1.3 }}>
+                <div style={{ marginTop: 8, color: theme.ink, fontFamily: theme.fontFamily, fontSize: 30, fontWeight: 700, lineHeight: 1.3 }}>
                   {step.detail}
                 </div>
               </div>
@@ -66,8 +79,8 @@ export const InputScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
                     justifyContent: "center",
                     color: theme.accents[0],
                     fontFamily: theme.fontFamily,
-                    fontSize: 34,
-                    fontWeight: 900,
+                    fontSize: 72,
+                    fontWeight: 800,
                     lineHeight: 1.1,
                   }}
                 >

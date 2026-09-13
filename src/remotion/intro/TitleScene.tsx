@@ -28,7 +28,7 @@ export const TitleScene: React.FC = () => {
           zIndex: 1,
           fontFamily: theme.fontFamily,
           fontSize: 160,
-          fontWeight: 900,
+          fontWeight: 800,
           letterSpacing: -8,
           color: theme.ink,
           opacity: interpolate(frame, [0, fps * 0.45], [0, 1], {
@@ -51,7 +51,7 @@ export const TitleScene: React.FC = () => {
           zIndex: 1,
           marginTop: 24,
           fontFamily: theme.fontFamily,
-          fontSize: 30,
+          fontSize: 44,
           // 和文は字面が詰まっているので、欧文向けの広い字間をそのまま当てると間延びする。
           letterSpacing: 2,
           fontWeight: 700,

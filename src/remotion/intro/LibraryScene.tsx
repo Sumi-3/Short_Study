@@ -27,7 +27,7 @@ export const LibraryScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
             border: `2px solid ${withAlpha(theme.ink, 0.1)}`,
           }}
         >
-          <div style={{ color: theme.accents[0], fontFamily: theme.fontFamily, fontSize: 32, fontWeight: 900 }}>
+          <div style={{ color: theme.accents[0], fontFamily: theme.fontFamily, fontSize: 32, fontWeight: 800 }}>
             分野で絞り込む
           </div>
           {/* 大分類はちょうど9個なので3列で3行に揃う。4列だと最終行が1個だけ残り、
@@ -43,7 +43,7 @@ export const LibraryScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
                     color: theme.accents[0],
                     fontFamily: theme.fontFamily,
                     fontSize: 30,
-                    fontWeight: 900,
+                    fontWeight: 800,
                   }}
                 >
                   {major}

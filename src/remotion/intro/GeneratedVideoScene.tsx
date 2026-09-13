@@ -14,14 +14,14 @@ export const GeneratedVideoScene: React.FC<{ scene: IntroScene }> = ({ scene }) 
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = useTheme();
-  // 録画の実寸比で画面幅が少し広がっても、3台と矢印2つを同じ列に保つ。
-  const height = 720;
+  // 3台＋矢印2つが横に収まる上限。矢印を大きくしたぶん、画面高と間隔で幅を返している。
+  const height = 700;
 
   return (
     <SceneLayout title="生成された解説動画" narration={scene.narration} durationInFrames={scene.durationInFrames}>
-      <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 48 }}>
+      <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 40 }}>
         {recordings.map((recording, index) => (
-          <div key={recording.src} style={{ display: "flex", alignItems: "center", gap: 48 }}>
+          <div key={recording.src} style={{ display: "flex", alignItems: "center", gap: 40 }}>
             <div
               style={{
                 opacity: interpolate(frame, [index * fps * 0.22, (index * 0.22 + 0.45) * fps], [0, 1], {
@@ -43,8 +43,8 @@ export const GeneratedVideoScene: React.FC<{ scene: IntroScene }> = ({ scene }) 
                 style={{
                   color: theme.accents[0],
                   fontFamily: theme.fontFamily,
-                  fontSize: 64,
-                  fontWeight: 900,
+                  fontSize: 96,
+                  fontWeight: 800,
                   opacity: interpolate(frame, [(index + 0.5) * fps * 0.36, (index + 0.5) * fps * 0.36 + fps * 0.3], [0, 1], {
                     extrapolateLeft: "clamp",
                     extrapolateRight: "clamp",

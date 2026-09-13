@@ -42,7 +42,7 @@ const histogram: Extract<SceneVisual, { kind: "histogram" }> = {
     { from: 30, to: 40, count: 6 },
   ],
   unit: "点",
-  caption: "分布を読む",
+  caption: "",
   marks: [{ value: 24, label: "平均" }],
 };
 
@@ -203,14 +203,16 @@ const VisualCard: React.FC<{ label: string; index: number; children: ReactNode }
           left: 16,
           color: theme.accents[index % theme.accents.length],
           fontFamily: theme.fontFamily,
-          fontSize: 24,
-          fontWeight: 900,
+          fontSize: 30,
+          fontWeight: 800,
           letterSpacing: 1,
         }}
       >
         {label}
       </div>
-      <div style={{ width: "100%", height: "100%", paddingTop: 18, boxSizing: "border-box" }}>{children}</div>
+      {/* paddingTop はカード左上のラベルを避ける高さ。ラベルの文字サイズと連動させないと、
+          グラフの一番上の目盛りがラベルへ突き上げる。 */}
+      <div style={{ width: "100%", height: "100%", paddingTop: 36, boxSizing: "border-box" }}>{children}</div>
     </div>
   );
 };
@@ -220,7 +222,7 @@ const VisualCard: React.FC<{ label: string; index: number; children: ReactNode }
  * 6枚ぶん増えるだけで、値は毎回同じになる。
  */
 const CARD_WIDTH = (1920 - 100 * 2 - 20 * 2) / 3 - 14 * 2;
-const CARD_HEIGHT = (798 - 20) / 2 - 14 * 2 - 18;
+const CARD_HEIGHT = (798 - 20) / 2 - 14 * 2 - 36;
 
 /**
  * short 用のコンポーネントは 9:16 の実寸（横1080）を前提に自分を拡大する。カードへ直接置くと
@@ -249,11 +251,26 @@ const Stage: React.FC<{ height?: number; children: ReactNode }> = ({ height, chi
 
 const FormulaPreview: React.FC = () => {
   const theme = useTheme();
-  // FormulaRun は与えられた高さの中央に組むので、短編の 1920 ではなく中身ぶんだけ渡す。
+  /*
+   * FormulaRun は 9:16 の縦長を前提に上下へ大きく余白を取る。カードの高さへ合わせて縮めると
+   * その余白ごと縮み、式だけが小さくなる。幅だけを合わせて拡大し、はみ出した余白は
+   * カードの overflow で落とす。中身は中央に組まれるので切れない。
+   */
   return (
-    <Stage height={1150}>
-      <FormulaRun scenes={[formula]} accent={theme.accents[0]} />
-    </Stage>
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+      }}
+    >
+      <div style={{ width: 1080, height: 1250, translate: "0px 60px", scale: CARD_WIDTH / 1080, flexShrink: 0 }}>
+        <FormulaRun scenes={[formula]} accent={theme.accents[0]} />
+      </div>
+    </div>
   );
 };
 
