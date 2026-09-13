@@ -986,6 +986,13 @@ body {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+    /*
+     * 既定の `stretch` だと、行の高さは背の高い方の card が決め、低い方の cell には
+     * 余りが出る。card の背景は問題文の分の高さしか無いので、その余白には枠線の内側に
+     * page 背景がそのまま覗き、card が薄暗く欠けたように見えた。行の高さに合わせず、
+     * 各 card を中身の高さのままにする。
+     */
+    align-items: start;
   }
 }
 
