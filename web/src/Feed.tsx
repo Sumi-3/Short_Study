@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FirstFrame } from "./FirstFrame";
 import { ShortPlayer, type ShortPlayerHandle } from "./ShortPlayer";
 import { Thumbnail } from "./Thumbnail";
@@ -25,9 +26,26 @@ export const Feed: React.FC<{
   seekSlot: HTMLElement | null;
   playbackRef?: React.Ref<ShortPlayerHandle>;
 }> = ({ shorts, initialIndex, seekSlot, playbackRef }) => {
-  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const canLoop = shorts.length > 1;
+  const firstIndex = Math.max(0, Math.min(shorts.length - 1, initialIndex));
+  /* 両端の複製は snap の着地点だけを作る。Player は下の sourceIndex を使うので、
+     複製の上でも元の short と同じ一つの instance を保てる。 */
+  const items = useMemo(
+    () =>
+      canLoop
+        ? [
+            { short: shorts[shorts.length - 1]!, sourceIndex: shorts.length - 1 },
+            ...shorts.map((short, sourceIndex) => ({ short, sourceIndex })),
+            { short: shorts[0]!, sourceIndex: 0 },
+          ]
+        : shorts.map((short, sourceIndex) => ({ short, sourceIndex })),
+    [canLoop, shorts],
+  );
+  const [activeIndex, setActiveIndex] = useState(firstIndex);
+  const [playerItemIndex, setPlayerItemIndex] = useState(firstIndex + (canLoop ? 1 : 0));
   const [playerSwapping, setPlayerSwapping] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
+  const settleTimer = useRef<number | null>(null);
   /* 一つの item が scroller を満たすため、これは行の高さであると同時に、固定した
      player をずらす pitch でもある。 */
   const [itemHeight, setItemHeight] = useState(0);
@@ -36,9 +54,9 @@ export const Feed: React.FC<{
   useLayoutEffect(() => {
     const container = scroller.current;
     if (container) {
-      container.scrollTop = initialIndex * container.clientHeight;
+      container.scrollTop = (firstIndex + (canLoop ? 1 : 0)) * container.clientHeight;
     }
-  }, [initialIndex]);
+  }, [canLoop, firstIndex]);
 
   useLayoutEffect(() => {
     const container = scroller.current;
@@ -67,40 +85,91 @@ export const Feed: React.FC<{
       return;
     }
 
+    const itemAt = (scrollTop: number) =>
+      Math.max(0, Math.min(items.length - 1, Math.round(scrollTop / itemHeight)));
+
+    const wrapAfterSnap = () => {
+      const currentItemIndex = itemAt(container.scrollTop);
+      // scrollend のない browser の静止待ちで途中の位置を巡回させないよう、clone の
+      // snap point まで実際に着地したときだけ書き換える。
+      if (
+        !canLoop ||
+        Math.abs(container.scrollTop - currentItemIndex * itemHeight) > 1 ||
+        (currentItemIndex !== 0 && currentItemIndex !== items.length - 1)
+      ) {
+        return;
+      }
+
+      const targetItemIndex = currentItemIndex === 0 ? shorts.length : 1;
+      // Player の top を先に同じ実カードへ移す。DOM を作り直さず scrollTop だけを戻せば、
+      // iOS で gesture 中に解除した audio pool をそのまま使える。
+      flushSync(() => {
+        setPlayerItemIndex(targetItemIndex);
+        setActiveIndex(items[targetItemIndex]!.sourceIndex);
+      });
+      container.scrollTop = targetItemIndex * itemHeight;
+    };
+
     const onScroll = () => {
-      const nearest = Math.round(container.scrollTop / itemHeight);
-      const next = Math.max(0, Math.min(shorts.length - 1, nearest));
+      const nextItemIndex = itemAt(container.scrollTop);
+      const next = items[nextItemIndex]!.sourceIndex;
+      setPlayerItemIndex((current) => (current === nextItemIndex ? current : nextItemIndex));
       setActiveIndex((current) => (current === next ? current : next));
+
+      if (!("onscrollend" in container)) {
+        if (settleTimer.current !== null) window.clearTimeout(settleTimer.current);
+        // 慣性中に clone を実カードへ戻すと iOS の bounce と競合するため、scrollend を
+        // 持たない browser だけは scroll が止まってから同じ判定を行う。
+        settleTimer.current = window.setTimeout(wrapAfterSnap, 180);
+      }
     };
 
     onScroll();
     container.addEventListener("scroll", onScroll, { passive: true });
-    return () => container.removeEventListener("scroll", onScroll);
-  }, [itemHeight, shorts.length]);
+    container.addEventListener("scrollend", wrapAfterSnap);
+    return () => {
+      container.removeEventListener("scroll", onScroll);
+      container.removeEventListener("scrollend", wrapAfterSnap);
+      if (settleTimer.current !== null) window.clearTimeout(settleTimer.current);
+    };
+  }, [canLoop, itemHeight, items, shorts.length]);
 
   // swipe は両方向に進めるため、両隣を warm する。どちらかが active short になる頃には
   // manifest を取得済みにするためである。
   useEffect(() => {
-    for (const index of [activeIndex + 1, activeIndex - 1]) {
+    if (!canLoop) {
+      return;
+    }
+    for (const index of new Set([
+      (activeIndex + 1) % shorts.length,
+      (activeIndex - 1 + shorts.length) % shorts.length,
+    ])) {
       const neighbour = shorts[index];
       if (neighbour) {
         prefetchManifest(neighbour.manifestSrc);
       }
     }
-  }, [activeIndex, shorts]);
+  }, [activeIndex, canLoop, shorts]);
 
   const active = shorts[activeIndex];
 
   return (
     <div className="feed">
       <div className="feed-scroll" ref={scroller}>
-        {shorts.map((short, index) => (
-          <section className="feed-item" key={short.slug} data-index={index}>
+        {items.map(({ short, sourceIndex }, itemIndex) => (
+          <section
+            className="feed-item"
+            key={`${short.slug}-${itemIndex}`}
+            data-index={sourceIndex}
+          >
             <div className="phone">
               {/* swipe で次に来るのはこの両隣だけ。そこには動画自身の最初の絵を敷き、
                   player が乗っても何も変わらないようにする。遠くの short は library
                   と同じ video layout の Poster を使い、manifest がまだ無い間も文字の大きさを揃える。 */}
-              {Math.abs(index - activeIndex) <= 1 ? (
+              {sourceIndex === activeIndex ||
+              (canLoop &&
+                (sourceIndex === (activeIndex + 1) % shorts.length ||
+                  sourceIndex === (activeIndex - 1 + shorts.length) % shorts.length)) ? (
                 <FirstFrame short={short} />
               ) : (
                 <Thumbnail short={short} layout="video" showMeta={false} />
@@ -115,7 +184,7 @@ export const Feed: React.FC<{
           <section
             className="feed-item feed-item--player"
             style={{
-              top: activeIndex * itemHeight,
+              top: playerItemIndex * itemHeight,
               height: itemHeight,
               // swapping 中は上層の Player とこの背景を同時に退かせ、下の FirstFrame を見せる。
               // 通常時は 9:16 の外に残る帯を、item と同じ白で埋める。
