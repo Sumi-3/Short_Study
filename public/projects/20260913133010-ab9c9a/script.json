@@ -1,0 +1,171 @@
+{
+  "topic": "次の極限を求めよ。\n$\\displaystyle \\lim_{n \\to \\infty} \\frac{1}{n} \\sum_{k=1}^{n} \\frac{1}{1+\\left(\\frac{k}{n}\\right)^{2}}$",
+  "model": "claude-opus-5",
+  "outline": [],
+  "unit": "数III 積分法",
+  "difficulty": 3,
+  "subunit": "積分法の応用（面積・体積・曲線の長さ）",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "次の極限を求めよ。$\\lim_{n \\to \\infty} \\frac{1}{n}\\sum_{k=1}^{n}\\frac{1}{1+\\left(\\frac{k}{n}\\right)^2}$ です。項の個数 $n$ が限りなく増えていく和の極限です。和のままでは計算できないので、積分に読みかえます。\n<<<TTS_READING>>>\n次の極限を求めよ。リミット エヌ が 無限大、エヌ ぶんの 1 かける シグマ ケー イコール 1 から エヌ まで、1 たす カッコ エヌ ぶんの ケー カッコ の 2じょう ぶんの 1、です。項の個数 エヌ が限りなく増えていく和の極限です。和のままでは計算できないので、積分に読みかえます。",
+      "visual_type": "hook",
+      "visual_content": "和を積分に読みかえる"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。1つ目に、式が $\\frac{1}{n}$ かける $f\\left(\\frac{k}{n}\\right)$ の和の形になっていることを見ます。2つ目に、対応する関数と積分区間を決めます。3つ目に、その定積分を $x=\\tan\\theta$ の置き換えで計算します。最後に値を答えとして確定します。\n<<<TTS_READING>>>\nまずは解く方針を確認します。1つ目に、式が エヌ ぶんの 1 かける エフ カッコ エヌ ぶんの ケー カッコ の和の形になっていることを見ます。2つ目に、対応する関数と積分区間を決めます。3つ目に、その定積分を エックス イコール タンジェント シータ の置き換えで計算します。最後に値を答えとして確定します。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①式を $\\frac{1}{n}\\sum f\\left(\\frac{k}{n}\\right)$ の形とみて区分求積法を使う",
+          "②対応する関数 $f(x)$ と積分区間を決める",
+          "③定積分を $x=\\tan\\theta$ の置換積分で計算する",
+          "④得られた値を答えとして確定する"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "区分求積法とは、細かい長方形の面積の和が積分に近づくという考え方です。幅が $\\frac{1}{n}$ 、高さが $f\\left(\\frac{k}{n}\\right)$ の短冊を $n$ 本足しています。$n$ を限りなく大きくすると、$0$ から $1$ までの定積分になります。\n<<<TTS_READING>>>\n区分求積法とは、細かい長方形の面積の和が積分に近づくという考え方です。幅が エヌ ぶんの 1、高さが エフ カッコ エヌ ぶんの ケー カッコ の短冊を エヌ 本足しています。エヌ を限りなく大きくすると、0 から 1 までの定積分になります。",
+      "visual_type": "step",
+      "visual_content": "①式を $\\frac{1}{n}\\sum f\\left(\\frac{k}{n}\\right)$ の形とみて区分求積法を使う",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 区分求積法の公式",
+          "[highlight] \\lim_{n \\to \\infty}\\frac{1}{n}\\sum_{k=1}^{n} f\\left(\\frac{k}{n}\\right)=\\int_0^1 f(x)\\,dx",
+          "[text] 幅 $\\frac{1}{n}$ の短冊の面積の和"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "与えられた式は $\\frac{1}{n}$ が前に出ていて、残りは $\\frac{k}{n}$ だけで書けています。そこで $\\frac{k}{n}$ を $x$ とみます。すると関数は $f(x)=\\frac{1}{1+x^2}$ です。$k$ は $1$ から $n$ まで動くので、$x$ は $0$ から $1$ まで動きます。\n<<<TTS_READING>>>\n与えられた式は エヌ ぶんの 1 が前に出ていて、残りは エヌ ぶんの ケー だけで書けています。そこで エヌ ぶんの ケー を エックス とみます。すると関数は エフ カッコ エックス カッコ イコール 1 たす エックス の 2じょう ぶんの 1 です。ケー は 1 から エヌ まで動くので、エックス は 0 から 1 まで動きます。",
+      "visual_type": "step",
+      "visual_content": "②対応する関数 $f(x)$ と積分区間を決める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "\\frac{1}{n}\\sum_{k=1}^{n}\\frac{1}{1+\\left(\\frac{k}{n}\\right)^2}",
+          "[text] $\\frac{k}{n}$ を $x$ とみる",
+          "[underline] f(x)=\\frac{1}{1+x^2}",
+          "[text] 求める極限は $\\int_0^1 \\frac{1}{1+x^2}dx$"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "図で見ると、求める値は曲線 $y=\\frac{1}{1+x^2}$ と $x$ 軸に挟まれた、$0$ から $1$ までの部分の面積です。短冊を細かくした極限がこの面積にあたります。\n<<<TTS_READING>>>\n図で見ると、求める値は曲線 ワイ イコール 1 たす エックス の 2じょう ぶんの 1 と エックス 軸に挟まれた、0 から 1 までの部分の面積です。短冊を細かくした極限がこの面積にあたります。",
+      "visual_type": "step",
+      "visual_content": "②対応する関数 $f(x)$ と積分区間を決める",
+      "visual": {
+        "kind": "plot",
+        "lines": [
+          "[plain] S=\\int_0^1 \\frac{1}{1+x^2}\\,dx"
+        ],
+        "caption": "塗った面積が答え",
+        "xRange": [
+          -0.3,
+          1.6
+        ],
+        "yRange": [
+          0,
+          1.3
+        ],
+        "curves": [
+          {
+            "expr": "1/(1+x^2)",
+            "exprY": null,
+            "label": "$y=\\frac{1}{1+x^2}$",
+            "region": null
+          }
+        ],
+        "tRange": null,
+        "shade": [
+          0,
+          1
+        ],
+        "points": []
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "この積分は $x=\\tan\\theta$ とおくと計算できます。$\\tan$ の微分より $dx=\\frac{1}{\\cos^2\\theta}d\\theta$ です。$x$ が $0$ のとき $\\theta$ は $0$ 、$x$ が $1$ のとき $\\tan\\theta=1$ なので $\\theta$ は $\\frac{\\pi}{4}$ です。\n<<<TTS_READING>>>\nこの積分は エックス イコール タンジェント シータ とおくと計算できます。タンジェント の微分より ディーエックス イコール コサイン シータ の 2じょう ぶんの 1、ディーシータ です。エックス が 0 のとき シータ は 0、エックス が 1 のとき タンジェント シータ イコール 1 なので シータ は 4 ぶんの パイ です。",
+      "visual_type": "step",
+      "visual_content": "③定積分を $x=\\tan\\theta$ の置換積分で計算する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] $x=\\tan\\theta$ とおく",
+          "dx=\\frac{1}{\\cos^2\\theta}\\,d\\theta",
+          "[text] $x:0 \\to 1$ のとき $\\theta:0 \\to \\frac{\\pi}{4}$"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "分母は $1+\\tan^2\\theta=\\frac{1}{\\cos^2\\theta}$ となります。よって被積分関数は $\\cos^2\\theta$ になり、$dx$ の $\\frac{1}{\\cos^2\\theta}$ と打ち消し合います。残るのは $d\\theta$ の積分だけです。\n<<<TTS_READING>>>\n分母は 1 たす タンジェント シータ の 2じょう イコール コサイン シータ の 2じょう ぶんの 1 となります。よって被積分関数は コサイン シータ の 2じょう になり、ディーエックス の コサイン シータ の 2じょう ぶんの 1 と打ち消し合います。残るのは ディーシータ の積分だけです。",
+      "visual_type": "step",
+      "visual_content": "③定積分を $x=\\tan\\theta$ の置換積分で計算する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "\\int_0^1 \\frac{1}{1+x^2}\\,dx",
+          "[substitute: x=tanθ を代入] \\int_0^{\\frac{\\pi}{4}} \\cos^2\\theta \\cdot \\frac{1}{\\cos^2\\theta}\\,d\\theta",
+          "[plain] =\\int_0^{\\frac{\\pi}{4}} d\\theta"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 8,
+      "narration": "$d\\theta$ の積分は $\\theta$ そのものです。$0$ から $\\frac{\\pi}{4}$ まで代入すると、値は $\\frac{\\pi}{4}$ になります。\n<<<TTS_READING>>>\nディーシータ の積分は シータ そのものです。0 から 4 ぶんの パイ まで代入すると、値は 4 ぶんの パイ になります。",
+      "visual_type": "step",
+      "visual_content": "③定積分を $x=\\tan\\theta$ の置換積分で計算する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "\\int_0^{\\frac{\\pi}{4}} d\\theta=\\Big[\\theta\\Big]_0^{\\frac{\\pi}{4}}",
+          "[plain] =\\frac{\\pi}{4}-0=\\frac{\\pi}{4}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 9,
+      "narration": "したがって、求める極限は $\\frac{\\pi}{4}$ です。和の極限が円周率で表される、きれいな結果になりました。\n<<<TTS_READING>>>\nしたがって、求める極限は 4 ぶんの パイ です。和の極限が円周率で表される、きれいな結果になりました。",
+      "visual_type": "step",
+      "visual_content": "④得られた値を答えとして確定する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 答え",
+          "[underline] \\lim_{n \\to \\infty}\\frac{1}{n}\\sum_{k=1}^{n}\\frac{1}{1+\\left(\\frac{k}{n}\\right)^2}=\\frac{\\pi}{4}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 10,
+      "narration": "まとめます。$\\frac{1}{n}$ と $\\frac{k}{n}$ の形を見つけたら区分求積法です。$f(x)=\\frac{1}{1+x^2}$ の $0$ から $1$ の積分に直し、$x=\\tan\\theta$ で計算して答えは $\\frac{\\pi}{4}$ です。\n<<<TTS_READING>>>\nまとめます。エヌ ぶんの 1 と エヌ ぶんの ケー の形を見つけたら区分求積法です。エフ カッコ エックス カッコ イコール 1 たす エックス の 2じょう ぶんの 1 の 0 から 1 の積分に直し、エックス イコール タンジェント シータ で計算して答えは 4 ぶんの パイ です。",
+      "visual_type": "summary",
+      "visual_content": "答えは $\\frac{\\pi}{4}$",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "$\\frac{1}{n}\\sum f\\left(\\frac{k}{n}\\right)$ は $\\int_0^1 f(x)dx$",
+          "$f(x)=\\frac{1}{1+x^2}$ に置き換える",
+          "$x=\\tan\\theta$ の置換で $\\frac{\\pi}{4}$"
+        ]
+      }
+    }
+  ]
+}
