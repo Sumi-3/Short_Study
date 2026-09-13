@@ -191,11 +191,10 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(
-    basicAuthEnabled()
-      ? "認証: HTTP Basic 認証は有効です"
-      : "警告: BASIC_AUTH_PASSWORD が未設定のため認証は無効です",
-  );
+  // 認証を掛けたときだけ知らせる。未設定は手元で動かす既定の状態で、毎回の警告に値しない。
+  if (basicAuthEnabled()) {
+    console.log("認証: HTTP Basic 認証は有効です");
+  }
   if (apiOnly) {
     console.log(`API   http://localhost:${PORT}  (API only — open the Vite URL)`);
     return;
