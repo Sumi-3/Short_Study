@@ -14,7 +14,7 @@ Claude が台本を書き、TTS がナレーションを吹き込み、Remotion 
 | **Node.js 22 以上** | 24 でも動作を確認しています |
 | **Anthropic の API キー** | **動画を新しく作るときだけ** 必要です。視聴するだけなら不要 |
 
-Node.js が入っているかは、ターミナル（Windows なら PowerShell）で確認できます。
+Node.js が入っているかは、ターミナルで確認できます。
 
 ```
 node -v
@@ -40,9 +40,10 @@ npm run dev
 
 ## Windows
 
-PowerShell で実行します。コマンドは macOS と同じです。
+「ターミナル」を開いて実行します（コマンドプロンプトでも同じです）。
+コマンドは macOS と変わりません。
 
-```powershell
+```
 git clone https://github.com/Sumi-3/Short_Study.git
 cd Short_Study
 npm install
@@ -50,14 +51,6 @@ npm run dev
 ```
 
 ブラウザで **http://localhost:5173/** を開きます。
-
-> `npm install` のあとに `npm : このシステムではスクリプトの実行が無効になっているため…` と
-> 出る場合は、PowerShell の実行ポリシーが原因です。管理者権限の PowerShell で一度だけ
-> 次を実行してください。
->
-> ```powershell
-> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-> ```
 
 ---
 
@@ -92,10 +85,10 @@ macOS:
 cp .env.example .env
 ```
 
-Windows (PowerShell):
+Windows:
 
-```powershell
-Copy-Item .env.example .env
+```
+copy .env.example .env
 ```
 
 **2. `.env` を開いて、1行目のキーを書き換える**
