@@ -24,7 +24,7 @@ Claude が台本を書き、TTS がナレーションを吹き込み、Remotion 
 
 ### 1. Node.js と Git を入れる
 
-まず入っているか確認します。
+ターミナルを開いて、入っているか確認します。
 
 ```bash
 node -v
@@ -33,35 +33,19 @@ git --version
 
 `node -v` が `v22` 以上を返し、`git --version` も表示されれば **手順2へ進んでください。**
 
-**Node.js が無い場合。** Homebrew で入れます。Homebrew 自体が無ければ先にこれを実行します
-（途中でパスワードを聞かれます）。
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-Apple シリコン（M1 以降）では、続けて次の2行も実行してください。これを忘れると
-`brew` コマンドが見つかりません。Intel Mac では不要です。
-
-```bash
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
-```
-
-Homebrew が使えるようになったら、Node.js を入れます。
-
-```bash
-brew install node
-```
+**Node.js が無い場合。** [nodejs.org/ja/download](https://nodejs.org/ja/download) を開き、
+**LTS** の **macOS Installer（`.pkg`）** を落とします。ダウンロードした `.pkg` を
+ダブルクリックし、そのまま「続ける」を押していけば完了です。
 
 **Git が無い場合。** 次を実行すると、インストールを促すダイアログが出ます。
+「インストール」を押して待ってください。
 
 ```bash
 xcode-select --install
 ```
 
-> Homebrew を使いたくない場合は、[nodejs.org/ja/download](https://nodejs.org/ja/download) から
-> macOS 用のインストーラ（`.pkg`）を落として実行しても同じです。
+**どちらも、入れ終えたらターミナルを一度閉じて開き直してください。**
+開き直したら `node -v` と `git --version` をもう一度実行し、両方表示されることを確認します。
 
 ### 2. 起動する
 
@@ -78,11 +62,9 @@ npm run dev
 
 ## Windows
 
-「ターミナル」を開いて実行します（コマンドプロンプトでも同じです）。
-
 ### 1. Node.js と Git を入れる
 
-まず入っているか確認します。
+「ターミナル」を開いて（コマンドプロンプトでも同じです）、入っているか確認します。
 
 ```
 node -v
@@ -91,20 +73,17 @@ git --version
 
 `node -v` が `v22` 以上を返し、`git --version` も表示されれば **手順2へ進んでください。**
 
-無い場合は、Windows 標準の `winget` で入ります。
+**Node.js が無い場合。** [nodejs.org/ja/download](https://nodejs.org/ja/download) を開き、
+**LTS** の **Windows Installer（`.msi`）** を落とします。ダウンロードした `.msi` を
+ダブルクリックし、そのまま「Next」を押していけば完了です。
 
-```
-winget install OpenJS.NodeJS.LTS
-winget install Git.Git
-```
+**Git が無い場合。** [git-scm.com/download/win](https://git-scm.com/download/win) を開くと
+インストーラのダウンロードが始まります。実行したあとは設定項目が多く出ますが、
+**すべて既定のまま「Next」で問題ありません。**
 
-**インストール後、ターミナルを一度閉じて開き直してください。** PATH が反映されず
-`node` が見つからないままになります。開き直したら `node -v` で確認します。
-
-> `winget` が見つからない場合（Windows 10 の古い版など）は、
-> [nodejs.org/ja/download](https://nodejs.org/ja/download) と
-> [git-scm.com/download/win](https://git-scm.com/download/win) から
-> インストーラを落として実行してください。
+**どちらも、入れ終えたらターミナルを一度閉じて開き直してください。**
+これを忘れると、入れたのに `node` が見つからないままになります。開き直したら
+`node -v` と `git --version` をもう一度実行し、両方表示されることを確認します。
 
 ### 2. 起動する
 
