@@ -38,7 +38,7 @@ export const InputScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
     <SceneLayout title="入力から動画生成まで" narration={scene.narration} durationInFrames={scene.durationInFrames}>
       <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 96 }}>
         <PhoneFrame height={PHONE_HEIGHT}>
-          <ScreenVideo placeholder="ここに 入力の録画（撮影・切り抜き・テキスト抽出・音声選択） が入る" />
+          <ScreenVideo src="intro/input.mp4" placeholder="ここに 入力の録画（撮影・切り抜き・テキスト抽出・音声選択） が入る" />
         </PhoneFrame>
 
         <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 22 }}>

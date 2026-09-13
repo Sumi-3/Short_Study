@@ -17,11 +17,6 @@ const PAUSE_OVERLAY_STYLE = {
 } as React.CSSProperties;
 const rateLabel = (rate: number) => `${Number.isInteger(rate) ? rate.toFixed(1) : rate}×`;
 
-const clock = (seconds: number) => {
-  const whole = Math.max(0, Math.floor(seconds));
-  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, "0")}`;
-};
-
 /**
  * シークバー。player の親を毎秒30回再レンダーさせないため、フレームカウンターも
  * ここで持つ。これは大きな差だった。再レンダーのたびに `inputProps` が作り直され、
@@ -32,8 +27,7 @@ const clock = (seconds: number) => {
 const Scrubber: React.FC<{
   player: React.RefObject<PlayerRef | null>;
   durationInFrames: number;
-  fps: number;
-}> = ({ player, durationInFrames, fps }) => {
+}> = ({ player, durationInFrames }) => {
   const [frame, setFrame] = useState(0);
   const [scrubbing, setScrubbing] = useState(false);
   const track = useRef<HTMLDivElement>(null);
@@ -93,11 +87,6 @@ const Scrubber: React.FC<{
       onPointerCancel={() => setScrubbing(false)}
       onClick={(event) => event.stopPropagation()}
     >
-      {scrubbing ? (
-        <div className="scrubber__time">
-          {clock(frame / fps)} / {clock(durationInFrames / fps)}
-        </div>
-      ) : null}
       <div className="scrubber__track" ref={track}>
         <div className="scrubber__fill" style={{ width: `${percent}%` }} />
         <div className="scrubber__knob" style={{ left: `${percent}%` }} />
@@ -517,11 +506,7 @@ export const ShortPlayer: React.FC<{
             */}
           {seekSlot
             ? createPortal(
-                <Scrubber
-                  player={player}
-                  durationInFrames={durationInFrames}
-                  fps={manifest.fps}
-                />,
+                <Scrubber player={player} durationInFrames={durationInFrames} />,
                 seekSlot,
               )
             : null}

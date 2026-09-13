@@ -25,7 +25,7 @@ export const OverviewScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
       <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 120 }}>
         <div style={enter(0)}>
           <PhoneFrame height={height}>
-            <ScreenVideo placeholder="ここに 概要・左のフィード録画 が入る" />
+            <ScreenVideo src="intro/feed.mp4" placeholder="ここに 概要・左のフィード録画 が入る" />
           </PhoneFrame>
         </div>
         <div style={enter(1)}>

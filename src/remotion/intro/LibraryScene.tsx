@@ -61,7 +61,7 @@ export const LibraryScene: React.FC<{ scene: IntroScene }> = ({ scene }) => {
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <PhoneFrame height={PHONE_HEIGHT}>
-            <ScreenVideo placeholder="ここに 3-4 右の録画（ホーム・フィルター） が入る" />
+            <ScreenVideo src="intro/library.mp4" placeholder="ここに ライブラリの録画（ホーム・フィルター） が入る" />
           </PhoneFrame>
         </div>
       </div>

@@ -505,15 +505,6 @@ body {
   transform: translateY(-50%) scale(1);
 }
 
-.scrubber__time {
-  margin-bottom: 10px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-
 .player-placeholder {
   height: 100%;
   display: flex;

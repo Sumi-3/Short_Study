@@ -14,3 +14,4 @@ build
 
 # Vercel CLI
 .vercel
+public/intro/input.mp4
