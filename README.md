@@ -86,6 +86,10 @@ npm run server    # http://localhost:3001 で web/dist を配信
 
 ## デプロイ（Railway）
 
+`vercel.json` `api/` `.githooks/` は**リポジトリに含めていません**。clone して
+`ANTHROPIC_API_KEY` を設定すれば動く、という最小構成を保つためです（`.gitignore` 参照）。
+`railway.json` だけは、Import 時にビルドと起動コマンドを読ませるため残しています。
+
 ```bash
 # 1. GitHub リポジトリから Railway service を Import する（railway.json が Nixpacks を設定する）
 # 2. Volume を作成し、この service の /data にマウントする
@@ -141,8 +145,9 @@ project ごとに `tar | ssh` で独立して送信し、送信後は全ファ�
 
 ### 旧構成: Vercel + Blob
 
-`vercel.json` と Blob の同期コードは、既存の完成品を Railway へ移すためにも残しています。
-Vercel を継続利用する場合の構成は次のとおりです。
+Blob の同期コード（`src/syncBlob.ts` `src/importBlob.ts`）は、既存の完成品を Railway へ移すために
+残しています。`vercel.json` と `api/` はリポジトリに含めていないので、Vercel を使う場合は
+手元の複製から戻してください。構成は次のとおりです。
 
 ローカルとデプロイ先で動くコードは同じです。分かれるのは置き場所だけで、
 それも設定ではなく実行環境から決まります:

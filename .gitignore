@@ -14,3 +14,22 @@ build
 
 # Vercel CLI
 .vercel
+
+# --- ここから下はリポジトリに含めない ---
+# clone して ANTHROPIC_API_KEY を設定すれば動く、という最小構成を保つため。
+# いずれもローカルには残るが、push はしない。
+
+# デプロイ先の設定。アプリの動作には要らない。railway.json だけは、Railway が
+# GitHub から Import するときにビルドと起動コマンドを読むので追跡したままにする。
+vercel.json
+api/
+.githooks/
+
+# AI エージェント用の設定とスキル。開発補助であり、アプリの一部ではない。
+.agents/
+.claude/
+.codex/
+skills-lock.json
+AGENTS.md
+CLAUDE.md
+

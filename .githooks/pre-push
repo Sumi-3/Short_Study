@@ -1,4 +1,0 @@
-#!/bin/sh
-
-npm run --silent sync:railway
-exit 0
