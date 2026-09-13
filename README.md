@@ -134,7 +134,7 @@ npm run sync:railway -- --force <slug>       # 意図して削除済み動画を
 アプリ上で削除した動画はローカルに残る。そのため「Volume に無いものをすべて送る」差分同期では、削除した
 動画が次の push で復活してしまう。`.railway-synced.json`（Git 管理外）に一度送った slug と既に Volume
 にある slug を記録し、台帳にある slug は Volume から消えていても自動では再送しない。意図して戻す場合だけ
-`--force <slug>` を使う。`mock` は同梱サンプルなので対象外である。
+`--force <slug>` を使う。
 
 project ごとに `tar | ssh` で独立して送信し、送信後は全ファイルの実バイト数を照合する。接続・転送・照合の
 失敗は目立つ警告と手動再実行コマンドを出すが、pre-push によって Git push を止めない。
@@ -213,7 +213,7 @@ npm run sync:blob -- --dry-run    # token がなくても初回 upload 対象を
 ```
 
 Blob に既にある `manifest.json` と scene mp3 は pathname ごとに飛ばし、未アップロード分だけを送る。
-`mock` も Blob の feed がローカルの一覧と一致するよう同期対象に含める。失敗した project があっても
+失敗した project があっても
 他を続けるが、最後に非ゼロで終了して push は止める。現在の pre-push はこの旧同期を呼ばない。
 
 ## パイプライン
@@ -247,7 +247,7 @@ npm run typecheck
 Studio で特定の動画を開くときは props を渡します:
 
 ```bash
-npm run studio -- --props=public/projects/mock/props.json
+npm run studio -- --props=public/projects/m3-pythagoras/props.json
 ```
 
 ## 環境変数

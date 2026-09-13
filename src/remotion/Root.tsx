@@ -7,8 +7,9 @@ import {
 import { VIDEO } from "../config-video";
 
 const defaultProps: StudyShortProps = {
-  // render ごとに `--props` で上書きする。`mock` は repository に入っている sample。
-  manifestSrc: "projects/mock/manifest.json",
+  // render ごとに `--props` で上書きする。Studio を素で開いたときの表示用に、同梱した
+  // 生成物の中から図形と式の両方が出る 1 本を指しておく。
+  manifestSrc: "projects/m3-pythagoras/manifest.json",
   manifest: null,
   animateHookEntrance: true,
   renderCaptions: true,

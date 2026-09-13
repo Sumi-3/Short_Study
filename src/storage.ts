@@ -299,14 +299,7 @@ export const listShorts = async (): Promise<ShortSummary[]> =>
   usingBlob() ? listFromBlob() : listFromDisk();
 
 const deleteFromDisk = async (slug: string) => {
-  if (slug === "mock") {
-    // `mock` は fresh clone をすぐ使えるようにする同梱サンプルで、working tree の中に居る。
-    // 通常の生成物扱いなら、ライブラリの 1 回の操作でリポジトリを壊せてしまう。守るべきは
-    // repository の file であって slug ではないので、この禁止は disk 経路だけに置く。deploy が
-    // 消すのは Blob に上がった複製であり、それは他の short と同じく使い捨ててよい。
-    throw new ProjectDeleteError("the mock project cannot be deleted", 403);
-  }
-  // path を構築する前に、意図して上の検証を済ませる。
+  // path を構築する前に、意図して slug の検証を済ませる。
   const dir = paths.projectDir(slug);
   if (!fs.existsSync(dir)) {
     // 存在しないプロジェクトは client error。成功と返すと、タイプミスと実際に行われた不可逆な

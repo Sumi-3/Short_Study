@@ -105,8 +105,7 @@ const localProjects = (): Project[] => {
   }
 
   return fs.readdirSync(paths.projects, { withFileTypes: true }).flatMap((entry) => {
-    // mock は fresh clone 用のリポジトリ同梱物であり、利用者が作った完成品ではない。
-    if (!entry.isDirectory() || entry.name === "mock" || !isProjectSlug(entry.name)) {
+    if (!entry.isDirectory() || !isProjectSlug(entry.name)) {
       return [];
     }
     return [{ slug: entry.name, ...sizeOf(path.join(paths.projects, entry.name)) }];

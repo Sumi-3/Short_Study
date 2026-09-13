@@ -20,7 +20,7 @@ import { ThemeProvider, accentFor, layout, themeOf } from "./theme";
 import type { Manifest, ManifestScene } from "../types";
 
 export type StudyShortProps = {
-  /** `public/` 相対の path。例: `projects/mock/manifest.json`。 */
+  /** `public/` 相対の path。例: `projects/m3-pythagoras/manifest.json`。 */
   manifestSrc: string;
   /** `calculateMetadata` が設定する値で、手渡しはしない。 */
   manifest: Manifest | null;

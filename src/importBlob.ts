@@ -106,10 +106,8 @@ const main = async () => {
     return;
   }
 
-  const projects = blobProjects(await listBlobFiles()).filter(({ slug }) => {
-    // mock は source tree の Player 用であり、永続 Volume の feed へ複製しない。
-    return slug !== "mock" && !fs.existsSync(path.join(paths.projectDir(slug), "manifest.json"));
-  });
+  const projects = blobProjects(await listBlobFiles()).filter(({ slug }) =>
+    !fs.existsSync(path.join(paths.projectDir(slug), "manifest.json")));
 
   if (dryRun) {
     for (const { slug } of projects) {
