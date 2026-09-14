@@ -1,0 +1,110 @@
+{
+  "topic": "$\\lim_{x \\to \\infty} \\left( \\sqrt{x^2+3x} - x \\right)$ を求めよ。",
+  "model": "claude-opus-5",
+  "outline": [
+    "関数の極限について考える。",
+    "(1) $\\lim_{x \\to \\infty} \\left( \\sqrt{x^2+3x} - x \\right)$ を求めよ。"
+  ],
+  "unit": "数III 極限",
+  "difficulty": 2,
+  "subunit": "関数の極限と連続性",
+  "course": "math",
+  "subject": "math",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "リミット $x \\to \\infty$ の $\\sqrt{x^2+3x}-x$ を求めよ。\nルートの中も $x$ も、どちらも限りなく大きくなります。\nその差がどうなるかを調べる問題です。\n<<<TTS_READING>>>\nリミット エックス かぎりなく大きく、ルート エックスのにじょう たす さんエックス ひく エックス を もとめよ。\nルートの中も エックス も、どちらもかぎりなく大きくなります。\nその差がどうなるかを調べる問題です。",
+      "visual_type": "hook",
+      "visual_content": "差を有理化して分数にする"
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずは解く方針を確認します。\n1つ目に、そのまま代入すると無限大ひく無限大になることを確かめます。\n2つ目に、和をかけて割る有理化で、差を分数の形に直します。\n3つ目に、分母と分子を $x$ で割って、$x$ を大きくした値を求めます。\n<<<TTS_READING>>>\nまずは解く方針を確認します。\nひとつ目に、そのまま代入すると むげんだい ひく むげんだい になることを確かめます。\nふたつ目に、和をかけて割る ゆうりか で、差をぶんすうの形に直します。\nみっつ目に、ぶんぼ と ぶんし を エックス で割って、エックス を大きくした値を求めます。",
+      "visual_type": "step",
+      "visual_content": "方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①そのままでは $\\infty-\\infty$ の不定形になることを確認する",
+          "②$\\sqrt{x^2+3x}+x$ を分母分子にかけて有理化し、分数の形にする",
+          "③分母分子を $x$ で割り、$x \\to \\infty$ の極限を計算して答えを確定する"
+        ]
+      }
+    },
+    {
+      "scene_id": 3,
+      "narration": "$x$ を大きくすると $\\sqrt{x^2+3x}$ も $x$ も無限大に近づきます。\n無限大ひく無限大は、値が決まらない不定形です。\nだから式を変形してから調べます。\n<<<TTS_READING>>>\nエックス を大きくすると ルート エックスのにじょう たす さんエックス も エックス も むげんだい に近づきます。\nむげんだい ひく むげんだい は、値が決まらない ふていけい です。\nだから式を変形してから調べます。",
+      "visual_type": "step",
+      "visual_content": "①そのままでは $\\infty-\\infty$ の不定形になることを確認する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] $x \\to \\infty$ のとき",
+          "\\sqrt{x^2+3x} \\to \\infty,\\quad x \\to \\infty",
+          "[text][underline] $\\infty-\\infty$ は不定形"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 4,
+      "narration": "差の形は扱いにくいので、和をかけて割ります。\n$(A-B)(A+B)=A^2-B^2$ でルートが外れます。\n分子は $x^2+3x-x^2$ で $3x$ になります。\n<<<TTS_READING>>>\n差の形はあつかいにくいので、和をかけて割ります。\nカッコ エー ひく ビー カッコ かける カッコ エー たす ビー カッコ は エーのにじょう ひく ビーのにじょう で、ルートが外れます。\nぶんし は エックスのにじょう たす さんエックス ひく エックスのにじょう で、さんエックス になります。",
+      "visual_type": "step",
+      "visual_content": "②$\\sqrt{x^2+3x}+x$ を分母分子にかけて有理化し、分数の形にする",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] (A-B)(A+B)=A^2-B^2",
+          "\\sqrt{x^2+3x}-x=\\frac{(x^2+3x)-x^2}{\\sqrt{x^2+3x}+x}",
+          "[plain] =\\frac{3x}{\\sqrt{x^2+3x}+x}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 5,
+      "narration": "次に分母と分子を $x$ で割ります。\n$x$ は正なので、$\\sqrt{x^2+3x}$ は $x\\sqrt{1+\\frac{3}{x}}$ と書けます。\nこれで $x$ でうまく約分できます。\n<<<TTS_READING>>>\n次に ぶんぼ と ぶんし を エックス で割ります。\nエックス は せい なので、ルート エックスのにじょう たす さんエックス は エックス かける ルート いち たす さん ぶんの エックス、と書けます。\nこれで エックス でうまく やくぶん できます。",
+      "visual_type": "step",
+      "visual_content": "③分母分子を $x$ で割り、$x \\to \\infty$ の極限を計算して答えを確定する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] $x>0$ より $\\sqrt{x^2+3x}=x\\sqrt{1+\\frac{3}{x}}$",
+          "\\frac{3x}{\\sqrt{x^2+3x}+x}",
+          "[substitute: 分母分子をxで割る] \\frac{3}{\\sqrt{1+\\frac{3}{x}}+1}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 6,
+      "narration": "$x$ を大きくすると $\\frac{3}{x}$ は $0$ に近づきます。\n分母は $\\sqrt{1}+1$ で $2$ になります。\nよって極限は $\\frac{3}{2}$ です。\n<<<TTS_READING>>>\nエックス を大きくすると さん ぶんの エックス は ゼロ に近づきます。\nぶんぼ は ルート いち たす いち で に になります。\nよって きょくげん は にぶんのさん です。",
+      "visual_type": "step",
+      "visual_content": "③分母分子を $x$ で割り、$x \\to \\infty$ の極限を計算して答えを確定する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] $x \\to \\infty$ のとき $\\frac{3}{x} \\to 0$",
+          "\\frac{3}{\\sqrt{1+0}+1}=\\frac{3}{2}",
+          "[text] 答え",
+          "[underline] \\lim_{x \\to \\infty}\\left(\\sqrt{x^2+3x}-x\\right)=\\frac{3}{2}"
+        ],
+        "caption": ""
+      }
+    },
+    {
+      "scene_id": 7,
+      "narration": "無限大ひく無限大は有理化で分数に直すのが定石です。\n差を分子にまとめ、$x$ で割れば形が見えます。\n答えは $\\frac{3}{2}$ です。\n<<<TTS_READING>>>\nむげんだい ひく むげんだい は ゆうりか で ぶんすう に直すのが じょうせき です。\n差を ぶんし にまとめ、エックス で割れば形が見えます。\n答えは にぶんのさん です。",
+      "visual_type": "summary",
+      "visual_content": "答え",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] $\\infty-\\infty$ は有理化で分数に",
+          "[box] \\lim_{x \\to \\infty}\\left(\\sqrt{x^2+3x}-x\\right)=\\frac{3}{2}"
+        ],
+        "caption": ""
+      }
+    }
+  ]
+}
