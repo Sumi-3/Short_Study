@@ -1,0 +1,5513 @@
+{
+  "topic": "行列 $A = \\begin{pmatrix} 2 & 1 \\\\ 3 & 2 \\end{pmatrix}$ について、\n(1) 逆行列 $A^{-1}$ を求めよ。\n(2) 連立方程式 $\\begin{cases} 2x + y = 4 \\\\ 3x + 2y = 7 \\end{cases}$ を、$A^{-1}$ を用いて解け。",
+  "outline": [
+    "行列 $A = \\begin{pmatrix} 2 & 1 \\\\ 3 & 2 \\end{pmatrix}$ が与えられている。",
+    "(1) 逆行列 $A^{-1}$ を求めよ。",
+    "(2) 連立方程式 $2x + y = 4$、$3x + 2y = 7$ を、$A^{-1}$ を用いて解け。"
+  ],
+  "unit": "数C 数学的な表現の工夫",
+  "subunit": "行列とその演算",
+  "difficulty": 2,
+  "model": "handwritten",
+  "course": "math",
+  "subject": "math",
+  "slug": "matrix-inverse-system",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "createdAt": "2026-09-14T04:32:31.007Z",
+  "scenes": [
+    {
+      "scene_id": 1,
+      "narration": "行列 $A$ の逆行列 $A^{-1}$ を求めます。\n次に連立方程式を、その $A^{-1}$ を使って解きます。\nかっこ1、かっこ2の順に解説します。\n<<<TTS_READING>>>\n行列 エー の逆行列 エー インバース を求めます。\n次に連立方程式を、その エー インバース を使って解きます。\nかっこ1、かっこ2の順に解説します。",
+      "visual_type": "hook",
+      "visual_content": "$A^{-1}$ を左からかける",
+      "audioSrc": "projects/matrix-inverse-system/scene-01.mp3",
+      "audioDurationInSeconds": 12.624,
+      "durationInFrames": 390,
+      "captions": [
+        {
+          "text": "行列 ",
+          "startMs": 119.458,
+          "endMs": 582.416,
+          "timestampMs": 350.937,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A$ ",
+          "startMs": 594,
+          "endMs": 767.625,
+          "timestampMs": 680.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 779.166,
+          "endMs": 906.499,
+          "timestampMs": 842.8325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "逆行列 ",
+          "startMs": 918.041,
+          "endMs": 1647.207,
+          "timestampMs": 1282.624,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 1658.791,
+          "endMs": 2364.833,
+          "timestampMs": 2011.812,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 2376.375,
+          "endMs": 2457.375,
+          "timestampMs": 2416.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "求め",
+          "startMs": 2469,
+          "endMs": 2793.083,
+          "timestampMs": 2631.0415000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 2804.625,
+          "endMs": 3140.291,
+          "timestampMs": 2972.458,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "次",
+          "startMs": 3958.333,
+          "endMs": 4224.541,
+          "timestampMs": 4091.437,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 4236.125,
+          "endMs": 4386.583,
+          "timestampMs": 4311.353999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "連立",
+          "startMs": 4398.166,
+          "endMs": 4826.416,
+          "timestampMs": 4612.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "方程",
+          "startMs": 4837.958,
+          "endMs": 5266.208,
+          "timestampMs": 5052.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 5277.791,
+          "endMs": 5497.707,
+          "timestampMs": 5387.749,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を、",
+          "startMs": 5509.25,
+          "endMs": 5740.75,
+          "timestampMs": 5625,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "その ",
+          "startMs": 6018.5,
+          "endMs": 6284.708,
+          "timestampMs": 6151.603999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 6296.291,
+          "endMs": 7071.75,
+          "timestampMs": 6684.0205000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 7083.333,
+          "endMs": 7164.333,
+          "timestampMs": 7123.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "使っ",
+          "startMs": 7175.916,
+          "endMs": 7476.832,
+          "timestampMs": 7326.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 7488.416,
+          "endMs": 7580.999,
+          "timestampMs": 7534.7075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "解き",
+          "startMs": 7592.583,
+          "endMs": 7800.915999999999,
+          "timestampMs": 7696.7495,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 7812.5,
+          "endMs": 8136.583,
+          "timestampMs": 7974.541499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "かっこ",
+          "startMs": 8993.041,
+          "endMs": 9293.956999999999,
+          "timestampMs": 9143.499,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "1、",
+          "startMs": 9305.541,
+          "endMs": 9675.916,
+          "timestampMs": 9490.7285,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "かっこ",
+          "startMs": 9884.25,
+          "endMs": 10219.916,
+          "timestampMs": 10052.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2",
+          "startMs": 10231.5,
+          "endMs": 10358.833,
+          "timestampMs": 10295.1665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 10370.375,
+          "endMs": 10486.125,
+          "timestampMs": 10428.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "順",
+          "startMs": 10497.666,
+          "endMs": 10682.831999999999,
+          "timestampMs": 10590.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 10694.458,
+          "endMs": 10844.916000000001,
+          "timestampMs": 10769.687000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "解説",
+          "startMs": 10856.5,
+          "endMs": 11307.875,
+          "timestampMs": 11082.1875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 11319.458,
+          "endMs": 11435.208,
+          "timestampMs": 11377.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 11446.75,
+          "endMs": 11805.541,
+          "timestampMs": 11626.145499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 2,
+      "narration": "まずはかっこ1の問題から解説します。\nはじめに、行列式 $\\det A$ を成分から計算します。\n次に、その値が $0$ でないことを確かめます。\n行列式が $0$ でなければ逆行列は存在します。\n最後に、2次の正方行列の逆行列の公式にあてはめます。\nこれで $A^{-1}$ が求まります。\n<<<TTS_READING>>>\nまずはかっこ1の問題から解説します。\nはじめに、行列式 デット エー を成分から計算します。\n次に、その値が 0 でないことを確かめます。\n行列式が 0 でなければ逆行列は存在します。\n最後に、2次の正方行列の逆行列の公式にあてはめます。\nこれで エー インバース が求まります。",
+      "visual_type": "step",
+      "visual_content": "(1)の方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①$A$ の行列式 $\\det A$ を成分から計算する",
+          "②$\\det A \\ne 0$ を確かめて逆行列が存在することを確認する",
+          "③2次の正方行列の逆行列の公式にあてはめて $A^{-1}$ を求める"
+        ]
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-02.mp3",
+      "audioDurationInSeconds": 25.2,
+      "durationInFrames": 767,
+      "captions": [
+        {
+          "text": "まず",
+          "startMs": 119.458,
+          "endMs": 397.249,
+          "timestampMs": 258.35350000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 408.791,
+          "endMs": 570.832,
+          "timestampMs": 489.8115,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かっこ",
+          "startMs": 605.541,
+          "endMs": 964.3320000000001,
+          "timestampMs": 784.9365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "1",
+          "startMs": 975.916,
+          "endMs": 1195.832,
+          "timestampMs": 1085.874,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1207.416,
+          "endMs": 1323.166,
+          "timestampMs": 1265.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "問題",
+          "startMs": 1334.708,
+          "endMs": 1728.208,
+          "timestampMs": 1531.458,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から",
+          "startMs": 1739.833,
+          "endMs": 1948.1660000000002,
+          "timestampMs": 1843.9995000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "解説",
+          "startMs": 1959.708,
+          "endMs": 2411.083,
+          "timestampMs": 2185.3955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 2422.666,
+          "endMs": 2538.416,
+          "timestampMs": 2480.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 2550,
+          "endMs": 2897.208,
+          "timestampMs": 2723.6040000000003,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "はじめ",
+          "startMs": 3715.291,
+          "endMs": 4062.4990000000003,
+          "timestampMs": 3888.8950000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 4074.083,
+          "endMs": 4305.5830000000005,
+          "timestampMs": 4189.8330000000005,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "行列",
+          "startMs": 4629.625,
+          "endMs": 5115.75,
+          "timestampMs": 4872.6875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式 ",
+          "startMs": 5127.333,
+          "endMs": 5358.833,
+          "timestampMs": 5243.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\det A$ ",
+          "startMs": 5370.375,
+          "endMs": 5844.916,
+          "timestampMs": 5607.6455000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 5856.5,
+          "endMs": 5995.375,
+          "timestampMs": 5925.9375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "成分",
+          "startMs": 6006.958,
+          "endMs": 6458.333,
+          "timestampMs": 6232.6455,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から",
+          "startMs": 6469.916,
+          "endMs": 6712.957,
+          "timestampMs": 6591.4365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "計算",
+          "startMs": 6736.125,
+          "endMs": 7199.083,
+          "timestampMs": 6967.603999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 7210.666,
+          "endMs": 7349.541,
+          "timestampMs": 7280.1035,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 7361.125,
+          "endMs": 7708.333,
+          "timestampMs": 7534.728999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "次",
+          "startMs": 8530.083,
+          "endMs": 8796.291000000001,
+          "timestampMs": 8663.187000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 8807.875,
+          "endMs": 9062.5,
+          "timestampMs": 8935.1875,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "その",
+          "startMs": 9351.833,
+          "endMs": 9594.874,
+          "timestampMs": 9473.353500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "値",
+          "startMs": 9606.5,
+          "endMs": 9930.583,
+          "timestampMs": 9768.5415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 9942.125,
+          "endMs": 10046.291,
+          "timestampMs": 9994.207999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$0$ ",
+          "startMs": 10057.875,
+          "endMs": 10243.041,
+          "timestampMs": 10150.457999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 10254.625,
+          "endMs": 10358.791,
+          "timestampMs": 10306.707999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ない",
+          "startMs": 10370.375,
+          "endMs": 10578.708,
+          "timestampMs": 10474.5415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "こと",
+          "startMs": 10590.291,
+          "endMs": 10810.206999999999,
+          "timestampMs": 10700.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 10821.75,
+          "endMs": 10914.333,
+          "timestampMs": 10868.0415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "確かめ",
+          "startMs": 10925.916,
+          "endMs": 11388.874,
+          "timestampMs": 11157.395,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 11400.458,
+          "endMs": 11747.666000000001,
+          "timestampMs": 11574.062000000002,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "行列",
+          "startMs": 12569.458,
+          "endMs": 13043.999,
+          "timestampMs": 12806.728500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 13055.541,
+          "endMs": 13263.874,
+          "timestampMs": 13159.7075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 13275.458,
+          "endMs": 13379.624,
+          "timestampMs": 13327.541000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$0$ ",
+          "startMs": 13391.208,
+          "endMs": 13587.958,
+          "timestampMs": 13489.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 13599.541,
+          "endMs": 13703.706999999999,
+          "timestampMs": 13651.624,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なけれ",
+          "startMs": 13715.291,
+          "endMs": 14050.956999999999,
+          "timestampMs": 13883.124,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ば",
+          "startMs": 14062.5,
+          "endMs": 14247.666,
+          "timestampMs": 14155.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "逆行列",
+          "startMs": 14317.125,
+          "endMs": 15046.291,
+          "timestampMs": 14681.707999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 15057.875,
+          "endMs": 15162.041,
+          "timestampMs": 15109.957999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "存在",
+          "startMs": 15173.625,
+          "endMs": 15601.875,
+          "timestampMs": 15387.75,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 15613.416,
+          "endMs": 15729.166,
+          "timestampMs": 15671.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 15740.75,
+          "endMs": 16087.958,
+          "timestampMs": 15914.354,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "最後",
+          "startMs": 16909.708,
+          "endMs": 17280.083,
+          "timestampMs": 17094.8955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 17291.666,
+          "endMs": 17534.707000000002,
+          "timestampMs": 17413.186500000003,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "2次",
+          "startMs": 17858.791,
+          "endMs": 18101.874900000003,
+          "timestampMs": 17980.332950000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 18113.416,
+          "endMs": 18229.166,
+          "timestampMs": 18171.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "正方",
+          "startMs": 18240.75,
+          "endMs": 18703.708,
+          "timestampMs": 18472.229,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 18715.291,
+          "endMs": 19143.541,
+          "timestampMs": 18929.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 19155.083,
+          "endMs": 19305.540999999997,
+          "timestampMs": 19230.311999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "逆行列",
+          "startMs": 19351.833,
+          "endMs": 20080.999,
+          "timestampMs": 19716.415999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 20092.583,
+          "endMs": 20231.458,
+          "timestampMs": 20162.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "公式",
+          "startMs": 20243.041,
+          "endMs": 20717.582000000002,
+          "timestampMs": 20480.311500000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 20729.166,
+          "endMs": 20844.916,
+          "timestampMs": 20787.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "あてはめ",
+          "startMs": 20856.5,
+          "endMs": 21307.875,
+          "timestampMs": 21082.1875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 21319.458,
+          "endMs": 21666.665999999997,
+          "timestampMs": 21493.061999999998,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "これ",
+          "startMs": 22534.708,
+          "endMs": 22685.165999999997,
+          "timestampMs": 22609.936999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で ",
+          "startMs": 22696.75,
+          "endMs": 22789.333,
+          "timestampMs": 22743.0415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 22800.916,
+          "endMs": 23495.375,
+          "timestampMs": 23148.1455,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 23506.958,
+          "endMs": 23599.540999999997,
+          "timestampMs": 23553.249499999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "求まり",
+          "startMs": 23611.125,
+          "endMs": 24039.375,
+          "timestampMs": 23825.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 24050.916,
+          "endMs": 24398.124,
+          "timestampMs": 24224.52,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 3,
+      "narration": "行列式は、たすきがけの差で決まります。\n左上と右下の積から、右上と左下の積を引きます。\n$A$ では $2$ と $2$ の積が $4$ です。\n$1$ と $3$ の積は $3$ です。\n差をとると $\\det A$ は $1$ になります。\n<<<TTS_READING>>>\n行列式は、たすきがけの差で決まります。\n左上と右下の積から、右上と左下の積を引きます。\nエー では 2 と 2 の積が 4 です。\n1 と 3 の積は 3 です。\n差をとると デット エー は 1 になります。",
+      "visual_type": "step",
+      "visual_content": "①$A$ の行列式 $\\det A$ を成分から計算する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 行列式は $ad-bc$ で計算する",
+          "\\det\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}=ad-bc",
+          "[substitute: 成分を代入] \\det A = 2\\cdot 2-1\\cdot 3",
+          "[underline] \\det A = 1"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-03.mp3",
+      "audioDurationInSeconds": 17.352,
+      "durationInFrames": 532,
+      "captions": [
+        {
+          "text": "行列",
+          "startMs": 119.458,
+          "endMs": 605.583,
+          "timestampMs": 362.52049999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 617.125,
+          "endMs": 848.625,
+          "timestampMs": 732.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は、",
+          "startMs": 860.166,
+          "endMs": 1080.082,
+          "timestampMs": 970.124,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "たすき",
+          "startMs": 1369.458,
+          "endMs": 1716.6660000000002,
+          "timestampMs": 1543.0620000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "がけ",
+          "startMs": 1728.25,
+          "endMs": 1948.166,
+          "timestampMs": 1838.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1959.708,
+          "endMs": 2052.291,
+          "timestampMs": 2005.9995000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "差",
+          "startMs": 2063.875,
+          "endMs": 2191.208,
+          "timestampMs": 2127.5415000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 2202.791,
+          "endMs": 2295.3740000000003,
+          "timestampMs": 2249.0825000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "決まり",
+          "startMs": 2306.958,
+          "endMs": 2654.166,
+          "timestampMs": 2480.562,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 2665.75,
+          "endMs": 3001.416,
+          "timestampMs": 2833.583,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "左上",
+          "startMs": 3819.458,
+          "endMs": 4374.999,
+          "timestampMs": 4097.2285,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 4386.583,
+          "endMs": 4513.915999999999,
+          "timestampMs": 4450.2495,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "右下",
+          "startMs": 4525.458,
+          "endMs": 4942.124,
+          "timestampMs": 4733.790999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 4953.708,
+          "endMs": 5046.290999999999,
+          "timestampMs": 4999.9995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "積",
+          "startMs": 5057.875,
+          "endMs": 5312.5,
+          "timestampMs": 5185.1875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から、",
+          "startMs": 5324.083,
+          "endMs": 5601.874,
+          "timestampMs": 5462.978499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "右上",
+          "startMs": 5902.791,
+          "endMs": 6354.166,
+          "timestampMs": 6128.4785,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 6365.75,
+          "endMs": 6458.333,
+          "timestampMs": 6412.041499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "左下",
+          "startMs": 6469.916,
+          "endMs": 7002.332,
+          "timestampMs": 6736.124,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 7013.875,
+          "endMs": 7118.041,
+          "timestampMs": 7065.9580000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "積",
+          "startMs": 7129.625,
+          "endMs": 7395.833,
+          "timestampMs": 7262.728999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 7407.416,
+          "endMs": 7488.416,
+          "timestampMs": 7447.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "引き",
+          "startMs": 7500,
+          "endMs": 7754.625,
+          "timestampMs": 7627.3125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 7766.208,
+          "endMs": 8090.290999999999,
+          "timestampMs": 7928.2495,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$A$ ",
+          "startMs": 8912.041,
+          "endMs": 9108.791,
+          "timestampMs": 9010.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 9120.375,
+          "endMs": 9224.541,
+          "timestampMs": 9172.457999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 9236.125,
+          "endMs": 9363.458,
+          "timestampMs": 9299.7915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$ ",
+          "startMs": 9386.583,
+          "endMs": 9548.624,
+          "timestampMs": 9467.603500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 9560.166,
+          "endMs": 9664.331999999999,
+          "timestampMs": 9612.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$ ",
+          "startMs": 9675.916,
+          "endMs": 9814.791,
+          "timestampMs": 9745.3535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 9826.375,
+          "endMs": 9918.958,
+          "timestampMs": 9872.6665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "積",
+          "startMs": 9930.541,
+          "endMs": 10185.166,
+          "timestampMs": 10057.8535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 10196.75,
+          "endMs": 10289.333,
+          "timestampMs": 10243.0415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$4$ ",
+          "startMs": 10300.916,
+          "endMs": 10543.956999999999,
+          "timestampMs": 10422.4365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 10555.541,
+          "endMs": 10914.331999999999,
+          "timestampMs": 10734.9365,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$1$ ",
+          "startMs": 11770.833,
+          "endMs": 11990.749,
+          "timestampMs": 11880.791000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 12025.458,
+          "endMs": 12129.624,
+          "timestampMs": 12077.541000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$3$ ",
+          "startMs": 12141.208,
+          "endMs": 12372.708,
+          "timestampMs": 12256.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 12384.25,
+          "endMs": 12476.833,
+          "timestampMs": 12430.5415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "積",
+          "startMs": 12488.416,
+          "endMs": 12743.041,
+          "timestampMs": 12615.7285,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 12754.625,
+          "endMs": 12858.791,
+          "timestampMs": 12806.707999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$3$ ",
+          "startMs": 12870.375,
+          "endMs": 13125,
+          "timestampMs": 12997.6875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 13136.583,
+          "endMs": 13483.791000000001,
+          "timestampMs": 13310.187000000002,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "差",
+          "startMs": 14305.541,
+          "endMs": 14467.581999999999,
+          "timestampMs": 14386.5615,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 14479.166,
+          "endMs": 14594.916,
+          "timestampMs": 14537.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "とる",
+          "startMs": 14606.5,
+          "endMs": 14849.541,
+          "timestampMs": 14728.020499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 14861.125,
+          "endMs": 14976.875,
+          "timestampMs": 14919,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\det A$ ",
+          "startMs": 14988.416,
+          "endMs": 15509.25,
+          "timestampMs": 15248.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 15520.833,
+          "endMs": 15636.583,
+          "timestampMs": 15578.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$1$ ",
+          "startMs": 15648.166,
+          "endMs": 15891.206999999999,
+          "timestampMs": 15769.6865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 15902.791,
+          "endMs": 16006.956999999999,
+          "timestampMs": 15954.874,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 16018.5,
+          "endMs": 16203.666,
+          "timestampMs": 16111.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 16215.291,
+          "endMs": 16550.957,
+          "timestampMs": 16383.124,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 4,
+      "narration": "逆行列はいつでも作れるとは限りません。\n公式は行列式で割る形をしています。\nですから行列式が $0$ だと割れません。\n$\\det A$ が $0$ でないことが存在の条件です。\n今回は $1$ なので、逆行列は存在します。\n<<<TTS_READING>>>\n逆行列はいつでも作れるとは限りません。\n公式は行列式で割る形をしています。\nですから行列式が 0 だと割れません。\nデット エー が 0 でないことが存在の条件です。\n今回は 1 なので、逆行列は存在します。",
+      "visual_type": "step",
+      "visual_content": "②$\\det A \\ne 0$ を確かめて逆行列が存在することを確認する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 逆行列が存在する条件",
+          "[underline] \\det A \\ne 0",
+          "[text] $\\det A = 1$ なので条件を満たす"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-04.mp3",
+      "audioDurationInSeconds": 18.792,
+      "durationInFrames": 575,
+      "captions": [
+        {
+          "text": "逆",
+          "startMs": 119.458,
+          "endMs": 374.08299999999997,
+          "timestampMs": 246.77049999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 385.666,
+          "endMs": 825.499,
+          "timestampMs": 605.5825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 837.041,
+          "endMs": 975.916,
+          "timestampMs": 906.4785,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "いつ",
+          "startMs": 999.083,
+          "endMs": 1230.583,
+          "timestampMs": 1114.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 1242.125,
+          "endMs": 1323.125,
+          "timestampMs": 1282.625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "も",
+          "startMs": 1334.708,
+          "endMs": 1450.458,
+          "timestampMs": 1392.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "作",
+          "startMs": 1462.041,
+          "endMs": 1681.9569999999999,
+          "timestampMs": 1571.9989999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "れる",
+          "startMs": 1693.5,
+          "endMs": 1901.833,
+          "timestampMs": 1797.6665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 1913.416,
+          "endMs": 1994.416,
+          "timestampMs": 1953.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 2006,
+          "endMs": 2144.875,
+          "timestampMs": 2075.4375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "限り",
+          "startMs": 2156.5,
+          "endMs": 2515.291,
+          "timestampMs": 2335.8955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ませ",
+          "startMs": 2526.833,
+          "endMs": 2769.8740000000003,
+          "timestampMs": 2648.3535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ん。\n",
+          "startMs": 2781.5,
+          "endMs": 2943.541,
+          "timestampMs": 2862.5205,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "公式",
+          "startMs": 3761.583,
+          "endMs": 4178.249,
+          "timestampMs": 3969.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 4189.833,
+          "endMs": 4386.583,
+          "timestampMs": 4288.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 4456,
+          "endMs": 4953.666,
+          "timestampMs": 4704.8330000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 4965.291,
+          "endMs": 5185.207,
+          "timestampMs": 5075.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 5196.75,
+          "endMs": 5300.916,
+          "timestampMs": 5248.8330000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "割る",
+          "startMs": 5312.5,
+          "endMs": 5532.416,
+          "timestampMs": 5422.4580000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "形",
+          "startMs": 5544,
+          "endMs": 5902.791,
+          "timestampMs": 5723.3955000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 5914.333,
+          "endMs": 6006.915999999999,
+          "timestampMs": 5960.6245,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 6018.5,
+          "endMs": 6134.25,
+          "timestampMs": 6076.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 6145.833,
+          "endMs": 6203.708,
+          "timestampMs": 6174.7705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "い",
+          "startMs": 6215.291,
+          "endMs": 6319.457,
+          "timestampMs": 6267.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 6331,
+          "endMs": 6678.208,
+          "timestampMs": 6504.603999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "です",
+          "startMs": 7500,
+          "endMs": 7731.5,
+          "timestampMs": 7615.75,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から",
+          "startMs": 7743.041,
+          "endMs": 7986.082,
+          "timestampMs": 7864.5615,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 8032.416,
+          "endMs": 8518.541000000001,
+          "timestampMs": 8275.478500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 8530.083,
+          "endMs": 8738.416000000001,
+          "timestampMs": 8634.249500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 8750,
+          "endMs": 8854.166,
+          "timestampMs": 8802.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$0$ ",
+          "startMs": 8865.75,
+          "endMs": 9050.916,
+          "timestampMs": 8958.332999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "だ",
+          "startMs": 9062.5,
+          "endMs": 9178.25,
+          "timestampMs": 9120.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 9189.833,
+          "endMs": 9305.583,
+          "timestampMs": 9247.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "割れ",
+          "startMs": 9317.125,
+          "endMs": 9513.875,
+          "timestampMs": 9415.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ませ",
+          "startMs": 9525.458,
+          "endMs": 9791.666000000001,
+          "timestampMs": 9658.562000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ん。\n",
+          "startMs": 9803.25,
+          "endMs": 9965.291,
+          "timestampMs": 9884.270499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$\\det A$ ",
+          "startMs": 10787.041,
+          "endMs": 11307.831999999999,
+          "timestampMs": 11047.4365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 11319.458,
+          "endMs": 11435.208,
+          "timestampMs": 11377.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$0$ ",
+          "startMs": 11446.75,
+          "endMs": 11631.916,
+          "timestampMs": 11539.332999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 11643.5,
+          "endMs": 11747.666,
+          "timestampMs": 11695.582999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ない",
+          "startMs": 11759.25,
+          "endMs": 11967.583,
+          "timestampMs": 11863.4165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "こと",
+          "startMs": 11979.166,
+          "endMs": 12187.499,
+          "timestampMs": 12083.3325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 12199.083,
+          "endMs": 12418.999,
+          "timestampMs": 12309.041000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "存在",
+          "startMs": 12523.166,
+          "endMs": 12986.124,
+          "timestampMs": 12754.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 12997.666,
+          "endMs": 13113.416,
+          "timestampMs": 13055.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "条件",
+          "startMs": 13125,
+          "endMs": 13564.833,
+          "timestampMs": 13344.9165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 13576.375,
+          "endMs": 13912.041,
+          "timestampMs": 13744.207999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "今回",
+          "startMs": 14768.5,
+          "endMs": 15127.291,
+          "timestampMs": 14947.895499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 15138.875,
+          "endMs": 15231.458,
+          "timestampMs": 15185.1665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$1$ ",
+          "startMs": 15243.041,
+          "endMs": 15486.081999999999,
+          "timestampMs": 15364.5615,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 15497.666,
+          "endMs": 15590.249,
+          "timestampMs": 15543.9575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 15601.833,
+          "endMs": 15705.999,
+          "timestampMs": 15653.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で、",
+          "startMs": 15717.583,
+          "endMs": 15902.749,
+          "timestampMs": 15810.166000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "逆行列",
+          "startMs": 16192.125,
+          "endMs": 16898.125,
+          "timestampMs": 16545.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 16909.708,
+          "endMs": 17025.458,
+          "timestampMs": 16967.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "存在",
+          "startMs": 17037.041,
+          "endMs": 17488.416,
+          "timestampMs": 17262.7285,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 17500,
+          "endMs": 17627.333,
+          "timestampMs": 17563.6665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 17638.875,
+          "endMs": 17986.083,
+          "timestampMs": 17812.479,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 5,
+      "narration": "2次の正方行列には逆行列の公式があります。\n対角にある $a$ と $d$ を入れかえます。\n残る $b$ と $c$ は符号を変えます。\nそして全体を行列式で割ります。\n$A$ の成分をあてはめて計算します。\n<<<TTS_READING>>>\n2次の正方行列には逆行列の公式があります。\n対角にある エー と ディー を入れかえます。\n残る ビー と シー は符号を変えます。\nそして全体を行列式で割ります。\nエー の成分をあてはめて計算します。",
+      "visual_type": "step",
+      "visual_content": "③2次の正方行列の逆行列の公式にあてはめて $A^{-1}$ を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[highlight] A^{-1}=\\frac{1}{ad-bc}\\begin{pmatrix} d & -b \\\\ -c & a \\end{pmatrix}",
+          "[substitute: a=2,b=1,c=3,d=2] A^{-1}=\\frac{1}{1}\\begin{pmatrix} 2 & -1 \\\\ -3 & 2 \\end{pmatrix}"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-05.mp3",
+      "audioDurationInSeconds": 17.328,
+      "durationInFrames": 531,
+      "captions": [
+        {
+          "text": "2次",
+          "startMs": 119.458,
+          "endMs": 408.83299999999997,
+          "timestampMs": 264.14549999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 420.375,
+          "endMs": 536.125,
+          "timestampMs": 478.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "正方",
+          "startMs": 547.666,
+          "endMs": 1010.624,
+          "timestampMs": 779.145,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 1022.208,
+          "endMs": 1462.041,
+          "timestampMs": 1242.1245,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 1473.625,
+          "endMs": 1577.791,
+          "timestampMs": 1525.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 1589.333,
+          "endMs": 1797.6660000000002,
+          "timestampMs": 1693.4995000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "逆行列",
+          "startMs": 1867.125,
+          "endMs": 2584.708,
+          "timestampMs": 2225.9165000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 2596.291,
+          "endMs": 2723.6240000000003,
+          "timestampMs": 2659.9575000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "公式",
+          "startMs": 2735.166,
+          "endMs": 3198.1240000000003,
+          "timestampMs": 2966.6450000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 3209.708,
+          "endMs": 3302.291,
+          "timestampMs": 3255.9995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "あり",
+          "startMs": 3313.875,
+          "endMs": 3487.5,
+          "timestampMs": 3400.6875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 3499.083,
+          "endMs": 3823.166,
+          "timestampMs": 3661.1245,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "対角",
+          "startMs": 4641.208,
+          "endMs": 5092.583,
+          "timestampMs": 4866.8955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 5104.166,
+          "endMs": 5208.332,
+          "timestampMs": 5156.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ある ",
+          "startMs": 5219.916,
+          "endMs": 5405.082,
+          "timestampMs": 5312.499,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$a$ ",
+          "startMs": 5416.666,
+          "endMs": 5601.832,
+          "timestampMs": 5509.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 5613.416,
+          "endMs": 5775.457,
+          "timestampMs": 5694.4365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$d$ ",
+          "startMs": 5787.041,
+          "endMs": 6030.082,
+          "timestampMs": 5908.5615,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 6041.666,
+          "endMs": 6145.832,
+          "timestampMs": 6093.749,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "入れ",
+          "startMs": 6157.416,
+          "endMs": 6342.582,
+          "timestampMs": 6249.999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かえ",
+          "startMs": 6354.166,
+          "endMs": 6550.916,
+          "timestampMs": 6452.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 6562.5,
+          "endMs": 6898.166,
+          "timestampMs": 6730.3330000000005,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "残る ",
+          "startMs": 7719.916,
+          "endMs": 8101.874,
+          "timestampMs": 7910.895,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$b$ ",
+          "startMs": 8113.416,
+          "endMs": 8310.166000000001,
+          "timestampMs": 8211.791000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 8321.75,
+          "endMs": 8425.916,
+          "timestampMs": 8373.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$c$ ",
+          "startMs": 8437.5,
+          "endMs": 8715.291,
+          "timestampMs": 8576.395499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 8726.833,
+          "endMs": 8877.291000000001,
+          "timestampMs": 8802.062000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "符号",
+          "startMs": 8888.875,
+          "endMs": 9236.083,
+          "timestampMs": 9062.479,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 9247.666,
+          "endMs": 9328.666,
+          "timestampMs": 9288.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "変え",
+          "startMs": 9340.291,
+          "endMs": 9548.624,
+          "timestampMs": 9444.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 9560.166,
+          "endMs": 9895.831999999999,
+          "timestampMs": 9727.999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "そして",
+          "startMs": 10717.583,
+          "endMs": 11168.958,
+          "timestampMs": 10943.2705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "全体",
+          "startMs": 11180.541,
+          "endMs": 11608.791,
+          "timestampMs": 11394.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 11620.375,
+          "endMs": 11736.125,
+          "timestampMs": 11678.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 11759.25,
+          "endMs": 12268.5,
+          "timestampMs": 12013.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 12280.083,
+          "endMs": 12488.416000000001,
+          "timestampMs": 12384.249500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 12500,
+          "endMs": 12592.583,
+          "timestampMs": 12546.2915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "割り",
+          "startMs": 12604.166,
+          "endMs": 12800.916,
+          "timestampMs": 12702.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 12812.5,
+          "endMs": 13159.708,
+          "timestampMs": 12986.104,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$A$ ",
+          "startMs": 13981.5,
+          "endMs": 14178.25,
+          "timestampMs": 14079.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 14189.833,
+          "endMs": 14305.583,
+          "timestampMs": 14247.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "成分",
+          "startMs": 14317.125,
+          "endMs": 14745.375,
+          "timestampMs": 14531.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 14756.958,
+          "endMs": 14861.124,
+          "timestampMs": 14809.041000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "あてはめ",
+          "startMs": 14872.666,
+          "endMs": 15451.374,
+          "timestampMs": 15162.02,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 15462.958,
+          "endMs": 15590.291000000001,
+          "timestampMs": 15526.624500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "計算",
+          "startMs": 15601.833,
+          "endMs": 16030.083,
+          "timestampMs": 15815.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 16041.666,
+          "endMs": 16180.541,
+          "timestampMs": 16111.1035,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 16192.125,
+          "endMs": 16516.208,
+          "timestampMs": 16354.1665,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 6,
+      "narration": "行列式が $1$ なので、分母は $1$ です。\nだから成分はそのまま残ります。\nこれでかっこ1の答えが出ました。\n$A^{-1}$ は $2$、$-1$、$-3$、$2$ を並べた行列です。\n<<<TTS_READING>>>\n行列式が 1 なので、分母は 1 です。\nだから成分はそのまま残ります。\nこれでかっこ1の答えが出ました。\nエー インバース は 2、マイナス1、マイナス3、2 を並べた行列です。",
+      "visual_type": "step",
+      "visual_content": "③2次の正方行列の逆行列の公式にあてはめて $A^{-1}$ を求める",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 分母が $1$ なので成分はそのまま",
+          "[text] (1)の答え",
+          "[box] A^{-1}=\\begin{pmatrix} 2 & -1 \\\\ -3 & 2 \\end{pmatrix}"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-06.mp3",
+      "audioDurationInSeconds": 15.48,
+      "durationInFrames": 475,
+      "captions": [
+        {
+          "text": "行列",
+          "startMs": 119.458,
+          "endMs": 593.999,
+          "timestampMs": 356.72850000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 605.541,
+          "endMs": 825.4570000000001,
+          "timestampMs": 715.499,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 837.041,
+          "endMs": 929.624,
+          "timestampMs": 883.3325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$1$ ",
+          "startMs": 941.208,
+          "endMs": 1172.708,
+          "timestampMs": 1056.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "な",
+          "startMs": 1184.25,
+          "endMs": 1276.833,
+          "timestampMs": 1230.5415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1288.416,
+          "endMs": 1392.5819999999999,
+          "timestampMs": 1340.4989999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で、",
+          "startMs": 1404.166,
+          "endMs": 1577.791,
+          "timestampMs": 1490.9785,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "分母",
+          "startMs": 1901.833,
+          "endMs": 2214.333,
+          "timestampMs": 2058.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 2225.916,
+          "endMs": 2318.4990000000003,
+          "timestampMs": 2272.2075000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$1$ ",
+          "startMs": 2330.083,
+          "endMs": 2584.708,
+          "timestampMs": 2457.3955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 2596.291,
+          "endMs": 2908.791,
+          "timestampMs": 2752.541,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "だ",
+          "startMs": 3726.833,
+          "endMs": 3854.166,
+          "timestampMs": 3790.4995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から",
+          "startMs": 3865.75,
+          "endMs": 4120.375,
+          "timestampMs": 3993.0625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "成分",
+          "startMs": 4131.958,
+          "endMs": 4548.624,
+          "timestampMs": 4340.290999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 4560.166,
+          "endMs": 4722.207,
+          "timestampMs": 4641.1865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "その",
+          "startMs": 4768.5,
+          "endMs": 5034.708,
+          "timestampMs": 4901.603999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "まま",
+          "startMs": 5046.291,
+          "endMs": 5277.791,
+          "timestampMs": 5162.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "残り",
+          "startMs": 5289.333,
+          "endMs": 5624.999,
+          "timestampMs": 5457.165999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 5636.583,
+          "endMs": 5972.249,
+          "timestampMs": 5804.415999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "これ",
+          "startMs": 6828.708,
+          "endMs": 7002.333,
+          "timestampMs": 6915.5205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 7013.875,
+          "endMs": 7187.5,
+          "timestampMs": 7100.6875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かっこ",
+          "startMs": 7210.666,
+          "endMs": 7557.874,
+          "timestampMs": 7384.27,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "1",
+          "startMs": 7569.458,
+          "endMs": 7789.374,
+          "timestampMs": 7679.415999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 7800.916,
+          "endMs": 7905.082,
+          "timestampMs": 7852.999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "答え",
+          "startMs": 7916.666,
+          "endMs": 8229.166000000001,
+          "timestampMs": 8072.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 8240.75,
+          "endMs": 8344.916,
+          "timestampMs": 8292.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "出",
+          "startMs": 8356.5,
+          "endMs": 8449.083,
+          "timestampMs": 8402.7915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "まし",
+          "startMs": 8460.666,
+          "endMs": 8692.166,
+          "timestampMs": 8576.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た。\n",
+          "startMs": 8703.708,
+          "endMs": 8923.624,
+          "timestampMs": 8813.666000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 9745.375,
+          "endMs": 10532.416,
+          "timestampMs": 10138.895499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 10544,
+          "endMs": 10648.166,
+          "timestampMs": 10596.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$、",
+          "startMs": 10659.708,
+          "endMs": 10856.458,
+          "timestampMs": 10758.083,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$-1$、",
+          "startMs": 11169,
+          "endMs": 11944.458,
+          "timestampMs": 11556.729,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$-3$、",
+          "startMs": 12256.958,
+          "endMs": 12858.791,
+          "timestampMs": 12557.8745,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$2$ ",
+          "startMs": 13136.583,
+          "endMs": 13240.749,
+          "timestampMs": 13188.666000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 13252.333,
+          "endMs": 13356.499,
+          "timestampMs": 13304.416000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "並べ",
+          "startMs": 13368.041,
+          "endMs": 13715.249,
+          "timestampMs": 13541.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た",
+          "startMs": 13726.833,
+          "endMs": 13830.999,
+          "timestampMs": 13778.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 13842.583,
+          "endMs": 14340.249,
+          "timestampMs": 14091.416000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。",
+          "startMs": 14351.833,
+          "endMs": 14664.333,
+          "timestampMs": 14508.083,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 7,
+      "narration": "次はかっこ2を解説します。\nはじめに、連立方程式を行列の式に書き直します。\n係数を行列に、未知数を縦のベクトルに並べます。\n次に、両辺に左から $A^{-1}$ をかけます。\nすると左辺は $\\vec{x}$ だけになります。\n最後に、かっこ1で求めた $A^{-1}$ との積を計算します。\n<<<TTS_READING>>>\n次はかっこ2を解説します。\nはじめに、連立方程式を行列の式に書き直します。\n係数を行列に、未知数を縦のベクトルに並べます。\n次に、両辺に左から エー インバース をかけます。\nすると左辺は ベクトル エックス だけになります。\n最後に、かっこ1で求めた エー インバース との積を計算します。",
+      "visual_type": "step",
+      "visual_content": "(2)の方針",
+      "visual": {
+        "kind": "bullets",
+        "items": [
+          "①連立方程式を $A\\vec{x}=\\vec{b}$ の形の行列の式に書き直す",
+          "②両辺に左から $A^{-1}$ をかけて $\\vec{x}=A^{-1}\\vec{b}$ を導く",
+          "③(1)の $A^{-1}$ と $\\vec{b}$ の積を計算して $x$ と $y$ を確定する"
+        ]
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-07.mp3",
+      "audioDurationInSeconds": 25.416,
+      "durationInFrames": 773,
+      "captions": [
+        {
+          "text": "次",
+          "startMs": 154.166,
+          "endMs": 385.666,
+          "timestampMs": 269.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 397.208,
+          "endMs": 570.8330000000001,
+          "timestampMs": 484.0205000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かっこ",
+          "startMs": 582.416,
+          "endMs": 929.624,
+          "timestampMs": 756.02,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2",
+          "startMs": 941.208,
+          "endMs": 1068.541,
+          "timestampMs": 1004.8744999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 1080.083,
+          "endMs": 1195.833,
+          "timestampMs": 1137.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "解説",
+          "startMs": 1207.416,
+          "endMs": 1670.374,
+          "timestampMs": 1438.895,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 1681.958,
+          "endMs": 1797.708,
+          "timestampMs": 1739.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 1809.25,
+          "endMs": 2156.458,
+          "timestampMs": 1982.854,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "はじめ",
+          "startMs": 2974.541,
+          "endMs": 3321.7490000000003,
+          "timestampMs": 3148.1450000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 3333.333,
+          "endMs": 3564.833,
+          "timestampMs": 3449.083,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "連立",
+          "startMs": 3912.041,
+          "endMs": 4351.874,
+          "timestampMs": 4131.9575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "方程",
+          "startMs": 4363.416,
+          "endMs": 4814.791,
+          "timestampMs": 4589.1035,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 4826.375,
+          "endMs": 5034.708,
+          "timestampMs": 4930.541499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 5046.291,
+          "endMs": 5162.041,
+          "timestampMs": 5104.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 5185.166,
+          "endMs": 5659.707,
+          "timestampMs": 5422.4365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 5671.291,
+          "endMs": 5763.874,
+          "timestampMs": 5717.5825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 5775.458,
+          "endMs": 6006.958,
+          "timestampMs": 5891.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 6018.5,
+          "endMs": 6203.666,
+          "timestampMs": 6111.0830000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "書き",
+          "startMs": 6215.291,
+          "endMs": 6469.916,
+          "timestampMs": 6342.6035,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直し",
+          "startMs": 6481.5,
+          "endMs": 6817.166,
+          "timestampMs": 6649.3330000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 6828.708,
+          "endMs": 7164.374,
+          "timestampMs": 6996.540999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "係数",
+          "startMs": 8020.833,
+          "endMs": 8449.082999999999,
+          "timestampMs": 8234.957999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 8460.666,
+          "endMs": 8541.666,
+          "timestampMs": 8501.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 8553.25,
+          "endMs": 9062.5,
+          "timestampMs": 8807.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 9074.083,
+          "endMs": 9259.249,
+          "timestampMs": 9166.666000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "未知数",
+          "startMs": 9583.333,
+          "endMs": 10034.708,
+          "timestampMs": 9809.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 10046.291,
+          "endMs": 10138.874,
+          "timestampMs": 10092.5825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "縦",
+          "startMs": 10150.458,
+          "endMs": 10393.499,
+          "timestampMs": 10271.978500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 10405.083,
+          "endMs": 10520.833,
+          "timestampMs": 10462.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ベクトル",
+          "startMs": 10532.416,
+          "endMs": 10960.666,
+          "timestampMs": 10746.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 10972.208,
+          "endMs": 11076.374,
+          "timestampMs": 11024.291000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "並べ",
+          "startMs": 11087.958,
+          "endMs": 11388.874,
+          "timestampMs": 11238.416000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 11400.458,
+          "endMs": 11747.666000000001,
+          "timestampMs": 11574.062000000002,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "次",
+          "startMs": 12569.458,
+          "endMs": 12847.249,
+          "timestampMs": 12708.353500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 12858.791,
+          "endMs": 13067.124,
+          "timestampMs": 12962.9575,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "両辺",
+          "startMs": 13391.208,
+          "endMs": 13715.291000000001,
+          "timestampMs": 13553.249500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 13726.833,
+          "endMs": 13842.583,
+          "timestampMs": 13784.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "左",
+          "startMs": 13854.166,
+          "endMs": 14189.831999999999,
+          "timestampMs": 14021.999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から ",
+          "startMs": 14201.375,
+          "endMs": 14421.291,
+          "timestampMs": 14311.332999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 14467.583,
+          "endMs": 15185.166000000001,
+          "timestampMs": 14826.374500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 15196.75,
+          "endMs": 15289.333,
+          "timestampMs": 15243.0415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かけ",
+          "startMs": 15300.916,
+          "endMs": 15520.831999999999,
+          "timestampMs": 15410.874,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 15532.416,
+          "endMs": 15868.081999999999,
+          "timestampMs": 15700.249,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "する",
+          "startMs": 16689.833,
+          "endMs": 16956.040999999997,
+          "timestampMs": 16822.936999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 16967.583,
+          "endMs": 17060.165999999997,
+          "timestampMs": 17013.874499999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "左辺",
+          "startMs": 17071.75,
+          "endMs": 17453.708,
+          "timestampMs": 17262.729,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 17465.291,
+          "endMs": 17662.041,
+          "timestampMs": 17563.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\vec{x}$ ",
+          "startMs": 17754.625,
+          "endMs": 18611.083,
+          "timestampMs": 18182.854,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "だけ",
+          "startMs": 18622.666,
+          "endMs": 18830.999,
+          "timestampMs": 18726.8325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 18842.583,
+          "endMs": 18946.749,
+          "timestampMs": 18894.665999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 18958.333,
+          "endMs": 19155.083,
+          "timestampMs": 19056.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 19166.666,
+          "endMs": 19513.874,
+          "timestampMs": 19340.27,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "最後",
+          "startMs": 20335.666,
+          "endMs": 20717.624,
+          "timestampMs": 20526.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に、",
+          "startMs": 20729.166,
+          "endMs": 20995.374,
+          "timestampMs": 20862.27,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "かっこ",
+          "startMs": 21250,
+          "endMs": 21597.208,
+          "timestampMs": 21423.604,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "1",
+          "startMs": 21608.791,
+          "endMs": 21805.541,
+          "timestampMs": 21707.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 21817.125,
+          "endMs": 21909.708,
+          "timestampMs": 21863.4165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "求め",
+          "startMs": 21921.291,
+          "endMs": 22256.957000000002,
+          "timestampMs": 22089.124000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た ",
+          "startMs": 22268.5,
+          "endMs": 22384.25,
+          "timestampMs": 22326.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 22395.833,
+          "endMs": 23067.124,
+          "timestampMs": 22731.478499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 23078.708,
+          "endMs": 23159.708,
+          "timestampMs": 23119.208,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の積",
+          "startMs": 23171.291,
+          "endMs": 23541.666,
+          "timestampMs": 23356.4785,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 23553.25,
+          "endMs": 23669,
+          "timestampMs": 23611.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "計算",
+          "startMs": 23680.541,
+          "endMs": 24108.791,
+          "timestampMs": 23894.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 24120.375,
+          "endMs": 24259.25,
+          "timestampMs": 24189.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 24270.833,
+          "endMs": 24606.499,
+          "timestampMs": 24438.665999999997,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 8,
+      "narration": "連立方程式を行列の式に書き直します。\n係数の $2$、$1$、$3$、$2$ を行列に並べます。\nこれはちょうど $A$ と同じ行列です。\n未知数の $x$ と $y$ は縦に並べます。\n右辺の $4$ と $7$ も縦に並べます。\n<<<TTS_READING>>>\n連立方程式を行列の式に書き直します。\n係数の 2、1、3、2 を行列に並べます。\nこれはちょうど エー と同じ行列です。\n未知数の エックス と ワイ は縦に並べます。\n右辺の 4 と 7 も縦に並べます。",
+      "visual_type": "step",
+      "visual_content": "①連立方程式を $A\\vec{x}=\\vec{b}$ の形の行列の式に書き直す",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "\\begin{cases} 2x+y=4 \\\\ 3x+2y=7 \\end{cases}",
+          "[text] 係数を行列、未知数を縦に並べる",
+          "\\begin{pmatrix} 2 & 1 \\\\ 3 & 2 \\end{pmatrix}\\begin{pmatrix} x \\\\ y \\end{pmatrix}=\\begin{pmatrix} 4 \\\\ 7 \\end{pmatrix}",
+          "[text][underline] これが $A\\vec{x}=\\vec{b}$ の形"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-08.mp3",
+      "audioDurationInSeconds": 18.216,
+      "durationInFrames": 557,
+      "captions": [
+        {
+          "text": "連立",
+          "startMs": 119.458,
+          "endMs": 593.999,
+          "timestampMs": 356.72850000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "方程",
+          "startMs": 605.541,
+          "endMs": 1045.374,
+          "timestampMs": 825.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 1056.958,
+          "endMs": 1276.874,
+          "timestampMs": 1166.9160000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 1288.416,
+          "endMs": 1415.749,
+          "timestampMs": 1352.0825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 1438.875,
+          "endMs": 1913.416,
+          "timestampMs": 1676.1455,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1925,
+          "endMs": 2017.583,
+          "timestampMs": 1971.2915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 2029.166,
+          "endMs": 2260.666,
+          "timestampMs": 2144.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 2272.208,
+          "endMs": 2445.833,
+          "timestampMs": 2359.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "書き",
+          "startMs": 2457.416,
+          "endMs": 2712.041,
+          "timestampMs": 2584.7285,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "直し",
+          "startMs": 2723.625,
+          "endMs": 3059.291,
+          "timestampMs": 2891.458,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 3070.833,
+          "endMs": 3406.4990000000003,
+          "timestampMs": 3238.666,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "係数",
+          "startMs": 4259.25,
+          "endMs": 4687.5,
+          "timestampMs": 4473.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の ",
+          "startMs": 4699.083,
+          "endMs": 4803.249,
+          "timestampMs": 4751.165999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$、",
+          "startMs": 4814.833,
+          "endMs": 5011.583,
+          "timestampMs": 4913.208,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$1$、",
+          "startMs": 5196.75,
+          "endMs": 5486.083,
+          "timestampMs": 5341.416499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$3$、",
+          "startMs": 5706,
+          "endMs": 5914.333,
+          "timestampMs": 5810.166499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$2$ ",
+          "startMs": 6087.958,
+          "endMs": 6203.708,
+          "timestampMs": 6145.833,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 6215.291,
+          "endMs": 6307.874,
+          "timestampMs": 6261.5825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 6319.458,
+          "endMs": 6817.124,
+          "timestampMs": 6568.290999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 6828.708,
+          "endMs": 6944.458,
+          "timestampMs": 6886.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "並べ",
+          "startMs": 6956,
+          "endMs": 7268.5,
+          "timestampMs": 7112.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 7280.083,
+          "endMs": 7638.874,
+          "timestampMs": 7459.478499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "これ",
+          "startMs": 8460.666,
+          "endMs": 8680.581999999999,
+          "timestampMs": 8570.624,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 8692.125,
+          "endMs": 8877.291,
+          "timestampMs": 8784.707999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ちょうど ",
+          "startMs": 8912.041,
+          "endMs": 9282.416,
+          "timestampMs": 9097.2285,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A$ ",
+          "startMs": 9294,
+          "endMs": 9502.333,
+          "timestampMs": 9398.1665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 9513.875,
+          "endMs": 9618.041,
+          "timestampMs": 9565.957999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "同じ",
+          "startMs": 9629.625,
+          "endMs": 10000,
+          "timestampMs": 9814.8125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 10011.583,
+          "endMs": 10439.833,
+          "timestampMs": 10225.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 10451.375,
+          "endMs": 10775.458,
+          "timestampMs": 10613.4165,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "未知数",
+          "startMs": 11597.208,
+          "endMs": 12083.333,
+          "timestampMs": 11840.2705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の ",
+          "startMs": 12094.916,
+          "endMs": 12164.374,
+          "timestampMs": 12129.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$x$ ",
+          "startMs": 12175.916,
+          "endMs": 12638.874,
+          "timestampMs": 12407.395,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 12650.458,
+          "endMs": 12743.041000000001,
+          "timestampMs": 12696.749500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$y$ ",
+          "startMs": 12754.625,
+          "endMs": 12962.958,
+          "timestampMs": 12858.7915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 12974.541,
+          "endMs": 13194.456999999999,
+          "timestampMs": 13084.499,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "縦",
+          "startMs": 13240.75,
+          "endMs": 13483.791,
+          "timestampMs": 13362.270499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 13495.375,
+          "endMs": 13622.708,
+          "timestampMs": 13559.0415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "並べ",
+          "startMs": 13634.25,
+          "endMs": 13946.75,
+          "timestampMs": 13790.5,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 13958.333,
+          "endMs": 14293.999,
+          "timestampMs": 14126.166000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "右辺",
+          "startMs": 15150.458,
+          "endMs": 15451.374,
+          "timestampMs": 15300.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の ",
+          "startMs": 15462.958,
+          "endMs": 15567.124,
+          "timestampMs": 15515.041000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$4$ ",
+          "startMs": 15578.708,
+          "endMs": 15798.624,
+          "timestampMs": 15688.666000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 15810.166,
+          "endMs": 15949.041,
+          "timestampMs": 15879.6035,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$7$ ",
+          "startMs": 15972.208,
+          "endMs": 16215.249,
+          "timestampMs": 16093.728500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "も",
+          "startMs": 16226.833,
+          "endMs": 16342.583,
+          "timestampMs": 16284.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "縦",
+          "startMs": 16354.166,
+          "endMs": 16597.207,
+          "timestampMs": 16475.6865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 16608.791,
+          "endMs": 16736.124,
+          "timestampMs": 16672.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "並べ",
+          "startMs": 16747.666,
+          "endMs": 17060.166,
+          "timestampMs": 16903.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 17071.75,
+          "endMs": 17407.416,
+          "timestampMs": 17239.583,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 9,
+      "narration": "なぜ $\\vec{x}=A^{-1}\\vec{b}$ になるのかを見ます。\n行列には割り算がありません。\nそのかわりに逆行列をかけます。\n両辺の左から $A^{-1}$ をかけます。\n$A^{-1}A$ は単位行列 $E$ になります。\n$E$ をかけても変わらないので左辺は $\\vec{x}$ だけです。\n<<<TTS_READING>>>\nなぜ ベクトル エックス イコール エー インバース ベクトル ビー になるのかを見ます。\n行列には割り算がありません。\nそのかわりに逆行列をかけます。\n両辺の左から エー インバース をかけます。\nエー インバース エー は単位行列 イー になります。\nイー をかけても変わらないので左辺は ベクトル エックス だけです。",
+      "visual_type": "step",
+      "visual_content": "②両辺に左から $A^{-1}$ をかけて $\\vec{x}=A^{-1}\\vec{b}$ を導く",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 両辺に左から $A^{-1}$ をかける",
+          "A^{-1}A\\vec{x}=A^{-1}\\vec{b}",
+          "[text] $A^{-1}A=E$ は単位行列",
+          "[underline] \\vec{x}=A^{-1}\\vec{b}"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-09.mp3",
+      "audioDurationInSeconds": 22.536,
+      "durationInFrames": 687,
+      "captions": [
+        {
+          "text": "なぜ ",
+          "startMs": 119.458,
+          "endMs": 431.95799999999997,
+          "timestampMs": 275.70799999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\vec{x}=A^{-1}\\vec{b}$ ",
+          "startMs": 443.5,
+          "endMs": 3140.2490000000003,
+          "timestampMs": 1791.8745000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 3151.833,
+          "endMs": 3255.9990000000003,
+          "timestampMs": 3203.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なる",
+          "startMs": 3267.583,
+          "endMs": 3475.916,
+          "timestampMs": 3371.7495,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 3487.5,
+          "endMs": 3580.083,
+          "timestampMs": 3533.7915000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "か",
+          "startMs": 3591.666,
+          "endMs": 3695.8320000000003,
+          "timestampMs": 3643.7490000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 3707.416,
+          "endMs": 3823.166,
+          "timestampMs": 3765.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "見",
+          "startMs": 3834.708,
+          "endMs": 3950.458,
+          "timestampMs": 3892.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 3962.041,
+          "endMs": 4286.124,
+          "timestampMs": 4124.0825,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "行列",
+          "startMs": 5104.166,
+          "endMs": 5555.541,
+          "timestampMs": 5329.8535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 5567.125,
+          "endMs": 5671.291,
+          "timestampMs": 5619.2080000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 5682.875,
+          "endMs": 5868.041,
+          "timestampMs": 5775.4580000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "割り算",
+          "startMs": 5891.208,
+          "endMs": 6284.708,
+          "timestampMs": 6087.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 6296.291,
+          "endMs": 6400.457,
+          "timestampMs": 6348.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "あり",
+          "startMs": 6412.041,
+          "endMs": 6608.791,
+          "timestampMs": 6510.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ませ",
+          "startMs": 6620.375,
+          "endMs": 6875,
+          "timestampMs": 6747.6875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ん。\n",
+          "startMs": 6886.583,
+          "endMs": 7037.040999999999,
+          "timestampMs": 6961.812,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "その",
+          "startMs": 7858.791,
+          "endMs": 8159.707,
+          "timestampMs": 8009.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かわり",
+          "startMs": 8171.291,
+          "endMs": 8518.499,
+          "timestampMs": 8344.895,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 8530.083,
+          "endMs": 8738.416000000001,
+          "timestampMs": 8634.249500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "逆行列",
+          "startMs": 8796.291,
+          "endMs": 9525.456999999999,
+          "timestampMs": 9160.874,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 9537.041,
+          "endMs": 9618.041,
+          "timestampMs": 9577.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かけ",
+          "startMs": 9629.625,
+          "endMs": 9861.125,
+          "timestampMs": 9745.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 9872.666,
+          "endMs": 10219.874,
+          "timestampMs": 10046.27,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "両辺",
+          "startMs": 11041.666,
+          "endMs": 11388.874,
+          "timestampMs": 11215.27,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 11400.458,
+          "endMs": 11481.458,
+          "timestampMs": 11440.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "左",
+          "startMs": 11493.041,
+          "endMs": 11851.831999999999,
+          "timestampMs": 11672.4365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から ",
+          "startMs": 11863.416,
+          "endMs": 12106.456999999999,
+          "timestampMs": 11984.9365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 12152.791,
+          "endMs": 12858.791,
+          "timestampMs": 12505.791,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 12870.375,
+          "endMs": 12951.375,
+          "timestampMs": 12910.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かけ",
+          "startMs": 12962.958,
+          "endMs": 13182.874,
+          "timestampMs": 13072.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 13194.458,
+          "endMs": 13530.124,
+          "timestampMs": 13362.291000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$A^{-1}A$ ",
+          "startMs": 14351.833,
+          "endMs": 15266.208,
+          "timestampMs": 14809.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 15277.791,
+          "endMs": 15509.291,
+          "timestampMs": 15393.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "単位",
+          "startMs": 15590.291,
+          "endMs": 15960.666,
+          "timestampMs": 15775.4785,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列 ",
+          "startMs": 15972.208,
+          "endMs": 16446.749,
+          "timestampMs": 16209.478500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$E$ ",
+          "startMs": 16458.333,
+          "endMs": 16631.958,
+          "timestampMs": 16545.1455,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 16643.5,
+          "endMs": 16747.666,
+          "timestampMs": 16695.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 16759.25,
+          "endMs": 16967.583,
+          "timestampMs": 16863.4165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 16979.166,
+          "endMs": 17303.249,
+          "timestampMs": 17141.2075,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$E$ ",
+          "startMs": 18125,
+          "endMs": 18333.333,
+          "timestampMs": 18229.1665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 18344.916,
+          "endMs": 18449.082000000002,
+          "timestampMs": 18396.999000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かけ",
+          "startMs": 18460.666,
+          "endMs": 18692.166,
+          "timestampMs": 18576.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 18703.708,
+          "endMs": 18796.290999999997,
+          "timestampMs": 18749.999499999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "も",
+          "startMs": 18807.875,
+          "endMs": 18946.75,
+          "timestampMs": 18877.3125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "変わら",
+          "startMs": 18958.333,
+          "endMs": 19293.999,
+          "timestampMs": 19126.165999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ない",
+          "startMs": 19305.541,
+          "endMs": 19502.291,
+          "timestampMs": 19403.916,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 19513.875,
+          "endMs": 19594.875,
+          "timestampMs": 19554.375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 19606.5,
+          "endMs": 19710.666,
+          "timestampMs": 19658.583,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "左辺",
+          "startMs": 19722.208,
+          "endMs": 20104.165999999997,
+          "timestampMs": 19913.186999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 20115.75,
+          "endMs": 20254.625,
+          "timestampMs": 20185.1875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\vec{x}$ ",
+          "startMs": 20300.916,
+          "endMs": 21145.833,
+          "timestampMs": 20723.374499999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "だけ",
+          "startMs": 21157.416,
+          "endMs": 21377.332000000002,
+          "timestampMs": 21267.374000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。",
+          "startMs": 21388.875,
+          "endMs": 21724.541,
+          "timestampMs": 21556.708,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 10,
+      "narration": "かっこ1で求めた $A^{-1}$ を左からかけます。\n右辺は $A^{-1}$ と $\\vec{b}$ の積になります。\n$\\vec{b}$ は $4$ と $7$ を縦に並べたものです。\nこの積を計算すれば答えが出ます。\n<<<TTS_READING>>>\nかっこ1で求めた エー インバース を左からかけます。\n右辺は エー インバース と ベクトル ビー の積になります。\nベクトル ビー は 4 と 7 を縦に並べたものです。\nこの積を計算すれば答えが出ます。",
+      "visual_type": "step",
+      "visual_content": "③(1)の $A^{-1}$ と $\\vec{b}$ の積を計算して $x$ と $y$ を確定する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] (1)の $A^{-1}$ を左からかける",
+          "\\begin{pmatrix} x \\\\ y \\end{pmatrix}=\\begin{pmatrix} 2 & -1 \\\\ -3 & 2 \\end{pmatrix}\\begin{pmatrix} 4 \\\\ 7 \\end{pmatrix}"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-10.mp3",
+      "audioDurationInSeconds": 15.144,
+      "durationInFrames": 465,
+      "captions": [
+        {
+          "text": "かっこ",
+          "startMs": 154.166,
+          "endMs": 455.082,
+          "timestampMs": 304.624,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "1",
+          "startMs": 466.666,
+          "endMs": 663.4159999999999,
+          "timestampMs": 565.0409999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 675,
+          "endMs": 767.583,
+          "timestampMs": 721.2915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "求め",
+          "startMs": 779.166,
+          "endMs": 1114.832,
+          "timestampMs": 946.999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た ",
+          "startMs": 1126.375,
+          "endMs": 1242.125,
+          "timestampMs": 1184.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 1265.291,
+          "endMs": 2017.625,
+          "timestampMs": 1641.458,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 2029.166,
+          "endMs": 2121.749,
+          "timestampMs": 2075.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "左",
+          "startMs": 2144.916,
+          "endMs": 2503.7070000000003,
+          "timestampMs": 2324.3115000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から",
+          "startMs": 2515.291,
+          "endMs": 2700.4570000000003,
+          "timestampMs": 2607.8740000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かけ",
+          "startMs": 2712.041,
+          "endMs": 2931.9570000000003,
+          "timestampMs": 2821.9990000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 2943.5,
+          "endMs": 3290.708,
+          "timestampMs": 3117.1040000000003,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "右辺",
+          "startMs": 4108.791,
+          "endMs": 4467.582,
+          "timestampMs": 4288.1865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 4479.166,
+          "endMs": 4629.624,
+          "timestampMs": 4554.395,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 4652.791,
+          "endMs": 5324.083,
+          "timestampMs": 4988.437,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 5335.666,
+          "endMs": 5497.707,
+          "timestampMs": 5416.6865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\vec{b}$ ",
+          "startMs": 5544,
+          "endMs": 6192.125,
+          "timestampMs": 5868.0625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の積",
+          "startMs": 6203.708,
+          "endMs": 6539.374,
+          "timestampMs": 6371.540999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 6550.916,
+          "endMs": 6655.082,
+          "timestampMs": 6602.999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 6666.666,
+          "endMs": 6851.832,
+          "timestampMs": 6759.249,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 6863.416,
+          "endMs": 7199.082,
+          "timestampMs": 7031.249,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$\\vec{b}$ ",
+          "startMs": 8020.833,
+          "endMs": 8657.416,
+          "timestampMs": 8339.1245,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 8669,
+          "endMs": 8900.5,
+          "timestampMs": 8784.75,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$4$ ",
+          "startMs": 8958.333,
+          "endMs": 9178.249,
+          "timestampMs": 9068.291000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と ",
+          "startMs": 9189.833,
+          "endMs": 9328.708,
+          "timestampMs": 9259.2705,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$7$ ",
+          "startMs": 9340.291,
+          "endMs": 9571.791,
+          "timestampMs": 9456.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 9583.333,
+          "endMs": 9675.916000000001,
+          "timestampMs": 9629.624500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "縦",
+          "startMs": 9687.5,
+          "endMs": 9907.416,
+          "timestampMs": 9797.457999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 9919,
+          "endMs": 10046.333,
+          "timestampMs": 9982.6665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "並べ",
+          "startMs": 10057.875,
+          "endMs": 10358.791,
+          "timestampMs": 10208.332999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た",
+          "startMs": 10370.375,
+          "endMs": 10474.541,
+          "timestampMs": 10422.457999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "もの",
+          "startMs": 10486.125,
+          "endMs": 10706.041,
+          "timestampMs": 10596.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 10717.583,
+          "endMs": 11076.374,
+          "timestampMs": 10896.978500000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "この",
+          "startMs": 11932.875,
+          "endMs": 12118.041,
+          "timestampMs": 12025.457999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "積",
+          "startMs": 12129.625,
+          "endMs": 12384.25,
+          "timestampMs": 12256.9375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 12395.833,
+          "endMs": 12511.583,
+          "timestampMs": 12453.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "計算",
+          "startMs": 12523.166,
+          "endMs": 12962.999,
+          "timestampMs": 12743.0825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "すれ",
+          "startMs": 12974.541,
+          "endMs": 13206.041,
+          "timestampMs": 13090.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ば",
+          "startMs": 13217.583,
+          "endMs": 13379.624,
+          "timestampMs": 13298.603500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "答え",
+          "startMs": 13391.208,
+          "endMs": 13738.416000000001,
+          "timestampMs": 13564.812000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 13750,
+          "endMs": 13854.166,
+          "timestampMs": 13802.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "出",
+          "startMs": 13865.75,
+          "endMs": 13969.916,
+          "timestampMs": 13917.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 13981.5,
+          "endMs": 14340.291,
+          "timestampMs": 14160.895499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 11,
+      "narration": "行列とベクトルの積は行ごとに計算します。\n1行目は $2$ かける $4$ ひく $1$ かける $7$ です。\nこれは $8$ ひく $7$ で $1$ になります。\n2行目は $-3$ かける $4$ たす $2$ かける $7$ です。\nこれは $-12$ たす $14$ で $2$ になります。\n<<<TTS_READING>>>\n行列とベクトルの積は行ごとに計算します。\n1行目は 2 かける 4 ひく 1 かける 7 です。\nこれは 8 ひく 7 で 1 になります。\n2行目は マイナス3 かける 4 たす 2 かける 7 です。\nこれは マイナス12 たす 14 で 2 になります。",
+      "visual_type": "step",
+      "visual_content": "③(1)の $A^{-1}$ と $\\vec{b}$ の積を計算して $x$ と $y$ を確定する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] 各行で成分をかけて足す",
+          "\\begin{pmatrix} x \\\\ y \\end{pmatrix}=\\begin{pmatrix} 2\\cdot 4-1\\cdot 7 \\\\ -3\\cdot 4+2\\cdot 7 \\end{pmatrix}",
+          "[underline] \\begin{pmatrix} x \\\\ y \\end{pmatrix}=\\begin{pmatrix} 1 \\\\ 2 \\end{pmatrix}"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-11.mp3",
+      "audioDurationInSeconds": 18.792,
+      "durationInFrames": 575,
+      "captions": [
+        {
+          "text": "行列",
+          "startMs": 119.458,
+          "endMs": 582.416,
+          "timestampMs": 350.937,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "と",
+          "startMs": 594,
+          "endMs": 698.1659999999999,
+          "timestampMs": 646.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ベクトル",
+          "startMs": 709.708,
+          "endMs": 1161.083,
+          "timestampMs": 935.3955000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 1172.666,
+          "endMs": 1253.666,
+          "timestampMs": 1213.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "積",
+          "startMs": 1265.291,
+          "endMs": 1531.499,
+          "timestampMs": 1398.395,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は",
+          "startMs": 1543.041,
+          "endMs": 1728.2069999999999,
+          "timestampMs": 1635.6239999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行ごと",
+          "startMs": 1797.666,
+          "endMs": 2283.791,
+          "timestampMs": 2040.7285000000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 2295.375,
+          "endMs": 2469,
+          "timestampMs": 2382.1875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "計算",
+          "startMs": 2480.541,
+          "endMs": 2897.2070000000003,
+          "timestampMs": 2688.8740000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 2908.791,
+          "endMs": 3047.666,
+          "timestampMs": 2978.2285,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 3059.25,
+          "endMs": 3406.458,
+          "timestampMs": 3232.8540000000003,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "1行目",
+          "startMs": 4224.541,
+          "endMs": 4826.3739000000005,
+          "timestampMs": 4525.45745,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 4837.958,
+          "endMs": 4930.540999999999,
+          "timestampMs": 4884.2495,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$ ",
+          "startMs": 4942.125,
+          "endMs": 5092.583,
+          "timestampMs": 5017.353999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かける ",
+          "startMs": 5104.166,
+          "endMs": 5451.374,
+          "timestampMs": 5277.77,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$4$ ",
+          "startMs": 5462.958,
+          "endMs": 5648.124,
+          "timestampMs": 5555.540999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ひく ",
+          "startMs": 5659.708,
+          "endMs": 5914.333,
+          "timestampMs": 5787.0205,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$1$ ",
+          "startMs": 5925.916,
+          "endMs": 6157.416,
+          "timestampMs": 6041.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かける ",
+          "startMs": 6169,
+          "endMs": 6504.666,
+          "timestampMs": 6336.8330000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$7$ ",
+          "startMs": 6516.208,
+          "endMs": 6736.124,
+          "timestampMs": 6626.165999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 6747.666,
+          "endMs": 7094.874,
+          "timestampMs": 6921.27,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "これ",
+          "startMs": 7962.958,
+          "endMs": 8124.999,
+          "timestampMs": 8043.978499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 8136.583,
+          "endMs": 8298.624,
+          "timestampMs": 8217.6035,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$8$ ",
+          "startMs": 8321.75,
+          "endMs": 8587.958,
+          "timestampMs": 8454.854,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ひく ",
+          "startMs": 8599.541,
+          "endMs": 8831.041,
+          "timestampMs": 8715.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$7$ ",
+          "startMs": 8842.583,
+          "endMs": 9074.083,
+          "timestampMs": 8958.333,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で ",
+          "startMs": 9085.666,
+          "endMs": 9166.666,
+          "timestampMs": 9126.166,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$1$ ",
+          "startMs": 9178.25,
+          "endMs": 9432.875,
+          "timestampMs": 9305.5625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 9444.458,
+          "endMs": 9548.624,
+          "timestampMs": 9496.541000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 9560.166,
+          "endMs": 9745.331999999999,
+          "timestampMs": 9652.749,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 9756.958,
+          "endMs": 10092.624,
+          "timestampMs": 9924.791000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "2行目",
+          "startMs": 10914.333,
+          "endMs": 11423.6249,
+          "timestampMs": 11168.97895,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 11435.166,
+          "endMs": 11585.624,
+          "timestampMs": 11510.395,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$-3$ ",
+          "startMs": 11631.958,
+          "endMs": 12268.5,
+          "timestampMs": 11950.229,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かける ",
+          "startMs": 12280.083,
+          "endMs": 12615.749,
+          "timestampMs": 12447.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$4$ ",
+          "startMs": 12627.333,
+          "endMs": 12824.083,
+          "timestampMs": 12725.708,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "たす ",
+          "startMs": 12835.666,
+          "endMs": 13078.706999999999,
+          "timestampMs": 12957.1865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$ ",
+          "startMs": 13090.291,
+          "endMs": 13217.624,
+          "timestampMs": 13153.9575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "かける ",
+          "startMs": 13229.166,
+          "endMs": 13576.374,
+          "timestampMs": 13402.77,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$7$ ",
+          "startMs": 13587.958,
+          "endMs": 13807.874,
+          "timestampMs": 13697.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 13819.458,
+          "endMs": 14178.249,
+          "timestampMs": 13998.853500000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "これ",
+          "startMs": 15034.708,
+          "endMs": 15219.874,
+          "timestampMs": 15127.291000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 15231.5,
+          "endMs": 15405.125,
+          "timestampMs": 15318.3125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$-12$ ",
+          "startMs": 15439.833,
+          "endMs": 16273.166,
+          "timestampMs": 15856.4995,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "たす ",
+          "startMs": 16284.708,
+          "endMs": 16562.499,
+          "timestampMs": 16423.6035,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$14$ ",
+          "startMs": 16574.083,
+          "endMs": 17037.040999999997,
+          "timestampMs": 16805.561999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で ",
+          "startMs": 17048.625,
+          "endMs": 17141.208,
+          "timestampMs": 17094.9165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$ ",
+          "startMs": 17164.333,
+          "endMs": 17291.665999999997,
+          "timestampMs": 17227.999499999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 17303.25,
+          "endMs": 17419,
+          "timestampMs": 17361.125,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 17430.541,
+          "endMs": 17638.874,
+          "timestampMs": 17534.7075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 17650.458,
+          "endMs": 17986.124,
+          "timestampMs": 17818.290999999997,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 12,
+      "narration": "答えが合っているか確かめます。\n$x=1$、$y=2$ をもとの式に代入します。\n1つ目の式は $2+2$ で $4$ になります。\n2つ目の式は $3+4$ で $7$ になります。\nどちらも成り立ちました。\nかっこ2の答えは $x=1$、$y=2$ です。\n<<<TTS_READING>>>\n答えが合っているか確かめます。\nエックス イコール 1、ワイ イコール 2 をもとの式に代入します。\n1つ目の式は 2 たす 2 で 4 になります。\n2つ目の式は 3 たす 4 で 7 になります。\nどちらも成り立ちました。\nかっこ2の答えは エックス イコール 1、ワイ イコール 2 です。",
+      "visual_type": "step",
+      "visual_content": "③(1)の $A^{-1}$ と $\\vec{b}$ の積を計算して $x$ と $y$ を確定する",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] もとの式に戻して確かめる",
+          "2\\cdot 1+2=4,\\quad 3\\cdot 1+2\\cdot 2=7",
+          "[text] (2)の答え",
+          "[box] x=1,\\ y=2"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-12.mp3",
+      "audioDurationInSeconds": 21.696,
+      "durationInFrames": 662,
+      "captions": [
+        {
+          "text": "答え",
+          "startMs": 165.75,
+          "endMs": 443.541,
+          "timestampMs": 304.64549999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が",
+          "startMs": 455.083,
+          "endMs": 570.8330000000001,
+          "timestampMs": 512.9580000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "合っ",
+          "startMs": 582.416,
+          "endMs": 756.041,
+          "timestampMs": 669.2285,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "て",
+          "startMs": 767.583,
+          "endMs": 848.583,
+          "timestampMs": 808.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "いる",
+          "startMs": 860.166,
+          "endMs": 1068.499,
+          "timestampMs": 964.3325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "か",
+          "startMs": 1080.083,
+          "endMs": 1195.833,
+          "timestampMs": 1137.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "確かめ",
+          "startMs": 1207.416,
+          "endMs": 1681.9569999999999,
+          "timestampMs": 1444.6864999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 1693.5,
+          "endMs": 2063.875,
+          "timestampMs": 1878.6875,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$x=1$、",
+          "startMs": 2881.958,
+          "endMs": 4097.249,
+          "timestampMs": 3489.6035,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$y=2$ ",
+          "startMs": 4421.291,
+          "endMs": 5185.208,
+          "timestampMs": 4803.2495,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 5196.75,
+          "endMs": 5277.75,
+          "timestampMs": 5237.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "もと",
+          "startMs": 5289.333,
+          "endMs": 5520.833,
+          "timestampMs": 5405.083,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 5532.416,
+          "endMs": 5636.582,
+          "timestampMs": 5584.499,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 5648.166,
+          "endMs": 5891.207,
+          "timestampMs": 5769.6865,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 5902.791,
+          "endMs": 6030.124,
+          "timestampMs": 5966.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "代入",
+          "startMs": 6041.666,
+          "endMs": 6435.166,
+          "timestampMs": 6238.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 6446.75,
+          "endMs": 6574.083,
+          "timestampMs": 6510.416499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 6585.666,
+          "endMs": 6921.332,
+          "timestampMs": 6753.499,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "1つ目",
+          "startMs": 7743.041,
+          "endMs": 8229.1659,
+          "timestampMs": 7986.1034500000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 8240.75,
+          "endMs": 8344.916,
+          "timestampMs": 8292.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 8356.5,
+          "endMs": 8599.541,
+          "timestampMs": 8478.020499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 8611.125,
+          "endMs": 8738.458,
+          "timestampMs": 8674.7915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2+2$ ",
+          "startMs": 8761.583,
+          "endMs": 9293.999,
+          "timestampMs": 9027.791000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で ",
+          "startMs": 9305.541,
+          "endMs": 9421.291,
+          "timestampMs": 9363.416,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$4$ ",
+          "startMs": 9432.875,
+          "endMs": 9652.791,
+          "timestampMs": 9542.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 9664.333,
+          "endMs": 9768.499,
+          "timestampMs": 9716.416000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 9780.083,
+          "endMs": 9988.416000000001,
+          "timestampMs": 9884.249500000002,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 10000,
+          "endMs": 10335.666,
+          "timestampMs": 10167.832999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "2つ目",
+          "startMs": 11157.416,
+          "endMs": 11631.916,
+          "timestampMs": 11394.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 11643.5,
+          "endMs": 11747.666,
+          "timestampMs": 11695.582999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 11759.25,
+          "endMs": 11990.75,
+          "timestampMs": 11875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 12002.333,
+          "endMs": 12164.374,
+          "timestampMs": 12083.353500000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$3+4$ ",
+          "startMs": 12187.5,
+          "endMs": 12905.083,
+          "timestampMs": 12546.2915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で ",
+          "startMs": 12916.666,
+          "endMs": 13032.416,
+          "timestampMs": 12974.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$7$ ",
+          "startMs": 13067.125,
+          "endMs": 13298.625,
+          "timestampMs": 13182.875,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 13310.166,
+          "endMs": 13425.916,
+          "timestampMs": 13368.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "なり",
+          "startMs": 13437.5,
+          "endMs": 13622.666,
+          "timestampMs": 13530.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 13634.25,
+          "endMs": 13969.916,
+          "timestampMs": 13802.082999999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "どちら",
+          "startMs": 14791.666,
+          "endMs": 15173.624,
+          "timestampMs": 14982.645,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "も",
+          "startMs": 15185.166,
+          "endMs": 15300.916,
+          "timestampMs": 15243.041,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "成り立ち",
+          "startMs": 15312.5,
+          "endMs": 15752.333,
+          "timestampMs": 15532.4165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "まし",
+          "startMs": 15763.875,
+          "endMs": 15972.208,
+          "timestampMs": 15868.0415,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た。\n",
+          "startMs": 15983.791,
+          "endMs": 16192.124,
+          "timestampMs": 16087.9575,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "かっこ",
+          "startMs": 17048.625,
+          "endMs": 17337.958,
+          "timestampMs": 17193.2915,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2",
+          "startMs": 17349.541,
+          "endMs": 17476.874,
+          "timestampMs": 17413.2075,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 17488.416,
+          "endMs": 17592.582000000002,
+          "timestampMs": 17540.499000000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "答え",
+          "startMs": 17604.166,
+          "endMs": 17962.957000000002,
+          "timestampMs": 17783.561500000003,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 17974.541,
+          "endMs": 18229.166,
+          "timestampMs": 18101.8535,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$x=1$、",
+          "startMs": 18356.5,
+          "endMs": 19525.499,
+          "timestampMs": 18940.999499999998,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$y=2$ ",
+          "startMs": 19826.375,
+          "endMs": 20555.541,
+          "timestampMs": 20190.958,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。",
+          "startMs": 20567.125,
+          "endMs": 20891.208,
+          "timestampMs": 20729.1665,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    },
+    {
+      "scene_id": 13,
+      "narration": "まとめます。\nかっこ1の $A^{-1}$ は $2$、$-1$、$-3$、$2$ を並べた行列です。\n行列式が $1$ で $0$ でないから存在しました。\nかっこ2の答えは $x=1$、$y=2$ です。\n連立方程式は $\\vec{x}=A^{-1}\\vec{b}$ で一度に解けます。\n<<<TTS_READING>>>\nまとめます。\nかっこ1の エー インバース は 2、マイナス1、マイナス3、2 を並べた行列です。\n行列式が 1 で 0 でないから存在しました。\nかっこ2の答えは エックス イコール 1、ワイ イコール 2 です。\n連立方程式は ベクトル エックス イコール エー インバース ベクトル ビー で一度に解けます。",
+      "visual_type": "summary",
+      "visual_content": "答えのまとめ",
+      "visual": {
+        "kind": "formula",
+        "lines": [
+          "[text] (1)の答え",
+          "A^{-1}=\\begin{pmatrix} 2 & -1 \\\\ -3 & 2 \\end{pmatrix}",
+          "[text] (2)の答え",
+          "[underline] x=1,\\ y=2"
+        ],
+        "caption": ""
+      },
+      "audioSrc": "projects/matrix-inverse-system/scene-13.mp3",
+      "audioDurationInSeconds": 22.608,
+      "durationInFrames": 689,
+      "captions": [
+        {
+          "text": "まとめ",
+          "startMs": 119.458,
+          "endMs": 512.958,
+          "timestampMs": 316.20799999999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。\n",
+          "startMs": 524.541,
+          "endMs": 894.916,
+          "timestampMs": 709.7285,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "かっこ",
+          "startMs": 1747.666,
+          "endMs": 2048.582,
+          "timestampMs": 1898.1239999999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "1",
+          "startMs": 2060.166,
+          "endMs": 2268.4990000000003,
+          "timestampMs": 2164.3325000000004,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の ",
+          "startMs": 2280.083,
+          "endMs": 2372.666,
+          "timestampMs": 2326.3745,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$A^{-1}$ ",
+          "startMs": 2384.25,
+          "endMs": 3125,
+          "timestampMs": 2754.625,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 3136.583,
+          "endMs": 3240.7490000000003,
+          "timestampMs": 3188.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$2$、",
+          "startMs": 3252.333,
+          "endMs": 3449.083,
+          "timestampMs": 3350.708,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$-1$、",
+          "startMs": 3750,
+          "endMs": 4513.875,
+          "timestampMs": 4131.9375,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$-3$、",
+          "startMs": 4826.375,
+          "endMs": 5416.666,
+          "timestampMs": 5121.5205000000005,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$2$ ",
+          "startMs": 5659.708,
+          "endMs": 5763.874,
+          "timestampMs": 5711.790999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "を",
+          "startMs": 5775.458,
+          "endMs": 5879.624,
+          "timestampMs": 5827.540999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "並べ",
+          "startMs": 5891.208,
+          "endMs": 6238.415999999999,
+          "timestampMs": 6064.812,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た",
+          "startMs": 6250,
+          "endMs": 6354.166,
+          "timestampMs": 6302.0830000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "行列",
+          "startMs": 6365.75,
+          "endMs": 6863.416,
+          "timestampMs": 6614.5830000000005,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 6875,
+          "endMs": 7199.083,
+          "timestampMs": 7037.041499999999,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "行列",
+          "startMs": 8020.833,
+          "endMs": 8495.374,
+          "timestampMs": 8258.1035,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 8506.958,
+          "endMs": 8726.874,
+          "timestampMs": 8616.916000000001,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "が ",
+          "startMs": 8738.416,
+          "endMs": 8854.166,
+          "timestampMs": 8796.291,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$1$ ",
+          "startMs": 8865.75,
+          "endMs": 9108.791,
+          "timestampMs": 8987.270499999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で ",
+          "startMs": 9120.375,
+          "endMs": 9224.541,
+          "timestampMs": 9172.457999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$0$ ",
+          "startMs": 9236.125,
+          "endMs": 9409.75,
+          "timestampMs": 9322.9375,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 9421.291,
+          "endMs": 9525.456999999999,
+          "timestampMs": 9473.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ない",
+          "startMs": 9537.041,
+          "endMs": 9722.206999999999,
+          "timestampMs": 9629.624,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "から",
+          "startMs": 9733.791,
+          "endMs": 9918.956999999999,
+          "timestampMs": 9826.374,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "存在",
+          "startMs": 9930.541,
+          "endMs": 10358.791,
+          "timestampMs": 10144.666,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "し",
+          "startMs": 10370.375,
+          "endMs": 10486.125,
+          "timestampMs": 10428.25,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "まし",
+          "startMs": 10497.666,
+          "endMs": 10705.999,
+          "timestampMs": 10601.8325,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "た。\n",
+          "startMs": 10717.583,
+          "endMs": 10937.499,
+          "timestampMs": 10827.541000000001,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "かっこ",
+          "startMs": 11794,
+          "endMs": 12083.333,
+          "timestampMs": 11938.6665,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "2",
+          "startMs": 12094.916,
+          "endMs": 12222.249,
+          "timestampMs": 12158.5825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "の",
+          "startMs": 12233.791,
+          "endMs": 12337.956999999999,
+          "timestampMs": 12285.874,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "答え",
+          "startMs": 12349.541,
+          "endMs": 12708.331999999999,
+          "timestampMs": 12528.9365,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 12719.916,
+          "endMs": 12974.541,
+          "timestampMs": 12847.2285,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$x=1$、",
+          "startMs": 13101.833,
+          "endMs": 14270.831999999999,
+          "timestampMs": 13686.3325,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "$y=2$ ",
+          "startMs": 14571.75,
+          "endMs": 15300.916,
+          "timestampMs": 14936.332999999999,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "です。\n",
+          "startMs": 15312.5,
+          "endMs": 15636.583,
+          "timestampMs": 15474.5415,
+          "confidence": 1,
+          "pageBreakAfter": true
+        },
+        {
+          "text": "連立",
+          "startMs": 16458.333,
+          "endMs": 16944.458,
+          "timestampMs": 16701.3955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "方程",
+          "startMs": 16956,
+          "endMs": 17395.833,
+          "timestampMs": 17175.9165,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "式",
+          "startMs": 17407.416,
+          "endMs": 17615.749,
+          "timestampMs": 17511.5825,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "は ",
+          "startMs": 17627.333,
+          "endMs": 17870.374,
+          "timestampMs": 17748.853499999997,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "$\\vec{x}=A^{-1}\\vec{b}$ ",
+          "startMs": 17974.541,
+          "endMs": 20636.541,
+          "timestampMs": 19305.541,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "で",
+          "startMs": 20648.166,
+          "endMs": 20740.749,
+          "timestampMs": 20694.4575,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "一度",
+          "startMs": 20752.333,
+          "endMs": 21076.415999999997,
+          "timestampMs": 20914.374499999998,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "に",
+          "startMs": 21087.958,
+          "endMs": 21226.833,
+          "timestampMs": 21157.3955,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "解け",
+          "startMs": 21238.416,
+          "endMs": 21435.166,
+          "timestampMs": 21336.791,
+          "confidence": 1,
+          "pageBreakAfter": false
+        },
+        {
+          "text": "ます。",
+          "startMs": 21446.75,
+          "endMs": 21793.958,
+          "timestampMs": 21620.354,
+          "confidence": 1,
+          "pageBreakAfter": true
+        }
+      ]
+    }
+  ]
+}
